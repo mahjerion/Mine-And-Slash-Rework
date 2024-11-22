@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.loot;
 import com.robertx22.library_of_exile.utils.EntityUtils;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Slime;
@@ -40,6 +41,12 @@ public class LootUtils {
 
         float hp = EntityUtils.getVanillaMaxHealth(entity);
 
+        var rar = Load.Unit(entity).getMobRarity();
+
+        if (rar.forcesCustomHp()) {
+            hp = rar.force_custom_hp;
+        }
+
         multi += (1 + hp / 40F) - 1;
 
         if (entity instanceof Slime slime) {
@@ -54,7 +61,9 @@ public class LootUtils {
                 }
             }
         }
-
+        if (multi > 10) {
+            multi = 10;
+        }
         return multi;
     }
 

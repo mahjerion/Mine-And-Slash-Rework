@@ -154,7 +154,17 @@ public enum Chats implements IAutoLocName {
     PROFESSION_LEVEL_UP("Your %1$s level has increased to level %2$s!"),
     TOO_MANY_BUFFS("You can't have that many buffs."),
     NEW_DAY("A new day has arrived! Profession drop rates have been boosted for the following items:"),
+
+    ERROR_TYPE_AND_REASON("%1$s %2$s"),
     TOO_LOW_LEVEL("Your level is too low."),
+
+    EAT_FOOD_ERROR("[Food Eat Fail]: "),
+    EQUIP_AURA_ERROR("[Augment Equip Fail]: "),
+    EQUIP_SUPP_ERROR("[Support Gem Equip Fail]: "),
+    MAP_DEVICE_USE_ERROR("[Map Device Use Fail]: "),
+    LEARN_ERROR("[Learn Fail]: "),
+
+
     TOO_LOW_LEVEL_TO_UPGRADE_SPELL("Your level is too low to Upgrade the Spell level."),
     CANT_SAME_BUFF("You already have a buff of that type."),
     NOT_OWNER("You are not the owner of this Station. Stations can NOT be shared, you have to craft your own."),

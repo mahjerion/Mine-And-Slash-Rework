@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.capability.player.helper;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGems;
+import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.types.spirit.AuraCapacity;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
@@ -180,21 +181,22 @@ public class GemInventoryHelper {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(Chats.TOO_LOW_LEVEL.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.TOO_LOW_LEVEL));
         }
         if (getRemainingSpirit(p) < 0) {
             for (ItemStack s : getAuras()) {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(Chats.LACK_AURA_CAPACITY.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.LACK_AURA_CAPACITY));
         }
         if (hasDuplicates()) {
             for (ItemStack s : getAuras()) {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(Chats.NO_DUPLICATE_AURA.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.NO_DUPLICATE_AURA));
+
         }
     }
 

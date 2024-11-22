@@ -1,7 +1,10 @@
 package com.robertx22.mine_and_slash.database.data.profession;
 
+import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class ExplainedResult {
 
@@ -11,6 +14,13 @@ public class ExplainedResult {
     private ExplainedResult(boolean can, Component answer) {
         this.can = can;
         this.answer = answer;
+    }
+
+
+    public static MutableComponent createErrorAndReason(IAutoLocName error, IAutoLocName reason) {
+        var er = error.locName().withStyle(ChatFormatting.RED);
+        var re = reason.locName().withStyle(ChatFormatting.YELLOW);
+        return Chats.ERROR_TYPE_AND_REASON.locName(er, re);
     }
 
     public static ExplainedResult success() {

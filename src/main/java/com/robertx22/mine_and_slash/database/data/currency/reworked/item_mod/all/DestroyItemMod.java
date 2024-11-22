@@ -30,10 +30,10 @@ public class DestroyItemMod extends ItemModification {
         return OutcomeType.BAD;
     }
 
-    public ItemModificationResult applyMod(ExileStack stack) {
+    public void applyMod(ExileStack stack, ItemModificationResult r) {
         stack.setStack(Items.COAL.getDefaultInstance());
-        return null;
     }
+
 
     @Override
     public MutableComponent getDescWithParams() {

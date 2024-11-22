@@ -175,3 +175,13 @@ Other rooms might have tons of mobs or secret chests, and need way longer to fin
 Also not a perfect system but probably more enjoyable to see your progress from the start
 - added base_stat_percents to gear rar datapacks
 - added cd to map teleport just in case
+
+v.5.9.19
+
+- rarities that force custom hp now use that hp to determine loot multi
+- reduced default max items when loot generates to 20
+- max mob hp loot multi is now 10
+- destroy item now works correctly as an item mod
+- auto aiming projectiles should be slightly less laggy now
+- redid some error messages so they are less vague, instead of "lvl too low", it will now be: Support gem equip fail: lvl too low. 
+Please tell if any error messages are still vague

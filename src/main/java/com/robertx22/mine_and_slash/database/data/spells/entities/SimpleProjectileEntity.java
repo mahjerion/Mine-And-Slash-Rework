@@ -2,6 +2,9 @@ package com.robertx22.mine_and_slash.database.data.spells.entities;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.robertx22.library_of_exile.utils.SoundUtils;
+import com.robertx22.library_of_exile.utils.geometry.MyPosition;
+import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.AoeSelector;
@@ -14,9 +17,6 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.Utilities;
-import com.robertx22.library_of_exile.utils.SoundUtils;
-import com.robertx22.library_of_exile.utils.geometry.MyPosition;
-import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -39,11 +39,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.util.ArrayList;
@@ -277,22 +273,29 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     }
 
+    Entity target = null;
+
     public void tryMoveTowardsTargets() {
         if (moveTowardsEnemies) {
-            int radius = getSpellData().getSpell().config.tracking_radius;
 
-            var b = EntityFinder.start(getCaster(), LivingEntity.class, position())
-                    .finder(EntityFinder.SelectionType.RADIUS)
-                    .searchFor(getSpellData().getSpell().config.tracks)
-                    .predicate(x -> AoeSelector.canHit(this.position(), x))
-                    .radius(radius);
+            if (target == null || !target.isAlive() || this.tickCount % 20 == 0) {
 
-            var target = b.getClosest();
+                int radius = getSpellData().getSpell().config.tracking_radius;
+
+                var b = EntityFinder.start(getCaster(), LivingEntity.class, position())
+                        .finder(EntityFinder.SelectionType.RADIUS)
+                        .searchFor(getSpellData().getSpell().config.tracks)
+                        .predicate(x -> AoeSelector.canHit(this.position(), x))
+                        .radius(radius);
+
+                target = b.getClosest();
+            }
 
             if (target != null) {
                 var vel = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
                 vel = vel.normalize().multiply(speed, speed, speed); // todo this doesnt fix the speed problem
                 setDeltaMovement(vel);
+
 
                 PlayerUtils.getNearbyPlayers(level(), blockPosition(), 40)
                         .forEach(p -> {

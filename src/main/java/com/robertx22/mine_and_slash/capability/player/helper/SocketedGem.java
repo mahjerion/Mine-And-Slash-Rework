@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
+import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.MaxLinks;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
@@ -46,7 +47,8 @@ public class SocketedGem {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(Chats.TOO_LOW_LEVEL.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.TOO_LOW_LEVEL));
+
         }
 
         if (getSupportDatas().size() > getMaxLinks(p).links) {
@@ -54,7 +56,8 @@ public class SocketedGem {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(Chats.CANT_EQUIP_THAT_MANY_SUPPORTS.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.CANT_EQUIP_THAT_MANY_SUPPORTS));
+
         }
 
 

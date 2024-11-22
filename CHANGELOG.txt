@@ -1,19 +1,11 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.18
+v.5.9.19
 
-- uniques now have a min_drop_lvl field
-- quality now provides flat bonus to base stats instead of being a multiplier. 
-- should fix mobs spawning with incorrect affix number in maps, mostly fixes bosses having affixes
-- cdr stats now also have an additional effect: reduces charge cd (update the stat/effect datapacks)
-This should mean cdr now works properly on charges
-- station recipes now show up not right
-- attempt fix stations not sometimes saving items
-- try fix map spawning out of world borders
-- map progress no longer needs scouting the entire map, but it's a bit random now
-Each room counts the same, so if you enter a room and it's empty, you would get a boost to your map %
-Other rooms might have tons of mobs or secret chests, and need way longer to finish. 
-Also not a perfect system but probably more enjoyable to see your progress from the start
-- added base_stat_percents to gear rar datapacks
-- added cd to map teleport just in case
-- updated translations
+- rarities that force custom hp now use that hp to determine loot multi
+- reduced default max items when loot generates to 20
+- max mob hp loot multi is now 10
+- destroy item now works correctly as an item mod
+- auto aiming projectiles should be slightly less laggy now
+- redid some error messages so they are less vague, instead of "lvl too low", it will now be: Support gem equip fail: lvl too low. 
+Please tell if any error messages are still vague

@@ -40,7 +40,7 @@ public class LootInfo {
     public Player player;
     public Level world;
     private int minItems = 0;
-    private int maxItems = 50;
+    private int maxItems = 20;
     public boolean isMapWorld = false;
     public MapData map;
     public BlockPos pos;

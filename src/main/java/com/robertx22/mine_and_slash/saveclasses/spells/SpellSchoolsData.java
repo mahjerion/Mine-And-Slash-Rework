@@ -119,7 +119,7 @@ public class SpellSchoolsData implements IStatCtx {
             return ExplainedResult.failure(Chats.NOT_ENOUGH_POINTS.locName().withStyle(ChatFormatting.RED));
         }
         if (!school.isLevelEnoughFor(en, perk)) {
-            return ExplainedResult.failure(Chats.TOO_LOW_LEVEL.locName().withStyle(ChatFormatting.RED));
+            return ExplainedResult.failure(ExplainedResult.createErrorAndReason(Chats.LEARN_ERROR, Chats.TOO_LOW_LEVEL));
         }
         if (!school.isLevelEnoughForSpellLevelUp(en, perk, this.getLevel(perk.GUID()))) {
             return ExplainedResult.failure(Chats.TOO_LOW_LEVEL_TO_UPGRADE_SPELL.locName().withStyle(ChatFormatting.RED));

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
+import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuff;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -95,7 +96,7 @@ public class PlayerBuffData implements IStatCtx {
     public boolean tryAdd(Player p, StatBuff buff, int lvl, int perc, Type type, int ticks) {
 
         if (lvl > Load.Unit(p).getLevel()) {
-            p.sendSystemMessage(Chats.TOO_LOW_LEVEL.locName());
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EAT_FOOD_ERROR, Chats.TOO_LOW_LEVEL));
             return false;
         }
 

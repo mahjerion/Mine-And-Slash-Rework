@@ -10,6 +10,7 @@ blizzard
 blood_explosion
 bone_shatter
 boomerang
+boss_cc_resist
 chain_lightning
 chaos_totem
 charge

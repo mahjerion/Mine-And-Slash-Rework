@@ -266,6 +266,11 @@ public class LootInfo {
 
         amount = LootUtils.WhileRoll(chance);
 
+        if (gen.onlyOneDropAllowed()) {
+            if (amount > 1) {
+                amount = 1;
+            }
+        }
     }
 
 }

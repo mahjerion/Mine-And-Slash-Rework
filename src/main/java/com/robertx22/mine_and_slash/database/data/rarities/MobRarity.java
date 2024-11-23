@@ -8,6 +8,9 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import net.minecraft.ChatFormatting;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<MobRarity>, IAutoLocName {
     public static MobRarity SERIALIZER = new MobRarity();
 
@@ -69,6 +72,10 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
     public float exp_multi;
     public int affixes = 0;
 
+    public int max_slow_from_chill = 100;
+
+    public List<String> spells = new ArrayList<>();
+
     public boolean is_elite = false;
 
 
@@ -81,10 +88,22 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
         return this;
     }
 
+    public MobRarity addSpell(String id) {
+        this.spells.add(id);
+        return this;
+    }
+
+    public MobRarity limitChillSlowTo(int c) {
+        this.max_slow_from_chill = c;
+        return this;
+    }
+
+
     public MobRarity setElite() {
         is_elite = true;
         return this;
     }
+
 
     public boolean forcesCustomHp() {
         return force_custom_hp > 0;

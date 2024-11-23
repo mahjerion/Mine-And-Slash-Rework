@@ -45,6 +45,7 @@ public class ServerContainer {
         LOG_ERRORS = b.define("log_errors", true);
         STOP_ERROR_SPAM = b.define("stop_error_spam", true);
         STATION_SUCK_NEARBY_CHESTS = b.define("STATION_SUCK_NEARBY_CHESTS", false);
+        SKULL_HIDES_LEVEL = b.comment("Mobs that are much higher level will hide their levels.").define("SKULL_HIDES_LEVEL", true);
         MIN_LEVEL_MAP_DROPS = b.defineInRange("min_level_map_drops", 25, 0, Integer.MAX_VALUE);
         MIN_SLIME_SIZE_FOR_LOOT = b.defineInRange("MIN_SLIME_SIZE_FOR_LOOT", 3, 0, Integer.MAX_VALUE);
         DEATH_PENALTY_START_LEVEL = b.defineInRange("DEATH_PENALTY_START_LEVEL", 25, 0, Integer.MAX_VALUE);
@@ -58,6 +59,7 @@ public class ServerContainer {
         MAX_EXP_DEBT_MULTI = b.defineInRange("max_death_exp_debt_multi", 1F, 0, 100);
         EXP_GAIN_MULTI = b.defineInRange("exp_gain_multi", 1D, 0, 1000);
         PARTY_RADIUS = b.defineInRange("party_radius", 200D, 0, 1000);
+        LEVEL_DISTANCE_SKULL_SHOW = b.comment("When mobs are this many levels higher than you, a skull will show, indicating danger.").defineInRange("SHOW_SKULL_ON_MOBS_THAT_ARE_X_LEVELS_HIGHER_THAN_YOU", 5, 1, 1000);
         LEVEL_DISTANCE_PENALTY_PER_LVL = b.comment("When you are higher or lower level than mobs by X levels, decreases the loot and exp droprate.").defineInRange("lvl_distance_loot_penalty_per_level", 0.2D, 0, 1D);
         LEVEL_DISTANCE_PENALTY_MIN_MULTI = b.defineInRange("min_loot_chance", 0.2D, 0, 1);
         EXTRA_MOB_STATS_PER_LEVEL = b.defineInRange("extra_mob_stats_per_lvl", 0.02D, 0, 1000);
@@ -198,6 +200,7 @@ public class ServerContainer {
     public ForgeConfigSpec.BooleanValue STOP_ERROR_SPAM;
     public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
     public ForgeConfigSpec.BooleanValue STATION_SUCK_NEARBY_CHESTS;
+    public ForgeConfigSpec.BooleanValue SKULL_HIDES_LEVEL;
 
     public ForgeConfigSpec.IntValue MIN_LEVEL_MAP_DROPS;
     public ForgeConfigSpec.IntValue MIN_SLIME_SIZE_FOR_LOOT;
@@ -205,6 +208,8 @@ public class ServerContainer {
 
     public ForgeConfigSpec.IntValue LEVEL_DISTANCE_PENALTY_LEEWAY;
     public ForgeConfigSpec.IntValue PERC_OFFHAND_WEP_STAT;
+    public ForgeConfigSpec.IntValue LEVEL_DISTANCE_SKULL_SHOW;
+
     //  public ForgeConfigSpec.IntValue DONT_MAKE_MAP_MOBS_PERSISTENT_IF_MOB_COUNT_IS_ABOVE;
 
 

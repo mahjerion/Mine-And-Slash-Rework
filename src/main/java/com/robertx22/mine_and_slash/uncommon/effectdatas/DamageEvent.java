@@ -86,7 +86,7 @@ public class DamageEvent extends EffectEvent {
 
         addMobDamageMultipliers();
 
-        if (this.targetData.immuneTicks > 0) {
+        if (this.targetData.immuneTicks > 0 && attackInfo != null) {
             this.cancelDamage();
         }
     }
@@ -218,6 +218,7 @@ public class DamageEvent extends EffectEvent {
                 vec3d3 = new Vec3(vec3d3.x, 0.0D, vec3d3.z);
                 if (vec3d3.dot(vec3d2) < 0.0D) {
                     this.data.setHitAvoided(EventData.IS_BLOCKED);
+                    SoundUtils.playSound(source, SoundEvents.SHIELD_BLOCK);
                 }
             }
         }
@@ -237,7 +238,7 @@ public class DamageEvent extends EffectEvent {
 
         WeaponTypes weaponType = data.getWeaponType();
 
-        if (weaponType.isMelee() && !isSpell()) {
+        if (this.data.getAttackType() != AttackType.dot && weaponType.isMelee() && !isSpell()) {
 
             if (this.source instanceof Player) {
 

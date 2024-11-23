@@ -58,16 +58,20 @@ public class ChunkCap implements ICap {
     public void tryLoadMobs(Level world) {
         if (!savedMobs.isEmpty()) {
             try {
+                
+                var saved = savedMobs.stream().toList();
+                savedMobs.clear();
+                mobIds.clear();
 
-                for (CompoundTag nbt : savedMobs) {
+                for (CompoundTag nbt : saved) {
                     var en = EntityType.loadEntityRecursive(nbt, world, x -> x);
                     world.addFreshEntity(en);
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            savedMobs.clear();
-            mobIds.clear();
+
         }
     }
 

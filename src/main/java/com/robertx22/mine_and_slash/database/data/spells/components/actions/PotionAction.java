@@ -3,9 +3,9 @@ package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction.GiveOrTake;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
-import com.robertx22.mine_and_slash.mixin_ducks.StatusEffectAccesor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -42,25 +42,17 @@ public class PotionAction extends SpellAction {
 
                     t.removeEffect(potion);
                 } else if (action == GiveOrTake.REMOVE_NEGATIVE) {
-                    int count = data.getOrDefault(COUNT, 1D)
-                            .intValue();
+                    int count = data.getOrDefault(COUNT, 1D).intValue();
 
                     for (int i = 0; i < count; i++) {
 
                         List<MobEffectInstance> opt = t.getActiveEffects()
                                 .stream()
-                                .filter(x -> {
-                                    if (x.getEffect() instanceof StatusEffectAccesor) {
-                                        StatusEffectAccesor acc = (StatusEffectAccesor) x.getEffect();
-                                        return acc.my$getstatusEffectType() == net.minecraft.world.effect.MobEffectCategory.HARMFUL;
-                                    }
-                                    return false;
-                                })
+                                .filter(x -> x.getEffect().getCategory() == MobEffectCategory.HARMFUL)
                                 .collect(Collectors.toList());
 
                         if (!opt.isEmpty()) {
-                            t.removeEffect(opt.get(0)
-                                    .getEffect());
+                            t.removeEffect(opt.get(0).getEffect());
                         }
                     }
 

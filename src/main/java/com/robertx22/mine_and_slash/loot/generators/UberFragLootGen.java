@@ -25,6 +25,11 @@ public class UberFragLootGen extends BaseLootGen<ItemBlueprint> {
     }
 
     @Override
+    public boolean onlyOneDropAllowed() {
+        return true;
+    }
+
+    @Override
     public LootType lootType() {
         return LootType.UberFrag;
     }

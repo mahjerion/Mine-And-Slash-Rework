@@ -138,7 +138,6 @@ public class EntityData implements ICap, INeededForClient {
     private static final String MAP_ID = "mapid";
     private static final String MAP_MOB = "map_mob";
 
-
     private transient int dontSyncTicks = 0;
 
     public DirtySync sync = new DirtySync("endata sync", x -> syncData()) {
@@ -301,7 +300,7 @@ public class EntityData implements ICap, INeededForClient {
             nbt.putBoolean(MAP_MOB, this.isCorrectlySpawnedMapMob);
 
             LoadSave.Save(cooldowns, nbt, COOLDOWNS);
-            LoadSave.Save(ailments, nbt, AILMENTS);
+            // LoadSave.Save(ailments, nbt, AILMENTS);
             LoadSave.Save(summonedPetData, nbt, PET);
             LoadSave.Save(leech, nbt, LEECH);
             LoadSave.Save(customExactStats, nbt, CUSTOM_STATS);
@@ -367,7 +366,7 @@ public class EntityData implements ICap, INeededForClient {
 
         try {
             this.summonedPetData = loadOrBlank(SummonedPetData.class, new SummonedPetData(), nbt, PET, new SummonedPetData());
-            this.ailments = loadOrBlank(EntityAilmentData.class, new EntityAilmentData(), nbt, AILMENTS, new EntityAilmentData());
+            // this.ailments = loadOrBlank(EntityAilmentData.class, new EntityAilmentData(), nbt, AILMENTS, new EntityAilmentData());
             this.threat = loadOrBlank(ThreatData.class, new ThreatData(), nbt, THREAT, new ThreatData());
             this.customExactStats = loadOrBlank(CustomExactStatsData.class, new CustomExactStatsData(), nbt, CUSTOM_STATS, new CustomExactStatsData());
             this.resources = loadOrBlank(ResourcesData.class, new ResourcesData(), nbt, RESOURCES_LOC, new ResourcesData());

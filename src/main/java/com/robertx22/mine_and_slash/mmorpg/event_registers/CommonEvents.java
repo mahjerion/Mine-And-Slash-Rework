@@ -24,11 +24,13 @@ import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashPotions;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.OnDeathEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.OnMobKilledByDamageEvent;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Wolf;
@@ -106,21 +108,38 @@ public class CommonEvents {
             if (event.getEntity() != null) {
                 if (event.getSource().getEntity() instanceof Player p) {
                     LivingEntity target = event.getEntity();
-                    if (!Load.Unit(target).getCooldowns().isOnCooldown("death")) {
+                    if (!Load.Unit(target).getCooldowns().isOnCooldown("onkill")) {
                         DamageEvent dmg = Load.Unit(target).lastDamageTaken;
                         if (dmg != null) {
                             // make absolutely sure this isn't called twice somehow
-                            Load.Unit(target).getCooldowns().setOnCooldown("death", Integer.MAX_VALUE);
+                            Load.Unit(target).getCooldowns().setOnCooldown("onkill", Integer.MAX_VALUE);
                             OnMobKilledByDamageEvent e = new OnMobKilledByDamageEvent(dmg);
                             e.Activate();
                         }
                     }
                 }
+
+                LivingEntity deadMob = event.getEntity();
+                Entity test = event.getSource().getEntity();
+                LivingEntity killer = null;
+                if (test instanceof LivingEntity en) {
+                    killer = en;
+                } else {
+                    killer = deadMob;
+                }
+                if (!Load.Unit(deadMob).getCooldowns().isOnCooldown(OnDeathEvent.ID)) {
+                    // make absolutely sure this isn't called twice somehow
+                    Load.Unit(deadMob).getCooldowns().setOnCooldown(OnDeathEvent.ID, Integer.MAX_VALUE);
+                    OnDeathEvent e = new OnDeathEvent(deadMob, deadMob, event.getSource());
+                    e.Activate();
+                }
             }
         });
 
 
-        ForgeEvents.registerForgeEvent(EntityJoinLevelEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(EntityJoinLevelEvent.class, event ->
+
+        {
 
             if (event.getEntity() instanceof LivingEntity en) {
                 Load.Unit(en).equipmentCache.setAllDirty(); // todo this is a new performance test
@@ -130,7 +149,9 @@ public class CommonEvents {
         });
 
 
-        ForgeEvents.registerForgeEvent(EntityItemPickupEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(EntityItemPickupEvent.class, event ->
+
+        {
             if (event.getEntity() instanceof ServerPlayer player) {
                 if (!player.level().isClientSide) {
                     ItemStack stack = event.getItem().getItem();
@@ -147,7 +168,9 @@ public class CommonEvents {
                 }
             }
         });
-        ForgeEvents.registerForgeEvent(PlayerEvent.Clone.class, event -> {
+        ForgeEvents.registerForgeEvent(PlayerEvent.Clone.class, event ->
+
+        {
             try {
                 if (event.getEntity() instanceof ServerPlayer p) {
                     if (!p.level().isClientSide) {
@@ -161,7 +184,9 @@ public class CommonEvents {
         });
 
 
-        ForgeEvents.registerForgeEvent(TickEvent.PlayerTickEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(TickEvent.PlayerTickEvent.class, event ->
+
+        {
             if (!event.player.level().isClientSide) {
                 if (event.phase == TickEvent.Phase.END) {
                     OnServerTick.onEndTick((ServerPlayer) event.player);
@@ -169,37 +194,51 @@ public class CommonEvents {
             }
         });
 
-        ForgeEvents.registerForgeEvent(TickEvent.LevelTickEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(TickEvent.LevelTickEvent.class, event ->
+
+        {
             if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel) {
                 OnTickDungeonWorld.onEndTick((ServerLevel) event.level);
             }
         });
 
 
-        ForgeEvents.registerForgeEvent(AttackEntityEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(AttackEntityEvent.class, event ->
+
+        {
             if (event.getEntity() instanceof ServerPlayer) {
                 StopCastingIfInteract.interact(event.getEntity());
             }
         });
 
-        ForgeEvents.registerForgeEvent(PlayerEvent.StartTracking.class, event -> {
+        ForgeEvents.registerForgeEvent(PlayerEvent.StartTracking.class, event ->
+
+        {
             if (event.getEntity() instanceof ServerPlayer) {
                 OnTrackEntity.onPlayerStartTracking((ServerPlayer) event.getEntity(), event.getTarget());
             }
         });
 
-        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerRespawnEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerRespawnEvent.class, event ->
+
+        {
             if (event.getEntity() instanceof ServerPlayer) {
                 Load.Unit(event.getEntity()).setAllDirtyOnLoginEtc();
             }
         });
 
-        ForgeEvents.registerForgeEvent(LivingEvent.LivingTickEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(LivingEvent.LivingTickEvent.class, event ->
+
+        {
             OnEntityTick.onTick(event.getEntity());
         });
 
-        ExileEvents.ON_CHEST_LOOTED.register(new OnLootChestEvent());
-        ExileEvents.MOB_DEATH.register(new OnMobDeathDrops());
+        ExileEvents.ON_CHEST_LOOTED.register(new
+
+                OnLootChestEvent());
+        ExileEvents.MOB_DEATH.register(new
+
+                OnMobDeathDrops());
 
         NewDamageMain.init();
 
@@ -211,7 +250,9 @@ public class CommonEvents {
         ExileEvents.PLAYER_DEATH.register(new OnPlayerDeath());
 
 
-        ForgeEvents.registerForgeEvent(LivingHurtEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(LivingHurtEvent.class, event ->
+
+        {
             try {
                 if (event.getEntity() instanceof Player == false) {
                     if (LivingHurtUtils.isEnviromentalDmg(event.getSource())) {
@@ -227,7 +268,9 @@ public class CommonEvents {
 
         });
 
-        ForgeEvents.registerForgeEvent(LivingDamageEvent.class, event -> {
+        ForgeEvents.registerForgeEvent(LivingDamageEvent.class, event ->
+
+        {
             try {
                 if (event.getEntity() instanceof Player) {
                     if (LivingHurtUtils.isEnviromentalDmg(event.getSource())) {

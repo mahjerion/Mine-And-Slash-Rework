@@ -82,7 +82,9 @@ public class MapAffix implements JsonExileRegistry<MobAffix>, IAutoGson<MapAffix
 
 
     public List<ExactStatData> getStats(int perc, int lvl) {
-        return stats.stream().map(x -> x.ToExactStat(perc, lvl)).collect(Collectors.toList());
+        var list = stats.stream().map(x -> x.ToExactStat(perc, lvl)).collect(Collectors.toList());
+        
+        return list;
     }
 
     @Override

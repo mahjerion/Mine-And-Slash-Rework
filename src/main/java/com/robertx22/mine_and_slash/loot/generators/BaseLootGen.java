@@ -22,6 +22,10 @@ public abstract class BaseLootGen<T extends ItemBlueprint> {
         return true;
     }
 
+    public boolean onlyOneDropAllowed() {
+        return false;
+    }
+
     protected abstract ItemStack generateOne();
 
     public boolean condition() {

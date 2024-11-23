@@ -138,12 +138,12 @@ public abstract class EffectEvent implements IGUID {
         if (!activated) {
 
             if (this.source.isDeadOrDying() || target.isDeadOrDying()) {
-                if (!canWorkOnDeadTarget()) {
+                if (false && !canWorkOnDeadTarget()) {
+                    // todo, enabled dead entities to work with events so on death stats can work, will see if any problems arise
                     this.activated = true;
                     return;
                 }
             }
-
 
             //Watch watch = new Watch();
             //watch.min = 500;

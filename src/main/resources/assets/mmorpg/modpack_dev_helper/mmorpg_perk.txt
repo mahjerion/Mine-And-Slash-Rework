@@ -97,6 +97,7 @@ blood_on_kill
 bloody_dance
 bone_shatter
 boomerang
+boss_cc_resist
 bow_damage
 bow_damage_big
 burn_chance

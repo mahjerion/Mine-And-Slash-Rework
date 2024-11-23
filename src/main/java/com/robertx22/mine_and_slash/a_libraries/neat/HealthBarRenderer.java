@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.robertx22.library_of_exile.utils.CLOC;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.HealthUtils;
 import net.minecraft.ChatFormatting;
@@ -231,7 +233,20 @@ public class HealthBarRenderer {
 
         List<ItemStack> icons = getIcons(entity);
 
-        String lvl = "Lvl " + Load.Unit(living).getLevel();
+        int lvl = Load.Unit(living).getLevel();
+        int playerlvl = Load.Unit(mc.player).getLevel();
+        int diffabove = lvl - playerlvl;
+
+        String lvltext = "Lvl " + lvl;
+
+        if (diffabove > ServerContainer.get().LEVEL_DISTANCE_SKULL_SHOW.get()) {
+            if (ServerContainer.get().SKULL_HIDES_LEVEL.get()) {
+                lvltext = "Lvl " + ChatFormatting.RED + UNICODE.SKULL;
+
+            } else {
+                lvltext = "Lvl " + lvl + " " + ChatFormatting.RED + UNICODE.SKULL;
+            }
+        }
 
         String prefix = "";
         String suffix = "";
@@ -257,7 +272,7 @@ public class HealthBarRenderer {
             color = ChatFormatting.RED;
         }
 
-        String name = ChatFormatting.YELLOW + lvl + " " + color + rar + " " + prefix + " " + living.getDisplayName().getString() + " " + suffix;
+        String name = ChatFormatting.YELLOW + lvltext + " " + color + rar + " " + prefix + " " + living.getDisplayName().getString() + " " + suffix;
 
         final float nameLen = (mc.font.width(name) + (icons.size() * 5)) * textScale;
         final float halfSize = Math.max(NeatConfig.instance.plateSize(), nameLen / 2.0F + 10.0F);

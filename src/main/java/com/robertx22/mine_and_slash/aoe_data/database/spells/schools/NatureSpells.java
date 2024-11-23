@@ -35,8 +35,31 @@ public class NatureSpells implements ExileRegistryInit {
     public static String CIRCLE_OF_HEALING = "circle_of_healing";
     public static String GARDEN_OF_THORNS = "garden_of_thorns";
 
+    public static String BOSS_CC_RESISTANCE = "boss_cc_resist";
+
     @Override
     public void registerAll() {
+
+
+        SpellBuilder.of(BOSS_CC_RESISTANCE, PlayStyle.INT, SpellConfiguration.Builder.instant(0, 20 * 5)
+                        , "Boss Spell - Crowd Control Resistance",
+                        Arrays.asList(SpellTags.BUFF))
+                .manualDesc(
+                        "Removes all negative effects on the boss")
+
+                .singleAnimation(SpellAnimations.STAFF_CAST_FINISH)
+                .weaponReq(CastingWeapon.ANY_WEAPON)
+
+                // .onCast(PartBuilder.playSound(SoundEvents.GENERIC_EXPLODE, 1D, 1D))
+
+                // todo rework activate in spell effects into boolean return so i can do something when say effect is removed without having to check first
+
+                .onCast(PartBuilder.justAction(SpellAction.POTION.removeNegative(1D))
+                        .addTarget(TargetSelector.CASTER.create()))
+
+                .levelReq(0)
+                .build();
+
 
         SpellBuilder.of(CHAOS_TOTEM, PlayStyle.STR, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 40), "Chaos Totem",
                         Arrays.asList(SpellTags.area, SpellTags.damage, SpellTags.totem, SpellTags.CHAOS))

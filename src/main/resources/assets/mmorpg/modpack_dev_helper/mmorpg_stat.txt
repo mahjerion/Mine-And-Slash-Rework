@@ -337,6 +337,7 @@ learn_blizzard
 learn_blood_explosion
 learn_bone_shatter
 learn_boomerang
+learn_boss_cc_resist
 learn_chain_lightning
 learn_chaos_totem
 learn_charge
@@ -529,6 +530,7 @@ not_affected_by_cast_speed_cdr
 not_affected_by_cast_speed_spell_dmg
 not_affected_by_cast_speed_spell_dmg_taken
 offensive_eff_dur_u_cast
+on_death_ignite_explosion
 out_of_combat_regen
 phys_to_all
 phys_to_chaos

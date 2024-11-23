@@ -4,6 +4,8 @@ import com.robertx22.mine_and_slash.capability.bases.EntityGears;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
@@ -37,6 +39,8 @@ public class OnEntityTick {
             if (data.isSummon()) {
                 data.summonedPetData.tick(entity);
             }
+
+            data.immuneTicks--;
 
             if (entity instanceof Player == false) {
                 if (WorldUtils.isMapWorldClass(entity.level())) {
@@ -92,14 +96,32 @@ public class OnEntityTick {
                         p.awardStat(Stats.CUSTOM.get(PlayerStats.REGISTERED_STATS.get(set.getKey())), max);
                     }
                 }
+            } else {
+
+                var rar = Load.Unit(entity).getMobRarity();
+
+                if (!rar.spells.isEmpty()) {
+                    for (String id : rar.spells) {
+
+                        // todo this is just a quick workaround, ideally mobs should be using the same cast code as players
+                        var spell = ExileDB.Spells().get(id);
+
+                        if (!data.getCooldowns().isOnCooldown(id)) {
+                            var ctx = new SpellCastContext(entity, 0, spell);
+                            spell.cast(ctx);
+
+                            int cd = ctx.spell.getCooldownTicks(ctx);
+                            ctx.data.getCooldowns().setOnCooldown(ctx.spell.GUID(), cd);
+                        }
+                    }
+
+                }
+
             }
 
             data.equipmentCache.onTick();
 
             data.sync.onTickTrySync(entity);
-
-
-            data.immuneTicks--;
 
         } catch (Exception e) {
             e.printStackTrace();

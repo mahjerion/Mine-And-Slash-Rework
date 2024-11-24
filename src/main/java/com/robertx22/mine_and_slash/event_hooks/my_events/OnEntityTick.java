@@ -43,7 +43,7 @@ public class OnEntityTick {
             data.immuneTicks--;
 
             if (entity instanceof Player == false) {
-                if (WorldUtils.isMapWorldClass(entity.level())) {
+                if (WorldUtils.isMapWorldClass(entity.level()) && Load.Unit(entity).isValidMapMob()) {
                     if (!Load.Unit(entity).getRarity().equals(IRarity.BOSS)) {
 
                         if (entity.tickCount > (20 * 12) && entity.tickCount % 40 == 0) {

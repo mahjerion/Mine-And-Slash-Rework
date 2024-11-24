@@ -116,7 +116,7 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
 
                                     GearInfusionData en = new GearInfusionData();
 
-                                    if (en.isEmpty()) {
+                                    if (gear.ench == null || gear.ench.isEmpty()) {
                                         Affix affix = ExileDB.Affixes().getFilterWrapped(x -> {
                                             return x.type == Affix.AffixSlot.enchant && x.requirements.satisfiesAllRequirements(new GearRequestedFor(gear)) && x.getAllTagReq().contains(SlotTags.enchantment.GUID());
                                         }).random();

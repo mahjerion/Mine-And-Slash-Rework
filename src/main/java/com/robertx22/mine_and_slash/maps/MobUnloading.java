@@ -15,7 +15,7 @@ public class MobUnloading {
     public static void onUnloadMob(LivingEntity en) {
         try {
 
-            if (WorldUtils.isMapWorldClass(en.level())) {
+            if (WorldUtils.isMapWorldClass(en.level()) && Load.Unit(en).isValidMapMob()) {
                 var cp = new ChunkPos(en.blockPosition());
 
                 if (en.level().hasChunk(cp.x, cp.z)) {

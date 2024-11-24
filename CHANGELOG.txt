@@ -15,3 +15,4 @@ Also, mobs should now be able to do damage with ailments too. Might be buggy, pl
 - infusion should no longer reroll on upgrading
 - infusion reroll no longer rerolls rarity
 - only map mobs are now unloaded and loaded in maps
+- added more context to error messages

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
+import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.jewel.JewelItemData;
@@ -52,7 +53,7 @@ public class JewelInvHelper implements IStatCtx {
         return this.getAllJewels().size() < getJewelSocketsMaxStat(p);
     }
 
- 
+
     public void checkRemoveJewels(Player p) {
         int max = getJewelSocketsMaxStat(p);
         int total = 0;
@@ -78,7 +79,7 @@ public class JewelInvHelper implements IStatCtx {
 
                 }
                 if (total > max) {
-                    p.sendSystemMessage(Chats.YOU_LACK_JEWEL_SLOTS.locName());
+                    ExplainedResult.sendErrorMessage(p, Chats.EQUIP_JEWEL_ERROR, Chats.YOU_LACK_JEWEL_SLOTS);
                     unequip(p, i);
                 }
             } else {

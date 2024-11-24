@@ -160,8 +160,10 @@ public enum Chats implements IAutoLocName {
 
     EAT_FOOD_ERROR("[Food Eat Fail]: "),
     EQUIP_AURA_ERROR("[Augment Equip Fail]: "),
+    EQUIP_JEWEL_ERROR("[Jewel Equip Fail]: "),
     EQUIP_SUPP_ERROR("[Support Gem Equip Fail]: "),
     MAP_DEVICE_USE_ERROR("[Map Device Use Fail]: "),
+    PROPHECY_ALTAR_USE_ERROR("[Prophecy Altar Use Fail]: "),
     LEARN_ERROR("[Learn Fail]: "),
 
 

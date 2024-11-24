@@ -165,10 +165,12 @@ public class MapBlock extends BaseEntityBlock {
     static boolean canStartMap(Player p, MapItemData data) {
 
         if (!data.getStatReq().meetsReq(Load.Unit(p).getLevel(), Load.Unit(p))) {
-            p.sendSystemMessage(Chats.RESISTS_TOO_LOW_FOR_MAP.locName().withStyle(ChatFormatting.RED));
+
+            ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
+
             List<Component> reqDifference = data.getStatReq().getReqDifference(data.lvl, Load.Unit(p));
             if (!reqDifference.isEmpty()) {
-                p.sendSystemMessage(Chats.NOT_MEET_MAP_REQ_FIRST_LINE.locName().withStyle(ChatFormatting.RED));
+                ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
                 reqDifference.forEach(p::sendSystemMessage);
             }
             return false;
@@ -183,10 +185,12 @@ public class MapBlock extends BaseEntityBlock {
         }
         MapItemData map1 = mapData.map;
         if (!map1.getStatReq().meetsReq(map1.lvl, Load.Unit(p))) {
-            p.sendSystemMessage(Chats.RESISTS_TOO_LOW_FOR_MAP.locName().withStyle(ChatFormatting.RED));
+
+            ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
+
             List<Component> reqDifference = map1.getStatReq().getReqDifference(map1.lvl, Load.Unit(p));
             if (!reqDifference.isEmpty()) {
-                p.sendSystemMessage(Chats.NOT_MEET_MAP_REQ_FIRST_LINE.locName().withStyle(ChatFormatting.RED));
+                ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
                 reqDifference.forEach(p::sendSystemMessage);
             }
             return false;

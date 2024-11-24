@@ -323,7 +323,7 @@ public class RangerSpells implements ExileRegistryInit {
                         Arrays.asList(SpellTags.damage, SpellTags.area, SpellTags.trap, element.spellTag))
                 .manualDesc(
                         "Throw out a trap that stays on the ground and activates when an enemy approaches to deal "
-                                + dmg.getLocDmgTooltip() + element.getIconNameDmg() + " in area around itself."
+                                + dmg.getLocDmgTooltip() + " " + element.getIconNameDmg() + " in area around itself."
                 )
                 .weaponReq(CastingWeapon.ANY_WEAPON)
                 .onCast(PartBuilder.playSound(SoundEvents.SNOWBALL_THROW, 1D, 1D))

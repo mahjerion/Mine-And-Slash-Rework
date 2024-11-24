@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.prophecy;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.library_of_exile.utils.geometry.Circle2d;
+import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
@@ -43,14 +44,14 @@ public class ProphecyAltarBlock extends Block {
     public InteractionResult use(BlockState pState, Level level, BlockPos pPos, Player p, InteractionHand pHand, BlockHitResult pHit) {
 
         if (!level.isClientSide) {
-          
+
             if (!EntityFinder.start(p, Mob.class, p.blockPosition()).radius(6).searchFor(AllyOrEnemy.enemies).build().isEmpty()) {
-                p.sendSystemMessage(Chats.ENEMY_TOO_CLOSE.locName());
+                ExplainedResult.sendErrorMessage(p, Chats.PROPHECY_ALTAR_USE_ERROR, Chats.ENEMY_TOO_CLOSE);
                 return InteractionResult.FAIL;
             }
 
             if (Load.player(p).prophecy.numMobAffixesCanAdd > 0) {
-                p.sendSystemMessage(Chats.PROPHECY_PLEASE_SPEND.locName().withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                ExplainedResult.sendErrorMessage(p, Chats.PROPHECY_ALTAR_USE_ERROR, Chats.PROPHECY_PLEASE_SPEND);
                 return InteractionResult.SUCCESS;
             }
 

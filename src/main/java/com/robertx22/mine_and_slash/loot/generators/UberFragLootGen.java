@@ -43,6 +43,9 @@ public class UberFragLootGen extends BaseLootGen<ItemBlueprint> {
         if (info.mobData == null || !info.mobData.getRarity().equals(IRarity.BOSS)) {
             return false;
         }
+        if (!map.map.getRarity().drops_uber_frags) {
+            return false;
+        }
         return info.level >= UberBossTier.T1.frag_drop_lvl;
     }
 

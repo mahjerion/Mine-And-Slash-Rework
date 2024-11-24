@@ -1,18 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.20
+v.5.9.21
 
-- uber frags can now only drop 1 per boss. You should need to clear multiple maps to assemble a single uber map
-- bosses and uber mob rarities now have CC resistance spell they auto cast every few seconds, removing a negative effect from themselves
-- higher rar mobs now have chill/slow resistance, for example you can no longer stun a boss with chill
-- fixed remove negative effect spell action
-- very high lvl mobs now show a skull and hide their level
-- Ailment code changed, now ailments are per player/mob. So Each player doing poison damage will have their own poison damages etc. 
-Also, mobs should now be able to do damage with ailments too. Might be buggy, please test
-- ailments are no longer saved to entity nbt, i dont think its needed
-- blocking sound added
-- added new on_death event for stats. Also to make this actually work, all mns stat events now work with dead mobs, this surely won't cause any bugs
-- infusion should no longer reroll on upgrading
-- infusion reroll no longer rerolls rarity
-- only map mobs are now unloaded and loaded in maps
-- added more context to error messages
+- only legendary and mythic maps now drop uber fragments

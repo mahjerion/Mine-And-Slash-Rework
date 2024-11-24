@@ -141,6 +141,8 @@ public class GearRaritiesAdder implements ExileRegistryInit {
         });
 
         GearRarity legendary = new GearRarity().edit(x -> {
+            x.drops_uber_frags = true;
+
             x.omens = new OmenDifficulty(new MinMax(1, 3), new MinMax(1, 2), new MinMax(1, 2), new MinMax(2, 3), new MinMax(2, 3), 1.25F);
 
             x.map_reward = new MapRarityRewardData(80, ModLootTables.TIER_4_DUNGEON_CHEST, 7, 1.5F);
@@ -174,6 +176,8 @@ public class GearRaritiesAdder implements ExileRegistryInit {
         });
 
         GearRarity mythic = new GearRarity().edit(x -> {
+
+            x.drops_uber_frags = true;
 
             x.omens = new OmenDifficulty(new MinMax(1, 3), new MinMax(1, 2), new MinMax(1, 2), new MinMax(2, 3), new MinMax(2, 3), 1.5F);
 

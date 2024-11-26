@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.stats.types.defense;
 
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.data.stats.IUsableStat;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
@@ -10,9 +11,9 @@ import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
-import com.robertx22.library_of_exile.utils.RandomUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Mth;
 
@@ -93,6 +94,9 @@ public class DodgeRating extends Stat implements IUsableStat {
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
 
             if (effect.GetElement() != Elements.Physical) {
+                return false;
+            }
+            if (effect.getAttackType() != AttackType.hit) {
                 return false;
             }
             if (effect.isSpell() && effect.getSpell().config.tags.contains(SpellTags.magic)) {

@@ -4,6 +4,7 @@ additive_damage
 crit_damage
 damage_conversion
 damage_reduction
+damage_suppression
 dot_dmg_multi
 double_damage
 elemental_mitigation

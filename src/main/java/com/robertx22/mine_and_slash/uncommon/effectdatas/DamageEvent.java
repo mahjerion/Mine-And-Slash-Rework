@@ -707,7 +707,7 @@ public class DamageEvent extends EffectEvent {
 
                 // this how do i make a copy of the same event that it was at the start..except element
                 DamageEvent bonus = EventBuilder.ofDamage(attackInfo, source, target, entry.getValue())
-                        .setupDamage(AttackType.hit, data.getWeaponType(), data.getStyle())
+                        .setupDamage(AttackType.bonus_dmg, data.getWeaponType(), data.getStyle())
                         .set(x -> {
                             if (wepdmgMulti != 1) {
                                 x.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, wepdmgMulti);

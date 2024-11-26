@@ -48,8 +48,7 @@ public class MapAffixes {
             new MapAffix(element.guidName + "_res").addMod(new StatMod(20, 60, new ElementalResist(element))).addToSerializables();
 
             // players
-            new MapAffix(element.guidName + "_minus_res").addMod(new StatMod(-15, -30, new ElementalResist(element))).affectsPlayer().addToSerializables();
-
+            new MapAffix(element.guidName + "_minus_res").addMod(new StatMod(-3, -15, new MaxElementalResist(element))).affectsPlayer().addToSerializables();
         }
 
         // mobs
@@ -84,7 +83,7 @@ public class MapAffixes {
         }
 
         for (Elements element : elements) {
-            prophecyAffix("prophecy_max_ele_res" + element.guidName, MapAffixTags.DMG_TAKEN).addMod(new MaxElementalResist(element).mod(-5, -5)).addMod(new ElementalResist(element).mod(-25, -25));
+            prophecyAffix("prophecy_max_ele_res" + element.guidName, MapAffixTags.DMG_TAKEN).addMod(new MaxElementalResist(element).mod(-10, -10));
             prophecyAffix("prophecy_ele_dmg" + element.guidName, MapAffixTags.DMG_DEALT).addMod(OffenseStats.ELEMENTAL_DAMAGE.get(element).mod(-50, -50));
             prophecyAffix("prophecy_always_crit" + element.guidName, MapAffixTags.DMG_TAKEN).addMod(DefenseStats.ALWAYS_CRIT_WHEN_HIT_BY_ELEMENT.get(element).mod(1, 1));
 

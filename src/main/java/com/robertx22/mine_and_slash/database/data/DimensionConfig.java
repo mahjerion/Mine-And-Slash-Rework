@@ -1,10 +1,10 @@
 package com.robertx22.mine_and_slash.database.data;
 
 import com.google.gson.JsonObject;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.library_of_exile.registry.serialization.ISerializable;
+import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 
 public class DimensionConfig implements JsonExileRegistry<DimensionConfig>, ISerializable<DimensionConfig> {
 
@@ -81,6 +81,8 @@ public class DimensionConfig implements JsonExileRegistry<DimensionConfig>, ISer
     public int mob_lvl_per_distance = 100;
     public int min_lvl_area = 100;
     public boolean scale_to_nearest_player = false;
+    
+    public EntityConfig.SpecialMobStats stats = new EntityConfig.SpecialMobStats();
 
     @Override
     public ExileRegistryType getExileRegistryType() {

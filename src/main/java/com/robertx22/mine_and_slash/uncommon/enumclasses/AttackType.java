@@ -8,6 +8,7 @@ import java.util.List;
 public enum AttackType {
 
     hit("hit", "Hit") {},
+    bonus_dmg("bonus_dmg", "Bonus Dmg") {},
     dot("dot", "DOT") {};
     // all("all", "Any") {};
 
@@ -33,7 +34,7 @@ public enum AttackType {
         return this == hit;
     }
 
- 
+
     public String locname;
 
 }

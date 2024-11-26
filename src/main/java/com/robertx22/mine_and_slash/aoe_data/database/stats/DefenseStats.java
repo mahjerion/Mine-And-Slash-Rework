@@ -62,7 +62,7 @@ public class DefenseStats {
                 x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.Misc;
                 x.min = -500;
-                x.max = 75;
+                x.max = 50;
             })
             .build();
 
@@ -79,7 +79,7 @@ public class DefenseStats {
                 x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.Misc;
                 x.min = -500;
-                x.max = 75;
+                x.max = 50;
             })
             .build();
 
@@ -89,9 +89,9 @@ public class DefenseStats {
             .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
             .setSide(EffectSides.Target)
             .addCondition(StatConditions.IF_RANDOM_ROLL)
-            .addEffect(StatEffects.Layers.DAMAGE_REDUCTION_50)
+            .addEffect(StatEffects.Layers.DAMAGE_SUPPRESSION_50)
             .setLocName(x -> "Damage Suppression Chance").
-            setLocDesc(x -> "Chance to reduce damage by 50%. This stacks with other [Damage Reduction]s").
+            setLocDesc(x -> "Chance to reduce damage by 50%.").
             modifyAfterDone(x ->
             {
                 x.is_perc = true;

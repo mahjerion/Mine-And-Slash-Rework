@@ -1,14 +1,15 @@
 package com.robertx22.mine_and_slash.database.data.stats.types.defense;
 
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
+import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
-import com.robertx22.library_of_exile.utils.RandomUtils;
 import net.minecraft.ChatFormatting;
 
 public class BlockChance extends Stat {
@@ -21,7 +22,7 @@ public class BlockChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Chance to passively block hit damage"; //, requires a shield in the offhand, but don't have to activate it.";
+        return "Chance to passively block hit damage and reduce the damage taken by 50%. Requires a shield in offhand. Blocked hits can't proc ailments like burn."; //, requires a shield in the offhand, but don't have to activate it.";
     }
 
     private BlockChance() {
@@ -59,7 +60,7 @@ public class BlockChance extends Stat {
 
         @Override
         public StatPriority GetPriority() {
-            return StatPriority.Damage.HIT_PREVENTION;
+            return StatPriority.Damage.DAMAGE_LAYERS;
         }
 
         @Override
@@ -71,7 +72,8 @@ public class BlockChance extends Stat {
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
             float chance = data.getValue();
             if (RandomUtils.roll(chance)) {
-                effect.data.setHitAvoided(EventData.IS_BLOCKED);
+                effect.getLayer(StatLayers.Defensive.DAMAGE_SUPPRESSION, EventData.NUMBER, Side()).reduce(0.5F);
+                effect.data.setBoolean(EventData.IS_BLOCKED, true);
             }
             return effect;
         }

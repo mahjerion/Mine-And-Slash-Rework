@@ -36,7 +36,7 @@ public class StatEffects implements ExileRegistryInit {
 
         // defensive
         public static ModifyStatLayerEffect DAMAGE_REDUCTION = new ModifyStatLayerEffect("", StatLayers.Defensive.DAMAGE_REDUCTION, EventData.NUMBER, ModifyStatLayerEffect.ModificationType.REDUCE, NumberProvider.ofStatData());
-        public static ModifyStatLayerEffect DAMAGE_REDUCTION_50 = new ModifyStatLayerEffect("", StatLayers.Defensive.DAMAGE_REDUCTION, EventData.NUMBER, ModifyStatLayerEffect.ModificationType.REDUCE, NumberProvider.specificNumber(50));
+        public static ModifyStatLayerEffect DAMAGE_SUPPRESSION_50 = new ModifyStatLayerEffect("", StatLayers.Defensive.DAMAGE_SUPPRESSION, EventData.NUMBER, ModifyStatLayerEffect.ModificationType.REDUCE, NumberProvider.specificNumber(50));
 
 
         // public static ModifyStatLayerEffect ELEMENTAL_RESIST = new ModifyStatLayerEffect(StatLayers.Defensive.ELEMENTAL_MITIGATION, EventData.NUMBER, ModifyStatLayerEffect.ModificationType.REDUCE, ModifyStatLayerEffect.CalculationType.JUST_STAT_NUMBER);

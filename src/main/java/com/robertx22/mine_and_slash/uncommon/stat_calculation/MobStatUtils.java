@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.utils.EntityUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.DimensionConfig;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
@@ -108,8 +109,10 @@ public class MobStatUtils {
         List<ExactStatData> stats = new ArrayList<>();
 
         EntityConfig config = ExileDB.getEntityConfig(entity, unitdata);
-
         config.stats.stats.forEach(x -> stats.add(x.toExactStat(unitdata.getLevel())));
+
+        DimensionConfig dimConfig = ExileDB.getDimensionConfig(entity.level());
+        dimConfig.stats.stats.forEach(x -> stats.add(x.toExactStat(unitdata.getLevel())));
 
         float hp = (float) ((-1F + config.hp_multi) * 100F);
         float dmg = (float) ((-1F + config.dmg_multi) * 100F);

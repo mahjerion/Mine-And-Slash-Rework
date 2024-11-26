@@ -1,5 +1,13 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.21
+v.5.9.22
 
-- only legendary and mythic maps now drop uber fragments
+- removed or replaced minus resist map affixes with minux max ele resists
+- dmg reduction can now only reduce 50% of the dmg, down from 75%.
+- dmg supression is now another layer, and also caps at 50% reduction.
+So max dmg reduction you can get now is 0.1x or 0.25x (90% ele resist with overcapped max res or just plain capped res with 75%), 0.5x with dmg reduction and 0.5x with dmg supression
+- block chance now works similar to damage supression chance (reduces dmg by 50%), but now it also blocks ailments
+- "Bonus" elemental dmg that is created from physical to element conversion, or bonus flat damage is no longer considered a 'hit' but 'bonus_dmg' instead.
+This should stop it from being converted into elemental in the case of physical, and should also stop it from being dodged etc, as hit prevention mechanics like dodge, block etc should only work against actual hits
+- added custom bonus stats to dimension datapacks
+- lowered default max stat caps to 100 million so gson doesnt throw errors on higher java version.. (???)

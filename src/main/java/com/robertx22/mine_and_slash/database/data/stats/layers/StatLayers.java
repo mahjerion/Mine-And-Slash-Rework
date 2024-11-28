@@ -5,13 +5,14 @@ import com.robertx22.mine_and_slash.uncommon.STATICS;
 public class StatLayers {
 
     public static class Offensive {
-        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "Damage Conversion", StatLayer.LayerAction.ADD, -999, 0, STATICS.MAX_FLOAT);
+
+        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "Damage Conversion", StatLayer.LayerAction.ADD, 5, 0, STATICS.MAX_FLOAT);
 
         public static StatLayer FLAT_DAMAGE = new StatLayer("flat_damage", "Flat Damage", StatLayer.LayerAction.ADD, 0, -STATICS.MAX_FLOAT, STATICS.MAX_FLOAT);
-        public static StatLayer ADDITIVE_DMG = new StatLayer("additive_damage", "Additive Damage", StatLayer.LayerAction.MULTIPLY, 1, -1, STATICS.MAX_FLOAT);
-        public static StatLayer DOT_DMG_MULTI = new StatLayer("dot_dmg_multi", "DOT Damage Multi", StatLayer.LayerAction.MULTIPLY, 1, -1, STATICS.MAX_FLOAT);
-        public static StatLayer CRIT_DAMAGE = new StatLayer("crit_damage", "Crit Damage", StatLayer.LayerAction.MULTIPLY, 2, -1, STATICS.MAX_FLOAT);
-        public static StatLayer DOUBLE_DAMAGE = new StatLayer("double_damage", "Double Damage", StatLayer.LayerAction.MULTIPLY, 3, 2, 2);
+        public static StatLayer ADDITIVE_DMG = new StatLayer("additive_damage", "Additive Damage", StatLayer.LayerAction.MULTIPLY, 10, -1, STATICS.MAX_FLOAT);
+        public static StatLayer DOT_DMG_MULTI = new StatLayer("dot_dmg_multi", "DOT Damage Multi", StatLayer.LayerAction.MULTIPLY, 20, -1, STATICS.MAX_FLOAT);
+        public static StatLayer CRIT_DAMAGE = new StatLayer("crit_damage", "Crit Damage", StatLayer.LayerAction.MULTIPLY, 30, -1, STATICS.MAX_FLOAT);
+        public static StatLayer DOUBLE_DAMAGE = new StatLayer("double_damage", "Double Damage", StatLayer.LayerAction.MULTIPLY, 40, 2, 2);
 
         public static void init() {
 

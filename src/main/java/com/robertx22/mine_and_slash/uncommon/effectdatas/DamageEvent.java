@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanc
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayerData;
+import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.FullSwingDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.DamageAbsorbedByMana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShield;
@@ -31,6 +32,7 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
+import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.DmgNumPacket;
@@ -45,7 +47,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.LivingEntity;
@@ -195,7 +196,11 @@ public class DamageEvent extends EffectEvent {
     }
 
     public void addBonusEleDmg(Elements element, float dmg) {
-        bonusElementDamageMap.put(element, (int) (bonusElementDamageMap.getOrDefault(element, 0) + dmg));
+        if (element == getElement()) {
+            this.getLayer(StatLayers.Offensive.ADDITIVE_DMG, EventData.NUMBER, EffectSides.Source).add(dmg);
+        } else {
+            bonusElementDamageMap.put(element, (int) (bonusElementDamageMap.getOrDefault(element, 0) + dmg));
+        }
     }
 
     private void calcBlock() {
@@ -234,6 +239,10 @@ public class DamageEvent extends EffectEvent {
 
 
     private void calcAttackCooldown() {
+        if (data.isNumberSetup(EventData.ATTACK_COOLDOWN)) {
+            return;
+        }
+
         float cool = 1;
 
         WeaponTypes weaponType = data.getWeaponType();
@@ -247,19 +256,31 @@ public class DamageEvent extends EffectEvent {
                     GearItemData gear = wep.gear;
 
                     if (gear != null) {
-                        float atkpersec = 1;
+                        var attri = source.getAttribute(Attributes.ATTACK_SPEED);
 
-                        float secWaited = (float) (target.tickCount - target.getLastHurtByMobTimestamp()) / 20F;
+                        float atkpersec = attri != null ? (float) attri.getValue() : 1;
 
-                        if (secWaited < 0) {
-                            secWaited = 555; // its minus if you never hit the mob before or on fresh worlds?
+                        //float secWaited = (float) (target.tickCount - target.getLastHurtByMobTimestamp()) / 20F;
+
+                        String cdname = source.getStringUUID();
+
+                        if (!targetData.getCooldowns().isOnCooldown(cdname)) {
+                            cool = 1;
+                        } else {
+                            float atkpersecticks = (1F / atkpersec * 20);
+                            float atkcd = targetData.getCooldowns().getCooldownTicks(cdname);
+
+                            float waitedticks = atkpersecticks - atkcd;
+
+                            float multi = waitedticks / atkpersecticks;
+
+                            multi = MathHelper.clamp(multi, 0, 1);
+
+                            cool = multi;
+
                         }
-
-                        float secNeededToWaitForFull = 1F / atkpersec;
-
-                        cool = secWaited / secNeededToWaitForFull;
-
-                        cool = Mth.clamp(cool, 0F, 1F);
+                        int cd = (int) (1F / atkpersec * 20);
+                        targetData.getCooldowns().setOnCooldown(cdname, cd);
 
                         if (cool < 0.3) {
                             this.cancelDamage();
@@ -274,7 +295,6 @@ public class DamageEvent extends EffectEvent {
 
     private float getAttackSpeedDamageMulti() {
 
-        float multi = 1;
 
         float cool = data.getNumber(EventData.ATTACK_COOLDOWN).number;
 
@@ -282,18 +302,10 @@ public class DamageEvent extends EffectEvent {
 
         if (cool < 0.1F) {
             // we dont want to allow too fast mob clickings
-            multi = 0;
+            cool = 0;
             this.cancelDamage();
         }
-
-
-        if (cool > 0.8F) {
-            multi = sourceData.getUnit().getCalculatedStat(FullSwingDamage.getInstance()).getMultiplier();
-            //ParticleUtils.spawnDefaultSlashingWeaponParticles(source);
-        }
-
-        return multi;
-
+        return cool;
     }
 
 
@@ -365,7 +377,13 @@ public class DamageEvent extends EffectEvent {
 
         if (source instanceof Player) {
             if (data.isBasicAttack()) {
-                this.addMoreMulti(Words.ATTACK_SPEED_MULTI.locName(), EventData.NUMBER, getAttackSpeedDamageMulti());
+                float multi = getAttackSpeedDamageMulti();
+
+                if (multi > 0.8F) {
+                    float fullswing = sourceData.getUnit().getCalculatedStat(FullSwingDamage.getInstance()).getMultiplier();
+                    this.addMoreMulti(FullSwingDamage.getInstance(), EventData.NUMBER, fullswing);
+                }
+                this.addMoreMulti(Words.ATTACK_SPEED_MULTI.locName(), EventData.NUMBER, multi);
             }
             modifyIfArrowDamage();
         }
@@ -709,23 +727,25 @@ public class DamageEvent extends EffectEvent {
                 DamageEvent bonus = EventBuilder.ofDamage(attackInfo, source, target, entry.getValue())
                         .setupDamage(AttackType.bonus_dmg, data.getWeaponType(), data.getStyle())
                         .set(x -> {
-                            if (wepdmgMulti != 1) {
-                                x.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, wepdmgMulti);
+                            if (isSpell()) {
+                                x.data.setString(EventData.SPELL, this.data.getString(EventData.SPELL));
                             }
+                            x.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
+
+                            x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
+                            x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
+                            x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
+                            x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);
+                            if (wepdmgMulti != 1) {
+                                //  x.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, wepdmgMulti);
+                            }
+
                             x.setElement(entry.getKey());
                         })
                         .build();
 
-                if (isSpell()) {
-                    bonus.data.setString(EventData.SPELL, this.data.getString(EventData.SPELL));
-                }
-                bonus.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
 
-                bonus.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
-                bonus.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
-                bonus.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
-                bonus.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);
-
+                bonus.initBeforeActivating();
                 bonus.calculateEffects();
 
                 bonus.setElement(entry.getKey());

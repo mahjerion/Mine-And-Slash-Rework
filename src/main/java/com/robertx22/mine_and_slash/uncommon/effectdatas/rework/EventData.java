@@ -88,7 +88,10 @@ public class EventData {
     }
 
     public void setupNumber(String id, float num) {
+
+
         tryFreezeErrorMessage();
+
         if (floats.containsKey(id)) {
             throw new RuntimeException("Number is already setup: " + id);
         }
@@ -102,6 +105,10 @@ public class EventData {
             floats.put(id, new WrappedFloat(0));
         }
         return floats.get(id);
+    }
+
+    public boolean isNumberSetup(String id) {
+        return floats.containsKey(id);
     }
 
     public WrappedFloat getNumber(String id, float defNum) {

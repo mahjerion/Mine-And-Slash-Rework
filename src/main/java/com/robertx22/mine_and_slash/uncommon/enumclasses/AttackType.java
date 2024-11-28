@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.ErrorUtils;
 import java.util.Arrays;
 import java.util.List;
 
+// should be renamed to hittype
 public enum AttackType {
 
     hit("hit", "Hit") {},

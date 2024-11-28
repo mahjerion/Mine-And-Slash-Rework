@@ -74,15 +74,21 @@ public class OmenData {
             if (gear.gear != null) {
                 var type = gear.gear.getRarity().type;
 
-                var opt = slot_req.stream().filter(e -> e.slot.equals(gear.gear.GetBaseGearType().gear_slot)).findAny();
+                boolean has = true;
 
-                if (opt.isPresent()) {
-                    if (type != opt.get().rtype) {
-                        continue;
+                for (OmenSlotReq slot : slot_req) {
+                    String gearslot = gear.gear.GetBaseGearType().gear_slot;
+
+                    if (slot.slot.equals(gearslot)) {
+                        if (type != slot.rtype) {
+                            has = false;
+                        }
                     }
                 }
-                if (map.getOrDefault(type, 0) < rarities.getOrDefault(type, 0)) {
-                    map.put(type, map.getOrDefault(type, 0) + 1);
+                if (has) {
+                    if (map.getOrDefault(type, 0) < rarities.getOrDefault(type, 0)) {
+                        map.put(type, map.getOrDefault(type, 0) + 1);
+                    }
                 }
             }
         }

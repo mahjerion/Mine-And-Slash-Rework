@@ -109,8 +109,7 @@ public class PhysicalToElement extends ElementalStat {
 
     @Override
     public String locNameForLangFile() {
-        return "Physical to " + this.getElement()
-                .dmgName + " Damage";
+        return "Physical to " + this.getElement().dmgName + " Damage";
     }
 
 }

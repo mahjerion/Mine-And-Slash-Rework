@@ -75,7 +75,7 @@ public enum Words implements IAutoLocName {
     EnchantCompatStats("Enchantment Stats:"),
     Radius("Radius: %1$sb"),
 
-    ATTACK_SPEED_MULTI("Atk Speed Multi"),
+    ATTACK_SPEED_MULTI("Weapon Atk Speed Cooldown"),
     ARROW_DRAW_AMOUNT_MULTI("Bow Draw Amount Multi"),
     PVP_DMG_MULTI("PVP Dmg Multi"),
     LVL_EXPONENT_MOB_DMG("Leveled Exponent Mob DMG"),

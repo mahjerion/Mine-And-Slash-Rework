@@ -1,5 +1,8 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.23
+v.5.9.24
 
-- fixed the missing dimension stat datapack
+- fixed omens not respecting slot requirements completely
+- changed basic atk cooldown to hopefully work better
+- bonus dmg should now work with dmg multipliers, before it wasnt being lowered by attacking too fast for example
+As this works by making bonus damage no longer a "hit", it also means bonus damage is no longer converted from physical to element etc

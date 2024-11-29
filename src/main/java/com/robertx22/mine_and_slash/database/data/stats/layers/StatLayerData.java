@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.database.data.stats.layers;
 
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageConversionLogic;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
@@ -15,8 +14,20 @@ public class StatLayerData {
     public String numberID = "";
     private float number = 0;
 
-    public DamageConversionLogic.Data conversion = null;
+    public Conversion conversion = null;
 
+    public static class Conversion {
+
+        //public Elements from;
+        public Elements to;
+        public int percent;
+
+        public Conversion(Elements to, int percent) {
+            //this.from = from;
+            this.to = to;
+            this.percent = percent;
+        }
+    }
     //private Set<String> statsThatModifiedThis = new HashSet<>();
 
     public StatLayerData(String layer, String numberID, float number, EffectSides side) {
@@ -26,8 +37,8 @@ public class StatLayerData {
         this.side = side;
     }
 
-    public void convertDamage(Elements from, Elements to, int perc) {
-        this.conversion = new DamageConversionLogic.Data(from, to, perc);
+    public void convertDamage(Elements to, int perc) {
+        this.conversion = new Conversion(to, perc);
     }
 
     public StatLayer getLayer() {

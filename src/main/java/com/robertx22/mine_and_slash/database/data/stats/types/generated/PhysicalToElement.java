@@ -80,7 +80,7 @@ public class PhysicalToElement extends ElementalStat {
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
 
-            effect.getLayer(StatLayers.Offensive.DAMAGE_CONVERSION, EventData.NUMBER, Side()).convertDamage(Elements.Physical, getElement(), (int) data.getValue());
+            effect.getLayer(StatLayers.Offensive.DAMAGE_CONVERSION, EventData.NUMBER, Side()).convertDamage(getElement(), (int) data.getValue());
 
 /*
             var conv = data.getValue();

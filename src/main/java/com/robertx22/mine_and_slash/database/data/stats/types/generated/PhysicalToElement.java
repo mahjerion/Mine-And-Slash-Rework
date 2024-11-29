@@ -8,7 +8,6 @@ import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.data.stats.types.ElementalStat;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
-import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
@@ -81,6 +80,9 @@ public class PhysicalToElement extends ElementalStat {
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
 
+            effect.getLayer(StatLayers.Offensive.DAMAGE_CONVERSION, EventData.NUMBER, Side()).convertDamage(Elements.Physical, getElement(), (int) data.getValue());
+
+/*
             var conv = data.getValue();
 
             if (conv > effect.unconvertedDamagePercent) {
@@ -94,9 +96,12 @@ public class PhysicalToElement extends ElementalStat {
             float dmg = effect.data.getNumber(EventData.NUMBER).number * conv / 100F;
             dmg = MathHelper.clamp(dmg, 0, effect.data.getNumber());
             if (dmg > 0) {
-                effect.addBonusEleDmg(stat.getElement(), dmg);
+                effect.addBonusEleDmg(stat.getElement(), dmg, Side());
                 effect.getLayer(StatLayers.Offensive.DAMAGE_CONVERSION, EventData.NUMBER, Side()).reduce(dmg);
+                // or maybe create a dmg conversion layer..?
             }
+
+ */
             return effect;
         }
 

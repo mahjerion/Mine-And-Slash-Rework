@@ -3,7 +3,6 @@ package com.robertx22.mine_and_slash.database.data.stats.types.generated;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
-import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.data.stats.types.ElementalStat;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -82,11 +81,8 @@ public class BonusFlatElementalDamage extends ElementalStat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            if (stat.getElement() == effect.GetElement()) {
-                effect.getLayer(StatLayers.Offensive.FLAT_DAMAGE, EventData.NUMBER, Side()).add(data.getValue());
-            } else {
-                effect.addBonusEleDmg(stat.getElement(), NumberModifier.ModifierType.SPELL_DAMAGE_EFFECTIVENESS_MULTI.modify(effect, data.getValue()));
-            }
+            float num = NumberModifier.ModifierType.SPELL_DAMAGE_EFFECTIVENESS_MULTI.modify(effect, data.getValue());
+            effect.addBonusEleDmg(stat.getElement(), num, Side());
             return effect;
         }
 

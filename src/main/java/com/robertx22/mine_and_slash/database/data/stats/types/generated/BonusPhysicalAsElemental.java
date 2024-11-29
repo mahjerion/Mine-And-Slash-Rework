@@ -3,11 +3,13 @@ package com.robertx22.mine_and_slash.database.data.stats.types.generated;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
+import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.data.stats.types.ElementalStat;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
@@ -69,8 +71,12 @@ public class BonusPhysicalAsElemental extends ElementalStat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            float dmg = effect.data.getNumber() * data.getValue() / 100F;
-            effect.addBonusEleDmg(stat.getElement(), dmg);
+            // float dmg = effect.data.getNumber() * data.getValue() / 100F;
+
+            effect.getLayer(StatLayers.Offensive.ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE, EventData.NUMBER, Side())
+                    .convertDamage(Elements.Physical, getElement(), (int) data.getValue());
+
+            //effect.addBonusEleDmg(stat.getElement(), dmg, Side());
             // effect.data.getNumber(EventData.NUMBER).number -= dmg;
             return effect;
         }

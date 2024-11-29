@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.stats.types.ailment;
 
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailment;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
@@ -7,9 +8,9 @@ import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageE
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
-import com.robertx22.library_of_exile.utils.RandomUtils;
 
 public class AilmentProcStat extends Stat {
 
@@ -44,7 +45,7 @@ public class AilmentProcStat extends Stat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.getElement() != null && effect.getElement() == ailment.element && effect.getAttackType().isHit() && RandomUtils.roll(data.getValue());
+            return effect.getElement() != null && effect.getElement() == ailment.element && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg) && RandomUtils.roll(data.getValue());
         }
 
     }

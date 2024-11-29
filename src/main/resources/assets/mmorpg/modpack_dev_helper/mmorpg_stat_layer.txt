@@ -7,6 +7,7 @@ damage_reduction
 damage_suppression
 dot_dmg_multi
 double_damage
+ele_as_extra_flat
 elemental_mitigation
 flat_damage
 flat_damage_reduction

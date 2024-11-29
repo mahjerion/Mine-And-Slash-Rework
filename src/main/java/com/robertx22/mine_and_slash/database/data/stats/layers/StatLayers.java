@@ -6,13 +6,15 @@ public class StatLayers {
 
     public static class Offensive {
 
-        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "Damage Conversion", StatLayer.LayerAction.ADD, 5, 0, STATICS.MAX_FLOAT);
 
         public static StatLayer FLAT_DAMAGE = new StatLayer("flat_damage", "Flat Damage", StatLayer.LayerAction.ADD, 0, -STATICS.MAX_FLOAT, STATICS.MAX_FLOAT);
-        public static StatLayer ADDITIVE_DMG = new StatLayer("additive_damage", "Additive Damage", StatLayer.LayerAction.MULTIPLY, 10, -1, STATICS.MAX_FLOAT);
-        public static StatLayer DOT_DMG_MULTI = new StatLayer("dot_dmg_multi", "DOT Damage Multi", StatLayer.LayerAction.MULTIPLY, 20, -1, STATICS.MAX_FLOAT);
-        public static StatLayer CRIT_DAMAGE = new StatLayer("crit_damage", "Crit Damage", StatLayer.LayerAction.MULTIPLY, 30, -1, STATICS.MAX_FLOAT);
-        public static StatLayer DOUBLE_DAMAGE = new StatLayer("double_damage", "Double Damage", StatLayer.LayerAction.MULTIPLY, 40, 2, 2);
+        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "Damage Conversion", StatLayer.LayerAction.CONVERT_PERCENT, 1, 0, 100);
+        public static StatLayer ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE = new StatLayer("ele_as_extra_flat", "X Element as Extra Y Element Flat Damage", StatLayer.LayerAction.X_AS_BONUS_Y_ELEMENT_DAMAGE, 2, 0, 100);
+
+        public static StatLayer ADDITIVE_DMG = new StatLayer("additive_damage", "Additive Damage", StatLayer.LayerAction.MULTIPLY, 3, -1, STATICS.MAX_FLOAT);
+        public static StatLayer DOT_DMG_MULTI = new StatLayer("dot_dmg_multi", "DOT Damage Multi", StatLayer.LayerAction.MULTIPLY, 5, -1, STATICS.MAX_FLOAT);
+        public static StatLayer CRIT_DAMAGE = new StatLayer("crit_damage", "Crit Damage", StatLayer.LayerAction.MULTIPLY, 7, -1, STATICS.MAX_FLOAT);
+        public static StatLayer DOUBLE_DAMAGE = new StatLayer("double_damage", "Double Damage", StatLayer.LayerAction.MULTIPLY, 9, 2, 2);
 
         public static void init() {
 

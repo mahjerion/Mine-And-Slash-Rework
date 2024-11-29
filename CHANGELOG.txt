@@ -5,4 +5,8 @@ v.5.9.24
 - fixed omens not respecting slot requirements completely
 - changed basic atk cooldown to hopefully work better
 - bonus dmg should now work with dmg multipliers, before it wasnt being lowered by attacking too fast for example
-As this works by making bonus damage no longer a "hit", it also means bonus damage is no longer converted from physical to element etc
+- reworked damage conversion to happen after additive damage layers 
+- bonus phys as elemental dmg now works after flat dmg was added and after conversions
+- so base dmg + flat dmg > converts to x > bonus x as y
+Needs updating the stat layers in stat datapacks, and make sure the priorities are correct
+- ailments can now proc from either hit or bonus dmg

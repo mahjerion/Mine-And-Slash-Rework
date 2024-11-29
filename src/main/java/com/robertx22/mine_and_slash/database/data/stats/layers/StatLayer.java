@@ -1,14 +1,17 @@
 package com.robertx22.mine_and_slash.database.data.stats.layers;
 
 
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.mmorpg.MMORPG;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
-import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.uncommon.MathHelper;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -43,6 +46,46 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
     public LayerAction action = LayerAction.MULTIPLY;
 
     public enum LayerAction {
+        CONVERT_PERCENT() {
+            @Override
+            public void apply(EffectEvent event, StatLayerData layer, String number) {
+                // todo this should be equalizing conversion if theres like 100% to fire and 100% to frost, it should be 50% each instead of 100% whichever is first
+                float conv = layer.conversion.percent;
+
+                if (event instanceof DamageEvent effect) {
+                    if (conv > effect.unconvertedDamagePercent) {
+                        conv = effect.unconvertedDamagePercent;
+                    }
+                    if (conv <= 0) {
+                        return;
+                    }
+                    effect.unconvertedDamagePercent -= conv;
+                    float dmg = effect.data.getNumber(EventData.NUMBER).number * conv / 100F;
+                    dmg = MathHelper.clamp(dmg, 0, effect.data.getNumber());
+                    if (dmg > 0) {
+                        effect.addBonusEleDmg(layer.conversion.to, dmg, layer.side);
+                        event.data.getNumber(EventData.NUMBER).number -= dmg;
+                    }
+                }
+            }
+        },
+        X_AS_BONUS_Y_ELEMENT_DAMAGE() {
+            @Override
+            public void apply(EffectEvent event, StatLayerData layer, String number) {
+                float conv = layer.conversion.percent;
+
+                if (event instanceof DamageEvent effect) {
+                    if (conv <= 0) {
+                        return;
+                    }
+                    float dmg = effect.data.getNumber(EventData.NUMBER).number * conv / 100F;
+                    dmg = MathHelper.clamp(dmg, 0, Float.MAX_VALUE);
+                    if (dmg > 0) {
+                        effect.addBonusEleDmg(layer.conversion.to, dmg, layer.side);
+                    }
+                }
+            }
+        },
         MULTIPLY() {
             @Override
             public void apply(EffectEvent event, StatLayerData layer, String number) {

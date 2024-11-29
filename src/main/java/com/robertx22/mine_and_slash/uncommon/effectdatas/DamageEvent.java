@@ -195,13 +195,24 @@ public class DamageEvent extends EffectEvent {
         this.data.setElement(ele);
     }
 
-    public void addBonusEleDmg(Elements element, float dmg) {
+    public void addBonusEleDmg(Elements element, float dmg, EffectSides side) {
         if (element == getElement()) {
-            this.getLayer(StatLayers.Offensive.ADDITIVE_DMG, EventData.NUMBER, EffectSides.Source).add(dmg);
+            this.getLayer(StatLayers.Offensive.FLAT_DAMAGE, EventData.NUMBER, side).add(dmg);
         } else {
             bonusElementDamageMap.put(element, (int) (bonusElementDamageMap.getOrDefault(element, 0) + dmg));
         }
     }
+
+    /*
+    public void addBonusEleDmgFinal(DamageConversionEvent event, Elements element, float dmg) {
+        if (element == getElement()) {
+            this.getLayer(StatLayers.Offensive.FLAT_DAMAGE, EventData.NUMBER, EffectSides.Source).add(dmg);
+        } else {
+            bonusElementDamageMap.put(element, (int) (bonusElementDamageMap.getOrDefault(element, 0) + dmg));
+        }
+    }
+
+     */
 
     private void calcBlock() {
 

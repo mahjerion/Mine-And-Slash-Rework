@@ -75,14 +75,13 @@ public class BonusAttackDamage extends ElementalStat {
 
         @Override
         public EffectSides Side() {
-
             return EffectSides.Source;
 
         }
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            effect.addBonusEleDmg(stat.getElement(), data.getValue());
+            effect.addBonusEleDmg(stat.getElement(), data.getValue(), Side());
             return effect;
         }
 

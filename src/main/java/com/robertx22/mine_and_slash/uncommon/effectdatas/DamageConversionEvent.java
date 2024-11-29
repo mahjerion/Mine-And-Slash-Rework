@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-// todo still unsure how to best do this
+// todo 
 public class DamageConversionEvent extends EffectEvent {
     public static String ID = "damage_conversion_event";
 

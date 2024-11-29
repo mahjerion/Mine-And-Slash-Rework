@@ -219,3 +219,14 @@ So max dmg reduction you can get now is 0.1x or 0.25x (90% ele resist with overc
 This should stop it from being converted into elemental in the case of physical, and should also stop it from being dodged etc, as hit prevention mechanics like dodge, block etc should only work against actual hits
 - added custom bonus stats to dimension datapacks
 - lowered default max stat caps to 100 million so gson doesnt throw errors on higher java version.. (???)
+
+v.5.9.24
+
+- fixed omens not respecting slot requirements completely
+- changed basic atk cooldown to hopefully work better
+- bonus dmg should now work with dmg multipliers, before it wasnt being lowered by attacking too fast for example
+- reworked damage conversion to happen after additive damage layers 
+- bonus phys as elemental dmg now works after flat dmg was added and after conversions
+- so base dmg + flat dmg > converts to x > bonus x as y
+Needs updating the stat layers in stat datapacks, and make sure the priorities are correct
+- ailments can now proc from either hit or bonus dmg

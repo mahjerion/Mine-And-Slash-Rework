@@ -8,8 +8,8 @@ public class StatLayers {
 
 
         public static StatLayer FLAT_DAMAGE = new StatLayer("flat_damage", "Flat Damage", StatLayer.LayerAction.ADD, 0, -STATICS.MAX_FLOAT, STATICS.MAX_FLOAT);
-        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "Damage Conversion", StatLayer.LayerAction.CONVERT_PERCENT, 1, 0, 100);
-        public static StatLayer ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE = new StatLayer("ele_as_extra_flat", "X Element as Extra Y Element Flat Damage", StatLayer.LayerAction.X_AS_BONUS_Y_ELEMENT_DAMAGE, 2, 0, 100);
+        public static StatLayer DAMAGE_CONVERSION = new StatLayer("damage_conversion", "%1$s to %2$s Conversion", StatLayer.LayerAction.CONVERT_PERCENT, 1, 0, 100);
+        public static StatLayer ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE = new StatLayer("ele_as_extra_flat", "Plus %1$s as Extra %2$s", StatLayer.LayerAction.X_AS_BONUS_Y_ELEMENT_DAMAGE, 2, 0, 100);
 
         public static StatLayer ADDITIVE_DMG = new StatLayer("additive_damage", "Additive Damage", StatLayer.LayerAction.MULTIPLY, 3, -1, STATICS.MAX_FLOAT);
         public static StatLayer DOT_DMG_MULTI = new StatLayer("dot_dmg_multi", "DOT Damage Multi", StatLayer.LayerAction.MULTIPLY, 5, -1, STATICS.MAX_FLOAT);

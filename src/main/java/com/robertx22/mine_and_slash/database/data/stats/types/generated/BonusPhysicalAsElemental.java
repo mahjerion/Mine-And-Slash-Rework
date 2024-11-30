@@ -73,8 +73,8 @@ public class BonusPhysicalAsElemental extends ElementalStat {
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
             // float dmg = effect.data.getNumber() * data.getValue() / 100F;
 
-            effect.getLayer(StatLayers.Offensive.ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE, EventData.NUMBER, Side())
-                    .convertDamage(getElement(), (int) data.getValue());
+            effect.getConversionLayer(StatLayers.Offensive.ELEMENT_AS_EXTRA_OTHER_FLAT_DAMAGE, getElement(), EventData.NUMBER, Side())
+                    .convertAdditional(getElement(), (int) data.getValue());
 
             //effect.addBonusEleDmg(stat.getElement(), dmg, Side());
             // effect.data.getNumber(EventData.NUMBER).number -= dmg;

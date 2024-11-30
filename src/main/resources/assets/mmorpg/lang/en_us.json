@@ -610,6 +610,49 @@
 "_comment": " [CATEGORY]: DUNGEON - NAMES",
 
 
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
+
+	"mmorpg.ailment.bleed": "Bleed",
+	"mmorpg.ailment.burn": "Burn",
+	"mmorpg.ailment.electrify": "Electrify",
+	"mmorpg.ailment.freeze": "Freeze",
+	"mmorpg.ailment.poison": "Poison",
+	"mmorpg.effect.agony": "Physical Agony",
+	"mmorpg.effect.blind": "Blind",
+	"mmorpg.effect.bone_chill": "Bone Chill",
+	"mmorpg.effect.charm": "Charm",
+	"mmorpg.effect.despair": "Despair of Chaos",
+	"mmorpg.effect.draconic_blood": "Dragon Blood",
+	"mmorpg.effect.endurance_charge": "Endurance Charge",
+	"mmorpg.effect.essence_of_frost": "Essence of Frost",
+	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
+	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
+	"mmorpg.effect.frost_lich": "Frost Lich",
+	"mmorpg.effect.gale_force": "Gale Force",
+	"mmorpg.effect.ground": "Grounding",
+	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
+	"mmorpg.effect.inner_calm": "Inner Calm",
+	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
+	"mmorpg.effect.mage_circle": "Mage Circle",
+	"mmorpg.effect.perseverance": "Perseverance",
+	"mmorpg.effect.petrify": "Petrify",
+	"mmorpg.effect.power_charge": "Power Charge",
+	"mmorpg.effect.rejuvenation": "Rejuvenation",
+	"mmorpg.effect.shred": "Shred",
+	"mmorpg.effect.slow": "Lethargy",
+	"mmorpg.effect.stun": "Stun",
+	"mmorpg.effect.taunt_stance": "Taunt Stance",
+	"mmorpg.effect.thorn": "Thorn",
+	"mmorpg.effect.undying_will": "Undying Will",
+	"mmorpg.effect.valor": "Valor",
+	"mmorpg.effect.vamp_blood": "Vamp Blood",
+	"mmorpg.effect.vigor": "Vigor",
+	"mmorpg.effect.weak": "Elemental Weakness",
+	"mmorpg.effect.wounds": "Wounds",
+
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
+
+
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
 
 	"mmorpg.currency.affix_common_reroll": "Orb of New Beginnings",
@@ -678,49 +721,6 @@
 	"item.mmorpg.currency.upgrade_common_affix": "Orb of Fledgling's Reprieve",
 
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
-
-
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
-
-	"mmorpg.ailment.bleed": "Bleed",
-	"mmorpg.ailment.burn": "Burn",
-	"mmorpg.ailment.electrify": "Electrify",
-	"mmorpg.ailment.freeze": "Freeze",
-	"mmorpg.ailment.poison": "Poison",
-	"mmorpg.effect.agony": "Physical Agony",
-	"mmorpg.effect.blind": "Blind",
-	"mmorpg.effect.bone_chill": "Bone Chill",
-	"mmorpg.effect.charm": "Charm",
-	"mmorpg.effect.despair": "Despair of Chaos",
-	"mmorpg.effect.draconic_blood": "Dragon Blood",
-	"mmorpg.effect.endurance_charge": "Endurance Charge",
-	"mmorpg.effect.essence_of_frost": "Essence of Frost",
-	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
-	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
-	"mmorpg.effect.frost_lich": "Frost Lich",
-	"mmorpg.effect.gale_force": "Gale Force",
-	"mmorpg.effect.ground": "Grounding",
-	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
-	"mmorpg.effect.inner_calm": "Inner Calm",
-	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
-	"mmorpg.effect.mage_circle": "Mage Circle",
-	"mmorpg.effect.perseverance": "Perseverance",
-	"mmorpg.effect.petrify": "Petrify",
-	"mmorpg.effect.power_charge": "Power Charge",
-	"mmorpg.effect.rejuvenation": "Rejuvenation",
-	"mmorpg.effect.shred": "Shred",
-	"mmorpg.effect.slow": "Lethargy",
-	"mmorpg.effect.stun": "Stun",
-	"mmorpg.effect.taunt_stance": "Taunt Stance",
-	"mmorpg.effect.thorn": "Thorn",
-	"mmorpg.effect.undying_will": "Undying Will",
-	"mmorpg.effect.valor": "Valor",
-	"mmorpg.effect.vamp_blood": "Vamp Blood",
-	"mmorpg.effect.vigor": "Vigor",
-	"mmorpg.effect.weak": "Elemental Weakness",
-	"mmorpg.effect.wounds": "Wounds",
-
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
 
 
 "_comment": " [CATEGORY]: TALENTS - NAMES",
@@ -1796,6 +1796,46 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1853,46 +1893,6 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
@@ -1928,12 +1928,12 @@
 
 	"mmorpg.stat_layer.additive_damage": "Additive Damage",
 	"mmorpg.stat_layer.crit_damage": "Crit Damage",
-	"mmorpg.stat_layer.damage_conversion": "Damage Conversion",
+	"mmorpg.stat_layer.damage_conversion": "%1$s to %2$s Conversion",
 	"mmorpg.stat_layer.damage_reduction": "Damage Reduction",
 	"mmorpg.stat_layer.damage_suppression": "Damage Suppression",
 	"mmorpg.stat_layer.dot_dmg_multi": "DOT Damage Multi",
 	"mmorpg.stat_layer.double_damage": "Double Damage",
-	"mmorpg.stat_layer.ele_as_extra_flat": "X Element as Extra Y Element Flat Damage",
+	"mmorpg.stat_layer.ele_as_extra_flat": "Plus %1$s as Extra %2$s",
 	"mmorpg.stat_layer.elemental_mitigation": "Elemental Mitigation",
 	"mmorpg.stat_layer.flat_damage": "Flat Damage",
 	"mmorpg.stat_layer.flat_damage_reduction": "Flat Damage Reduction",
@@ -2083,7 +2083,7 @@
 	"mmorpg.chat.require_ranged": "Requires Ranged Weapon to use.",
 	"mmorpg.chat.reset_full_potion_desc": "Resets and refunds ALL spent Points.",
 	"mmorpg.chat.reset_points": "Your %1$s Points were reset.",
-	"mmorpg.chat.reset_points_potion_desc": "Gives 10 Reset/Respec Points\n\nThese Can be used to selectively un-learn things",
+	"mmorpg.chat.reset_points_potion_desc": "Gives 10 Reset/Respec Points\n\nThese Can be used to selectively un-learn things\n\nYou can Unlearn most things by Right Clicking them",
 	"mmorpg.chat.resists_too_low_for_map": "You lack Resistances to Open/Enter this Map.",
 	"mmorpg.chat.right_click_open": "Right Click to Open",
 	"mmorpg.chat.right_click_to_gen_item": "You can also right-click to generate an item.",
@@ -2892,6 +2892,18 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -2904,18 +2916,6 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
-
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3562,13 +3562,6 @@
 "_comment": " [CATEGORY]: STATS - DESCRIPTIONS",
 
 
-"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
-
-	"mmorpg.uber_map.desc.uber1": "A living mortal, in MY Realm?",
-
-"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
-
-
 "_comment": " [CATEGORY]: STATUSEFFECTS - DESCRIPTIONS",
 
 	"mmorpg.ailment.desc.bleed": "Deals 120% of the damage as \u00A76\u2600 Physical\u00A77\u00A79 Damage for 5s.",
@@ -3578,7 +3571,14 @@
 	"mmorpg.ailment.desc.poison": "Deals 150% of the damage as \u00A75\u2600 Chaos\u00A77\u00A79 Damage for 10s.",
 	"mmorpg.effect.desc.thorn": "Attacking an enemy with Thorns consumes the thorns to deal [calc:thorn_bush] \u00A76\u2600 Physical\u00A77 Damage",
 
-"_comment": " [CATEGORY]: STATUSEFFECTS - DESCRIPTIONS"
+"_comment": " [CATEGORY]: STATUSEFFECTS - DESCRIPTIONS",
+
+
+"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
+
+	"mmorpg.uber_map.desc.uber1": "A living mortal, in MY Realm?",
+
+"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS"
 
 
 }

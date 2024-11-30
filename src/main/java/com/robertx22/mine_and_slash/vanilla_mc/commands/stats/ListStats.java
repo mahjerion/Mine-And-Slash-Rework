@@ -47,14 +47,12 @@ public class ListStats {
                 String str = "";
 
                 if (type.equals("exact")) {
-                    str = Strings.join(data.getCustomExactStats().stats.values()
+                    str = Strings.join(data.getCustomExactStats().stats.keySet()
                             .stream()
-                            .map(x -> x.getStatId())
                             .collect(Collectors.toList()), ",");
                 } else {
-                    str = Strings.join(data.getCustomExactStats().mods.values()
+                    str = Strings.join(data.getCustomExactStats().mods.keySet()
                             .stream()
-                            .map(x -> x.stat)
                             .collect(Collectors.toList()), ",");
                 }
                 player.displayClientMessage(Component.literal(str), false);

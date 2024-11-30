@@ -17,6 +17,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.base.EffectWithCtx;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IStatEffect;
 import net.minecraft.network.chat.Component;
@@ -83,6 +84,17 @@ public abstract class EffectEvent implements IGUID {
 
     public StatLayerData getLayer(StatLayer layer, String number, EffectSides side) {
         String id = layer.GUID() + "_" + number;
+        if (!layers.containsKey(id)) {
+            var data = new StatLayerData(layer.GUID(), number, 0, side);
+
+            layers.put(id, data);
+        }
+        return layers.get(id);
+
+    }
+
+    public StatLayerData getConversionLayer(StatLayer layer, Elements ele, String number, EffectSides side) {
+        String id = layer.GUID() + "_" + number + "_" + ele.GUID();
         if (!layers.containsKey(id)) {
             var data = new StatLayerData(layer.GUID(), number, 0, side);
 

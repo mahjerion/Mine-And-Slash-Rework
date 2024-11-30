@@ -5,6 +5,8 @@ import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
+import java.util.HashMap;
+
 
 // example: you have 200% fire resist, enemy has 10% fire pene, you end up with 190% fire res which means enemy doesnt do any extra dmg to you
 public class StatLayerData {
@@ -15,15 +17,28 @@ public class StatLayerData {
     private float number = 0;
 
     public Conversion conversion = null;
+    public AdditionalConversion additionalConversion = null;
 
     public static class Conversion {
+
+        public HashMap<Elements, Float> totals = new HashMap<>();
+
+        public void add(Elements ele, Float n) {
+            if (!totals.containsKey(ele)) {
+                totals.put(ele, 0f);
+            }
+            totals.put(ele, totals.get(ele) + n);
+        }
+
+    }
+
+    public static class AdditionalConversion {
 
         //public Elements from;
         public Elements to;
         public int percent;
 
-        public Conversion(Elements to, int percent) {
-            //this.from = from;
+        public AdditionalConversion(Elements to, int percent) {
             this.to = to;
             this.percent = percent;
         }
@@ -37,8 +52,15 @@ public class StatLayerData {
         this.side = side;
     }
 
+    public void convertAdditional(Elements to, int perc) {
+        this.additionalConversion = new AdditionalConversion(to, perc);
+    }
+
     public void convertDamage(Elements to, int perc) {
-        this.conversion = new Conversion(to, perc);
+        if (conversion == null) {
+            conversion = new Conversion();
+        }
+        this.conversion.add(to, (float) perc);
     }
 
     public StatLayer getLayer() {

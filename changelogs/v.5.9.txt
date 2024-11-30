@@ -230,3 +230,8 @@ v.5.9.24
 - so base dmg + flat dmg > converts to x > bonus x as y
 Needs updating the stat layers in stat datapacks, and make sure the priorities are correct
 - ailments can now proc from either hit or bonus dmg
+
+v.5.9.25
+
+- dmg conversion now has better tooltips in chat messages
+- fixed conversion so it can work with multiple conversions

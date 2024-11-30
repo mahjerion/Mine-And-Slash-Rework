@@ -16,6 +16,7 @@ public class EventData {
     public static String AILMENT = "ailment";
 
     public static String NUMBER = "number";
+    public static String BEFORE_CONVERSION_NUMBER = "before_conversion_number";
     public static String ITEM_ID = "item_id";
     public static String IS_SUMMON_ATTACK = "is_summon_attack";
     public static String IS_BONUS_ELEMENT_DAMAGE = "is_bonus_element_damage";

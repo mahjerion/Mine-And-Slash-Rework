@@ -11,12 +11,14 @@ import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // todo this will be used to combine defensives and cap them
 // for example armor will provide a physicial mitigation layer, but physical resistance stat will add to it
@@ -49,30 +51,44 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
         CONVERT_PERCENT() {
             @Override
             public void apply(EffectEvent event, StatLayerData layer, String number) {
-                // todo this should be equalizing conversion if theres like 100% to fire and 100% to frost, it should be 50% each instead of 100% whichever is first
-                float conv = layer.conversion.percent;
+
 
                 if (event instanceof DamageEvent effect) {
-                    if (conv > effect.unconvertedDamagePercent) {
-                        conv = effect.unconvertedDamagePercent;
+                    if (!event.data.isNumberSetup(EventData.BEFORE_CONVERSION_NUMBER)) {
+                        event.data.getNumber(EventData.BEFORE_CONVERSION_NUMBER, effect.data.getNumber(EventData.NUMBER).number);
                     }
-                    if (conv <= 0) {
-                        return;
-                    }
-                    effect.unconvertedDamagePercent -= conv;
-                    float dmg = effect.data.getNumber(EventData.NUMBER).number * conv / 100F;
-                    dmg = MathHelper.clamp(dmg, 0, effect.data.getNumber());
-                    if (dmg > 0) {
-                        effect.addBonusEleDmg(layer.conversion.to, dmg, layer.side);
-                        event.data.getNumber(EventData.NUMBER).number -= dmg;
+                    float original = effect.data.getNumber(EventData.BEFORE_CONVERSION_NUMBER).number;
+
+                    for (Map.Entry<Elements, Float> en : layer.conversion.totals.entrySet()) {
+                        var ele = en.getKey();
+                        float conv = en.getValue();
+
+                        if (conv > 100) {
+                            conv = 100;
+                        }
+
+                        if (conv > effect.unconvertedDamagePercent) {
+                            conv = effect.unconvertedDamagePercent;
+                        }
+                        if (conv <= 0) {
+                            return;
+                        }
+                        effect.unconvertedDamagePercent -= conv;
+                        float dmg = original * conv / 100F;
+                        dmg = MathHelper.clamp(dmg, 0, original);
+                        if (dmg > 0) {
+                            effect.addBonusEleDmg(ele, dmg, layer.side);
+                            event.data.getNumber(EventData.NUMBER).number -= dmg;
+                        }
                     }
                 }
+
             }
         },
         X_AS_BONUS_Y_ELEMENT_DAMAGE() {
             @Override
             public void apply(EffectEvent event, StatLayerData layer, String number) {
-                float conv = layer.conversion.percent;
+                float conv = layer.additionalConversion.percent;
 
                 if (event instanceof DamageEvent effect) {
                     if (conv <= 0) {
@@ -81,7 +97,7 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
                     float dmg = effect.data.getNumber(EventData.NUMBER).number * conv / 100F;
                     dmg = MathHelper.clamp(dmg, 0, Float.MAX_VALUE);
                     if (dmg > 0) {
-                        effect.addBonusEleDmg(layer.conversion.to, dmg, layer.side);
+                        effect.addBonusEleDmg(layer.additionalConversion.to, dmg, layer.side);
                     }
                 }
             }
@@ -104,19 +120,39 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
         public abstract void apply(EffectEvent event, StatLayerData layer, String number);
     }
 
-    public MutableComponent getTooltip(StatLayerData data) {
+    public MutableComponent getTooltip(EffectEvent event, StatLayerData data) {
 
         // todo can a target effect be modified by the source etc..?
         MutableComponent sourcetarget = Component.empty().append("[").append(data.side.word.locName().append("]: "));
 
         MutableComponent number = Component.literal("x" + MMORPG.DECIMAL_FORMAT.format(data.getMultiplier()));
+
+        MutableComponent locname = locName();
+
         if (this.action == LayerAction.ADD) {
             String plusminus = data.getNumber() < 0 ? "" : "+";
             number = Component.literal(plusminus + MMORPG.DECIMAL_FORMAT.format(data.getNumber()));
         }
+        if (this.action == LayerAction.CONVERT_PERCENT) {
+            MutableComponent convtext = Component.literal("");
 
-        MutableComponent t = Component.empty().append(sourcetarget).append(locName().append(": ").append(number));
+            for (Map.Entry<Elements, Float> en : data.conversion.totals.entrySet()) {
+                var ele = en.getKey();
+                Float perc = en.getValue();
+                locname = locName(event.data.getElement().getIconNameDmg(), ele.getIconNameDmg());
+                number = Component.literal(perc + "%");
 
+                MutableComponent t = Component.empty().append(sourcetarget).append(locname.append(": ").append(number));
+                convtext.append(t);
+            }
+            return convtext;
+        }
+        if (this.action == LayerAction.X_AS_BONUS_Y_ELEMENT_DAMAGE) {
+            locname = locName(event.data.getElement().getIconNameDmg(), data.additionalConversion.to.getIconNameDmg());
+            number = Component.literal(data.additionalConversion.percent + "%");
+        }
+
+        MutableComponent t = Component.empty().append(sourcetarget).append(locname.append(": ").append(number));
         return t;
 
     }

@@ -463,7 +463,7 @@ public class DamageEvent extends EffectEvent {
 
         for (StatLayerData layerData : this.getSortedLayers()) {
             if (layerData.numberID.equals(EventData.NUMBER)) {
-                msg.append(layerData.getLayer().getTooltip(layerData).append("\n"));
+                msg.append(layerData.getLayer().getTooltip(this, layerData).append("\n"));
             }
         }
 
@@ -497,6 +497,7 @@ public class DamageEvent extends EffectEvent {
         }
 
         if (doBonusDmg) {
+            msg.append(Component.literal("\n"));
             msg.append(Component.literal("Total Combined Damage: " + (int) info.totalDmg + "\n").withStyle(ChatFormatting.GOLD));
         }
 

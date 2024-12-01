@@ -1,7 +1,6 @@
 buildscript {
     repositories {
-
-
+        maven { url = 'https://maven.sinytra.org/' }
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
@@ -20,6 +19,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.3.3"
+    //id "org.moddedmc.wiki.toolkit" version "0.2.4"
+    //id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -33,6 +34,7 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+
     maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" } // geckolib
     maven { url = "https://maven.kosmx.dev/" } // player animations
     maven { url = "https://maven.theillusivec4.top/" } // curios
@@ -176,3 +178,14 @@ publishMods {
 
     }
 }
+
+/*
+wiki {
+    docs {
+        mutils {
+            root = file("../../docs")
+        }
+    }
+}
+
+ */

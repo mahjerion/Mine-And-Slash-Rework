@@ -8,9 +8,9 @@ import net.minecraft.world.item.Item;
 
 public class SlashItemTags {
 
-    public static final TagKey<Item> CHIPPED_GEMS = tagOf("chipped_gems");
-    public static final TagKey<Item> FLAWED_GEMS = tagOf("flawed_gems");
-    public static final TagKey<Item> REGULAR_GEMS = tagOf("regular_gems");
+    // public static final TagKey<Item> CHIPPED_GEMS = tagOf("chipped_gems");
+    // public static final TagKey<Item> FLAWED_GEMS = tagOf("flawed_gems");
+    // public static final TagKey<Item> REGULAR_GEMS = tagOf("regular_gems");
 
     public static void init() {
 

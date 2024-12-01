@@ -1,0 +1,8 @@
+{
+    "id": "mine_and_slash",
+    "platform": "curseforge",
+    "slug": "mine-and-slash-reloaded",
+	   "versions": {
+        "1.20.1": "1.20-Forge"
+    }
+}

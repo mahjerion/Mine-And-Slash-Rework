@@ -235,3 +235,7 @@ v.5.9.25
 
 - dmg conversion now has better tooltips in chat messages
 - fixed conversion so it can work with multiple conversions
+
+v.5.9.26
+
+- dmg conversion now normalizes past 100%. So 100% physical to fire + 100% physical to frost becomes 50% each

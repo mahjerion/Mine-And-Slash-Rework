@@ -54,8 +54,12 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
 
 
                 if (event instanceof DamageEvent effect) {
+                    // todo this isnt needed as theres only 1 conversion layer
                     if (!event.data.isNumberSetup(EventData.BEFORE_CONVERSION_NUMBER)) {
                         event.data.getNumber(EventData.BEFORE_CONVERSION_NUMBER, effect.data.getNumber(EventData.NUMBER).number);
+                    }
+                    if (!layer.conversion.normalized) {
+                        layer.conversion.normalizeNumbersToCapTo100();
                     }
                     float original = effect.data.getNumber(EventData.BEFORE_CONVERSION_NUMBER).number;
 

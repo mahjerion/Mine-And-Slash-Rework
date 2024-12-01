@@ -1,6 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.25
+v.5.9.26
 
-- dmg conversion now has better tooltips in chat messages
-- fixed conversion so it can work with multiple conversions
+- dmg conversion now normalizes past 100%. So 100% physical to fire + 100% physical to frost becomes 50% each

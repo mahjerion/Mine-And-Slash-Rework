@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 // example: you have 200% fire resist, enemy has 10% fire pene, you end up with 190% fire res which means enemy doesnt do any extra dmg to you
@@ -23,6 +24,8 @@ public class StatLayerData {
 
         public HashMap<Elements, Float> totals = new HashMap<>();
 
+        boolean normalized = false;
+
         public void add(Elements ele, Float n) {
             if (!totals.containsKey(ele)) {
                 totals.put(ele, 0f);
@@ -30,6 +33,20 @@ public class StatLayerData {
             totals.put(ele, totals.get(ele) + n);
         }
 
+        public void normalizeNumbersToCapTo100() {
+            normalized = true;
+
+            float total = 0;
+            for (Float v : totals.values()) {
+                total += v;
+            }
+            if (total > 100) {
+                float multi = 100F / total;
+                for (Map.Entry<Elements, Float> en : new HashMap<>(totals).entrySet()) {
+                    totals.put(en.getKey(), totals.get(en.getKey()) * multi);
+                }
+            }
+        }
     }
 
     public static class AdditionalConversion {

@@ -20,7 +20,6 @@ plugins {
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.3.3"
     id "org.moddedmc.wiki.toolkit" version "0.2.4"
-    //id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -179,13 +178,11 @@ publishMods {
     }
 }
 
-/*
+
 wiki {
     docs {
         mutils {
-            root = file("../../docs")
+             root = file("docs")
         }
     }
 }
-
- */

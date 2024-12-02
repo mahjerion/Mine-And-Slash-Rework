@@ -86,13 +86,17 @@ public class LevelUtils {
         }
         DimensionConfig dimConfig = ExileDB.getDimensionConfig(world);
 
-        if (isInMinLevelArea(sw, pos, dimConfig)) {
-            info.set(LevelInfo.LevelSource.MIN_LEVEL_AREA, dimConfig.min_lvl);
+        if (ServerContainer.get().SCALE_MOB_LEVEL_TO_NEAREST_PLAYER.get()) {
+            info.set(LevelInfo.LevelSource.NEAREST_PLAYER_CONFIG, Load.Unit(nearestPlayer).getLevel());
         } else {
-            if (dimConfig.scale_to_nearest_player && nearestPlayer != null) {
-                info.set(LevelInfo.LevelSource.NEAREST_PLAYER, Load.Unit(nearestPlayer).getLevel());
+            if (isInMinLevelArea(sw, pos, dimConfig)) {
+                info.set(LevelInfo.LevelSource.MIN_LEVEL_AREA, dimConfig.min_lvl);
             } else {
-                info.set(LevelInfo.LevelSource.DISTANCE_FROM_SPAWN, determineLevelPerDistanceFromSpawn(sw, pos, dimConfig));
+                if (dimConfig.scale_to_nearest_player && nearestPlayer != null) {
+                    info.set(LevelInfo.LevelSource.NEAREST_PLAYER, Load.Unit(nearestPlayer).getLevel());
+                } else {
+                    info.set(LevelInfo.LevelSource.DISTANCE_FROM_SPAWN, determineLevelPerDistanceFromSpawn(sw, pos, dimConfig));
+                }
             }
         }
 

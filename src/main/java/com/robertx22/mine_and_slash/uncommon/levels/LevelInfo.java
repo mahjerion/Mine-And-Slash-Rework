@@ -72,6 +72,7 @@ public class LevelInfo {
         DIMENSION,
         MIN_LEVEL_AREA,
         NEAREST_PLAYER,
+        NEAREST_PLAYER_CONFIG,
         MAX_LEVEL,
         BIOME
     }

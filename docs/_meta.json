@@ -1,5 +1,11 @@
 {
-  "intro.mdx": "Introductiontest",
-  "test.mdx": "Test",
+  "intro.mdx": "Introduction",
+  "newbie_guide": "Newbie Guide", 
+  "leveling": "Leveling",  
+  "professions": "Professions",  
+  "equipment": "Equipment",    
+  "loot_drops": "Loot Drops",    
+  "endgame": "Endgame",  
+  "faq": "FAQ",  
   "wiki_work.mdx": "Wiki Contributing"
 }

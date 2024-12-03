@@ -39,7 +39,7 @@ public class AilmentProcStat extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            effect.targetData.ailments.shatterAccumulated(effect.source, effect.target, ailment, effect.getSpell());
+            effect.targetData.ailments.shatterAccumulated(effect.source, effect.target, ailment, effect.getSpellOrNull());
             return effect;
         }
 

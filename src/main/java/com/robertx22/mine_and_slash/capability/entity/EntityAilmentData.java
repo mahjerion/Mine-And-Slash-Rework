@@ -11,6 +11,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
@@ -51,19 +52,23 @@ public class EntityAilmentData {
         }
         var data = datas.get(caster.getUUID());
 
-
         float dmg = data.dmgMap.getOrDefault(ailment.GUID(), 0F);
         data.dmgMap.put(ailment.GUID(), 0F);
 
         if (dmg > 0) {
-            EventBuilder.ofSpellDamage(caster, target, (int) dmg, spell).setupDamage(AttackType.dot, WeaponTypes.none, PlayStyle.INT).set(x -> {
-                        x.calcSourceEffects = false;
-                        x.calcTargetEffects = false;
-                        x.setElement(ailment.element);
-                        x.setisAilmentDamage(ailment);
+            var b = EventBuilder.ofDamage(caster, target, (int) dmg).setupDamage(AttackType.dot, WeaponTypes.none, PlayStyle.INT).set(x -> {
+                x.calcSourceEffects = false;
+                x.calcTargetEffects = false;
+                x.setElement(ailment.element);
+                x.setisAilmentDamage(ailment);
 
-                    }).build()
-                    .Activate();
+                if (spell != null) {
+                    x.data.setString(EventData.WEAPON_TYPE, spell.getWeapon(caster).id);
+                    x.data.setString(EventData.SPELL, spell.GUID());
+                }
+            });
+
+            b.build().Activate();
         }
     }
 

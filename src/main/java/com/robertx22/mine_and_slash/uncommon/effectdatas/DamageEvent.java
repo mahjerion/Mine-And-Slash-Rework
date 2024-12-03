@@ -85,7 +85,6 @@ public class DamageEvent extends EffectEvent {
         this.attackInfo = attackInfo;
         calcBlock();
 
-        addMobDamageMultipliers();
 
         if (this.targetData.immuneTicks > 0 && attackInfo != null) {
             this.cancelDamage();
@@ -100,7 +99,13 @@ public class DamageEvent extends EffectEvent {
     public void addMobDamageMultipliers() {
 
         try {
+
+            if (!calcSourceEffects && !calcTargetEffects) {
+                return;// temp fix for mobs doing too much ailment proc dmg
+            }
+
             if (source instanceof Player == false) {
+
 
                 if (target instanceof Player) {
                     if (sourceData.getLevel() > targetData.getLevel()) {
@@ -385,6 +390,9 @@ public class DamageEvent extends EffectEvent {
     @Override
     public void initBeforeActivating() {
         calcAttackCooldown();
+
+        addMobDamageMultipliers();
+
 
         if (source instanceof Player) {
             if (data.isBasicAttack()) {

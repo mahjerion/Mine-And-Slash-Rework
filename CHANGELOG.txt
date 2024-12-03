@@ -3,4 +3,6 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 v.5.9.27
 
 - added back scale mob lvl to nearest player in the config, because datapacks are apparently galaxy brain technology
-- started work on the wiki
+- started work on the wiki, you can now read the wiki contribution guidelines if you want to know how to contribute!
+- fixed block chance to actually reduce damage
+- ailment proc stats no longer count as black hole spell damage

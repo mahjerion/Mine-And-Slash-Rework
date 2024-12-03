@@ -147,7 +147,7 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
                 number = Component.literal(perc + "%");
 
                 MutableComponent t = Component.empty().append(sourcetarget).append(locname.append(": ").append(number));
-                convtext.append(t);
+                convtext.append(t.append("\n"));
             }
             return convtext;
         }

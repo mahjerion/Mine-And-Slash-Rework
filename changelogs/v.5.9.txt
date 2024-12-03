@@ -239,3 +239,10 @@ v.5.9.25
 v.5.9.26
 
 - dmg conversion now normalizes past 100%. So 100% physical to fire + 100% physical to frost becomes 50% each
+
+v.5.9.27
+
+- added back scale mob lvl to nearest player in the config, because datapacks are apparently galaxy brain technology
+- started work on the wiki, you can now read the wiki contribution guidelines if you want to know how to contribute!
+- fixed block chance to actually reduce damage
+- ailment proc stats no longer count as black hole spell damage

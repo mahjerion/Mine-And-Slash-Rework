@@ -132,6 +132,13 @@ public abstract class EffectEvent implements IGUID {
         return ExileDB.Spells().get(data.getString(EventData.SPELL));
     }
 
+    public Spell getSpellOrNull() {
+        if (!isSpell()) {
+            return null;
+        }
+        return ExileDB.Spells().get(data.getString(EventData.SPELL));
+    }
+
     public void initBeforeActivating() {
 
     }

@@ -21,3 +21,4 @@ staff
 sword
 tome
 totem
+trident

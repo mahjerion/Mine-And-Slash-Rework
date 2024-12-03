@@ -30,6 +30,7 @@ public class SlotTags {
     public static SlotTag spear = SlotTag.of("spear");
     public static SlotTag hammer = SlotTag.of("hammer");
     public static SlotTag staff = SlotTag.of("staff");
+    public static SlotTag trident = SlotTag.of("trident");
 
 
     public static SlotTag ranger_casting_weapon = SlotTag.of("ranger_casting_weapon");
@@ -64,7 +65,7 @@ public class SlotTags {
     public static SlotTag intelligence = SlotTag.of("intelligence");
     public static SlotTag dexterity = SlotTag.of("dexterity");
     public static SlotTag strength = SlotTag.of("strength");
- 
+
     public static void init() {
 
     }

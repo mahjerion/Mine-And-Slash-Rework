@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.event_hooks.damage_hooks;
 
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.AttackInformation;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
-import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,13 +18,13 @@ public class RangedDamageUtil {
 
         LivingEntity en = (LivingEntity) event.getSource().getEntity();
         DamageSource source = event.getSource();
-        GearItemData gear = StackSaving.GEARS.loadFrom(en.getMainHandItem());
+        GearItemData gear = event.weaponData;
 
         if (gear != null) {
             var type = gear.GetBaseGearType();
             return type.weaponType().damage_validity_check.isValid(source);
         }
-        
+
         return source.is(DamageTypes.PLAYER_ATTACK);
     }
 }

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_gear_types;
 
+import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.GearDataHelper;
 import com.robertx22.mine_and_slash.aoe_data.database.gear_slots.GearSlots;
 import com.robertx22.mine_and_slash.database.data.StatMod;
@@ -14,7 +15,6 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gearitems.VanillaMaterial;
-import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -38,6 +38,7 @@ public class BaseGearsAdder implements ExileRegistryInit, GearDataHelper {
         List<Item> helmet = Arrays.asList(Items.IRON_HELMET, Items.DIAMOND_HELMET, Items.NETHERITE_HELMET);
 
         List<Item> sword = Arrays.asList(Items.IRON_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD);
+        List<Item> trident = Arrays.asList(Items.TRIDENT);
         List<Item> staff = Arrays.asList(SlashItems.GearItems.STAFFS.get(VanillaMaterial.WOOD).get(), SlashItems.GearItems.STAFFS.get(VanillaMaterial.IRON).get(), SlashItems.GearItems.STAFFS.get(VanillaMaterial.DIAMOND).get());
         List<Item> ring = Arrays.asList(SlashItems.GearItems.RINGS.get(VanillaMaterial.IRON).get(), SlashItems.GearItems.RINGS.get(VanillaMaterial.GOLD).get(), SlashItems.GearItems.RINGS.get(VanillaMaterial.DIAMOND).get());
         List<Item> necklace = Arrays.asList(SlashItems.GearItems.NECKLACES.get(VanillaMaterial.IRON).get(), SlashItems.GearItems.NECKLACES.get(VanillaMaterial.GOLD).get(), SlashItems.GearItems.NECKLACES.get(VanillaMaterial.DIAMOND).get());
@@ -173,6 +174,12 @@ public class BaseGearsAdder implements ExileRegistryInit, GearDataHelper {
                 .tags(new TagList(SlotTags.mage_weapon, SlotTags.staff, SlotTags.weapon_family, SlotTags.melee_weapon, SlotTags.intelligence))
                 .items(staff)
                 .build();
+
+        BaseGearBuilder.weapon(BaseGearTypes.TRIDENT, GearSlots.TRIDENT, WeaponTypes.trident, StatRequirement.of(PlayStyle.STR))
+                .tags(new TagList(SlotTags.trident, SlotTags.melee_weapon, SlotTags.weapon_family, SlotTags.strength, SlotTags.dexterity))
+                .items(trident)
+                .build();
+
 
     }
 }

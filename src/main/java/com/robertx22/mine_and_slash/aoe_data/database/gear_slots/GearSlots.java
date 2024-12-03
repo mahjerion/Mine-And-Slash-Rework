@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.aoe_data.database.gear_slots;
 
+import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
-import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 
 import java.util.Arrays;
 
@@ -12,6 +12,7 @@ public class GearSlots implements ExileRegistryInit {
     public static String BOW = new String("bow");
     public static String CROSBOW = new String("crossbow");
     public static String STAFF = new String("staff");
+    public static String TRIDENT = new String("trident");
 
     public static String BOOTS = new String("boots");
     public static String PANTS = new String("pants");
@@ -37,6 +38,7 @@ public class GearSlots implements ExileRegistryInit {
         new GearSlot(STAFF, "Staff", SlotFamily.Weapon, new GearSlot.WeaponData(4, 2, 0.8F), 3, 1500).addToSerializables();
         new GearSlot(BOW, "Bow", SlotFamily.Weapon, new GearSlot.WeaponData(0, 8, 2), 5, 1000).addToSerializables();
         new GearSlot(CROSBOW, "Crossbow", SlotFamily.Weapon, new GearSlot.WeaponData(0, 8, 2), 6, 500).addToSerializables();
+        new GearSlot(TRIDENT, "Trident", SlotFamily.Weapon, new GearSlot.WeaponData(5, 2, 1), 14, 300).addToSerializables();
 
         new GearSlot(BOOTS, "Boots", SlotFamily.Armor, new GearSlot.WeaponData(0, 0, 0), 7, 1000).addToSerializables();
         new GearSlot(PANTS, "Pants", SlotFamily.Armor, new GearSlot.WeaponData(0, 0, 0), 8, 1000).addToSerializables();

@@ -1,13 +1,14 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
-import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.library_of_exile.utils.SoundUtils;
+import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 
 public class OnScreenMessageUtils {
@@ -20,7 +21,7 @@ public class OnScreenMessageUtils {
         p.connection.send(new ClientboundSetTitleTextPacket(Chats.LEVEL_UP_MESSAGE_UP.locName().withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD)));
         p.connection.send(new ClientboundSetSubtitleTextPacket(Chats.LEVEL_UP_MESSAGE_DOWN.locName(levelType, before, now).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)));
 
-        SoundUtils.ding(player.level(), player.blockPosition());
+        SoundUtils.playSound(player.level(), player.blockPosition(), SoundEvents.PLAYER_LEVELUP);
     }
 
     public static void sendMessage(ServerPlayer p, MutableComponent title, MutableComponent sub) {

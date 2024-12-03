@@ -7,6 +7,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class WeaponFinderUtil {
@@ -44,7 +45,7 @@ public class WeaponFinderUtil {
          */
 
         if (gear == null) {
-            if (sourceEntity != null) {
+            if (sourceEntity != null && source instanceof Player) {
                 ItemStack wep = getWeaponStackFromThrownEntity(sourceEntity);
                 if (wep != null) {
                     gear = StackSaving.GEARS.loadFrom(wep);

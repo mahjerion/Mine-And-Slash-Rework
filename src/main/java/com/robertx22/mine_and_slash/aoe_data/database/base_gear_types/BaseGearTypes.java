@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_gear_types;
 
-import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.library_of_exile.registry.DataGenKey;
+import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ public class BaseGearTypes {
     public final static DataGenKey<BaseGearType> BOW = of("bow");
     public final static DataGenKey<BaseGearType> CROSSBOW = of("crossbow");
     public final static DataGenKey<BaseGearType> STAFF = of("staff");
+    public final static DataGenKey<BaseGearType> TRIDENT = of("trident");
 
     public final static DataGenKey<BaseGearType> CLOTH_BOOTS = of("cloth_boots");
     public final static DataGenKey<BaseGearType> CLOTH_PANTS = of("cloth_pants");
@@ -37,7 +38,7 @@ public class BaseGearTypes {
     public final static DataGenKey<BaseGearType> PLATE_HELMET = of("plate_helmet");
 
     public static void init() {
-        
+
     }
 
     static DataGenKey<BaseGearType> of(String id) {

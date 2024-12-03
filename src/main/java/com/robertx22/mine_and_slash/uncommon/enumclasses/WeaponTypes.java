@@ -25,7 +25,7 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
     public static WeaponTypes none = new WeaponTypes("none", PlayStyle.STR, WeaponRange.MELEE, false, DamageValidityData.meleeWeapon());
     public static WeaponTypes axe = new WeaponTypes("axe", PlayStyle.STR, WeaponRange.MELEE, false, DamageValidityData.meleeWeapon());
     public static WeaponTypes staff = new WeaponTypes("staff", PlayStyle.INT, WeaponRange.MELEE, false, DamageValidityData.meleeWeapon());
-    public static WeaponTypes trident = new WeaponTypes("trident", PlayStyle.STR, WeaponRange.OPTIONALLY_RANGED, false, DamageValidityData.meleeWeapon());
+    public static WeaponTypes trident = new WeaponTypes("trident", PlayStyle.STR, WeaponRange.OPTIONALLY_RANGED, false, DamageValidityData.Trident());
     public static WeaponTypes sword = new WeaponTypes("sword", PlayStyle.STR, WeaponRange.MELEE, false, DamageValidityData.meleeWeapon()).setCanDualWield();
     public static WeaponTypes bow = new WeaponTypes("bow", PlayStyle.DEX, WeaponRange.RANGED, true, DamageValidityData.projectile());
     public static WeaponTypes crossbow = new WeaponTypes("crossbow", PlayStyle.DEX, WeaponRange.RANGED, true, DamageValidityData.projectile());
@@ -104,6 +104,7 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
                     }
                 }
                 String id = source.getMsgId();
+                // todo this seems to need fixing but im afraid itll fuck things up now id = dmgid.getPath();
                 for (String name : data.contains_in_dmg_id) {
                     if (id.contains(name)) {
                         return true;
@@ -138,6 +139,15 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
                     TagCheck.MATCH_ANY,
                     Arrays.asList(),
                     Arrays.asList("arrow", "bolt", "ammo", "bullet", "dart", "missile")
+            );
+        }
+
+        public static DamageValidityData Trident() {
+            return new DamageValidityData(
+                    SourceCheck.ANY,
+                    TagCheck.MATCH_ANY,
+                    Arrays.asList(),
+                    Arrays.asList("trident", "player")
             );
         }
 

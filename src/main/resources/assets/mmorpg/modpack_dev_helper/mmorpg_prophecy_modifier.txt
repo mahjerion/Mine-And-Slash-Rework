@@ -33,5 +33,6 @@ staff
 sword
 tome
 totem
+trident
 uncommon
 unique

@@ -64,7 +64,7 @@ public class LevelUtils {
     }
 
 
-    public static LevelInfo determineLevel(@Nullable LivingEntity en, Level world, BlockPos pos, Player nearestPlayer, boolean usevariance) {
+    public static LevelInfo determineLevel(@Nullable LivingEntity en, Level world, BlockPos pos, @Nullable Player nearestPlayer, boolean usevariance) {
 
         LevelInfo info = new LevelInfo();
 
@@ -86,7 +86,7 @@ public class LevelUtils {
         }
         DimensionConfig dimConfig = ExileDB.getDimensionConfig(world);
 
-        if (ServerContainer.get().SCALE_MOB_LEVEL_TO_NEAREST_PLAYER.get()) {
+        if (ServerContainer.get().SCALE_MOB_LEVEL_TO_NEAREST_PLAYER.get() && nearestPlayer != null) {
             info.set(LevelInfo.LevelSource.NEAREST_PLAYER_CONFIG, Load.Unit(nearestPlayer).getLevel());
         } else {
             if (isInMinLevelArea(sw, pos, dimConfig)) {

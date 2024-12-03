@@ -1,5 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.28
+v.5.9.29
 
-- add crash safety to mob join event
+- fixed crash

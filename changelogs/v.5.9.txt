@@ -246,3 +246,7 @@ v.5.9.27
 - started work on the wiki, you can now read the wiki contribution guidelines if you want to know how to contribute!
 - fixed block chance to actually reduce damage
 - ailment proc stats no longer count as black hole spell damage
+
+v.5.9.28
+
+- add crash safety to mob join event

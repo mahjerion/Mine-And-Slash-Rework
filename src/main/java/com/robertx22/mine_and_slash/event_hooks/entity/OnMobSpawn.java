@@ -19,6 +19,10 @@ public class OnMobSpawn {
 
     public static void onLoad(Entity entity) {
 
+        if (entity == null) {
+            return;
+        }
+
         if (!(entity instanceof LivingEntity)) {
             return;
         }

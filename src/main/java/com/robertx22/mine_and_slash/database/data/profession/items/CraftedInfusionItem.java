@@ -114,20 +114,18 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
 
                                 ctx.stack.get(StackKeys.GEAR).edit(gear -> {
 
-                                    GearInfusionData en = new GearInfusionData();
+                                    boolean makenew = gear.ench == null || gear.ench.isEmpty();
 
-                                    if (gear.ench == null || gear.ench.isEmpty()) {
+                                    gear.ench = new GearInfusionData();
+
+                                    if (makenew) {
                                         Affix affix = ExileDB.Affixes().getFilterWrapped(x -> {
                                             return x.type == Affix.AffixSlot.enchant && x.requirements.satisfiesAllRequirements(new GearRequestedFor(gear)) && x.getAllTagReq().contains(SlotTags.enchantment.GUID());
                                         }).random();
-
-                                        en.en = affix.GUID();
+                                        gear.ench.en = affix.GUID();
+                                    } else {
+                                        gear.ench.rar = rar;
                                     }
-
-                                    en.rar = rar;
-
-
-                                    gear.ench = en;
 
                                     ctx.stack.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
 

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
+// transform into currency, so people can pick other tags etc
 public class TagForceSoulItem extends AutoItem implements IShapelessRecipe {
 
     public AvailableTags tag;

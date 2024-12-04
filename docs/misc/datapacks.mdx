@@ -1,0 +1,51 @@
+
+## What does this mean?
+
+You are probably here because you were reading the wiki and found a:
+### 📦 This Feature is a [Datapack](../misc/datapacks)
+
+What this means is the feature is heavily configurable and you can expect it to differ massively in modpacks.
+As an example, Unique items are datapacks and modpacks can:
+- Change the stats on existing unique items
+- Add new unique items
+- Remove some of them
+- Change their droprates
+
+And so on. So this block of text is a short warning:
+
+<Callout variant="danger">
+   THE ONLY CORRECT INFORMATION ABOUT DATAPACK-ABLE FEATURES IS INSIDE THE GAME!
+</Callout>
+
+Make use of JEI and the ingame library to browse a list of unique items for example.
+Do not trust wikis or sites to stay updated and be true for your version of the game or modpack!
+
+## What are datapacks?
+
+Datapacks are a kind of like config files, but slightly different.
+It's a vanilla minecraft system
+
+## How to edit:
+
+Datapacks are a way to edit or add a lot of content in Mine and Slash, but first you need to know how to make one!
+
+1) Read this here: https://minecraft.wiki/w/Tutorials/Creating_a_data_pack
+
+2) After you have created a simple empty datapack and placed it correctly, do a `/datapacks list` command when you boot up the game.
+If you did it correctly, your datapack name should be there, if not, go back to 1)
+
+3) Use 7zip, winrar etc to open the Mine and Slash .jar, in the `data\mmorpg\` you will find many custom datapack types for the mod.
+You will create a folder of the same name in your datapack like mmorpg_runeword and then copy a json from there too
+
+4) With this json, you will want to rename the file name and then open it up and edit the `id` field to be the same as the filename (USE ALL LOWERCASE LETTERS)
+
+5) Now you're free to edit the json to your liking, edit the stats a runeword gives, what runes are needed for it and so on.
+
+6) Boot the game again, if you find ingame chat message telling you about datapack errors, read the log file for more info how to fix them, if no errors are found, continue
+
+7) Test your datapacks by cheating! Using commands I mean. If you created a new gear type, then you can try doing /mine_and_slash give gear to give yourself the gear type. If your gear type is there continue
+
+8) You will notice your gear or whatever is not named correctly. Go here and learn how to make a lang file: https://minecraft.wiki/w/Tutorials/Creating_a_resource_pack . That way your "gear.testblabla" will become "Your gear name"
+
+WARNING:
+If you have found a bug you might be asked to reproduce the bug without custom datapacks. To do this just download gdlauncher, create a new instance and install mine and slash. The datapack error checking system isn't perfect and it's possible to create a faulty datapack without any errors

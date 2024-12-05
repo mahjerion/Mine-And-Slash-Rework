@@ -1,0 +1,20 @@
+
+Damage conversion might be one of the more complicated or hidden mechanics, even if there are ways to see how it works!
+
+There's a few mechanics here you need to know:
+- If you attack with a basic attack doing physical damage, and you have added physical flat damage from somewhere, that flat damage will be added to the base damage
+- If you have added damage of a different element, that damage will count as "bonus" damage, and it won't be converted because only the initial hit damage is converted
+
+# All Loot Modifiers:
+
+| Damage Layer     | Explanation   |
+|-----------|------------------------------|
+| Added Flat Damage    | Stuff like + Added Fire Damage etc, or Bonus X Element Attack Damage stat |
+| Damage Conversion    | After same element as base hit flat damage is added, it's then converted, the converted damage transfers into "bonus" damage |
+| Additional Damage    | If there's any of the original element's damage left, this stat can be used. If you converted 100% of the damage, this stat will have nothing to add |
+| Additive Damage Modifiers    | Afterwards, all the damage modifiers are added up into this |
+| Enemy Defenses    | Now the enemy defense layers like Elemental Mitigation or Damage Reduction are applied |
+| Damage Multipliers    | This includes all the damage stats with "More" in the name, so "+30% More Fire damage" becomes 1.3x multiplier, each multiplier is multiplicative with the others.
+ So if you had another more stat like +50% More Total Damage, you calculate them by just doing: 1.3x * 1.5x etc |
+
+You can see all this in your chat by enabling Damage Numbers under Features in the Main Hub!

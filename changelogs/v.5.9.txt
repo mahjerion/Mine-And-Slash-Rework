@@ -254,3 +254,8 @@ v.5.9.28
 v.5.9.29
 
 - fixed crash
+
+v.5.9.31
+
+- block now works with bonus dmg too
+- offhands now drop if requirements not met too

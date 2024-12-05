@@ -31,7 +31,7 @@ public class UnequipGear {
         player.setItemSlot(slot, ItemStack.EMPTY); // todo is this good?
 
         if (player.getItemBySlot(slot).isEmpty()) {
-            if (slot == EquipmentSlot.MAINHAND) {
+            if (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) {
                 var en = player.spawnAtLocation(stack, 1F);
                 en.setPickUpDelay(40);
 
@@ -64,11 +64,7 @@ public class UnequipGear {
 
             if (gear != null) {
                 if (!gear.canPlayerWear(Load.Unit(player))) {
-                    if (!gear.isWeapon() && (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)) {
-
-                    } else {
-                        drop(player, slot, stack, Chats.GEAR_DROP.locName().withStyle(ChatFormatting.RED));
-                    }
+                    drop(player, slot, stack, Chats.GEAR_DROP.locName().withStyle(ChatFormatting.RED));
                 }
             }
         }

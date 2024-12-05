@@ -3,3 +3,4 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 v.5.9.31
 
 - block now works with bonus dmg too
+- offhands now drop if requirements not met too

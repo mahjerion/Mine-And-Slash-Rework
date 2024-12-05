@@ -237,7 +237,7 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                 //handle possibleRarities
                 .accept(WorksOnBlock.possibleDrops(ExileDB.GearRarities().getFilterWrapped(
                         x -> this.tier >= ExileDB.GearRarities().get(x.min_map_rarity_to_drop).map_tiers.min
-                ).list));
+                ).list).notDraggable());
         if (this.isUber()) {
             tip.accept(new AdditionalBlock(Collections.singletonList(Words.AreaContains.locName().withStyle(ChatFormatting.RED))));
         }

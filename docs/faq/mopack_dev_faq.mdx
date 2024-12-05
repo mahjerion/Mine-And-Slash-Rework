@@ -1,0 +1,47 @@
+
+## 1) What mods go well with Mine and Slash?
+- dungeon/structure mods
+- Mob mods
+- Boss mods
+- Any Mods that have armors with non-combat utility uses
+- dimension mods
+
+In short Mine and Slash takes care of gear, stats, talents, spells, classes, endgame maps etc, but lacks certain forms of content that can be easily filled up with above mods to make a fun modpack!
+
+## 2) What mods DON'T go well with Mine and Slash?
+
+- Spell Mods (Fully incompatible)
+- Other RPG mods with their own leveling/progression systems
+
+## 3) Can I edit X or Y?
+
+Most likely yes, first check if it's in the config file.
+Second, check if it's a datapack. Most features are datapacks!
+
+## 4) How exactly does compatibility work with Mine and Slash?
+
+MNS is an overhaul mod and OVERRIDES all entity vs entity damage.
+
+Compatibility with other mods is done in a few different ways:
+- Mob mods are compatible by default
+- The damage a mob deals is automatically turned to scale with MNS damage system
+- Players need to attack using a MNS approved system: BASIC ATTACKS or MNS SPELLS.
+- Basic attacks require a weapon with MNS stat souls you can wield
+- For a basic attack to deal damage, it needs to pass a "Damage validity check" noted in the weapon's MNS datapack
+- Weapons, armors etc are mostly automatically classified into MNS gear types, and Stat souls can be applied to them
+- Vanilla Enchants/attributes/stats can be allowed to give MNS stats with "Stat Compat" MNS datapacks
+- Vanilla and mod stats/enchants that affect entity vs entity damage will be ignored, refer to Stat Compat datapacks above
+- Vanilla and mod stats/enchants that don't directly affect damage MIGHT work. Misc QOL stuff like "Swimming is 10% faster" will almost definitely work
+- Dimensions can be given level ranges with Dimension MNS datapacks
+- Spell mods are currently incompatible
+
+Most of the compatibility ways for MNS is to turn the other mods to work with MNS systems. MNS does not try to be a generic mod you can place into any modpack. It's meant to be a center-piece of an RPG modpack and that's why it was made.
+
+5) Any specific mods that with known incompatibilities?
+
+| Mod Name      | Problem       | Suggestion |
+| ------------- |:-------------:| ----------:|
+| Majrusz Mods | Mns Profession Exp Not working [because](https://github.com/Majrusz/MajruszLibrary/issues/91) of Majrusz library mod | Remove all [Majrusz17](https://www.curseforge.com/members/majrusz17) Mods|
+| Epic Fight Mod | Epic fight overrides player model which stops Mns spells from being animated | Remove Epic fight or disable mns spell animations in client config |
+| Other Spell/Magic Mods | Mine and slash overrides damage and has no good system to allow compatibility with other spell mods | Remove either other spell mods or mine and slash |
+| Mo' Enchantments | Makes some Mns items invisible because it messes with custom data icons | Remove Mo' Enchantments |

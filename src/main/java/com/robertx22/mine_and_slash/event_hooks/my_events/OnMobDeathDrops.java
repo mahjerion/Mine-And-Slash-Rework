@@ -166,8 +166,8 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
 
         mods.add(new LootModifier(LootModifierEnum.MOB_HEALTH, LootUtils.getMobHealthBasedLootMulti(victim)));
         mods.add(new LootModifier(LootModifierEnum.MOB_RARITY, mobData.getMobRarity().expMulti()));
-        mods.add(new LootModifier(LootModifierEnum.ENTITY_DATAPACK, multi));
-        mods.add(new LootModifier(LootModifierEnum.CONFIG, ServerContainer.get().EXP_GAIN_MULTI.get().floatValue()));
+        mods.add(new LootModifier(LootModifierEnum.MOB_DATAPACK, multi));
+        mods.add(new LootModifier(LootModifierEnum.EXP_GAIN_CONFIG, ServerContainer.get().EXP_GAIN_MULTI.get().floatValue()));
         mods.add(new LootModifier(LootModifierEnum.DIMENSION_LOOT, ExileDB.getDimensionConfig(victim.level()).exp_multi));
         mods.add(new LootModifier(LootModifierEnum.PLAYER_BONUS_EXP, killerData.getUnit().getCalculatedStat(BonusExp.getInstance()).getMultiplier()));
         mods.add(new LootModifier(LootModifierEnum.FAVOR, Load.player(killer).favor.getLootExpMulti()));

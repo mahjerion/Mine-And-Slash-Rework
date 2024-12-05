@@ -31,6 +31,7 @@ public class OperationTipBlock extends AbstractTextBlock {
         return this;
     }
 
+ 
     public OperationTipBlock setShift() {
         this.shift = true;
         return this;

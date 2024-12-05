@@ -94,7 +94,7 @@ public class MapBlock extends BaseEntityBlock {
             if (Load.Unit(p).getLevel() < ServerContainer.get().MIN_LEVEL_MAP_DROPS.get()) {
                 p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.TOO_LOW_LEVEL));
 
-                return InteractionResult.FAIL;
+                return InteractionResult.CONSUME;
             }
 
             MapItemData data = StackSaving.MAP.loadFrom(p.getItemInHand(pHand));
@@ -107,7 +107,7 @@ public class MapBlock extends BaseEntityBlock {
                 if (data != null) {
 
                     if (!canStartMap(p, data)) {
-                        return InteractionResult.FAIL;
+                        return InteractionResult.CONSUME;
                     }
 
                     Load.worldData(level).map.startNewMap(p, data);
@@ -146,12 +146,12 @@ public class MapBlock extends BaseEntityBlock {
                      */
 
                     if (!canJoinMap(p, mapData)) {
-                        return InteractionResult.FAIL;
+                        return InteractionResult.CONSUME;
                     }
                     mapData.teleportToMap(p);
 
                 } else {
-                    return InteractionResult.FAIL;
+                    return InteractionResult.CONSUME;
                 }
 
             }

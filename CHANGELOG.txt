@@ -1,7 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.30
+v.5.9.31
 
-- SCALE_MOB_LEVEL_TO_NEAREST_PLAYER defaults to false now
-- lvl up now uses level up sound
-- added tridents and made them work when attacking from range
+- block now works with bonus dmg too

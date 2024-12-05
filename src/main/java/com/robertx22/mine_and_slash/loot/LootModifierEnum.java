@@ -11,24 +11,21 @@ import java.util.Locale;
 public enum LootModifierEnum implements IAutoLocName {
     PROFESSION_BONUS_STAT("Profession Bonus Stat"),
     LOW_LEVEL_RECIPE_PENALTY("Low-LVL Recipe penalty"),
-
-
     MAP_CHEST("Map Chest"),
     CHEST("Chest"),
-    BREAK_SPAWNER("Break Spawner"),
+    BREAK_SPAWNER("Broken Spawner"),
     LEVEL_DISTANCE_PENALTY("Level Distance Penalty"),
     MOB_HEALTH("Mob Health"),
-    MAP_COMPLETITION_RARITY_REWARD("Map Completiton Rarity"),
-    CONFIG("Config File"),
+    MAP_COMPLETITION_RARITY_REWARD("Map Complete Rarity"),
+    EXP_GAIN_CONFIG("Exp Gain Config"),
     MOB_DATAPACK("Mob Datapack"),
     MOB_BONUS_LOOT_STAT("Mob Bonus Loot Stat"),
     MOB_RARITY("Mob Rarity"),
-    ENTITY_DATAPACK("Mob Datapack"),
     LOW_LEVEL_BOOST("Low Level"),
     FAVOR("Favor Rank"),
     PLAYER_LOOT_QUANTITY("Player Loot Quantity"),
     PLAYER_BONUS_EXP("Player Exp Bonus"),
-    DIMENSION_LOOT("Dimension"),
+    DIMENSION_LOOT("Dimension Datapack"),
     ADVENTURE_MAP("Adventure Map"),
     ANTI_MOB_FARM_MOD("Anti Mob Farm Mod"),
     ;

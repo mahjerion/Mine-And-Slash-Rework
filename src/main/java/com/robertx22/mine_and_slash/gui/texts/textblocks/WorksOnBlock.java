@@ -43,10 +43,17 @@ public class WorksOnBlock extends AbstractTextBlock {
         return new WorksOnBlock(Type.POSSIBLE_GEAR_DROPS).rarities(rar);
     }
 
+    public WorksOnBlock notDraggable() {
+        this.draggable = false;
+        return this;
+    }
+
     private WorksOnBlock(Type name) {
         this.name = name.name.locName();
     }
 
+
+    public boolean draggable = true;
 
     public enum Type {
         USABLE_ON(Words.USABLE_ON),
@@ -112,9 +119,8 @@ public class WorksOnBlock extends AbstractTextBlock {
                 all.add(Component.literal(" ").append(m));
             }
         }
+        if (draggable) {
 
-        // todo maybe some items won't be drag and droppable?
-        if (true) {
             all.add(Itemtips.DRAG_AND_DROP_TO_USE.locName().withStyle(ChatFormatting.BLUE));
 
             if (Screen.hasShiftDown()) {

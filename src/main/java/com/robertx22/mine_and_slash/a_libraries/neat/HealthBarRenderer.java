@@ -239,10 +239,9 @@ public class HealthBarRenderer {
 
         String lvltext = "Lvl " + lvl;
 
-        if (diffabove > ServerContainer.get().LEVEL_DISTANCE_SKULL_SHOW.get()) {
+        if (entity instanceof Player == false && diffabove > ServerContainer.get().LEVEL_DISTANCE_SKULL_SHOW.get()) {
             if (ServerContainer.get().SKULL_HIDES_LEVEL.get()) {
                 lvltext = "Lvl " + ChatFormatting.RED + UNICODE.SKULL;
-
             } else {
                 lvltext = "Lvl " + lvl + " " + ChatFormatting.RED + UNICODE.SKULL;
             }

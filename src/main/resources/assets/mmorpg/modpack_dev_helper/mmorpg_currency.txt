@@ -12,6 +12,9 @@ entangled_quality
 entangled_unique_reroll
 extract_gem
 extract_rune
+force_soul_tag_armor_stat
+force_soul_tag_dodge_stat
+force_soul_tag_magic_shield_stat
 harvest_essence_0
 harvest_essence_1
 harvest_essence_2

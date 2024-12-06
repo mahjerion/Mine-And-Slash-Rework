@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database.data.currency.reworked.item_req;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.gear.ExtractSocketItemMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.HasCorruptAffixes;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.IsAnyReq;
+import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.IsSingleStack;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.MaximumUsesReq;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.gear.*;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.jewel.JewelHasAffixesReq;
@@ -70,6 +71,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
                     )),
                     "Must be Common Or Uncommon")
     );
+    public ExileKey<ItemRequirement, KeyInfo> IS_SINGLE_ITEM = ExileKey.ofId(this, "is_single_item", x -> new IsSingleStack(x.GUID()));
 
     // nones
 

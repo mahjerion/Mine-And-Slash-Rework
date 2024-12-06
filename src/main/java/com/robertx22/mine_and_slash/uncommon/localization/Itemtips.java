@@ -20,7 +20,7 @@ public enum Itemtips implements IAutoLocName {
     BUFF_CONSUMABLE_DURATION_MINUTES("Duration: %1$s minutes"),
     BUFF_CONSUMABLE_INFO("You can have One Consumable active per each type:\nElixirs, Meals and Seafoods."),
     DROP_CHANCE_EXTRA_INFO("Drop Chance assumes you're killing a mob of your level"),
-    SOUL_LOCKED_TO_TYPE("Locked Armor type: %1$s"),
+    SOUL_LOCKED_TO_TYPE("Locked Gear type: %1$s"),
     PROF_MAT_LEVEL_RANGE_INFO("Gained when your profession level is:"),
 
     CHECK_GEAR_STATS_IN_SOUL("This soul has gear stat, you can press Shift to check out."),

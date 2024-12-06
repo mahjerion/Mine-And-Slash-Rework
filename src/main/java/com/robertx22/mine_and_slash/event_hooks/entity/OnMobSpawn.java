@@ -88,7 +88,7 @@ public class OnMobSpawn {
                 endata.getUnit().initStats(); // give new stats to mob on spawn
                 endata.setEquipsChanged();
             }
-
+            endata.sync.setDirty();
         }
 
     }

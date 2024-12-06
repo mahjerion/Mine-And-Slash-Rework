@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.level_ranges.LevelRange;
 import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -24,6 +25,7 @@ import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.ModRange;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;
+import com.robertx22.mine_and_slash.tags.imp.SlotTag;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
@@ -33,7 +35,6 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ISettableLeve
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
-import com.robertx22.mine_and_slash.vanilla_mc.items.TagForceSoulItem;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -64,6 +65,13 @@ public class StatSoulData implements ICommonDataItem<GearRarity>, ISettableLevel
 
     public SavedGearSoul gear = null;
 
+
+    public static boolean has(ItemStack stack) {
+
+        return StackSaving.STAT_SOULS.has(stack) || (stack.getItem() instanceof CraftedSoulItem i && i.getSoul(stack) != null);
+
+
+    }
 
     // todo how do i make the result accept nbt.
     // and how to make jei accept nbt
@@ -290,9 +298,8 @@ public class StatSoulData implements ICommonDataItem<GearRarity>, ISettableLevel
                 }
             }
             if (!Objects.equals(this.force_tag, "")) {
-                Arrays.stream(TagForceSoulItem.AvailableTags.values()).filter(x -> x.tag.equals(this.force_tag)).findFirst().ifPresent(x -> {
-                    tooltip.add(Itemtips.SOUL_LOCKED_TO_TYPE.locName(x.translation).withStyle(ChatFormatting.GOLD));
-                });
+                SlotTag tag = new SlotTag(this.force_tag);
+                tooltip.add(Itemtips.SOUL_LOCKED_TO_TYPE.locName(tag.locName()).withStyle(ChatFormatting.GOLD));
             }
             exileTooltips.accept(new UsageBlock(tooltip));
             exileTooltips.accept(new OperationTipBlock().setShift());

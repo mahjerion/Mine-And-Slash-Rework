@@ -15,6 +15,9 @@ do_nothing
 downgrade_random_affix
 extract_gem
 extract_rune
+force_soul_tag_armor_stat
+force_soul_tag_dodge_stat
+force_soul_tag_magic_shield_stat
 increment_uses_level_up
 increment_uses_random_mythic_affix
 increment_uses_sharpening_stone

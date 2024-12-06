@@ -41,7 +41,7 @@ public class TagForceSoulItem extends AutoItem implements IShapelessRecipe {
 
     @Override
     public String locNameForLangFile() {
-        return tag.tagName + "-Armor Soul Modifier";
+        return tag.tagName + "-Gear Soul Modifier";
     }
 
     @Override

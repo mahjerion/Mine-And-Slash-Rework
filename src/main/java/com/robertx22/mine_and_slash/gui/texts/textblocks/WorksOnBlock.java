@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.mmorpg.UNICODE;
+import com.robertx22.mine_and_slash.saveclasses.stat_soul.StatSoulData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
@@ -144,7 +145,7 @@ public class WorksOnBlock extends AbstractTextBlock {
         TOOL(Words.TOOL, Words.TOOL_DESC, x -> StackSaving.TOOL.has(x)),
         JEWEL(Words.Jewel, Words.Jewel_DESC, x -> StackSaving.JEWEL.has(x)),
         MAP(Words.Map, Words.MapDESC, x -> StackSaving.MAP.has(x)),
-        SOUL(Words.Soul, Words.Gear_DESC, x -> StackSaving.STAT_SOULS.has(x)),
+        SOUL(Words.Soul, Words.GEAR_SOUL_DESC, x -> StatSoulData.has(x)),
         SOULLESS_GEAR(Words.SOULLESS_Gear, Words.SOULLESS_Gear_DESC, x -> !StackSaving.GEARS.has(x) && GearSlot.getSlotOf(x) != null);
 
         public Words name;

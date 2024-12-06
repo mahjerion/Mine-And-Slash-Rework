@@ -1,6 +1,8 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.31
+v.5.9.32
 
-- block now works with bonus dmg too
-- offhands now drop if requirements not met too
+- try fix 0 hp mobs
+- soul modifiers are now currencies
+- players no longer show skull
+- fixed infusions

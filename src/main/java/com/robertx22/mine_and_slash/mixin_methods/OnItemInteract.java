@@ -20,7 +20,6 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;
-import com.robertx22.mine_and_slash.vanilla_mc.items.TagForceSoulItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
@@ -133,6 +132,7 @@ public class OnItemInteract {
             }
         });
 
+        /*
         CLICKS.add(new ClickFeature() {
             @Override
             public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
@@ -162,6 +162,8 @@ public class OnItemInteract {
                 return new Result(false);
             }
         });
+
+         */
 
         CLICKS.add(new ClickFeature() {
             @Override

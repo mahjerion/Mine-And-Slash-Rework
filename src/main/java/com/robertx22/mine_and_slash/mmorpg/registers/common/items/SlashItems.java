@@ -150,9 +150,9 @@ public class SlashItems {
     public static HashMap<String, RegObj<Item>> STATIONS = new HashMap<>();
     public static HashMap<String, RegObj<Item>> EFFECT_DISPLAY = new HashMap<>();
 
-    public static RegObj<Item> CLOTH_SET = Def.item(() -> new TagForceSoulItem(() -> Items.PAPER, TagForceSoulItem.AvailableTags.CLOTH), "cloth_set");
-    public static RegObj<Item> LEATHER_SET = Def.item(() -> new TagForceSoulItem(() -> Items.LEATHER, TagForceSoulItem.AvailableTags.LEATHER), "leather_set");
-    public static RegObj<Item> PLATE_SET = Def.item(() -> new TagForceSoulItem(() -> Items.COPPER_INGOT, TagForceSoulItem.AvailableTags.PLATE), "plate_set");
+    //  public static RegObj<Item> CLOTH_SET = Def.item(() -> new TagForceSoulItem(() -> Items.PAPER, TagForceSoulItem.AvailableTags.CLOTH), "cloth_set");
+    // public static RegObj<Item> LEATHER_SET = Def.item(() -> new TagForceSoulItem(() -> Items.LEATHER, TagForceSoulItem.AvailableTags.LEATHER), "leather_set");
+    //public static RegObj<Item> PLATE_SET = Def.item(() -> new TagForceSoulItem(() -> Items.COPPER_INGOT, TagForceSoulItem.AvailableTags.PLATE), "plate_set");
 
 
     public static class GearItems {

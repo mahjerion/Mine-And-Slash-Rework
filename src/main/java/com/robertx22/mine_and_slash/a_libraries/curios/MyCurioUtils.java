@@ -27,6 +27,7 @@ public class MyCurioUtils {
                 .getCuriosHandler(player)
                 .orElse(null);
 
+
         if (handler != null) {
             for (String slot : slots) {
 

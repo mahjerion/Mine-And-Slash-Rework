@@ -9,8 +9,13 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.keys.*;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
@@ -26,6 +31,22 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public HarvestCurrencies HARVEST = new HarvestCurrencies(this);
     public JewelCurrencies JEWEL = new JewelCurrencies(this);
 
+
+    public ExileKeyMap<ExileCurrency, NamedKey> FORCE_SOUL_TAGS = new ExileKeyMap<ExileCurrency, NamedKey>(this, "force_soul_tag")
+            .ofList(Arrays.asList(
+                    new NamedKey(SlotTags.armor_stat.GUID(), "Armor"),
+                    new NamedKey(SlotTags.magic_shield_stat.GUID(), "Magic Shield"),
+                    new NamedKey(SlotTags.dodge_stat.GUID(), "Dodge")
+            ))
+            .build((id, info) -> {
+                return ExileCurrency.Builder.of(id, info.name + "-Gear Soul Modifier", WorksOnBlock.ItemType.SOUL)
+                        .rarity(IRarity.UNCOMMON)
+                        .addRequirement(ItemReqs.INSTANCE.IS_SINGLE_ITEM)
+                        .addAlwaysUseModification(ItemMods.INSTANCE.FORCE_SOUL_TAG.get(info))
+                        .potentialCost(0)
+                        .weight(0)
+                        .buildCurrency(this);
+            });
 
     public ExileKeyMap<ExileCurrency, SkillItemTierKey> SHARPEN_STONE_QUALITY = new ExileKeyMap<ExileCurrency, SkillItemTierKey>(this, "sharpening_stone")
             .ofSkillItemTiers()
@@ -220,6 +241,27 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                     .pattern("XXX")
                     .pattern(" Y ");
         });
+
+
+        for (Map.Entry<NamedKey, ExileKey<ExileCurrency, NamedKey>> en : FORCE_SOUL_TAGS.map.entrySet()) {
+
+            Item item = Items.COPPER_INGOT;
+            if (en.getKey().GUID().equals(SlotTags.magic_shield_stat.GUID())) {
+                item = Items.PAPER;
+            }
+            if (en.getKey().GUID().equals(SlotTags.dodge_stat.GUID())) {
+                item = Items.LEATHER;
+            }
+            Item finalItem = item;
+            en.getValue().addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+                return IShapedRecipe.of(x.getItem(), 1)
+                        .define('X', finalItem)
+                        .define('Y', Items.IRON_INGOT)
+                        .pattern("X")
+                        .pattern("Y");
+            });
+        }
+
 
     }
 }

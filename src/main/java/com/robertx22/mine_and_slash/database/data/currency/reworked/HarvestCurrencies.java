@@ -100,7 +100,6 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                         .pattern("YXY")
                         .pattern("YYY");
             });
-
         }
 
 

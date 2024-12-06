@@ -18,5 +18,6 @@ public class ItemReqSers {
     public static String NOT_CRAFTED_GEAR = "not_crafted_gear";
     public static String JEWEL_HAS_AFFIXES = "jewel_has_affixes";
     public static String HAS_SOCKET_OF_TYPE = "has_socket_of_type";
+    public static String IS_SINGLE_ITEM = "is_single_item";
 
 }

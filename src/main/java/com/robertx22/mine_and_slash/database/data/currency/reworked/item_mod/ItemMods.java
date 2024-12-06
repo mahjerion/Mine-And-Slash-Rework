@@ -6,9 +6,13 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.gea
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.jewel.CorruptJewelItemMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.jewel.UpgradeJewelAffixRarityMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.map.UpgradeMapRarityItemMod;
+import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.soul.ForceGearSlotSoulMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemReqs;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.keys.*;
+import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
+
+import java.util.Arrays;
 
 // i think i like this way of registering. one liner, holds id and lazy supplier for when needs to register
 public class ItemMods extends ExileKeyHolder<ItemModification> {
@@ -72,6 +76,18 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
 
     public ExileKey<ItemModification, KeyInfo> UPGRADE_CORRUPTION_AFFIX_RARITY = ExileKey.ofId(this, "up_corrupt_affix", x -> new UpgradeCorruptionAffixMod(x.GUID(), UpgradeAffixItemMod.AffixFinder.RANDOM_AFFIX.get()));
 
+    // jewels
+
+    public ExileKeyMap<ItemModification, IdKey> FORCE_SOUL_TAG = new ExileKeyMap<ItemModification, IdKey>(this, "force_soul_tag")
+            .ofList(Arrays.asList(
+                    new IdKey(SlotTags.armor_stat.GUID()),
+                    new IdKey(SlotTags.magic_shield_stat.GUID()),
+                    new IdKey(SlotTags.dodge_stat.GUID())
+            ))
+            .build((id, info) -> {
+                var data = new ForceGearSlotSoulMod.Data(info.GUID());
+                return new ForceGearSlotSoulMod(id, data);
+            });
 
     @Override
     public void loadClass() {

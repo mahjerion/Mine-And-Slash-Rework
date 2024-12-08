@@ -194,6 +194,7 @@ public class ProfessionBlockEntity extends BlockEntity {
             if (craftingState == Crafting_State.ACTIVE) {
                 boolean ifOnlyDestroy = getMats().stream().filter(x -> !x.toString().equals(Blocks.AIR.asItem().getDefaultInstance().toString())).allMatch(x -> x.toString().equals(SlashItems.DESTROY_OUTPUT.get().getDefaultInstance().toString()));
                 if (this.inventory.getInventory(INPUTS).isEmpty() || ifOnlyDestroy) {
+
                     if (recipe_locked)
                         craftingState = Crafting_State.IDLE;
                     else {
@@ -215,14 +216,14 @@ public class ProfessionBlockEntity extends BlockEntity {
                                 var can2 = tryRecipe(p);
                                 if (!can2.can && p.containerMenu instanceof CraftingStationMenu) {
                                     p.sendSystemMessage(can2.answer);
-                                    craftingState = Crafting_State.IDLE;
+                                    //craftingState = Crafting_State.IDLE;
                                 }
                             } else if (p.containerMenu instanceof CraftingStationMenu) {
                                 p.sendSystemMessage(can.answer);
                                 craftingState = Crafting_State.IDLE;
                             }
 
-                            craftingState = Crafting_State.IDLE;
+                            //craftingState = Crafting_State.IDLE;
                         } else {
                             ProfessionRecipe recipe = getCurrentRecipe();
                             if (recipe == null) {

@@ -54,6 +54,9 @@ public class DamageAction extends SpellAction {
                 DamageEvent dmg = EventBuilder.ofSpellDamage(ctx.caster, t, value, ctx.calculatedSpellData.getSpell())
                         .build();
 
+                dmg.allowSelfDamage = data.getOrDefault(MapField.ALLOW_SELF_DAMAGE, false);
+                
+
                 dmg.data.setupNumber(EventData.DMG_EFFECTIVENESS, dmgEffectiveness);
 
                 if (ctx.calculatedSpellData.getSpell().usesWeaponForDamage()) {
@@ -73,7 +76,7 @@ public class DamageAction extends SpellAction {
                     dmg.petEntity = (LivingEntity) ctx.sourceEntity;
                     dmg.data.setBoolean(EventData.IS_SUMMON_ATTACK, true);
                 }
-               
+
 
                 dmg.setElement(ele);
                 dmg.Activate();

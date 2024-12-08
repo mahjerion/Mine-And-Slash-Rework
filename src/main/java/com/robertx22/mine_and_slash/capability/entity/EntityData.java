@@ -232,7 +232,7 @@ public class EntityData implements ICap, INeededForClient {
         try {
             nbt.putInt(LEVEL, level);
             nbt.putString(RARITY, rarity);
-            nbt.putInt(HP, (int) getUnit().getCalculatedStat(Health.getInstance()).getValue());
+            nbt.putInt(HP, maxHealth);
             nbt.putString(ENTITY_TYPE, this.type.toString());
 
             if (affixes != null) {
@@ -623,7 +623,6 @@ public class EntityData implements ICap, INeededForClient {
 
         var stats = StatCalculation.getStatsWithoutSuppGems(entity, this);
 
-
         StatCalculation.calc(unit, stats, entity, null, -1);
 
         if (entity instanceof Player p) {
@@ -653,6 +652,7 @@ public class EntityData implements ICap, INeededForClient {
             }
         }
 
+        this.maxHealth = (int) getUnit().getCalculatedStat(Health.getInstance()).getValue();
         //watch.print("stat calc for " + (entity instanceof PlayerEntity ? "player " : "mob "));
 
     }

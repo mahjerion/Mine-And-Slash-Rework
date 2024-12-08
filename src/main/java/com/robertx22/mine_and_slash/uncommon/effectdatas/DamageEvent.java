@@ -363,7 +363,16 @@ public class DamageEvent extends EffectEvent {
         return;
     }
 
+    public boolean allowSelfDamage = false;
+
+
     public boolean stopFriendlyFire() {
+
+        if (allowSelfDamage) {
+            if (source == target) {
+                return false;
+            }
+        }
         if (WorldUtils.isMapWorldClass(source.level())) {
             // in maps, we dont want mobs to damage each other
             if (AllyOrEnemy.allies.is(source, target)) {

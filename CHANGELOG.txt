@@ -1,8 +1,7 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.32
+v.5.9.33
 
-- try fix 0 hp mobs
-- soul modifiers are now currencies
-- players no longer show skull
-- fixed infusions
+- try again fix 0 hp mobs
+- fix stations only crafting a few times instead of all
+- added allow_self_damage to spell datapack options

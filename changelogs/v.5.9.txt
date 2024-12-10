@@ -266,3 +266,10 @@ v.5.9.32
 - soul modifiers are now currencies
 - players no longer show skull
 - fixed infusions
+
+v.5.9.33
+
+- try again fix 0 hp mobs
+- fix stations only crafting a few times instead of all
+- added allow_self_damage to spell datapack options
+- pressing shift now shows you locked sockets, this is how many more sockets you can add to this item

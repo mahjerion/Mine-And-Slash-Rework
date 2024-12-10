@@ -117,7 +117,6 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
 
 
     public int getEmptySockets() {
-
         return sockets.getTotalSockets() - this.sockets.getSocketedGemsCount();
     }
 

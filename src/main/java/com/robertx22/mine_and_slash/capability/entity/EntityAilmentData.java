@@ -224,21 +224,21 @@ public class EntityAilmentData {
                     l.removeIf(x -> x.ticks < 1);
                 }
             }
-
-
-            if (en.tickCount % 400 == 0) {
-                ServerLevel s = (ServerLevel) en.level();
-
-                this.datas.entrySet().removeIf(x -> {
-                    if (x.getValue().isEmpty()) {
-                        return true;
-                    }
-                    Entity entity = s.getEntity(x.getKey());
-                    return entity instanceof LivingEntity == false;
-                });
-            }
-
         }
+
+        if (en.tickCount % 400 == 0) {
+            ServerLevel s = (ServerLevel) en.level();
+
+            this.datas.entrySet().removeIf(x -> {
+                if (x.getValue().isEmpty()) {
+                    return true;
+                }
+                Entity entity = s.getEntity(x.getKey());
+                return entity instanceof LivingEntity == false;
+            });
+        }
+
+        
     }
 
 

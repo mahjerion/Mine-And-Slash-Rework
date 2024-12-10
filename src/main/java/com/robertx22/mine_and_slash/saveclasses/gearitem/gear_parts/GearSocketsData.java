@@ -86,11 +86,18 @@ public class GearSocketsData implements IStatsContainer, IGearPartTooltip {
     }
 
     public ExplainedResult canAddSocket(GearItemData gear) {
-
         if (sl < gear.getRarity().sockets.max) {
             return ExplainedResult.success();
         }
         return ExplainedResult.failure(Chats.ALREADY_MAX_SOCKETS.locName());
+    }
+
+    public int getMaxSocketsPossible(GearItemData gear) {
+        return gear.getRarity().sockets.max;
+    }
+
+    public int getMissingSockets(GearItemData gear) {
+        return getMaxSocketsPossible(gear) - sl;
     }
 
     public int getTotalSockets() {
@@ -135,8 +142,12 @@ public class GearSocketsData implements IStatsContainer, IGearPartTooltip {
             for (int i = 0; i < gear.getEmptySockets(); i++) {
                 list.add(Itemtips.EMPTY_SOCKET.locName().withStyle(ChatFormatting.GRAY));
             }
-
-
+            if (info.hasShiftDown) {
+                for (int i = 0; i < getMissingSockets(gear); i++) {
+                    list.add(Itemtips.LOCKED_SOCKET.locName().withStyle(ChatFormatting.RED));
+                }
+            }
+            
             if (hasRuneWord()) {
                 var r = getRuneWord();
                 list.add(Component.empty());

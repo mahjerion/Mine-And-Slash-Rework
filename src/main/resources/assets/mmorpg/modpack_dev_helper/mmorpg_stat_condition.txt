@@ -37,6 +37,7 @@ is_crossbow_wep_type
 is_day
 is_day_is_false
 is_elemental_damage
+is_hit_or_bonus
 is_ignite_explosion_not_on_cd
 is_in_combat
 is_in_combat_is_false

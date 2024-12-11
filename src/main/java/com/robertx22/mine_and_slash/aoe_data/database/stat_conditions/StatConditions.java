@@ -124,6 +124,13 @@ public class StatConditions implements ExileRegistryInit {
             "is_attack_or_spell_attack",
             Arrays.asList(ATTACK_TYPE_MATCHES.get(AttackType.hit).GUID())
     );
+    public static StatCondition IS_HIT_OR_BONUS = new EitherIsTrueCondition(
+            "is_hit_or_bonus",
+            Arrays.asList(
+                    ATTACK_TYPE_MATCHES.get(AttackType.hit).GUID(),
+                    ATTACK_TYPE_MATCHES.get(AttackType.bonus_dmg).GUID()
+            )
+    );
 
     public static StatCondition IS_NOT_DOT = new StringMatchesCondition(EventData.ATTACK_TYPE, AttackType.dot.name()).flipCondition();
 

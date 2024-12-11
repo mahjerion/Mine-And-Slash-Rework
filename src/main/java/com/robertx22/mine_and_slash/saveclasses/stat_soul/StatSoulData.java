@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.saveclasses.stat_soul;
 
 import com.robertx22.library_of_exile.utils.ItemstackDataSaver;
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
@@ -43,6 +44,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class StatSoulData implements ICommonDataItem<GearRarity>, ISettableLevelTier {
@@ -189,9 +191,19 @@ public class StatSoulData implements ICommonDataItem<GearRarity>, ISettableLevel
         GearSlot gearslot = getSlotFor(stack);
         String slotid = gearslot.GUID();
 
-        b.gearItemSlot.set(ExileDB.GearTypes()
-                .getFilterWrapped(x -> x.gear_slot.equals(slotid) && (!forcesTag() ? true : x.tags.contains(force_tag)))
-                .random());
+
+        var possible = ExileDB.GearTypes().getFilterWrapped(x -> x.gear_slot.equals(slotid)).list;
+
+        if (forcesTag()) {
+            // only use the force tag if the slot can actually roll that tag, this is a bandaid fix for now
+            var filted = possible.stream().filter(x -> x.tags.contains(force_tag)).collect(Collectors.toList());
+            if (!filted.isEmpty()) {
+                possible = filted;
+            }
+        }
+        if (!possible.isEmpty()) {
+            b.gearItemSlot.set(RandomUtils.weightedRandom(possible));
+        }
 
         UniqueGear uniq = ExileDB.UniqueGears().get(this.uniq);
 

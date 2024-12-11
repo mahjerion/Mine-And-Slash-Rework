@@ -12,12 +12,14 @@ public class Client {
 
 
         ForgeEvents.registerForgeEvent(TickEvent.ClientTickEvent.class, event -> {
-            if (event.phase == TickEvent.Phase.END) {
-                OnClientTick.onEndTick(Minecraft.getInstance());
-                OnKeyPress.onEndTick(Minecraft.getInstance());
+            if (event.phase != TickEvent.Phase.END) {
+                return;
             }
+            OnClientTick.onEndTick(Minecraft.getInstance());
+            OnKeyPress.onEndTick(Minecraft.getInstance());
+            
         });
 
-        
+
     }
 }

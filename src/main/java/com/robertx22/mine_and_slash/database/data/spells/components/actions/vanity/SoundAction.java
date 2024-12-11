@@ -22,12 +22,15 @@ public class SoundAction extends SpellAction {
     @Override
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
         if (!ctx.world.isClientSide) {
+            try {
+                float pitch = data.get(PITCH).floatValue();
+                float volume = data.get(VOLUME).floatValue();
+                SoundEvent sound = data.getSound();
 
-            float pitch = data.get(PITCH).floatValue();
-            float volume = data.get(VOLUME).floatValue();
-            SoundEvent sound = data.getSound();
-
-            SoundUtils.playSound(ctx.world, ctx.getBlockPos(), sound, volume, pitch);
+                SoundUtils.playSound(ctx.world, ctx.getBlockPos(), sound, volume, pitch);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -36,8 +39,7 @@ public class SoundAction extends SpellAction {
         d.type = GUID();
         d.put(VOLUME, volume);
         d.put(PITCH, pitch);
-        d.put(SOUND, BuiltInRegistries.SOUND_EVENT.getKey(sound)
-                .toString());
+        d.put(SOUND, BuiltInRegistries.SOUND_EVENT.getKey(sound).toString());
         return d;
     }
 

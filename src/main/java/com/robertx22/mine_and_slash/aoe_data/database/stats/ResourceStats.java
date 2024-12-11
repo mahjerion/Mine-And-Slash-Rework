@@ -237,7 +237,7 @@ public class ResourceStats {
             .worksWithEvent(DamageEvent.ID)
             .setPriority(StatPriority.Damage.AFTER_DAMAGE_BONUSES)
             .setSide(EffectSides.Source)
-            .addCondition(StatConditions.IS_ATTACK_DAMAGE)
+            .addCondition(StatConditions.IS_HIT_OR_BONUS)
             .addEffect(StatEffects.LEECH_PERCENT_OF_DAMAGE_AS_RESOURCE.get(ResourceType.health))
             .setLocName(x -> "Lifesteal")
             .setLocDesc(x -> "Restore % of damage as health.")

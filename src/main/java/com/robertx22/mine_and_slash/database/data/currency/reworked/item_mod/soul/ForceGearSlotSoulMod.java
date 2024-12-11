@@ -33,6 +33,7 @@ public class ForceGearSlotSoulMod extends ItemModification {
         // todo i should merge souls into 1 type of data saving..
         // maybe add profession outcome types, default type being tier 1 and 2 etc?
         // can also leave it as is, souls probably wont get any more specific currencies
+       
 
         var craftedStack = stack.getStack();
 

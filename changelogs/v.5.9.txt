@@ -273,3 +273,8 @@ v.5.9.33
 - fix stations only crafting a few times instead of all
 - added allow_self_damage to spell datapack options
 - pressing shift now shows you locked sockets, this is how many more sockets you can add to this item
+
+v.5.9.34
+
+- attempt to fix keybind bugs
+- fix soul modifiers being able to make crazy items

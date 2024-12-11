@@ -17,6 +17,7 @@ public class InCalc {
         this.unit = unit;
     }
 
+    // todo convert this to stat compat
     public void addVanillaHpToStats(LivingEntity entity, InCalcStatContainer calc) {
         if (entity instanceof Player) {
 

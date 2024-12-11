@@ -62,11 +62,12 @@ public class OnKeyPress {
                     number = key.getIndex();
                 }
             }
-            
+
             // try see if consuming clicks fixes the random key bugs
-            for (SpellKeybind key : keys) {
+            for (SpellKeybind key : SpellKeybind.ALL) {
                 key.key.consumeClick();
             }
+
             if (ClientConfigs.getConfig().HOTBAR_SWAPPING.get()) {
                 if (SpellKeybind.IS_ON_SECONd_HOTBAR) {
                     if (number > -1) {

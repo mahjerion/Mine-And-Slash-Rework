@@ -1,0 +1,46 @@
+
+## What is Gear Compatiblity?
+
+Gear Compat in Mine and Slash means the gear being able to have a soul.
+Souls are a way of saying the item has mine and slash gear stats.
+
+## Do I need to add Compat for X Items?
+
+If the items are: armor, curio ring/necklace then they will be instantly compatible.
+If they are weapons, read on.
+
+## How do I make an item Compatible?
+
+This assumes the item is of a type that already exists, for example, Vanilla swords become mine and slash sword item types.
+To make these items compatible (in case the auto-compat didn't work), you just have to either:
+1) add them to server config's compat item list
+2) Create an mmorpg:slot tag datapack with them inside
+
+## What if the item type doesn't exist?
+
+If it's a simple melee weapon, you can just use an existing weapon type like Sword and just ignore the funny item being a scythe but named a sword.
+If you find that horrible, read on:
+
+If you say have a Scythe weapon and want to give it a scythe item type, you have to actually create the datapacks needed:
+- mmorpg_base_gear_types
+- mmorpg_gear_slot
+- mmorpg_weapon_type (Decides what is a valid attack, for melee weapons that's player attack, for bows that's an arrow hit)
+
+These names are currently confusing and need renaming, but anyway some examples:
+
+Plate chestplate is a mmorpg_base_gear_types of chest mmorpg_gear_slot
+
+Sword is a mmorpg_base_gear_types of sword mmorpg_gear_slot with sword mmorpg_weapon_type
+
+As you notice, some items like chestplates have different base gear types, cloth, plate, leather.
+But items like swords have just 1 type for their slot.
+
+## I made a weapon and it's ingame but the attacks don't do damage correctly!
+
+That means your mmorpg_weapon_type datapack is falsely configured.
+You need to find out how the weapon deals damage and add that correctly to the mmorpg_weapon_type datapack.
+This can be done by checking the mod github code of the weapon you're using and seeing how it deals damage.
+(A feature to check this ingame might be created in the future if people want it)
+
+It's possible to just allow any damage to trigger weapon hits, but you probably don't want your bazooka to deal weapon damage on snowball hits right?
+That's why you should try make it specific so ONLY that weapon can actually trigger the hits.

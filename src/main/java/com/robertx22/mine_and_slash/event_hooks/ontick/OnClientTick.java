@@ -66,8 +66,10 @@ public class OnClientTick {
                         .getCooldowns()
                         .onTicksPass(1);
 
-                Load.player(player).spellCastingData
-                        .onTimePass(player); // ticks spells on client
+                if (!mc.isPaused()) {
+                    Load.player(player).spellCastingData
+                            .onTimePass(player); // ticks spells on client
+                }
 
                 List<String> onCooldownAfter = Load.player(player)
                         .spellCastingData

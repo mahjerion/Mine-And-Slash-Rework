@@ -278,3 +278,11 @@ v.5.9.34
 
 - attempt to fix keybind bugs
 - fix soul modifiers being able to make crazy items
+
+v.5.9.35
+
+- released on modrinth now also!
+- added chance to receive ailment stat
+- map exploration announcements should no longer be dimension wide
+- moved magic shield heal to use value after dmg mods
+- attempt to fix boss multiplication in maps

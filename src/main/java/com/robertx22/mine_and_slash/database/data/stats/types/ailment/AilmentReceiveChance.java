@@ -2,28 +2,22 @@ package com.robertx22.mine_and_slash.database.data.stats.types.ailment;
 
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailment;
-import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
-import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
-import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
-import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
-import net.minecraft.world.entity.LivingEntity;
 
-public class AilmentChance extends Stat {
+public class AilmentReceiveChance extends Stat {
 
     Ailment ailment;
 
-    public AilmentChance(Ailment ailment) {
+    public AilmentReceiveChance(Ailment ailment) {
         this.ailment = ailment;
         this.is_perc = true;
         this.statEffect = new Effect();
@@ -33,27 +27,6 @@ public class AilmentChance extends Stat {
         this.gui_group = StatGuiGroup.AILMENT_CHANCE;
     }
 
-    public static void activate(float dmg, Ailment ailment, LivingEntity source, LivingEntity target, Spell spell) {
-        // we take the original or base damage of the attack so we don't double dip
-
-        if (dmg <= 0) {
-            return;
-        }
-
-        // todo will probably have to tweak this
-        var event = EventBuilder.ofDamage(source, target, dmg).setupDamage(AttackType.dot, WeaponTypes.none, PlayStyle.INT).set(x -> {
-            x.disableActivation = true; // we dont actually want to do the dmg now
-            x.setElement(ailment.element);
-            x.setisAilmentDamage(ailment);
-            if (spell != null) {
-                x.data.setString(EventData.SPELL, spell.GUID());
-            }
-        }).build();
-
-        event.Activate();
-
-        Load.Unit(target).ailments.onAilmentCausingDamage(source, target, ailment, event.data.getNumber());
-    }
 
     private class Effect extends BaseDamageEffect {
 
@@ -64,7 +37,7 @@ public class AilmentChance extends Stat {
 
         @Override
         public EffectSides Side() {
-            return EffectSides.Source;
+            return EffectSides.Target;
         }
 
         @Override
@@ -88,16 +61,16 @@ public class AilmentChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Chance to Cause the Ailment on " + getElement().dmgName + "  hits. Maximum chance is 100%. " + ailment.locDescForLangFile();
+        return "Chance to Receive the Ailment on " + getElement().dmgName + "  hits. Maximum chance is 100%. " + ailment.locDescForLangFile();
     }
 
     @Override
     public String locNameForLangFile() {
-        return ailment.locNameForLangFile() + " Chance";
+        return "Chance to Receive " + ailment.locNameForLangFile();
     }
 
     @Override
     public String GUID() {
-        return ailment.GUID() + "_chance";
+        return ailment.GUID() + "_receive_chance";
     }
 }

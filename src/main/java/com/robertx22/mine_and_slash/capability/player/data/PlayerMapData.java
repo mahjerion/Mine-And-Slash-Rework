@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.capability.player.data;
 import com.robertx22.library_of_exile.utils.TeleportUtils;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +50,8 @@ public class PlayerMapData {
         if (p.level().isClientSide) {
             return;
         }
+        Load.Unit(p).getCooldowns().setOnCooldown("stop_map_gen", 2);
+
         BlockPos pos = getTeleportBackPos();
         TeleportUtils.teleport((ServerPlayer) p, pos, new ResourceLocation(tpbackdim.isEmpty() ? "minecraft:overworld" : tpbackdim));
 

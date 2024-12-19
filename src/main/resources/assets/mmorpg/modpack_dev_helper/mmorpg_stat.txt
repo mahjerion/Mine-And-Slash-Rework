@@ -57,6 +57,7 @@ bleed_chance
 bleed_damage
 bleed_duration
 bleed_proc_chance
+bleed_receive_chance
 bleed_resistance
 bleed_strength
 block_aura_cost
@@ -79,6 +80,7 @@ burn_chance
 burn_damage
 burn_duration
 burn_proc_chance
+burn_receive_chance
 burn_resistance
 burn_strength
 cast_speed
@@ -182,6 +184,7 @@ electrify_chance
 electrify_damage
 electrify_duration
 electrify_proc_chance
+electrify_receive_chance
 electrify_resistance
 electrify_strength
 elemental_any_wep_damage
@@ -247,6 +250,7 @@ freeze_chance
 freeze_damage
 freeze_duration
 freeze_proc_chance
+freeze_receive_chance
 freeze_resistance
 freeze_strength
 frenzy_charge_on_crit
@@ -603,6 +607,7 @@ poison_chance
 poison_damage
 poison_duration
 poison_proc_chance
+poison_receive_chance
 poison_resistance
 poison_strength
 positive_eff_dur_u_cast

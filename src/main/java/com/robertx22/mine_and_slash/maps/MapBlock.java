@@ -97,12 +97,13 @@ public class MapBlock extends BaseEntityBlock {
                 return InteractionResult.CONSUME;
             }
 
-            MapItemData data = StackSaving.MAP.loadFrom(p.getItemInHand(pHand));
 
             if (WorldUtils.isDungeonWorld(level)) {
                 Load.player(p).map.teleportBack(p);
-
+                return InteractionResult.CONSUME;
+                
             } else {
+                MapItemData data = StackSaving.MAP.loadFrom(p.getItemInHand(pHand));
 
                 if (data != null) {
 

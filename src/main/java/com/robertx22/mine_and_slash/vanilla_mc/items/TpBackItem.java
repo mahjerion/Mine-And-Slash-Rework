@@ -48,8 +48,7 @@ public class TpBackItem extends AutoItem implements IShapedRecipe {
                 }
                 itemstack.shrink(1);
 
-                Load.Unit(p).getCooldowns().setOnCooldown("stop_map_gen", 2);
-
+               
                 Load.player(p).map.teleportBack(p);
 
                 return InteractionResultHolder.success(p.getItemInHand(pUsedHand));

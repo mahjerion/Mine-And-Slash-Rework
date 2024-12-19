@@ -70,7 +70,7 @@ public class ServerContainer {
         MOB_DESPAWN_DISTANCE_IN_MAPS = b.comment("Distance needed from player to despawn mobs in maps, lower means more despawning")
                 .defineInRange("MOB_DESPAWN_DISTANCE_IN_MAPS", 30D, 5, 200);
         MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA = b.comment("")
-                .defineInRange("MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA", 30D, 5, 99D);
+                .defineInRange("MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA", 50, 5, 99D);
         IN_COMBAT_REGEN_MULTI = b.defineInRange("in_combat_regen_multi", 0.5, 0, 10);
         COMBAT_TO_PROFESSION_RESTED_XP_GENERATION = b.defineInRange("COMBAT_TO_PROFESSION_RESTED_XP_GENERATION", 0.25, 0, 1);
         PROFESSION_TO_COMBAT_RESTED_XP_GENERATION = b.defineInRange("PROFESSION_TO_COMBAT_RESTED_XP_GENERATION", 0.1, 0, 1);

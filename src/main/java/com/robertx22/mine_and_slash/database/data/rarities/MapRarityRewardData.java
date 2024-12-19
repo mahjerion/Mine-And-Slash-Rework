@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.screens.map.MapSyncData;
 import com.robertx22.mine_and_slash.maps.MapData;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TeamUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.MapCompletePacket;
@@ -51,8 +52,11 @@ public class MapRarityRewardData {
                 map.completion_rarity = higher.GUID();
 
                 for (Player x : player.level().players()) {
-                    x.sendSystemMessage(Chats.MAP_COMPLETE_RARITY_UPGRADE.locName(ExileDB.GearRarities().get(map.completion_rarity).coloredName()).withStyle(ChatFormatting.LIGHT_PURPLE));
-                    Packets.sendToClient(player, new MapCompletePacket(new MapSyncData(map)));
+                    var maptest = Load.mapAt(player.level(), x.blockPosition());
+                    if (maptest != null && maptest.map.uuid.equals(map.map.uuid)) {
+                        x.sendSystemMessage(Chats.MAP_COMPLETE_RARITY_UPGRADE.locName(ExileDB.GearRarities().get(map.completion_rarity).coloredName()).withStyle(ChatFormatting.LIGHT_PURPLE));
+                        Packets.sendToClient(player, new MapCompletePacket(new MapSyncData(map)));
+                    }
                 }
             }
         }

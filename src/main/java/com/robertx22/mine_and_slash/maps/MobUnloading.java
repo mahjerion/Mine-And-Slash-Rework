@@ -15,6 +15,10 @@ public class MobUnloading {
     public static void onUnloadMob(LivingEntity en) {
         try {
 
+            if (en instanceof Mob mob && mob.isPersistenceRequired()) {
+                return; // dont save unloaded persistent mobs
+            }
+            
             if (WorldUtils.isMapWorldClass(en.level()) && Load.Unit(en).isValidMapMob()) {
                 var cp = new ChunkPos(en.blockPosition());
 

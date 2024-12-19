@@ -1,8 +1,9 @@
+// --- COMMON BUILD SCRIPT START ---
 buildscript {
     repositories {
-        maven { url = 'https://maven.sinytra.org/' }
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://maven.sinytra.org/' } // Wiki
+        maven { url = 'https://maven.parchmentmc.org' } // Mappings
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
     }
@@ -13,32 +14,33 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "0.3.3"
-    id "org.moddedmc.wiki.toolkit" version "0.2.4"
+    id "me.modmuss50.mod-publish-plugin" version "${publish_plugin_version}"
+    id "org.moddedmc.wiki.toolkit" version "${wiki_toolkit_version}"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/common.gradle'
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/exile_lib_dep.gradle'
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/ide_runs.gradle'
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/meta.gradle'
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/publishing.gradle'
 
-archivesBaseName = "${mod_archive_name}-${minecraft_version}"
-version = project.mod_version
-group = project.maven_group
+// --- COMMON BUILD SCRIPT END ---
+
+
+// --- MOD SPECIFIC ---
 
 repositories {
 
-    maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" } // geckolib
-    maven { url = "https://maven.kosmx.dev/" } // player animations
     maven { url = "https://maven.theillusivec4.top/" } // curios
-    maven { url '"https://maven.theillusivec4.top/' }
-
+    maven { url = "https://maven.kosmx.dev/" } // player animations
     maven {
         // location of a maven mirror for JEI files, as a fallback
         name = "ModMaven"
@@ -50,139 +52,42 @@ repositories {
 }
 
 minecraft {
-    //mappings channel: "snapshot", version: "20201028-1.16.3"
-
-    mappings channel: "${mapping_channel}", version: "${mapping_version}-${minecraft_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-            arg "-mixin.config=${mod_id}-mixins.json"
-            // This makes dependencies with mixins work
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            // This makes dependencies with mixins work
-            mods {
-                modid {
-                    source sourceSets.main
-                }
-            }
-        }
-        server {
-            workingDirectory project.file('run')
-            arg "-mixin.config=${mod_id}-mixins.json"
-            // This makes dependencies with mixins work
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            // This makes dependencies with mixins work
-            mods {
-                modid {
-                    source sourceSets.main
-                }
-            }
-        }
-        data {
-            workingDirectory project.file('run')
-            arg "-mixin.config=${mod_id}-mixins.json"
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', '${mod_id}', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                modid {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-}
 dependencies {
 
-    minecraft([
-            group  : "net.minecraftforge",
-            name   : 'forge',
-            version: "$project.minecraft_version-${project.forgeversion}"
-    ])
-
-
-    if (System.getProperty("idea.sync.active") != "true") {
-        annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
-    }
-    //implementation fg.deobf("blank:lootr-forge-1.20:0.7.34.89")
-
-    implementation fg.deobf("blank:Library_of_Exile-1.20.1:${exile_library_version}")
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${project.jei_version}") //API for compile
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${project.jei_version}") //API for compile
     runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${project.jei_version}") //Full for runtime
 
-
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
-    //implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
-
-    //  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    // at runtime, use the full JEI jar
-    // runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 }
 
-
-jar {
-    manifest {
-        attributes([
-                "MixinConnector": "com.robertx22.mine_and_slash.mmorpg.MixinConnector",
-                "MixinConfigs"  : "mmorpg-mixins.json"
-        ])
-    }
-    finalizedBy 'reobfJar'
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-
-apply plugin: 'org.spongepowered.mixin'
-mixin {
-    add sourceSets.main, "mmorpg.refmap.json"
-}
 
 publishMods {
 
-    file = jar.archiveFile
-    changelog = file("CHANGELOG.txt").text
-    type = STABLE
-    modLoaders.add("forge")
-
     curseforge {
-        accessToken = file("key.properties").text
-        projectId = "${curse_id}"
-        displayName = "${mod_archive_name}-${minecraft_version}-v${mod_version}"
-        minecraftVersions.add("${minecraft_version}")
-        minecraftVersions.add("1.20")
-
         requires { slug = "library-of-exile" }
         requires { slug = "curios" }
         requires { slug = "playeranimator" }
-
+    }
+    modrinth {
+        requires { slug = "library-of-exile" }
+        requires { slug = "curios" }
+        requires { slug = "playeranimator" }
     }
 }
-
 
 wiki {
     docs {
         mutils {
-             root = file("docs")
+            root = file("docs")
         }
     }
 }
+
+// --- MOD SPECIFIC ---

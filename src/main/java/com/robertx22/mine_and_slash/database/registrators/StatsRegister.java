@@ -74,6 +74,7 @@ public class StatsRegister implements ExileRegistryInit {
 
                     for (Ailment ailment : ExileDB.Ailments().getList()) {
                         add(new AilmentChance(ailment));
+                        add(new AilmentReceiveChance(ailment));
                         add(new AilmentDamage(ailment));
                         add(new AilmentDuration(ailment));
                         add(new AilmentEffectStat(ailment));

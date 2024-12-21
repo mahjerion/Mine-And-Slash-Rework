@@ -295,8 +295,10 @@ public class ProfessionBlockEntity extends BlockEntity {
         boolean destroyOuput = false;
 
         if (this.inventory.getInventory(INPUTS).countItem(SlashItems.DESTROY_OUTPUT.get()) > 0) {
-            expMulti = 3;
-            destroyOuput = true;
+            if (!getProfession().GUID().equals(Professions.SALVAGING)) {
+                expMulti = 3;
+                destroyOuput = true;
+            }
         }
 
         int expGive = (int) (recipe.getExpReward(p, ownerLvl, getMats()) * expMulti);

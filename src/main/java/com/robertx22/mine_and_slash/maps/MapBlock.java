@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -101,7 +102,7 @@ public class MapBlock extends BaseEntityBlock {
             if (WorldUtils.isDungeonWorld(level)) {
                 Load.player(p).map.teleportBack(p);
                 return InteractionResult.CONSUME;
-                
+
             } else {
                 MapItemData data = StackSaving.MAP.loadFrom(p.getItemInHand(pHand));
 
@@ -164,6 +165,15 @@ public class MapBlock extends BaseEntityBlock {
 
 
     static boolean canStartMap(Player p, MapItemData data) {
+
+        var cds = Load.Unit(p).getCooldowns();
+
+        if (cds.isOnCooldown("start_map")) {
+            int sec = cds.getCooldownTicks("start_map") / 20;
+            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR.locName(), Words.MAP_START_COOLDOWN.locName(sec)));
+            return false;
+        }
+
 
         if (!data.getStatReq().meetsReq(Load.Unit(p).getLevel(), Load.Unit(p))) {
 

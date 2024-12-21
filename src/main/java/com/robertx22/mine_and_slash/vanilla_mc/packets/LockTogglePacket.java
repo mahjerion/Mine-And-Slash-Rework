@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.packets.ExilePacketContext;
 import com.robertx22.mine_and_slash.database.data.profession.Crafting_State;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlockEntity;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
+import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -43,9 +44,15 @@ public class LockTogglePacket extends MyPacket<LockTogglePacket> {
 
     @Override
     public void onReceived(ExilePacketContext exilePacketContext) {
+
         BlockEntity be = exilePacketContext.getPlayer().level().getBlockEntity(this.block_pos);
         if (be instanceof ProfessionBlockEntity) {
             ProfessionBlockEntity pbe = (ProfessionBlockEntity) be;
+
+            if (pbe.getProfession().GUID().equals(Professions.SALVAGING)) {
+                return;
+            }
+
             if (pbe.craftingState == Crafting_State.ACTIVE && pbe.recipe_locked) {
                 if ((pbe.ownerUUID != null && pbe.ownerUUID.compareTo(exilePacketContext.getPlayer().getUUID()) == 0) || pbe.ownerUUID == null)
                     exilePacketContext.getPlayer().sendSystemMessage(Component.literal("This Station is currently claimed by another player").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));

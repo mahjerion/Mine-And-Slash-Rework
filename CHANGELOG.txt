@@ -1,9 +1,9 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.35
+v.5.9.36
 
-- released on modrinth now also!
-- added chance to receive ailment stat
-- map exploration announcements should no longer be dimension wide
-- moved magic shield heal to use value after dmg mods
-- attempt to fix boss multiplication in maps
+- removed lock button from salvage station
+- downgrade map now has a cooldown of 5 minutes
+- starting a new map also has a cooldown of 3 minutes
+These cooldowns are to stop the abuse of generating tons of maps to search for best layouts.
+They shouldn't really impact genuine play

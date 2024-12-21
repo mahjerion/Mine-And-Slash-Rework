@@ -18,6 +18,8 @@ public enum Words implements IAutoLocName {
     OPTION_LOCKED_UNTIL_BOSS_KILLED("Option Locked Until Map Boss is Killed."),
     MAP_IS_ALREADY_MAX_RARITY("Map is already at Maximum Rarity."),
     NO_MAP_TO_UPGRADE("You don't have any map currently."),
+    MAP_DOWNGRADE_COOLDOWN("Map Downgrade option is on cooldown for 1$s seconds"),
+    MAP_START_COOLDOWN("You can not start new maps for 1$s seconds"),
 
     UPGRADE_MAP("Upgrade Map Rarity"),
     DOWNGRADE_MAP("Downgrade Map Rarity"),

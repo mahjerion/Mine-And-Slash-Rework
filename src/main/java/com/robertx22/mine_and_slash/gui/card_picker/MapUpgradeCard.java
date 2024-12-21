@@ -54,14 +54,20 @@ public class MapUpgradeCard implements ICard {
         DOWNGRADE("downgrade", Words.DOWNGRADE_MAP, Words.DOWNGRADE_MAP_DESC) {
             @Override
             public ExplainedResult canPick(Player p) {
-                var map = Load.player(p).map;
+                var pmap = Load.player(p).map;
 
-                if (map.map == null) {
+                if (pmap.map == null) {
                     return ExplainedResult.failure(Words.NO_MAP_TO_UPGRADE.locName());
                 }
 
-                return ExplainedResult.success();
+                var cds = Load.Unit(p).getCooldowns();
 
+                if (cds.isOnCooldown("downgrade_map")) {
+                    int sec = cds.getCooldownTicks("downgrade_map") / 20;
+                    return ExplainedResult.failure(Words.MAP_DOWNGRADE_COOLDOWN.locName(sec));
+                }
+
+                return ExplainedResult.success();
             }
 
             @Override
@@ -79,6 +85,11 @@ public class MapUpgradeCard implements ICard {
 
                 PlayerUtils.giveItem(stack, p);
                 Load.player(p).map.clearMapAfterUpgrading();
+
+                var cds = Load.Unit(p).getCooldowns();
+
+                cds.setOnCooldown("downgrade_map", 60 * 20 * 5);
+
             }
         },
 

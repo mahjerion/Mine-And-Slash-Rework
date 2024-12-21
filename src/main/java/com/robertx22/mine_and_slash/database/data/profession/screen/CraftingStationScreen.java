@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database.data.profession.screen;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
 import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
+import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.items.ProfTierMatItem;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -74,7 +75,9 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(new LockButton(leftPos + 79, topPos + 33, this));
+        if (!prof.GUID().equals(Professions.SALVAGING)) {
+            this.addRenderableWidget(new LockButton(leftPos + 79, topPos + 33, this));
+        }
         this.addRenderableWidget(new CraftButton(leftPos + 79, topPos + 51, this));
 
         if (this.primaryTier != null) {

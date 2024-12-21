@@ -200,7 +200,6 @@ public class ResourceStats {
             .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
             .setSide(EffectSides.Target)
             .addCondition(StatConditions.IS_SPELL)
-            .addCondition(StatConditions.IS_RESOURCE.get(ResourceType.health))
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.rejuvenate))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> "Rejuvenation Healing")
@@ -213,6 +212,7 @@ public class ResourceStats {
                 x.group = Stat.StatGroup.RESTORATION;
             })
             .build();
+    
     public static DataPackStatAccessor<EmptyAccessor> HEALING_RECEIVED = DatapackStatBuilder
             .ofSingle("heal_effect_on_self", Elements.ALL)
             .worksWithEvent(RestoreResourceEvent.ID)

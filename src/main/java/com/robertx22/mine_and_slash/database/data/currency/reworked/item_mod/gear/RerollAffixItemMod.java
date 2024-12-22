@@ -8,7 +8,6 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.AffixData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class RerollAffixItemMod extends GearModification {
@@ -60,15 +59,17 @@ public class RerollAffixItemMod extends GearModification {
 
     @Override
     public MutableComponent getDescWithParams() {
-        Component rar = Words.RANDOM_RARITY.locName();
+        MutableComponent rar = Words.RANDOM_RARITY.locName();
         if (ExileDB.GearRarities().isRegistered(data.result_rar)) {
             rar = ExileDB.GearRarities().get(data.result_rar).coloredName();
         }
+        rar.append(" ").append(Words.AFFIX.locName());
+
         return this.getDescParams(data.finder_data.finder().getTooltip(data.finder_data), rar);
     }
 
     @Override
     public String locDescForLangFile() {
-        return "Rerolls %1$s into %2$s";
+        return "Rerolls %1$s into a new %2$s";
     }
 }

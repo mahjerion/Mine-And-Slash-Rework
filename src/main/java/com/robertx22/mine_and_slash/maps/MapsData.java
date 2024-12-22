@@ -6,13 +6,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class MapsData {
 
-
     private List<MapData> maps = new ArrayList<>();
+
+    private HashMap<String, Boolean> oldMaps = new HashMap<>();
 
     public void deleteOldMap(Player p) {
         maps.removeIf(x -> x.playerUuid.equals(p.getStringUUID()));
@@ -21,6 +23,16 @@ public class MapsData {
 
     public Optional<MapData> getCurrentMap(Player player) {
         return maps.stream().filter(x -> x.playerUuid.equals(player.getStringUUID())).findFirst();
+    }
+
+    public void addToList(ChunkPos cp) {
+        var key = cp.x + "_" + cp.z;
+        oldMaps.put(key, true);
+    }
+
+    public Boolean startExistsAlready(ChunkPos cp) {
+        var key = cp.x + "_" + cp.z;
+        return oldMaps.getOrDefault(key, false);
     }
 
     public Optional<MapData> getMap(BlockPos pos) {
@@ -44,10 +56,10 @@ public class MapsData {
 
         Load.player(player).map.clearMapAfterUpgrading();
 
-      
         if (!data.isUber()) {
             Load.player(player).map.map = data;
         }
+        Load.Unit(player).getCooldowns().setOnCooldown("start_map", 20 * 60 * 3);
 
         return m;
     }

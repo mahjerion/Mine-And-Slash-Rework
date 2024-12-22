@@ -72,7 +72,6 @@ public class MapData {
 
     public static MapData newMap(Player p, MapItemData map, MapsData maps) {
 
-
         Load.player(p).prophecy.affixesTaken.clear();
 
         maps.deleteOldMap(p);
@@ -88,6 +87,7 @@ public class MapData {
 
         data.leagues.setupOnMapStart(map, p);
 
+        maps.addToList(cp);
 
         return data;
 
@@ -142,6 +142,8 @@ public class MapData {
 
     private ChunkPos randomFree(Level level, MapsData maps) {
 
+        int MAXTRIES = 300;
+
         ChunkPos pos = null;
 
         int tries = 0;
@@ -149,12 +151,12 @@ public class MapData {
         // seems this is how you get the level
         WorldBorder border = level.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, WorldUtils.DUNGEON_DIM_ID)).getWorldBorder();
 
-        int max = (int) (border.getMaxX() / 16 / 2);
+        int max = (int) (border.getMaxX() / 16);
 
-        max = MathHelper.clamp(max, 0, 299999 / 2); // don't be higher than normal mc border
+        max = MathHelper.clamp(max, 0, Integer.MAX_VALUE);
 
-        while (pos == null || maps.getMap(pos).isPresent() || !border.isWithinBounds(pos)) {
-            if (tries++ > 200) {
+        while (pos == null || maps.startExistsAlready(pos) || !border.isWithinBounds(pos)) {
+            if (tries++ > MAXTRIES) {
                 ExileLog.get().warn("Tried too many times to find random dungeon pos and failed, please delete the map dimension folder");
                 return null;
             }
@@ -166,8 +168,8 @@ public class MapData {
 
         }
 
-        if (tries > 1000) {
-            ExileLog.get().warn("It took more than 1000 tries to find random free dungeon, either you are insanely unlucky, or the world is close to filled! Dungeon worlds are cleared on next server boot if they reach too close to capacity.");
+        if (tries > MAXTRIES) {
+            ExileLog.get().warn("It took more than " + MAXTRIES + "  tries to find random free dungeon, either you are insanely unlucky, or the world is close to filled! Dungeon worlds are cleared on next server boot if they reach too close to capacity.");
         }
 
         return pos;

@@ -12,6 +12,7 @@ has_affix_unique
 has_affixes
 has_corrupt_affixes
 has_infusion
+has_no_enchants
 has_socketed_gem
 has_socketed_rune
 is_common
@@ -23,6 +24,7 @@ is_not_corrupted
 is_rare
 is_runeword
 is_single_item
+is_tool_tag
 is_uncommon
 is_under_20_quality
 is_under_21_quality

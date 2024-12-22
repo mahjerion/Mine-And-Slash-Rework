@@ -23,5 +23,6 @@ public class ItemModificationSers {
     public static String REROLL_AFFIX_NUMBERS = "reroll_affix_numbers";
     public static String EXTRACT_SOCKET = "extract_socket";
     public static String FORCE_SOUL_TAG = "force_soul_tag";
+    public static String VANILLA = "vanilla_function";
 
 }

@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.Ite
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,10 +36,10 @@ public class IsNoneReq extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(ExileStack obj) {
+    public boolean isValid(Player p, ExileStack obj) {
         var all = data.requirements.stream().map(x -> ExileDB.ItemReq().get(x)).collect(Collectors.toList());
         for (ItemRequirement req : all) {
-            if (req.isValid(obj)) {
+            if (req.isValid(p, obj)) {
                 return false;
             }
         }

@@ -7,6 +7,8 @@ import java.util.Locale;
 
 // to use a "%" here, do %% or '%'
 public enum Words implements IAutoLocName {
+    ANY_ITEM("Any Matching Item"),
+
     TELEPORT_TO_BOSS("Enter Boss Arena!"),
     MAP_UPGRADE("Map Upgrading"),
 

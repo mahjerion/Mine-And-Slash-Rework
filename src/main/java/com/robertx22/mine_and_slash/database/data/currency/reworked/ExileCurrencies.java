@@ -209,6 +209,16 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+
+    public ExileKey<ExileCurrency, IdKey> RANDOMLY_ENCHANT = ExileCurrency.Builder.of("randomly_enchant_test", "Randomly enchant", WorksOnBlock.ItemType.ANY)
+            .addRequirement(ItemReqs.INSTANCE.IS_TOOL_TAG)
+            .addRequirement(ItemReqs.INSTANCE.HAS_NO_ENCHANTS)
+            .rarity(IRarity.UNCOMMON)
+            .addAlwaysUseModification(ItemMods.INSTANCE.ENCHANT_30_LEVELS)
+            .potentialCost(0)
+            .weight(0)
+            .build(this);
+
     @Override
     public void loadClass() {
 

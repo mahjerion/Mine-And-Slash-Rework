@@ -13,6 +13,7 @@ corrupt_gear_no_affix
 destroy_item
 do_nothing
 downgrade_random_affix
+enchant_with_30_levels
 extract_gem
 extract_rune
 force_soul_tag_armor_stat

@@ -51,7 +51,7 @@ public class PlayerCommands {
                 ItemStack stack = p.getMainHandItem();
 
                 var ex = ExileStack.of(stack);
-                mod.applyMod(ex, res);
+                mod.applyMod(p, ex, res);
 
                 res.onFinish(p);
 

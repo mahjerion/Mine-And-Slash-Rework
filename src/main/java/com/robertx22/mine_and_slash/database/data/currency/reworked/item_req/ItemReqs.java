@@ -1,15 +1,16 @@
 package com.robertx22.mine_and_slash.database.data.currency.reworked.item_req;
 
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.gear.ExtractSocketItemMod;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.HasCorruptAffixes;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.IsAnyReq;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.IsSingleStack;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.MaximumUsesReq;
+import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.custom.*;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.gear.*;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.jewel.JewelHasAffixesReq;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.map.MapHasHigherRarityReq;
+import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.vanilla.VanillaRequirement;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.keys.*;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 
 import java.util.Arrays;
 import java.util.List;
@@ -72,11 +73,18 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
                     "Must be Common Or Uncommon")
     );
     public ExileKey<ItemRequirement, KeyInfo> IS_SINGLE_ITEM = ExileKey.ofId(this, "is_single_item", x -> new IsSingleStack(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> IS_DAMAGED = ExileKey.ofId(this, "is_damaged", x -> new IsDamagedReq(x.GUID()));
 
     // nones
 
 
     public ExileKey<ItemRequirement, KeyInfo> JEWEL_HAS_AFFIXES = ExileKey.ofId(this, "jewel_has_affixes", x -> new JewelHasAffixesReq(x.GUID()));
+
+    //vanilla
+
+    public ExileKey<ItemRequirement, KeyInfo> IS_TOOL_TAG = ExileKey.ofId(this, "is_tool_tag", x -> new VanillaRequirement(x.GUID(), "Must be tagged as #Tool", MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.TOOLS)).build()));
+    public ExileKey<ItemRequirement, KeyInfo> HAS_NO_ENCHANTS = ExileKey.ofId(this, "has_no_enchants", x -> new HasNoEnchantsReq(x.GUID()));
+
 
     @Override
     public void loadClass() {

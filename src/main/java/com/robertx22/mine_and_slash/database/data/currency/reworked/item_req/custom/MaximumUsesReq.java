@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.rework.DataKey;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 public class MaximumUsesReq extends ItemRequirement {
 
@@ -37,7 +38,7 @@ public class MaximumUsesReq extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(ExileStack stack) {
+    public boolean isValid(Player p, ExileStack stack) {
         var uses = stack.get(StackKeys.CUSTOM).getOrCreate().data.get(new DataKey.IntKey(data.use_id));
         return uses < data.max_uses;
     }

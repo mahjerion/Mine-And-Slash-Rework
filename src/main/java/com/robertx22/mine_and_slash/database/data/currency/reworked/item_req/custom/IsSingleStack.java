@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.Ite
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemRequirement;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 public class IsSingleStack extends ItemRequirement {
 
@@ -31,7 +32,7 @@ public class IsSingleStack extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(ExileStack stack) {
+    public boolean isValid(Player p, ExileStack stack) {
         return stack.getStack().getCount() == 1;
     }
 }

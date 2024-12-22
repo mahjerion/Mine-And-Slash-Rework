@@ -7,10 +7,13 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.jew
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.jewel.UpgradeJewelAffixRarityMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.map.UpgradeMapRarityItemMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.soul.ForceGearSlotSoulMod;
+import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.vanilla.VanillaItemMod;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemReqs;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.keys.*;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
+import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import java.util.Arrays;
 
@@ -88,6 +91,22 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
                 var data = new ForceGearSlotSoulMod.Data(info.GUID());
                 return new ForceGearSlotSoulMod(id, data);
             });
+
+    // vanilla
+
+
+    public ExileKey<ItemModification, KeyInfo> ENCHANT_30_LEVELS = ExileKey.ofId(this, "enchant_with_30_levels", x -> {
+        var fun = EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(30.0F)).allowTreasure().build();
+        return new VanillaItemMod(x.GUID(), "Applies Enchantments worth 30 Levels", fun);
+    });
+    public ExileKey<ItemModification, KeyInfo> ENCHANT_20_LEVELS = ExileKey.ofId(this, "enchant_with_20_levels", x -> {
+        var fun = EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20)).allowTreasure().build();
+        return new VanillaItemMod(x.GUID(), "Applies Enchantments worth 20 Levels", fun);
+    });
+    public ExileKey<ItemModification, KeyInfo> ENCHANT_10_LEVELS = ExileKey.ofId(this, "enchant_with_10_levels", x -> {
+        var fun = EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(10)).allowTreasure().build();
+        return new VanillaItemMod(x.GUID(), "Applies Enchantments worth 10 Levels", fun);
+    });
 
     @Override
     public void loadClass() {

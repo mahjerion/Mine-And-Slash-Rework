@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.Ite
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 public class IsNotCorruptedReq extends ItemRequirement {
 
@@ -23,7 +24,7 @@ public class IsNotCorruptedReq extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(ExileStack stack) {
+    public boolean isValid(Player p, ExileStack stack) {
         if (stack.get(StackKeys.CUSTOM).hasAndTrue(x -> x.isCorrupted())) {
             return false;
         }

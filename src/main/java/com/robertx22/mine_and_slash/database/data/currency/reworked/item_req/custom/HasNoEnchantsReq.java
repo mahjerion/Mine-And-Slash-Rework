@@ -3,43 +3,31 @@ package com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.cu
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemReqSers;
 import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemRequirement;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
-import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 
-public class HasCorruptAffixes extends ItemRequirement {
-
-    public HasCorruptAffixes(String id) {
-        super(ItemReqSers.HAS_CORRUPTION_AFFIXES, id);
+public class HasNoEnchantsReq extends ItemRequirement {
+    public HasNoEnchantsReq(String id) {
+        super(ItemReqSers.HAS_NO_ENCHANTS, id);
     }
 
     @Override
     public Class<?> getClassForSerialization() {
-        return HasCorruptAffixes.class;
+        return HasNoEnchantsReq.class;
     }
 
     @Override
     public MutableComponent getDescWithParams() {
-        return this.getDescParams();
+        return getDescParams();
     }
 
     @Override
-    public boolean isValid(Player p, ExileStack s) {
-
-        if (s.get(StackKeys.GEAR).has()) {
-            return !s.get(StackKeys.GEAR).get().affixes.cor.isEmpty();
-        }
-        if (s.get(StackKeys.JEWEL).has()) {
-            return !s.get(StackKeys.JEWEL).get().cor.isEmpty();
-        }
-
-        return false;
+    public boolean isValid(Player p, ExileStack obj) {
+        return !obj.getStack().isEnchanted();
     }
 
     @Override
     public String locDescForLangFile() {
-        return "Must have Corruption affixes";
+        return "Must have no Enchantments";
     }
-
-
 }

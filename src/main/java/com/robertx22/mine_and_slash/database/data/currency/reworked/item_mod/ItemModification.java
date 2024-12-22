@@ -14,6 +14,7 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 // test if this loads correctly
 public abstract class ItemModification implements JsonExileRegistry<ItemModification>, IAutoLocDesc, GsonCustomSer<ItemModification> {
@@ -51,7 +52,7 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
     public abstract void applyINTERNAL(ExileStack stack, ItemModificationResult r);
 
 
-    public void applyMod(ExileStack stack, ItemModificationResult r) {
+    public void applyMod(Player p, ExileStack stack, ItemModificationResult r) {
         applyINTERNAL(stack, r);
     }
 

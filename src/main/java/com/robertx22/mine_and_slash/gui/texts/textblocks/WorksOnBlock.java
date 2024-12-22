@@ -140,7 +140,9 @@ public class WorksOnBlock extends AbstractTextBlock {
     }
 
 
+    // todo rework these into requirements..
     public enum ItemType {
+        ANY(Words.ANY_ITEM, Words.ANY_ITEM, x -> true),
         GEAR(Words.Gear, Words.Gear_DESC, x -> StackSaving.GEARS.has(x)),
         TOOL(Words.TOOL, Words.TOOL_DESC, x -> StackSaving.TOOL.has(x)),
         JEWEL(Words.Jewel, Words.Jewel_DESC, x -> StackSaving.JEWEL.has(x)),
@@ -158,5 +160,6 @@ public class WorksOnBlock extends AbstractTextBlock {
             this.desc = desc;
             this.worksOn = worksOn;
         }
+        
     }
 }

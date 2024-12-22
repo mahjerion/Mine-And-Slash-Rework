@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 
 public abstract class ItemRequirement implements JsonExileRegistry<ItemRequirement>, IAutoLocDesc, GsonCustomSer<ItemRequirement> {
 
@@ -78,7 +79,7 @@ public abstract class ItemRequirement implements JsonExileRegistry<ItemRequireme
         return weight;
     }
 
-    public abstract boolean isValid(ExileStack obj);
+    public abstract boolean isValid(Player p, ExileStack obj);
 
 
 }

@@ -159,12 +159,12 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             var res = new ItemModificationResult();
 
             for (ItemModData mod : this.always_do_item_mods) {
-                mod.get().applyMod(stack, res);
+                mod.get().applyMod(ctx.player, stack, res);
             }
 
             if (!pick_one_item_mod.isEmpty()) {
                 var picked = RandomUtils.weightedRandom(this.pick_one_item_mod);
-                picked.get().applyMod(stack, res);
+                picked.get().applyMod(ctx.player, stack, res);
                 if (picked.get().getOutcomeType() == ItemModification.OutcomeType.BAD) {
                     bad = true;
                 }
@@ -184,6 +184,10 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         return res;
     }
 
+    // todo this needs refactoring to work as a separate mod..
+    // either not use exiletips system or transfer exiletips to library + make it an event
+    // tooltip modifier register in library? so i can do: TooltipModifiers.CURRENCY.blabla( ... )
+    // so the tooltip is added only to currency tooltips
     public List<Component> getTooltip() {
 
         ExileTooltips tip = new ExileTooltips();
@@ -193,7 +197,6 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         tip.accept(WorksOnBlock.usableOn(this.item_type));
         tip.accept(new AdditionalBlock(() -> {
             List<MutableComponent> all = new ArrayList<>();
-
 
             int totalWeight = this.pick_one_item_mod.stream().mapToInt(IWeighted::Weight).sum();
 
@@ -267,7 +270,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         }
         for (String s : this.req) {
             var r = ExileDB.ItemReq().get(s);
-            if (!r.isValid(context.stack)) {
+            if (!r.isValid(context.player, context.stack)) {
                 // todo do i want to add custom fail messages instead?
                 return ExplainedResult.failure(r.getDescWithParams());
             }

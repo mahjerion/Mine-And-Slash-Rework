@@ -1,4 +1,4 @@
-package com.robertx22.mine_and_slash.mmorpg;
+package com.robertx22.mmorpg;
 
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.connect.IMixinConnector;
@@ -8,7 +8,7 @@ public class MixinConnector implements IMixinConnector {
     @Override
     public void connect() {
         Mixins.addConfiguration(
-            "mmorpg-mixins.json"
+                "mmorpg-mixins.json"
         );
     }
 }

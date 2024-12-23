@@ -6,6 +6,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
+import com.robertx22.library_of_exile.registry.util.ExileRegistryUtil;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.a_libraries.curios.CurioEvents;
 import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
@@ -80,7 +81,7 @@ import java.util.function.Consumer;
 public class MMORPG {
 
     // DISABLE WHEN PUBLIC BUILD
-    public static boolean RUN_DEV_TOOLS = true;
+    public static boolean RUN_DEV_TOOLS = false;
 
     public static String formatNumber(float num) {
 
@@ -113,6 +114,7 @@ public class MMORPG {
 
     public MMORPG() {
 
+        ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
 
         Watch watch = new Watch();
 
@@ -228,7 +230,7 @@ public class MMORPG {
 
     // todo  this needs events or some way of regulating order of registers..
     static void initLazyExileRegistries() {
-        if (MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
+        if (true || MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
             OnClick.register();
 
             // todo
@@ -240,7 +242,7 @@ public class MMORPG {
         ItemMods.INSTANCE.init();
 
 
-        if (MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
+        if (true || MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
             // todo
             Orbs.INSTANCE.init();
         }
@@ -258,6 +260,8 @@ public class MMORPG {
     }
 
     public void commonSetupEvent(FMLCommonSetupEvent event) {
+
+        ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
 
         GeneratedData.addAllObjectsToGenerate();
 

@@ -31,6 +31,7 @@ apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/he
 apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/ide_runs.gradle'
 apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/meta.gradle'
 apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/publishing.gradle'
+apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/mixin.gradle'
 
 // --- COMMON BUILD SCRIPT END ---
 

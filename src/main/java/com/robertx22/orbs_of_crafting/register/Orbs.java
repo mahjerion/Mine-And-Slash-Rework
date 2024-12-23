@@ -4,11 +4,8 @@ import com.robertx22.addons.orbs_of_crafting.currency.base.ExileCurrencyItem;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.orbs_of_crafting.keys.ExileKey;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
-import com.robertx22.orbs_of_crafting.keys.IdKey;
 
 public class Orbs extends ExileKeyHolder<ExileCurrency> {
 
@@ -20,6 +17,7 @@ public class Orbs extends ExileKeyHolder<ExileCurrency> {
             .dependsOn(() -> ItemReqs.INSTANCE);
 
 
+    /*
     public ExileKey<ExileCurrency, IdKey> LEGENDARY_TOOL_ENCHANT = ExileCurrency.Builder.of("legendary_enchant_tool", "Orb of Legendary Tool Enchant", WorksOnBlock.ItemType.ANY)
             .addRequirement(Requirements.INSTANCE.IS_TOOL_TAG)
             .addRequirement(Requirements.INSTANCE.HAS_NO_ENCHANTS)
@@ -27,6 +25,8 @@ public class Orbs extends ExileKeyHolder<ExileCurrency> {
             .potentialCost(0)
             .weight(0)
             .build(this);
+
+     */
 
 
     @Override

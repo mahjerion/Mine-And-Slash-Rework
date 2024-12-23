@@ -1,12 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.36
+v.5.9.37
 
-- removed lock button from salvage station
-- downgrade map now has a cooldown of 5 minutes
-- starting a new map also has a cooldown of 3 minutes
-These cooldowns are to stop the abuse of generating tons of maps to search for best layouts.
-They shouldn't really impact genuine play
-- tweaked some tooltips
-- redid code for finding random map spot within worldborders, should hopefully utilize the full dimension border now
-- you should no longer see old maps when you start new maps (this requires a map dimension wipe, just delete the dimensions/mmorpg/dungeon folder)
+- try fix crash

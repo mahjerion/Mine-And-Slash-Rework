@@ -6,7 +6,7 @@ issueTrackerURL = "${mod_issues_link}"
 modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_display_name}"
-displayURL="${mod_website_link}"
+displayURL = "${mod_website_link}"
 logoFile = "icon.png"
 credits = ""
 authors = "mcrobertx22"
@@ -29,7 +29,7 @@ side = "BOTH"
 [[dependencies.mmorpg]]
 modId = "library_of_exile"
 mandatory = true
-versionRange = "[1.5.2,)"
+versionRange = "[1.5.6,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.mmorpg]]

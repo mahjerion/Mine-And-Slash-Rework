@@ -297,3 +297,7 @@ They shouldn't really impact genuine play
 - tweaked some tooltips
 - redid code for finding random map spot within worldborders, should hopefully utilize the full dimension border now
 - you should no longer see old maps when you start new maps (this requires a map dimension wipe, just delete the dimensions/mmorpg/dungeon folder)
+
+v.5.9.37
+
+- try fix crash

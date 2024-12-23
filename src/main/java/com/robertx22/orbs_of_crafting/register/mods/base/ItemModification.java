@@ -61,6 +61,8 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
 
     @Override
     public void addToSerializables() {
+        // todo this might be bit bad..
+        // i cant disable adding stuff to seriazable if i also do stuff like this like registering custom ser here
         getSerMap().register(this);
         Database.getRegistry(this.getExileRegistryType()).addSerializable(this);
     }

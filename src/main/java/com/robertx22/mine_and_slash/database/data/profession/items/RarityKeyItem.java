@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapedRecipe;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
+import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;

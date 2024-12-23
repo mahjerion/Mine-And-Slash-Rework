@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.profession.all;
 
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrencies;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrencies;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;

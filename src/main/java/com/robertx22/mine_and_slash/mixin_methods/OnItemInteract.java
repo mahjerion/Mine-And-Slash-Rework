@@ -1,12 +1,8 @@
 package com.robertx22.mine_and_slash.mixin_methods;
 
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
-import com.robertx22.mine_and_slash.database.data.currency.IItemAsCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.base.ModifyResult;
-import com.robertx22.mine_and_slash.database.data.currency.loc_reqs.LocReqContext;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.ItemModification;
 import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
@@ -21,6 +17,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
+import com.robertx22.orbs_of_crafting.main.LocReqContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +32,7 @@ import java.util.List;
 
 public class OnItemInteract {
 
-    static class Result {
+    private static class Result {
 
         public boolean can;
 
@@ -51,7 +48,7 @@ public class OnItemInteract {
         }
     }
 
-    public abstract static class ClickFeature {
+    private abstract static class ClickFeature {
         public abstract Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot);
     }
 
@@ -60,48 +57,6 @@ public class OnItemInteract {
 
     public static void register() {
 
-        // new datapack currencies
-        CLICKS.add(new ClickFeature() {
-            @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                var opt = ExileCurrency.get(currency);
-
-                if (opt.isPresent()) {
-                    LocReqContext ctx = new LocReqContext(player, craftedStack, currency);
-
-                    var cur = opt.get();
-                    if (!craftedStack.isEmpty()) {
-                        var can = cur.canItemBeModified(ctx);
-
-                        if (can.can) {
-                            var result = cur.modifyItem(ctx);
-
-                            if (result.resultEnum != ModifyResult.SUCCESS) {
-                                player.sendSystemMessage(result.result.answer);
-                                return new Result(false);
-                            }
-
-                            craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
-                            currency.shrink(1);
-                            // PlayerUtils.giveItem(result, player);
-                            slot.set(result.stack.getStack().copy());
-
-                            if (result.outcome == ItemModification.OutcomeType.BAD) {
-                                SoundUtils.playSound(player.level(), player.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-                                return new Result(true);
-                            } else {
-                                return new Result(true).ding();
-                            }
-                        } else {
-                            SoundUtils.playSound(player.level(), player.blockPosition(), SoundEvents.VILLAGER_NO, 1, 1);
-                            player.sendSystemMessage(can.answer);
-                        }
-                    }
-
-                }
-                return new Result(false);
-            }
-        });
 
         CLICKS.add(new ClickFeature() {
             @Override
@@ -132,39 +87,8 @@ public class OnItemInteract {
             }
         });
 
-        /*
-        CLICKS.add(new ClickFeature() {
-            @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (currency.getItem() instanceof TagForceSoulItem force) {
-                    if (craftedStack.getCount() == 1) {
-                        StatSoulData data = StackSaving.STAT_SOULS.loadFrom(craftedStack);
-                        if (data != null && data.isArmor()) {
-                            data.force_tag = force.tag.tag;
-                            data.saveToStack(craftedStack);
-                            currency.shrink(1);
 
-                            return new Result(true).ding();
-
-                        } else {
-                            if (craftedStack.getItem() instanceof CraftedSoulItem i) {
-                                var soul = i.getSoul(craftedStack);
-
-                                if (soul != null && soul.isArmor()) {
-                                    craftedStack.getOrCreateTag().putString("force_tag", force.tag.tag);
-                                    currency.shrink(1);
-                                    return new Result(true).ding();
-                                }
-                            }
-                        }
-                    }
-                }
-                return new Result(false);
-            }
-        });
-
-         */
-
+        // todo replace repair stones with datapack currencies
         CLICKS.add(new ClickFeature() {
             @Override
             public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
@@ -335,6 +259,7 @@ public class OnItemInteract {
 
 
         });
+
         ForgeEvents.registerForgeEvent(EntityItemPickupEvent.class, x -> {
             ItemStack stack = x.getItem().getItem();
             if (!StackSaving.GEARS.has(stack)) {

@@ -1,12 +1,9 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
-import com.robertx22.mine_and_slash.database.data.currency.loc_reqs.LocReqContext;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.ItemModification;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.ItemModificationResult;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
@@ -20,6 +17,9 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.parts.ResetPlayerData;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
+import com.robertx22.orbs_of_crafting.main.LocReqContext;
+import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
+import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;

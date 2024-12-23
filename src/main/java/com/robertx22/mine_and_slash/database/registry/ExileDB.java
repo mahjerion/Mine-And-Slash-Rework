@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.registry;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
@@ -16,9 +17,6 @@ import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.boss_arena.BossArena;
 import com.robertx22.mine_and_slash.database.data.chaos_stats.ChaosStat;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.ItemModification;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemRequirement;
 import com.robertx22.mine_and_slash.database.data.custom_item.CustomItem;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
@@ -55,6 +53,8 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffec
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.MapManager;
+import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
+import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;

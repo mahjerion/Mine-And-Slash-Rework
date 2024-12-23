@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.gui.wiki.reworked.filters.all;
 
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanic;
 import com.robertx22.mine_and_slash.gui.wiki.BestiaryEntry;
 import com.robertx22.mine_and_slash.gui.wiki.reworked.filters.GroupFilterEntry;

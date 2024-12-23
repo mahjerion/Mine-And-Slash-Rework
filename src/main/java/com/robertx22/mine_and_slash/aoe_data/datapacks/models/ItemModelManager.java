@@ -8,14 +8,12 @@ public class ItemModelManager {
     public static ItemModelManager INSTANCE = new ItemModelManager();
 
     public void generateModels() {
-
         VanillaUTIL.REGISTRY.items().getAll().forEach(x -> {
             if (x instanceof IAutoModel) {
                 IAutoModel auto = (IAutoModel) x;
                 auto.generateModel(this);
             }
         });
-
     }
 
     public void generated(Item item) {

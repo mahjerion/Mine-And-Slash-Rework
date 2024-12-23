@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapelessRecipe;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RuneItems;
 import com.robertx22.mine_and_slash.saveclasses.jewel.CraftedUniqueJewelData;
 import com.robertx22.mine_and_slash.saveclasses.jewel.JewelItemData;
+import com.robertx22.mine_and_slash.uncommon.IShapelessRecipe;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;

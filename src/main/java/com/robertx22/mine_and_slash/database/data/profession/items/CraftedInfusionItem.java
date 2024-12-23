@@ -1,12 +1,12 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.base.GearCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.base.GearOutcome;
+import com.robertx22.addons.orbs_of_crafting.currency.base.OutcomeType;
 import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
-import com.robertx22.mine_and_slash.database.data.currency.IItemAsCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.base.CodeCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.base.GearCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.base.GearOutcome;
-import com.robertx22.mine_and_slash.database.data.currency.loc_reqs.LocReqContext;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.profession.ICreativeTabTiered;
@@ -35,6 +35,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;
+import com.robertx22.orbs_of_crafting.main.LocReqContext;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

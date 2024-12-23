@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// this needs to become a static util class and to remove usage of it in currencies
 public class ExileStack {
 
     public HashMap<String, StackData> map = new HashMap<>();

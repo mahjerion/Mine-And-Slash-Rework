@@ -2,8 +2,8 @@ package com.robertx22.mine_and_slash.capability.player;
 
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.IAutoModel;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapelessRecipe;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
+import com.robertx22.mine_and_slash.uncommon.IShapelessRecipe;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;

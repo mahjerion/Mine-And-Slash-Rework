@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items.gearitems.baubles;
 
 import com.robertx22.mine_and_slash.a_libraries.curios.interfaces.IRing;
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapedRecipe;
+import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gearitems.VanillaMaterial;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gearitems.bases.BaseBaublesItem;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -16,7 +16,7 @@ public class ItemRing extends BaseBaublesItem implements IRing, IShapedRecipe {
                 , "Ring");
         this.mat = mat;
     }
-    
+
     @Override
     public ShapedRecipeBuilder getRecipe() {
         return shaped(this)

@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapelessRecipe;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.OperationTipBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
+import com.robertx22.mine_and_slash.uncommon.IShapelessRecipe;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;

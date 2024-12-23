@@ -4,7 +4,7 @@ import com.robertx22.library_of_exile.utils.CLOC;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
-import com.robertx22.mine_and_slash.database.data.currency.base.CodeCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
 import com.robertx22.mine_and_slash.database.data.runes.Rune;

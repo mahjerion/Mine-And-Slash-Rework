@@ -1,10 +1,10 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items.misc;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapelessRecipe;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.AdditionalBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.OperationTipBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
+import com.robertx22.mine_and_slash.uncommon.IShapelessRecipe;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.EnchantedItemTrigger;

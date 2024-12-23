@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapedRecipe;
+import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;

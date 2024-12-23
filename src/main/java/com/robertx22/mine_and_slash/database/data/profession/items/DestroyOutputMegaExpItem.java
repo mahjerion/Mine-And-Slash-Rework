@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapedRecipe;
+import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;

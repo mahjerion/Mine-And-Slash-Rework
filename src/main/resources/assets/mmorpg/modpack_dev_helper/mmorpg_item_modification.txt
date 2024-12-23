@@ -13,6 +13,8 @@ corrupt_gear_no_affix
 destroy_item
 do_nothing
 downgrade_random_affix
+enchant_with_10_levels
+enchant_with_20_levels
 enchant_with_30_levels
 extract_gem
 extract_rune

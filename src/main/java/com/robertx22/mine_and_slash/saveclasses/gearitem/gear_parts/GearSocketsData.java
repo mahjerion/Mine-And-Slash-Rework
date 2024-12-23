@@ -2,7 +2,7 @@ package com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts;
 
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.database.data.StatMod;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.gear.ExtractSocketItemMod;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.ExtractSocketItemMod;
 import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;

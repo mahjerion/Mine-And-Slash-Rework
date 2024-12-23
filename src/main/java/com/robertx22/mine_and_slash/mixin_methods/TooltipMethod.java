@@ -2,8 +2,8 @@ package com.robertx22.mine_and_slash.mixin_methods;
 
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
-import com.robertx22.mine_and_slash.database.data.currency.IItemAsCurrency;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.mixin_ducks.tooltip.ItemTooltip;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;

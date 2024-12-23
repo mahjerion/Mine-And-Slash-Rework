@@ -2,7 +2,7 @@ package com.robertx22.mine_and_slash.vanilla_mc.items.crates.gem_crate;
 
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.utils.SoundUtils;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
 import com.robertx22.mine_and_slash.database.data.runes.Rune;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;

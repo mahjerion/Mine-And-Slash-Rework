@@ -1,5 +1,8 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrencies;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
@@ -17,9 +20,6 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.Stats;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.ExileCurrencies;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_mod.ItemMods;
-import com.robertx22.mine_and_slash.database.data.currency.reworked.item_req.ItemReqs;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChests;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionEvents;
@@ -47,6 +47,10 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffect;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.VanillaRarities;
+import com.robertx22.orbs_of_crafting.main.OnClick;
+import com.robertx22.orbs_of_crafting.register.Modifications;
+import com.robertx22.orbs_of_crafting.register.Orbs;
+import com.robertx22.orbs_of_crafting.register.Requirements;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -222,10 +226,24 @@ public class MMORPG {
 
     }
 
+    // todo  this needs events or some way of regulating order of registers..
     static void initLazyExileRegistries() {
+        if (MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
+            OnClick.register();
+
+            // todo
+            Modifications.INSTANCE.init();
+            Requirements.INSTANCE.init();
+        }
 
         ItemReqs.INSTANCE.init();
         ItemMods.INSTANCE.init();
+
+
+        if (MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE) {
+            // todo
+            Orbs.INSTANCE.init();
+        }
         ExileCurrencies.INSTANCE.init();
 
     }

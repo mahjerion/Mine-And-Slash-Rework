@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items;
 
-import com.robertx22.mine_and_slash.database.data.currency.base.IShapedRecipe;
+import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -48,7 +48,7 @@ public class TpBackItem extends AutoItem implements IShapedRecipe {
                 }
                 itemstack.shrink(1);
 
-               
+
                 Load.player(p).map.teleportBack(p);
 
                 return InteractionResultHolder.success(p.getItemInHand(pUsedHand));

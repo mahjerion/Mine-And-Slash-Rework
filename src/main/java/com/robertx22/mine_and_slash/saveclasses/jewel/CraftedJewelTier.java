@@ -10,11 +10,11 @@ public enum CraftedJewelTier {
 
     ZERO(0, 0, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.COMMON_ID).get(), 10), false),
     ONE(1, 1, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.UNCOMMON).get(), 10), true),
-    TWO(2, 20, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.RARE_ID).get(), 10), true),
-    THREE(3, 40, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.EPIC_ID).get(), 10), false),
+    TWO(2, 20, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.RARE_ID).get(), 10), false),
+    THREE(3, 40, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.EPIC_ID).get(), 10), true),
     FOUR(4, 60, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.LEGENDARY_ID).get(), 10), false),
-    FIVE(5, 80, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.MYTHIC_ID).get(), 10), true),
-    LAST(6, 100, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.MYTHIC_ID).get(), 10), false);
+    FIVE(5, 80, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.MYTHIC_ID).get(), 10), false),
+    LAST(6, 100, () -> new ItemStack(RarityItems.RARITY_STONE.get(IRarity.MYTHIC_ID).get(), 10), true);
 
 
     public int tier;

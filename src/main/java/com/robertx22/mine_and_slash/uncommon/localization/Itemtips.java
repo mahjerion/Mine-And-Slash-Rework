@@ -71,7 +71,7 @@ public enum Itemtips implements IAutoLocName {
 
     GEM_OPEN_GUI_TIP("Right Click to Open Gui"),
     SOUL_STONE_TIP("Right click to produce a common gear soul."),
-    UNIQUE_JEWEL_USE("Right click to create a Unique Jewel\nOnly One can be equipped per player."),
+    UNIQUE_JEWEL_USE("Right click to create a Unique Jewel\n\nOnly One can be equipped per player."),
     TP_BACK_ITEM("Right click to return from the Map\nExits the Map Dimension."),
     MAP_CREATOR_ITEM("Creates a Fresh Common Adventure Map"),
     UBER_BOSS_MAP_TIP("Right click to Generate Map Item\nLeads to a Boss Fight"),

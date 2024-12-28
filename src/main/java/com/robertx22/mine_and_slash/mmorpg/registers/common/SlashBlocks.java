@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.content.ubers.UberBossAltarBlock;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlock;
@@ -8,7 +9,6 @@ import com.robertx22.mine_and_slash.maps.MapBlock;
 import com.robertx22.mine_and_slash.mechanics.base.LeagueControlBlock;
 import com.robertx22.mine_and_slash.mechanics.base.LeagueTeleportBlock;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.prophecy.ProphecyAltarBlock;
 import com.robertx22.mine_and_slash.vanilla_mc.blocks.BlackHoleBlock;
 import com.robertx22.mine_and_slash.vanilla_mc.blocks.TotemBlock;

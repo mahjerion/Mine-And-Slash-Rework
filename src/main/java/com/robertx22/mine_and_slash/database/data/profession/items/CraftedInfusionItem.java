@@ -113,7 +113,9 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
                             @Override
                             public void modify(LocReqContext ctx) {
 
-                                ctx.stack.get(StackKeys.GEAR).edit(gear -> {
+                                ExileStack ex = ExileStack.of(ctx.stack);
+
+                                ex.get(StackKeys.GEAR).edit(gear -> {
 
                                     boolean makenew = gear.ench == null || gear.ench.isEmpty();
 
@@ -128,9 +130,11 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
                                         gear.ench.rar = rar;
                                     }
 
-                                    ctx.stack.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
+                                    ex.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
 
                                 });
+
+                                ctx.stack = ex.getStack();
                             }
 
                             @Override
@@ -152,7 +156,8 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
 
                             @Override
                             public void modify(LocReqContext ctx) {
-                                ctx.stack.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
+                                ExileStack ex = ExileStack.of(ctx.stack);
+                                ex.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
                             }
 
                             @Override
@@ -172,7 +177,7 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
             @Override
             public ExplainedResult canBeModified(LocReqContext c) {
 
-                ExileStack stack = c.stack;
+                ExileStack stack = ExileStack.of(c.stack);
 
                 var data = stack.get(StackKeys.GEAR).get();
 

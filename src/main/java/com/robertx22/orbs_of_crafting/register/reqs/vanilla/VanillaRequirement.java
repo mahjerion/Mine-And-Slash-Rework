@@ -2,8 +2,8 @@ package com.robertx22.orbs_of_crafting.register.reqs.vanilla;
 
 import com.google.gson.JsonObject;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqSers;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -40,14 +40,14 @@ public class VanillaRequirement extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(Player p, ExileStack obj) {
+    public boolean isValid(Player p, StackHolder obj) {
         var opt = LootDataType.PREDICATE.deserialize(new ResourceLocation(""), vanillaCondition, p.getServer().getResourceManager());
 
         if (opt.isPresent()) {
             LootParams lootparams = (new LootParams.Builder((ServerLevel) p.level()))
                     .withParameter(LootContextParams.THIS_ENTITY, p)
                     .withParameter(LootContextParams.ORIGIN, p.position())
-                    .withParameter(LootContextParams.TOOL, obj.getStack())
+                    .withParameter(LootContextParams.TOOL, obj.stack)
                     .create(LootContextParamSet.builder().build());
 
             var ctx = new LootContext.Builder(lootparams).create(SlashRef.id("vanilla_condition"));

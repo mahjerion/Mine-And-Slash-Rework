@@ -1,9 +1,9 @@
 package com.robertx22.orbs_of_crafting.keys;
 
 import com.google.common.base.Preconditions;
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
@@ -28,6 +28,10 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
         }
     }
 
+    public static record ItemRegistratorData(String itemID, Supplier<Item> item) {
+    }
+
+
     public static class ItemCreator<T extends ExileRegistry<T>> {
         Function<ExileKey<T, ?>, Item> maker = null;
 
@@ -41,6 +45,8 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
     private ItemCreator<T> itemCreator = new ItemCreator<T>(null);
 
     public HashMap<String, ExileKey<T, ?>> all = new HashMap<>();
+
+    public Function<ItemRegistratorData, RegObj<Item>> itemRegistrator = null;
 
     private List<Supplier<ExileKeyHolder<?>>> deps = new ArrayList<>();
 
@@ -61,8 +67,9 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
         return this;
     }
 
-    public ExileKeyHolder<T> createItems(ItemCreator item) {
+    public ExileKeyHolder<T> createItems(ItemCreator item, Function<ItemRegistratorData, RegObj<Item>> registrator) {
         this.itemCreator = item;
+        this.itemRegistrator = registrator;
         return this;
     }
 
@@ -117,8 +124,8 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
             for (ExileKey<T, ?> key : this.all.values()) {
                 if (!key.isCancelItemCreation()) {
                     var id = this.getItemId(key.GUID());
-                    var def = Def.item(id.getPath(), () -> this.itemCreator.maker.apply(key));
-                    key.item = def;
+                    var data = new ItemRegistratorData(id.getPath(), () -> this.itemCreator.maker.apply(key));
+                    key.item = this.itemRegistrator.apply(data);
                 }
             }
         }

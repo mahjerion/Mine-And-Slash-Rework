@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.loot_chest;
 
-import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChest;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChestData;
@@ -16,9 +16,11 @@ public class CurrencyLootChest extends LootChest {
     @Override
     public ItemStack generateOne(LootChestData data) {
 
-
         ExileCurrency currency = ExileDB.Currency()
-                .getFilterWrapped(x -> x.drop_req.canDropInLeague(LeagueMechanics.NONE, data.lvl))
+                .getFilterWrapped(x -> {
+                    var req = ExileDB.OrbExtension().get(this.GUID()).drop_req;
+                    return req.canDropInLeague(LeagueMechanics.NONE, data.lvl);
+                })
                 .random();
 
 

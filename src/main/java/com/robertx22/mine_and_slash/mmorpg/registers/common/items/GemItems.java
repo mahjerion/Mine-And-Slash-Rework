@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common.items;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class GemItems {
         for (GemItem.GemType type : GemItem.GemType.values()) {
             for (GemItem.GemRank rank : GemItem.GemRank.values()) {
 
-               
+
                 RegObj<GemItem> def = Def.item(() -> new GemItem(type, rank), "gems/" + type.id + "/" + rank.tier);
 
                 if (!MAP.containsKey(type)) {

@@ -3,6 +3,7 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqSers;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -24,13 +25,14 @@ public class HasCorruptAffixes extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(Player p, ExileStack s) {
+    public boolean isValid(Player p, StackHolder s) {
+        ExileStack ex = ExileStack.of(s.stack);
 
-        if (s.get(StackKeys.GEAR).has()) {
-            return !s.get(StackKeys.GEAR).get().affixes.cor.isEmpty();
+        if (ex.get(StackKeys.GEAR).has()) {
+            return !ex.get(StackKeys.GEAR).get().affixes.cor.isEmpty();
         }
-        if (s.get(StackKeys.JEWEL).has()) {
-            return !s.get(StackKeys.JEWEL).get().cor.isEmpty();
+        if (ex.get(StackKeys.JEWEL).has()) {
+            return !ex.get(StackKeys.JEWEL).get().cor.isEmpty();
         }
 
         return false;

@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.E
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.GemItems;
@@ -130,7 +131,9 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
                             @Override
                             public void modify(LocReqContext ctx) {
 
-                                ctx.stack.get(StackKeys.GEAR).edit(gear -> {
+                                ExileStack ex = ExileStack.of(ctx.stack);
+
+                                ex.get(StackKeys.GEAR).edit(gear -> {
                                     GemItem gitem = (GemItem) ctx.Currency.getItem();
                                     Gem gem = gitem.getGem();
 
@@ -142,6 +145,7 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
                                     ctx.player.displayClientMessage(Chats.GEM_SOCKETED.locName(), false);
 
                                 });
+                                ctx.stack = ex.getStack();
                             }
 
                             @Override
@@ -159,8 +163,10 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
 
             @Override
             public ExplainedResult canBeModified(LocReqContext c) {
+
+                ExileStack ex = ExileStack.of(c.stack);
                 var stack = c.stack;
-                var data = stack.get(StackKeys.GEAR).get();
+                var data = ex.get(StackKeys.GEAR).get();
 
                 if (data.getEmptySockets() < 1) {
                     return ExplainedResult.failure(Chats.NEED_EMPTY_SOCKET.locName());

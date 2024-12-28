@@ -4,7 +4,6 @@ import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
@@ -77,7 +76,7 @@ public abstract class CodeCurrency implements IWeighted, IAutoLocName, IAutoLocD
             context.effect.internalModifyMethod(context);
             return new ResultItem(context.stack, ModifyResult.SUCCESS, can);
         } else {
-            return new ResultItem(ExileStack.of(ItemStack.EMPTY), ModifyResult.NONE, can);
+            return new ResultItem(ItemStack.EMPTY, ModifyResult.NONE, can);
         }
 
     }

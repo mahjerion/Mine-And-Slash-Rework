@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common.items;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEffects;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.capability.player.BackpackItem;
@@ -16,7 +17,6 @@ import com.robertx22.mine_and_slash.database.data.profession.items.StationBlockI
 import com.robertx22.mine_and_slash.maps.MapItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashBlocks;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.saveclasses.stat_soul.StatSoulItem;
 import com.robertx22.mine_and_slash.uncommon.coins.Coin;
 import com.robertx22.mine_and_slash.uncommon.coins.CoinItem;

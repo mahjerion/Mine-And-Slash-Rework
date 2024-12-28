@@ -25,6 +25,7 @@ import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.DropChanceBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.DropLevelBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
+import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.loot.blueprints.bases.RunePart;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
@@ -87,7 +88,9 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
                         @Override
                         public void modify(LocReqContext ctx) {
 
-                            ctx.stack.get(StackKeys.GEAR).edit(gear -> {
+                            ExileStack ex = ExileStack.of(ctx.stack);
+
+                            ex.get(StackKeys.GEAR).edit(gear -> {
                                 //todo actually make this based on gear rarities
                                 var rune = new SocketData();
                                 boolean add = true;
@@ -115,7 +118,7 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
 
 
                                 if (gear.getRarity().can_have_runewords) {
-                                    var list = ExileDB.RuneWords().getFilterWrapped(x -> x.canApplyOnItem(ctx.stack.getStack()) && x.hasMatchingRunesToCreate(gear)).list;
+                                    var list = ExileDB.RuneWords().getFilterWrapped(x -> x.canApplyOnItem(ctx.stack) && x.hasMatchingRunesToCreate(gear)).list;
                                     if (!list.isEmpty()) {
                                         var biggest = list.stream().max(Comparator.comparingInt(x -> x.runes.size())).get();
 
@@ -135,6 +138,7 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
                             });
 
 
+                            ctx.stack = ex.getStack();
                         }
 
                         @Override
@@ -152,10 +156,10 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
 
         @Override
         public ExplainedResult canBeModified(LocReqContext c) {
-            var stack = c.stack;
+            ExileStack ex = ExileStack.of(c.stack);
 
-            var data = stack.get(StackKeys.GEAR).get();
-            if (data.uniqueStats != null && data.isUnique() && !data.uniqueStats.getUnique(stack).runable) {
+            var data = ex.get(StackKeys.GEAR).get();
+            if (data.uniqueStats != null && data.isUnique() && !data.uniqueStats.getUnique(ex).runable) {
                 return ExplainedResult.failure(Chats.CANT_RUNE_THIS_UNIQUE.locName());
             }
 

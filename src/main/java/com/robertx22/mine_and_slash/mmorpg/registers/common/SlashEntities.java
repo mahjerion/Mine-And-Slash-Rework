@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.spells.entities.*;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SkeletonSummon;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SpiderPet;
@@ -11,7 +12,6 @@ import com.robertx22.mine_and_slash.database.data.spells.summons.entity.golems.L
 import com.robertx22.mine_and_slash.entity.minions.ExplodeMinion;
 import com.robertx22.mine_and_slash.entity.minions.ThornyMinion;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

@@ -155,7 +155,7 @@ public class OnItemInteract {
                     if (!craftedStack.isEmpty()) {
                         var can = ctx.effect.canItemBeModified(ctx);
                         if (can.can) {
-                            ItemStack result = ctx.effect.modifyItem(ctx).stack.getStack().copy();
+                            ItemStack result = ctx.effect.modifyItem(ctx).stack.copy();
                             craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
                             currency.shrink(1);
                             // PlayerUtils.giveItem(result, player);

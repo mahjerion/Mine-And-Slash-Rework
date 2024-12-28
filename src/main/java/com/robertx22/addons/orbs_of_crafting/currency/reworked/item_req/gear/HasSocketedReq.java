@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class HasSocketedReq extends GearRequirement {
 
@@ -33,8 +34,10 @@ public class HasSocketedReq extends GearRequirement {
     }
 
     @Override
-    public boolean isGearValid(ExileStack stack) {
-        var gear = stack.get(StackKeys.GEAR).get();
+    public boolean isGearValid(ItemStack stack) {
+        ExileStack ex = ExileStack.of(stack);
+
+        var gear = ex.get(StackKeys.GEAR).get();
         return gear.sockets != null && gear.sockets.lastFilledSocketGemIndex(type) > -1;
     }
 }

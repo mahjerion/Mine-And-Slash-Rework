@@ -2,14 +2,13 @@ package com.robertx22.orbs_of_crafting.main;
 
 import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class LocReqContext {
 
     public LocReqContext(Player player, ItemStack stack, ItemStack currency) {
-        this.stack = ExileStack.of(stack);
+        this.stack = stack;
         this.Currency = currency;
         this.player = player;
 
@@ -19,12 +18,12 @@ public class LocReqContext {
     }
 
     public Player player;
-    public ExileStack stack;
+    public ItemStack stack;
     public ItemStack Currency;
     public CodeCurrency effect;
 
     public boolean isValid() {
-        return !stack.getStack().isEmpty() && !Currency.isEmpty();
+        return !stack.isEmpty() && !Currency.isEmpty();
     }
 
 }

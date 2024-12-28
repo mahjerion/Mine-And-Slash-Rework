@@ -2,7 +2,7 @@ package com.robertx22.orbs_of_crafting.register.reqs;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqSers;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,7 @@ public class IsSingleStack extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(Player p, ExileStack stack) {
-        return stack.getStack().getCount() == 1;
+    public boolean isValid(Player p, StackHolder stack) {
+        return stack.stack.getCount() == 1;
     }
 }

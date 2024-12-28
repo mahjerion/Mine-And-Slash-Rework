@@ -11,6 +11,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTie
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.keys.*;
@@ -29,7 +30,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public static ExileCurrencies INSTANCE = (ExileCurrencies) new ExileCurrencies()
             // todo is this a good way to check? I'm thinking note 1 layer of dep
             .itemIds(new ItemIdProvider(x -> SlashRef.id("currency/" + x)))
-            .createItems(new ItemCreator<ExileCurrency>(x -> new ExileCurrencyItem(x.get())))
+            .createItems(new ItemCreator<ExileCurrency>(x -> new ExileCurrencyItem(x.get())), x -> Def.item(x.itemID(), x.item()))
             .dependsOn(() -> ItemMods.INSTANCE)
             .dependsOn(() -> ItemReqs.INSTANCE);
 
@@ -61,7 +62,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                         .rarity(info.tier.rar)
                         .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
                         .addAlwaysUseModification(ItemMods.INSTANCE.SHARPEN_STONE_QUALITY.get(info))
-                        .maxUses(new MaxUsesKey(ItemReqs.Datas.MAX_SHARPENING_STONE_USES))
+                        .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_SHARPENING_STONE_USES.toKey()))
                         .potentialCost(0)
                         .weight(0)
                         .buildCurrency(this);
@@ -82,7 +83,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .rarity(IRarity.UNCOMMON)
             .addRequirement(ItemReqs.INSTANCE.LEVEL_NOT_MAX)
             .addModification(ItemMods.INSTANCE.ADD_GEAR_LEVEL, 1)
-            .maxUses(new MaxUsesKey(ItemReqs.Datas.MAX_LEVEL_USES))
+            .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_LEVEL_USES.toKey()))
             .potentialCost(5)
             .weight(1000)
             .build(this);
@@ -123,7 +124,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .addRequirement(ItemReqs.INSTANCE.NOT_CRAFTED)
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.MYTHIC_ID)))
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_RANDOM_AFFIX_INTO_MYTHIC)
-            .maxUses(new MaxUsesKey(ItemReqs.Datas.RANDOM_MYTHIC_AFFIX))
+            .edit(MaxUsesKey.ofUses(ItemReqs.Datas.RANDOM_MYTHIC_AFFIX.toKey()))
             .potentialCost(25)
             .weight(CodeCurrency.Weights.MEGA_UBER)
             .build(this);

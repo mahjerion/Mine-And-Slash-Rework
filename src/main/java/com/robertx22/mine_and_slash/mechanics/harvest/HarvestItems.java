@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.mechanics.harvest;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.mechanics.harvest.vanilla.HarvestMaterialItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.world.item.Item;
 
 public class HarvestItems {

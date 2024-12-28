@@ -1,12 +1,13 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.all;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.rework.DataKey;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
 import net.minecraft.network.chat.MutableComponent;
 
 public class IncrementUsesItemMod extends ItemModification {
@@ -19,12 +20,16 @@ public class IncrementUsesItemMod extends ItemModification {
     }
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
-        stack.get(StackKeys.CUSTOM).edit(gear -> {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
+        ExileStack ex = ExileStack.of(stack.stack);
+
+        ex.get(StackKeys.CUSTOM).edit(gear -> {
             var key = new DataKey.IntKey(use_key);
             int uses = gear.data.get(key) + 1;
             gear.data.set(key, uses);
         });
+
+        stack.stack = ex.getStack();
     }
 
     @Override

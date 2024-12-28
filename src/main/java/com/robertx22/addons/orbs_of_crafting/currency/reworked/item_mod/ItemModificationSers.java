@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.register.mods.base;
+package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod;
 
 public class ItemModificationSers {
 
@@ -13,8 +13,7 @@ public class ItemModificationSers {
     public static String SET_AFFIX_RARITY = "set_affix_rarity";
     public static String DOWNGRADE_AFFIX_RARITY = "downgrade_affix_rarity";
     public static String CORRUPT_GEAR = "corrupt_gear";
-    public static String DESTROY_ITEM = "destroy_item";
-    public static String DO_NOTHING = "do_nothing";
+
     public static String MODIFY_UNIQUE_STATS = "modify_unique_stats";
     public static String REROLL_AFFIX = "reroll_affix";
     public static String REROLL_INFUSION = "reroll_infusion";
@@ -23,6 +22,5 @@ public class ItemModificationSers {
     public static String REROLL_AFFIX_NUMBERS = "reroll_affix_numbers";
     public static String EXTRACT_SOCKET = "extract_socket";
     public static String FORCE_SOUL_TAG = "force_soul_tag";
-    public static String VANILLA = "vanilla_function";
 
 }

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
@@ -9,11 +10,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
@@ -34,6 +32,7 @@ public class Def {
 
 
     public static <T extends Item> RegObj<T> item(Supplier<T> object, String id) {
+
         return item(id, object);
     }
 
@@ -67,27 +66,9 @@ public class Def {
         return wrapper;
     }
 
-    public static <T extends RecipeSerializer<?>> RegObj<T> recipeSer(String id, Supplier<T> object) {
-        RegistryObject<T> reg = SlashDeferred.RECIPE_SERIALIZERS.register(id, object);
-        RegObj<T> wrapper = new RegObj<T>(reg);
-        return wrapper;
-    }
-
-    public static <T extends RecipeType<?>> RegObj<T> recipeType(String id, Supplier<T> object) {
-        RegistryObject<T> reg = SlashDeferred.RECIPE_TYPES.register(id, object);
-        RegObj<T> wrapper = new RegObj<T>(reg);
-        return wrapper;
-    }
-
 
     public static <T extends MenuType<?>> RegObj<T> container(String id, Supplier<T> object) {
         RegistryObject<T> reg = SlashDeferred.CONTAINERS.register(id, object);
-        RegObj<T> wrapper = new RegObj<T>(reg);
-        return wrapper;
-    }
-
-    public static <T extends Feature<?>> RegObj<T> feature(String id, Supplier<T> object) {
-        RegistryObject<T> reg = SlashDeferred.FEATURE.register(id, object);
         RegObj<T> wrapper = new RegObj<T>(reg);
         return wrapper;
     }

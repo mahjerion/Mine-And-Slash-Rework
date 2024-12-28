@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession.all;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;
@@ -8,7 +9,6 @@ import com.robertx22.mine_and_slash.database.data.profession.items.CraftedInfusi
 import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItemHolder;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.world.item.Item;
 

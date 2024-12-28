@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common.items;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.profession.LeveledItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

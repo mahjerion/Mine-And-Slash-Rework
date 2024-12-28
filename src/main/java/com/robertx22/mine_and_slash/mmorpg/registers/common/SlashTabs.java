@@ -1,13 +1,13 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.ICreativeTabNbt;
-import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;

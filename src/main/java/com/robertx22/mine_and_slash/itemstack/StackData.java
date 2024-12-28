@@ -84,6 +84,7 @@ public class StackData<T> {
     public void save() {
         this.saver.saveTo(stack.getStack(), get());
         resetGetterCache();
+        
     }
 
     // this seems dumb

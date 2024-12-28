@@ -1,9 +1,9 @@
 package com.robertx22.orbs_of_crafting.register.mods;
 
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
+import com.robertx22.orbs_of_crafting.register.mods.base.VanillaItemModSers;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items;
 public class DestroyItemMod extends ItemModification {
 
     public DestroyItemMod(String id) {
-        super(ItemModificationSers.DESTROY_ITEM, id);
+        super(VanillaItemModSers.DESTROY_ITEM, id);
     }
 
 
@@ -22,7 +22,7 @@ public class DestroyItemMod extends ItemModification {
 
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
 
     }
 
@@ -32,8 +32,8 @@ public class DestroyItemMod extends ItemModification {
     }
 
     @Override
-    public void applyMod(Player p, ExileStack stack, ItemModificationResult r) {
-        stack.setStack(Items.COAL.getDefaultInstance());
+    public void applyMod(Player p, StackHolder stack, ItemModificationResult r) {
+        stack.stack = Items.COAL.getDefaultInstance();
     }
 
 

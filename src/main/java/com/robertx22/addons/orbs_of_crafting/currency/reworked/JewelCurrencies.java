@@ -40,7 +40,7 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.UPGRADE_JEWEL_AFFIX_RARITY, 90)
             .addModification(Modifications.INSTANCE.DO_NOTHING, 10)
             .potentialCost(10)
-            .maxUses(new MaxUsesKey(ItemReqs.Datas.MAX_JEWEL_UPGRADE_USES))
+            .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_JEWEL_UPGRADE_USES.toKey()))
             .weight(CodeCurrency.Weights.MEGA_UBER)
             .build(get());
 

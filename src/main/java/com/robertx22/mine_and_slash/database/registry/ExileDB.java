@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.database.registry;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
@@ -116,6 +117,10 @@ public class ExileDB {
 
     public static ExileRegistryContainer<UniqueGear> UniqueGears() {
         return Database.getRegistry(ExileRegistryTypes.UNIQUE_GEAR);
+    }
+
+    public static ExileRegistryContainer<ExtendedOrb> OrbExtension() {
+        return Database.getRegistry(ExileRegistryTypes.ORB_EXTEND);
     }
 
 

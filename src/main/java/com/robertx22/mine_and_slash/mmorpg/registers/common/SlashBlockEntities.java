@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlock;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlockEntity;
 import com.robertx22.mine_and_slash.maps.MapBlockEntity;
 import com.robertx22.mine_and_slash.mechanics.base.LeagueControlBlockEntity;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.stream.Collectors;

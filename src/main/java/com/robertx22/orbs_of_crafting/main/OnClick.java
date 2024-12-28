@@ -63,7 +63,7 @@ public class OnClick {
                             craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
                             currency.shrink(1);
                             // PlayerUtils.giveItem(result, player);
-                            slot.set(result.stack.getStack().copy());
+                            slot.set(result.stack.copy());
 
                             if (result.outcome == ItemModification.OutcomeType.BAD) {
                                 SoundUtils.playSound(player.level(), player.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);

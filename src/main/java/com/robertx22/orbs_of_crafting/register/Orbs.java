@@ -4,7 +4,9 @@ import com.robertx22.addons.orbs_of_crafting.currency.base.ExileCurrencyItem;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.SlashDeferred;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
 
 public class Orbs extends ExileKeyHolder<ExileCurrency> {
@@ -12,7 +14,7 @@ public class Orbs extends ExileKeyHolder<ExileCurrency> {
     public static Orbs INSTANCE = (Orbs) new Orbs()
             // todo is this a good way to check? I'm thinking note 1 layer of dep
             .itemIds(new ItemIdProvider(x -> SlashRef.id("currency/" + x)))
-            .createItems(new ItemCreator<ExileCurrency>(x -> new ExileCurrencyItem(x.get())))
+            .createItems(new ItemCreator<ExileCurrency>(x -> new ExileCurrencyItem(x.get())), x -> RegObj.register(x.itemID(), x.item(), SlashDeferred.ITEMS))
             .dependsOn(() -> ItemMods.INSTANCE)
             .dependsOn(() -> ItemReqs.INSTANCE);
 

@@ -1,11 +1,12 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.all;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.UpgradeAffixItemMod;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
 import net.minecraft.network.chat.MutableComponent;
 
 public class UpgradeCorruptionAffixMod extends ItemModification {
@@ -24,18 +25,21 @@ public class UpgradeCorruptionAffixMod extends ItemModification {
     }
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
+        ExileStack ex = ExileStack.of(stack.stack);
 
-        stack.get(StackKeys.GEAR).editIfHas(gear -> {
+        ex.get(StackKeys.GEAR).editIfHas(gear -> {
             data.finder().getAffix(gear.affixes.cor, data).ifPresent(affix -> {
                 affix.upgradeRarity();
             });
         });
-        stack.get(StackKeys.JEWEL).editIfHas(jewel -> {
+        ex.get(StackKeys.JEWEL).editIfHas(jewel -> {
             data.finder().getAffix(jewel.cor, data).ifPresent(affix -> {
                 affix.upgradeRarity();
             });
         });
+
+        stack.stack = ex.getStack();
 
     }
 

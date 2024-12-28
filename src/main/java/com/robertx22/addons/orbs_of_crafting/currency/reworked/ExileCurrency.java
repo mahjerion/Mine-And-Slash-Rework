@@ -1,8 +1,5 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.IWeighted;
@@ -18,24 +15,23 @@ import com.robertx22.mine_and_slash.gui.texts.textblocks.NameBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.LeagueBlock;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
-import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.wip.ExileCached;
+import com.robertx22.orbs_of_crafting.api.OrbEvents;
 import com.robertx22.orbs_of_crafting.keys.ExileKey;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
 import com.robertx22.orbs_of_crafting.keys.IdKey;
 import com.robertx22.orbs_of_crafting.main.LocReqContext;
 import com.robertx22.orbs_of_crafting.main.ModifyResult;
 import com.robertx22.orbs_of_crafting.main.ResultItem;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
@@ -48,6 +44,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, JsonExileRegistry<ExileCurrency>, IRarity {
 
@@ -65,6 +62,8 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
     String rar = IRarity.RARE_ID;
 
+  
+    // todo this needs some extension system..
     public DropRequirement drop_req = DropRequirement.Builder.of().build();
 
     public PotentialData potential = new PotentialData(true, 1);
@@ -83,19 +82,12 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         public int potential_cost = 0;
 
         public PotentialData(boolean needs_potential, int potential_cost) {
+
             this.needs_potential = needs_potential;
             this.potential_cost = potential_cost;
         }
 
-        public boolean has(ExileStack stack) {
-            if (!needs_potential) {
-                return true;
-            }
-            if (potential_cost < 1) {
-                return true;
-            }
-            return stack.get(StackKeys.POTENTIAL).hasAndTrue(x -> x.potential >= this.potential_cost);
-        }
+
     }
 
     public Item getItem() {
@@ -148,24 +140,24 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
     }
 
     public ResultItem modifyItem(LocReqContext ctx) {
-        ExileStack stack = ctx.stack;
+
+        var event = new OrbEvents.Modify(this, ctx);
+        OrbEvents.MODIFY.callEvents(event);
+        StackHolder holder = new StackHolder(ctx.stack);
 
         boolean bad = false;
         try {
 
-            if (this.potential.potential_cost > 0) {
-                stack.get(StackKeys.POTENTIAL).edit(x -> x.spend(potential.potential_cost));
-            }
 
             var res = new ItemModificationResult();
 
             for (ItemModData mod : this.always_do_item_mods) {
-                mod.get().applyMod(ctx.player, stack, res);
+                mod.get().applyMod(ctx.player, holder, res);
             }
 
             if (!pick_one_item_mod.isEmpty()) {
                 var picked = RandomUtils.weightedRandom(this.pick_one_item_mod);
-                picked.get().applyMod(ctx.player, stack, res);
+                picked.get().applyMod(ctx.player, holder, res);
                 if (picked.get().getOutcomeType() == ItemModification.OutcomeType.BAD) {
                     bad = true;
                 }
@@ -175,10 +167,10 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResultItem(stack, ModifyResult.ERROR, ExplainedResult.failure(Component.literal("Code error caused the action to fail.")));
+            return new ResultItem(holder.stack, ModifyResult.ERROR, ExplainedResult.failure(Component.literal("Code error caused the action to fail.")));
         }
 
-        var res = new ResultItem(stack, ModifyResult.SUCCESS, ExplainedResult.success());
+        var res = new ResultItem(holder.stack, ModifyResult.SUCCESS, ExplainedResult.success());
         if (bad) {
             res.outcome = ItemModification.OutcomeType.BAD;
         }
@@ -238,8 +230,11 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         }
         tip.accept(new AdditionalBlock(Words.Currency.locName().withStyle(ChatFormatting.GOLD)));
 
-        if (this.drop_req.getLeague() != null) {
-            tip.accept(new LeagueBlock(drop_req.getLeague()));
+
+        var req = ExileDB.OrbExtension().get(this.GUID());
+
+        if (req != null && req.drop_req.getLeague() != null) {
+            tip.accept(new LeagueBlock(req.drop_req.getLeague()));
         }
 
         return tip.release();
@@ -257,7 +252,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
     public ExplainedResult canItemBeModified(LocReqContext context) {
 
 
-        if (item_type.stream().noneMatch(type -> type.worksOn.apply(context.stack.getStack()))) {
+        if (item_type.stream().noneMatch(type -> type.worksOn.apply(context.stack))) {
             if (item_type.size() == 1) {
                 return ExplainedResult.failure(Words.THIS_IS_NOT_A.locName(item_type.get(0).name.locName()));
 
@@ -266,12 +261,16 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             }
         }
 
-        if (!this.potential.has(context.stack)) {
-            return ExplainedResult.failure(Chats.GEAR_NO_POTENTIAL.locName());
+        var event = new OrbEvents.CanBeModified(this, context);
+        OrbEvents.CAN_BE_MODIFIED.callEvents(event);
+
+        if (event.result != null) {
+            return event.result;
         }
+
         for (String s : this.req) {
             var r = ExileDB.ItemReq().get(s);
-            if (!r.isValid(context.player, context.stack)) {
+            if (!r.isValid(context.player, new StackHolder(context.stack))) {
                 // todo do i want to add custom fail messages instead?
                 return ExplainedResult.failure(r.getDescWithParams());
             }
@@ -322,17 +321,17 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
     public static class Builder {
 
-        private List<ItemModData> pickOneMods = new ArrayList<>();
-        private List<ItemModData> useAllMods = new ArrayList<>();
-        private List<String> req = new ArrayList<>();
+        public List<ItemModData> pickOneMods = new ArrayList<>();
+        public List<ItemModData> useAllMods = new ArrayList<>();
+        public List<String> req = new ArrayList<>();
 
-        private DropRequirement drop = DropRequirement.Builder.of().build();
-        private String id;
-        private PotentialData pot = new PotentialData(1);
-        private int weight = 1000;
-        private String name;
-        private List<WorksOnBlock.ItemType> type;
-        private String rar = IRarity.RARE_ID;
+        public DropRequirement drop = DropRequirement.Builder.of().build();
+        public String id;
+        public PotentialData pot = new PotentialData(1);
+        public int weight = 1000;
+        public String name;
+        public List<WorksOnBlock.ItemType> type;
+        public String rar = IRarity.RARE_ID;
 
         public static Builder of(String id, String name, WorksOnBlock.ItemType... type) {
             return new Builder(id, name, type);
@@ -370,12 +369,10 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             return this;
         }
 
-        public Builder maxUses(MaxUsesKey key) {
-            this.useAllMods.add(new ItemModData(ItemMods.INSTANCE.MAXIMUM_USES.get(key).GUID(), 1));
-            this.addRequirement(ItemReqs.INSTANCE.MAXIMUM_USES.get(key));
+        public Builder edit(Consumer<Builder> c) {
+            c.accept(this);
             return this;
         }
-
 
         public Builder weight(int w) {
             this.weight = w;

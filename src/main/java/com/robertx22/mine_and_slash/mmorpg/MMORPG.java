@@ -1,6 +1,8 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrencies;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrbs;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.OrbAddonEvents;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
@@ -222,6 +224,7 @@ public class MMORPG {
         ProfessionEvents.init();
         DerivedRegistries.init();
 
+        OrbAddonEvents.register();
 
         watch.print("Mine and slash mod initialization ");
 
@@ -248,6 +251,7 @@ public class MMORPG {
         }
         ExileCurrencies.INSTANCE.init();
 
+        ExtendedOrbs.init();
     }
 
 

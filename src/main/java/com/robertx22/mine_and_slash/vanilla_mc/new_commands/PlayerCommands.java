@@ -7,7 +7,6 @@ import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.WatcherEyeBlueprint;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -18,6 +17,7 @@ import com.robertx22.mine_and_slash.vanilla_mc.new_commands.parts.ResetPlayerDat
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
 import com.robertx22.orbs_of_crafting.main.LocReqContext;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.ChatFormatting;
@@ -50,12 +50,12 @@ public class PlayerCommands {
                 var mod = MOD.getFromRegistry(e);
                 ItemStack stack = p.getMainHandItem();
 
-                var ex = ExileStack.of(stack);
+                var ex = new StackHolder(stack);
                 mod.applyMod(p, ex, res);
 
                 res.onFinish(p);
 
-                p.setItemSlot(EquipmentSlot.MAINHAND, ex.getStack());
+                p.setItemSlot(EquipmentSlot.MAINHAND, ex.stack);
 
                 p.sendSystemMessage(Component.literal("Applied Item Modification from Command").withStyle(ChatFormatting.GREEN));
             });
@@ -81,7 +81,7 @@ public class PlayerCommands {
                 var ex = mod.canItemBeModified(ctx);
                 if (ex.can) {
                     var res = mod.modifyItem(ctx);
-                    p.setItemSlot(EquipmentSlot.MAINHAND, res.stack.getStack().copy());
+                    p.setItemSlot(EquipmentSlot.MAINHAND, res.stack.copy());
 
                 } else {
                     p.sendSystemMessage(ex.answer);

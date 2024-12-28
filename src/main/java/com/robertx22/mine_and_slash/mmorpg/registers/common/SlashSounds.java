@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.sounds.SoundEvent;
 
 public class SlashSounds {

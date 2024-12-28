@@ -5,7 +5,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.Upg
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
 import net.minecraft.network.chat.MutableComponent;
 
 public class UpgradeJewelAffixRarityMod extends JewelModification {

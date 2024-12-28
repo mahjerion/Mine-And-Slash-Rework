@@ -1,13 +1,13 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.GearModification;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;

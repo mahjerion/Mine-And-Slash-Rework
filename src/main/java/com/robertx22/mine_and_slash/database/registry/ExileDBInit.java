@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.registry;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrbs;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
@@ -104,6 +105,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ITEM_REQ, ""));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.CURRENCY, "socket_adder"));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.BOSS_ARENA, "sandstone"));
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ORB_EXTEND, ExtendedOrbs.DEFAULT));
 
     }
 }

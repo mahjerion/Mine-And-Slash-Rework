@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.database.registry;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.SyncTime;
 import com.robertx22.library_of_exile.registry.loaders.BaseDataPackLoader;
@@ -123,6 +124,7 @@ public class ExileRegistryTypes {
     public static ExileRegistryType ITEM_REQ = ExileRegistryType.register(SlashRef.MODID, "item_requirement", 49, ItemRequirement.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType CURRENCY = ExileRegistryType.register(SlashRef.MODID, "currency", 50, ExileCurrency.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType BOSS_ARENA = ExileRegistryType.register(SlashRef.MODID, "boss_arena", 51, BossArena.SERIALIZER, SyncTime.NEVER);
+    public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 
 
 }

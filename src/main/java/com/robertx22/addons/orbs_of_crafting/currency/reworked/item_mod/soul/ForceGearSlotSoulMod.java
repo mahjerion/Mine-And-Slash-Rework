@@ -1,12 +1,12 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.soul;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
 import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.saveclasses.stat_soul.StatSoulData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
 import net.minecraft.network.chat.MutableComponent;
 
 public class ForceGearSlotSoulMod extends ItemModification {
@@ -28,14 +28,14 @@ public class ForceGearSlotSoulMod extends ItemModification {
     }
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
 
         // todo i should merge souls into 1 type of data saving..
         // maybe add profession outcome types, default type being tier 1 and 2 etc?
         // can also leave it as is, souls probably wont get any more specific currencies
 
 
-        var craftedStack = stack.getStack();
+        var craftedStack = stack.stack;
 
         StatSoulData soul = StackSaving.STAT_SOULS.loadFrom(craftedStack);
         if (soul != null) {

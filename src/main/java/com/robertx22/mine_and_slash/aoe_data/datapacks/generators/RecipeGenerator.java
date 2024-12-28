@@ -2,13 +2,13 @@ package com.robertx22.mine_and_slash.aoe_data.datapacks.generators;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.aoe_data.database.gear_slots.GearSlots;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.profession.all.ProfessionMatItems;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.IShapelessRecipe;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gearitems.VanillaMaterial;

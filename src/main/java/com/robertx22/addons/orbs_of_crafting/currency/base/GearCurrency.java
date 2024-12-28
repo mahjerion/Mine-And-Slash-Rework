@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
+import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -35,7 +36,12 @@ public abstract class GearCurrency extends CodeCurrency {
 
         GearOutcome outcome = getOutcome();
 
-        ctx.stack.get(StackKeys.POTENTIAL).edit(x -> x.spend(getPotentialLoss()));
+        ExileStack ex = ExileStack.of(ctx.stack);
+
+        StackKeys.POTENTIAL.get(ex).edit(x -> x.spend(getPotentialLoss()));
+        
+        ctx.stack = ex.getStack();
+
 
         Player player = ctx.player;
         if (outcome.getOutcomeType() == OutcomeType.GOOD) {
@@ -54,18 +60,20 @@ public abstract class GearCurrency extends CodeCurrency {
 
     @Override
     public ExplainedResult canItemBeModified(LocReqContext context) {
-        GearItemData data = context.stack.get(StackKeys.GEAR).get();
+        ExileStack ex = ExileStack.of(context.stack);
 
-       
+        GearItemData data = ex.get(StackKeys.GEAR).get();
+
+
         if (data == null) {
             return ExplainedResult.failure(Chats.NOT_GEAR.locName());
         }
 
-        if (context.stack.isCorrupted() && this.spendsGearPotential()) {
+        if (ex.isCorrupted() && this.spendsGearPotential()) {
             return ExplainedResult.failure(Chats.CORRUPT_CANT_BE_MODIFIED.locName());
         }
 
-        if (!context.stack.get(StackKeys.POTENTIAL).has() || context.stack.get(StackKeys.POTENTIAL).get().potential < 1) {
+        if (!ex.get(StackKeys.POTENTIAL).has() || ex.get(StackKeys.POTENTIAL).get().potential < 1) {
             if (this.spendsGearPotential()) {
                 return ExplainedResult.failure(Chats.GEAR_NO_POTENTIAL.locName());
             }

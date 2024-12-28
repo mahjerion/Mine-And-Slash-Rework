@@ -1,15 +1,15 @@
 package com.robertx22.orbs_of_crafting.register.mods;
 
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
+import com.robertx22.orbs_of_crafting.register.mods.base.VanillaItemModSers;
 import net.minecraft.network.chat.MutableComponent;
 
 public class DoNothingItemMod extends ItemModification {
 
     public DoNothingItemMod(String id) {
-        super(ItemModificationSers.DO_NOTHING, id);
+        super(VanillaItemModSers.DO_NOTHING, id);
     }
 
 
@@ -20,7 +20,7 @@ public class DoNothingItemMod extends ItemModification {
 
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
 
     }
 

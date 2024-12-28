@@ -1,12 +1,12 @@
 package com.robertx22.orbs_of_crafting.keys;
 
 import com.google.common.base.Preconditions;
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.generators.RecipeGenerator;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.database.data.profession.all;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.profession.ExpSources;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.tags.imp.SlotTag;
 import com.robertx22.temp.SkillItemTier;

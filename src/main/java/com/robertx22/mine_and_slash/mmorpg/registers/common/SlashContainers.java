@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
 import com.robertx22.mine_and_slash.capability.player.container.SkillGemsMenu;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.screen.CraftingStationMenu;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 

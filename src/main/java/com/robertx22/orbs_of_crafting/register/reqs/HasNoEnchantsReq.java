@@ -1,7 +1,7 @@
 package com.robertx22.orbs_of_crafting.register.reqs;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqSers;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -22,8 +22,8 @@ public class HasNoEnchantsReq extends ItemRequirement {
     }
 
     @Override
-    public boolean isValid(Player p, ExileStack obj) {
-        return !obj.getStack().isEnchanted();
+    public boolean isValid(Player p, StackHolder obj) {
+        return !obj.stack.isEnchanted();
     }
 
     @Override

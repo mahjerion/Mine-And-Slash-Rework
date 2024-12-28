@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanc
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class LevelNotMaxReq extends GearRequirement {
 
@@ -29,8 +30,10 @@ public class LevelNotMaxReq extends GearRequirement {
     }
 
     @Override
-    public boolean isGearValid(ExileStack stack) {
-        var gear = stack.get(StackKeys.GEAR).get();
+    public boolean isGearValid(ItemStack stack) {
+        ExileStack ex = ExileStack.of(stack);
+
+        var gear = ex.get(StackKeys.GEAR).get();
         return gear.lvl < GameBalanceConfig.get().MAX_LEVEL;
     }
 }

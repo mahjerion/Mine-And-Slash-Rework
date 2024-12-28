@@ -3,6 +3,7 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req;
 import com.robertx22.addons.orbs_of_crafting.currency.base.ExileKeyUtil;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.ExtractSocketItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.HasCorruptAffixes;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotCorruptedReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.gear.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.jewel.JewelHasAffixesReq;

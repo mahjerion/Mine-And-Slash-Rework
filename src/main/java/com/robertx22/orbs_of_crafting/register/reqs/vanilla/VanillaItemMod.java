@@ -1,11 +1,11 @@
 package com.robertx22.orbs_of_crafting.register.reqs.vanilla;
 
 import com.google.gson.JsonObject;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationSers;
+import com.robertx22.orbs_of_crafting.register.mods.base.VanillaItemModSers;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +25,7 @@ public class VanillaItemMod extends ItemModification {
     public JsonObject vanillaFunction = null;
 
     public VanillaItemMod(String id, String desc, LootItemFunction function) {
-        super(ItemModificationSers.VANILLA, id);
+        super(VanillaItemModSers.VANILLA, id);
         this.desc = desc;
         this.vanillaFunction = (JsonObject) LootDataType.MODIFIER.parser().toJsonTree(function);
     }
@@ -41,11 +41,12 @@ public class VanillaItemMod extends ItemModification {
     }
 
     @Override
-    public void applyINTERNAL(ExileStack stack, ItemModificationResult r) {
+    public void applyINTERNAL(StackHolder stack, ItemModificationResult r) {
     }
 
     @Override
-    public void applyMod(Player p, ExileStack stack, ItemModificationResult r) {
+    public void applyMod(Player p, StackHolder stack, ItemModificationResult r) {
+
         var opt = LootDataType.MODIFIER.deserialize(new ResourceLocation(""), vanillaFunction, p.getServer().getResourceManager());
 
         opt.ifPresent(x -> {
@@ -57,8 +58,8 @@ public class VanillaItemMod extends ItemModification {
             var ctx = new LootContext.Builder(lootparams).create(SlashRef.id("vanilla_function"));
 
 
-            var res = x.apply(stack.getStack(), ctx);
-            stack.setStack(res);
+            var res = x.apply(stack.stack, ctx);
+            stack.stack = res;
         });
 
     }

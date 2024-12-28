@@ -6,12 +6,12 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializer;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializers;
 import com.robertx22.orbs_of_crafting.custom_ser.GsonCustomSer;
+import com.robertx22.orbs_of_crafting.main.StackHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -49,10 +49,10 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
 
     public abstract OutcomeType getOutcomeType();
 
-    public abstract void applyINTERNAL(ExileStack stack, ItemModificationResult r);
+    public abstract void applyINTERNAL(StackHolder stack, ItemModificationResult r);
 
 
-    public void applyMod(Player p, ExileStack stack, ItemModificationResult r) {
+    public void applyMod(Player p, StackHolder stack, ItemModificationResult r) {
         applyINTERNAL(stack, r);
     }
 

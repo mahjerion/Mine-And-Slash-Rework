@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common.items;
 
+import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChestItem;
 import com.robertx22.mine_and_slash.database.data.profession.items.RarityKeyItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
-import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.RegObj;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SlashPotionItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;

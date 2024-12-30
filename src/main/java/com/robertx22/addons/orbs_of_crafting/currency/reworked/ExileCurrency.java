@@ -62,7 +62,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
     String rar = IRarity.RARE_ID;
 
-  
+
     // todo this needs some extension system..
     public DropRequirement drop_req = DropRequirement.Builder.of().build();
 
@@ -231,10 +231,12 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         tip.accept(new AdditionalBlock(Words.Currency.locName().withStyle(ChatFormatting.GOLD)));
 
 
-        var req = ExileDB.OrbExtension().get(this.GUID());
+        if (ExileDB.OrbExtension().isRegistered(GUID())) {
+            var req = ExileDB.OrbExtension().get(this.GUID());
 
-        if (req != null && req.drop_req.getLeague() != null) {
-            tip.accept(new LeagueBlock(req.drop_req.getLeague()));
+            if (req != null && req.drop_req.getLeague() != null) {
+                tip.accept(new LeagueBlock(req.drop_req.getLeague()));
+            }
         }
 
         return tip.release();

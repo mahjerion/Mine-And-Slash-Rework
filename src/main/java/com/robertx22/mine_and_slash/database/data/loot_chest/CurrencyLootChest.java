@@ -18,8 +18,11 @@ public class CurrencyLootChest extends LootChest {
 
         ExileCurrency currency = ExileDB.Currency()
                 .getFilterWrapped(x -> {
-                    var req = ExileDB.OrbExtension().get(this.GUID()).drop_req;
-                    return req.canDropInLeague(LeagueMechanics.NONE, data.lvl);
+                    if (ExileDB.OrbExtension().isRegistered(GUID())) {
+                        var req = ExileDB.OrbExtension().get(this.GUID()).drop_req;
+                        return req.canDropInLeague(LeagueMechanics.NONE, data.lvl);
+                    }
+                    return true;
                 })
                 .random();
 

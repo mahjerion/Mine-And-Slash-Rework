@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.ElementalStat;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
@@ -87,7 +88,7 @@ public class BonusAttackDamage extends ElementalStat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.data.isBasicAttack();
+            return effect.data.isBasicAttack() && effect.data.getAttackType() == AttackType.hit;
         }
 
     }

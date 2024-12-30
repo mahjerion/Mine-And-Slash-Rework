@@ -1,8 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.5.9.txt
 
-v.5.9.38
+v.5.9.39
 
-- runed jewel now correctly adds last affix at mythic upgrade
-- changed currency item datapacks slightly, drop req and other mns specific things are in a different datapack now 
-- fixed stat like fire_weapon_damage "+ele dmg on basic atk" being applied twice.
-- lower rar maps now give less xp
+- require updated library version

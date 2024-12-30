@@ -301,3 +301,10 @@ They shouldn't really impact genuine play
 v.5.9.37
 
 - try fix crash
+
+v.5.9.38
+
+- runed jewel now correctly adds last affix at mythic upgrade
+- changed currency item datapacks slightly, drop req and other mns specific things are in a different datapack now 
+- fixed stat like fire_weapon_damage "+ele dmg on basic atk" being applied twice.
+- lower rar maps now give less xp

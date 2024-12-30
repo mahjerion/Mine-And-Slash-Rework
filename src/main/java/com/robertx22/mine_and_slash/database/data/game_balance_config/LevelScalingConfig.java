@@ -24,5 +24,6 @@ public class LevelScalingConfig {
         return base_scaling + (per_level_scaling * (lvl - 1));
 
     }
+    
 
 }

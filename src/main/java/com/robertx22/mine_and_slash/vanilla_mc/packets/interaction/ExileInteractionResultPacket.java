@@ -48,6 +48,7 @@ public class ExileInteractionResultPacket extends MyPacket<ExileInteractionResul
     @Override
     public void onReceived(ExilePacketContext exilePacketContext) {
         if (!ClientConfigs.getConfig().ENABLE_FLOATING_DMG.get()) return;
+
         Entity entity = exilePacketContext.getPlayer().level().getEntity(id);
         notifier.spawnOnClient(entity);
     }

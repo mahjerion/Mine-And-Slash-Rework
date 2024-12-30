@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_stats;
 
+import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
@@ -14,17 +15,16 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.H
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
-import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 
 public class BaseStatsAdder implements ExileRegistryInit {
 
-    public static String PLAYER = "player";
     public static String MOB = "mob";
     public static String EMPTY = "empty";
 
     @Override
     public void registerAll() {
-        playerStats().addToSerializables();
+        playerStatsOverrideMode().addToSerializables();
+        playerStatsCompatMode().addToSerializables();
         mob().addToSerializables();
         empty().addToSerializables();
     }
@@ -48,11 +48,11 @@ public class BaseStatsAdder implements ExileRegistryInit {
 
     }
 
-    public static BaseStatsConfig playerStats() {
+    public static BaseStatsConfig playerStatsOverrideMode() {
 
         BaseStatsConfig c = new BaseStatsConfig();
 
-        c.id = PLAYER;
+        c.id = BaseStatsConfig.BaseStatsEnum.ORIGINAL_BALANCE.id;
 
         c.nonScaled(RegeneratePercentStat.MAGIC_SHIELD, 2);
 
@@ -81,5 +81,40 @@ public class BaseStatsAdder implements ExileRegistryInit {
         return c;
 
     }
+
+
+    public static BaseStatsConfig playerStatsCompatMode() {
+
+        BaseStatsConfig c = new BaseStatsConfig();
+
+        c.id = BaseStatsConfig.BaseStatsEnum.COMPAT_BALANCE.id;
+
+        c.nonScaled(RegeneratePercentStat.MAGIC_SHIELD, 2);
+
+        c.scaled(WeaponDamage.getInstance(), 1);
+
+        c.scaled(Health.getInstance(), 10);
+        c.scaled(Mana.getInstance(), 50);
+        c.scaled(Energy.getInstance(), 50);
+
+        c.scaled(HealthRegen.getInstance(), 0.5F);
+        c.scaled(MagicShieldRegen.getInstance(), 1);
+        c.scaled(ManaRegen.getInstance(), 3);
+        c.scaled(EnergyRegen.getInstance(), 4);
+
+        c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
+
+        // why did i add this again? I think its a must
+        c.nonScaled(OffenseStats.CRIT_CHANCE.get(), 1);
+        c.nonScaled(OffenseStats.CRIT_DAMAGE.get(), 1);
+
+        for (Stat cap : ResourceStats.LEECH_CAP.getAll()) {
+            c.nonScaled(cap, 5);
+        }
+
+        return c;
+
+    }
+
 
 }

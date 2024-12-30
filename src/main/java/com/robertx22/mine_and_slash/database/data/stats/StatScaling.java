@@ -35,7 +35,6 @@ public enum StatScaling {
             return val * GameBalanceConfig.get().MOB_DAMAGE_SCALING.getMultiFor(lvl);
         }
     },
-
     SLOW {
         @Override
         public float scale(float val, float lvl) {

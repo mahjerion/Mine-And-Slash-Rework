@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.uncommon.stat_calculation;
 
 import com.robertx22.mine_and_slash.aoe_data.database.base_stats.BaseStatsAdder;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.stat_compat.StatCompat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CommonStatUtils {
-   
+
 
     // no idea about perf impact lets keep this player only for now
     public static StatContext addStatCompat(LivingEntity en) {
@@ -47,7 +48,9 @@ public class CommonStatUtils {
     public static List<StatContext> addBaseStats(LivingEntity en) {
 
         try {
-            String id = BaseStatsAdder.PLAYER;
+
+            String id = CompatConfig.get().BASE_STATS_DATAPACK.get().id;
+
             if (en instanceof Player == false) {
                 id = BaseStatsAdder.MOB;
             }

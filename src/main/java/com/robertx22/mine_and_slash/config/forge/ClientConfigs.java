@@ -44,6 +44,7 @@ public class ClientConfigs {
         MODIFY_TOOLTIP_LENGTH = b.define("MODIFY_TOOLTIP_LENGTH", true);
         IN_DEPTH_TOOLTIPS_BY_DEFAULT = b.define("IN_DEPTH_TOOLTIPS_BY_DEFAULT", true);
         USE_SPELL_ANIMATIONS = b.comment("Use player animations when casting mns spells. Disable in case of other animation mod incompatibility").define("USE_SPELL_ANIMATIONS", true);
+        RENDER_FILLED_GUI_BARS = b.comment("If false, gui bars will only render when they aren't full").defineEnum("RENDER_FILLED_GUI_BARS", GuiBarRenderOption.DEFAULT);
 
         ITEM_RARITY_OPACITY = b.defineInRange("ITEM_RARITY_OPACITY", 0.75F, 0, 1F);
         HEALTH_BAR_GUI_SCALE = b.defineInRange("health_bar_gui_scale", 1.25F, 0, 10F);
@@ -95,6 +96,7 @@ public class ClientConfigs {
     public ForgeConfigSpec.BooleanValue IN_DEPTH_TOOLTIPS_BY_DEFAULT;
     public ForgeConfigSpec.BooleanValue HOTBAR_SWAPPING;
     public ForgeConfigSpec.BooleanValue USE_SPELL_ANIMATIONS;
+    public ForgeConfigSpec.EnumValue<GuiBarRenderOption> RENDER_FILLED_GUI_BARS;
 
     public ForgeConfigSpec.EnumValue<HorizontalOrVertical> STATUS_EFFECTS_OVERLAY_TYPE;
     public ForgeConfigSpec.EnumValue<HorizontalOrVertical> SPELL_HOTBAR_OVERLAY_TYPE;

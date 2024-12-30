@@ -1,7 +1,10 @@
 package com.robertx22.mine_and_slash.gui.overlays;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
+import com.robertx22.mine_and_slash.config.forge.GuiBarRenderOption;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.BloodUser;
+import com.robertx22.mine_and_slash.event_hooks.ontick.OnClientTick;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.HealthUtils;
@@ -11,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public enum BarGuiType {
+
     NONE {
         @Override
         public float getCurrent(EntityData data, Player en) {
@@ -27,7 +31,23 @@ public enum BarGuiType {
             return SlashRef.id("empty");
         }
     },
+
     EXP {
+        @Override
+        public boolean shouldRenderCustom(EntityData data, Player en) {
+            if (ClientConfigs.getConfig().RENDER_FILLED_GUI_BARS.get().getReal() == GuiBarRenderOption.WHEN_NOT_FULL) {
+                if (OnClientTick.expChangedRecentlyTicks < 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isRechargable() {
+            return false;
+        }
+
         @Override
         public float getCurrent(EntityData data, Player en) {
             return data.getExp();
@@ -48,6 +68,7 @@ public enum BarGuiType {
             return Gui.STATUS_BAR_LEVEL.locName(data.getLevel(), (int) (getMulti(data, en) * 100));
         }
     },
+
     ENERGY {
         @Override
         public float getCurrent(EntityData data, Player en) {
@@ -68,6 +89,7 @@ public enum BarGuiType {
             return SlashRef.id("textures/gui/overlay/energy.png");
         }
     },
+
     MAGIC_SHIELD {
         @Override
         public float getCurrent(EntityData data, Player en) {
@@ -89,7 +111,7 @@ public enum BarGuiType {
         }
 
         @Override
-        public boolean shouldRender(EntityData data, Player en) {
+        public boolean shouldRenderCustom(EntityData data, Player en) {
             return data.getUnit().magicShieldData().getValue() > 0;
         }
     },
@@ -130,6 +152,7 @@ public enum BarGuiType {
             }
         }
     },
+
     HEALTH {
         @Override
         public float getCurrent(EntityData data, Player en) {
@@ -171,6 +194,7 @@ public enum BarGuiType {
         }
 
     },
+
     AIR {
         @Override
         public float getCurrent(EntityData data, Player en) {
@@ -188,7 +212,7 @@ public enum BarGuiType {
         }
 
         @Override
-        public boolean shouldRender(EntityData data, Player en) {
+        public boolean shouldRenderCustom(EntityData data, Player en) {
             return getCurrent(data, en) < getMax(data, en);
         }
     };
@@ -206,13 +230,38 @@ public enum BarGuiType {
                 .replaceAll(".png", "_icon.png"));
     }
 
-    public boolean shouldRender(EntityData data, Player en) {
+    public boolean shouldRenderCustom(EntityData data, Player en) {
         return true;
     }
 
     public abstract float getCurrent(EntityData data, Player en);
 
     public abstract float getMax(EntityData data, Player en);
+
+
+    public boolean isFull(EntityData data, Player en) {
+        return getCurrent(data, en) >= getMax(data, en);
+    }
+
+    public boolean isRechargable() {
+        return true;
+    }
+
+    public boolean shouldRender(EntityData data, Player en) {
+        if (!shouldRenderCustom(data, en)) {
+            return false;
+        }
+
+        if (ClientConfigs.getConfig().RENDER_FILLED_GUI_BARS.get().getReal() == GuiBarRenderOption.WHEN_NOT_FULL) {
+            if (isFull(data, en)) {
+                if (isRechargable()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
     public abstract ResourceLocation getTexture(EntityData data, Player en);
 

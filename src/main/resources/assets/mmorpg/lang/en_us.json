@@ -608,6 +608,49 @@
 "_comment": " [CATEGORY]: DUNGEON - NAMES",
 
 
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
+
+	"mmorpg.ailment.bleed": "Bleed",
+	"mmorpg.ailment.burn": "Burn",
+	"mmorpg.ailment.electrify": "Electrify",
+	"mmorpg.ailment.freeze": "Freeze",
+	"mmorpg.ailment.poison": "Poison",
+	"mmorpg.effect.agony": "Physical Agony",
+	"mmorpg.effect.blind": "Blind",
+	"mmorpg.effect.bone_chill": "Bone Chill",
+	"mmorpg.effect.charm": "Charm",
+	"mmorpg.effect.despair": "Despair of Chaos",
+	"mmorpg.effect.draconic_blood": "Dragon Blood",
+	"mmorpg.effect.endurance_charge": "Endurance Charge",
+	"mmorpg.effect.essence_of_frost": "Essence of Frost",
+	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
+	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
+	"mmorpg.effect.frost_lich": "Frost Lich",
+	"mmorpg.effect.gale_force": "Gale Force",
+	"mmorpg.effect.ground": "Grounding",
+	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
+	"mmorpg.effect.inner_calm": "Inner Calm",
+	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
+	"mmorpg.effect.mage_circle": "Mage Circle",
+	"mmorpg.effect.perseverance": "Perseverance",
+	"mmorpg.effect.petrify": "Petrify",
+	"mmorpg.effect.power_charge": "Power Charge",
+	"mmorpg.effect.rejuvenation": "Rejuvenation",
+	"mmorpg.effect.shred": "Shred",
+	"mmorpg.effect.slow": "Lethargy",
+	"mmorpg.effect.stun": "Stun",
+	"mmorpg.effect.taunt_stance": "Taunt Stance",
+	"mmorpg.effect.thorn": "Thorn",
+	"mmorpg.effect.undying_will": "Undying Will",
+	"mmorpg.effect.valor": "Valor",
+	"mmorpg.effect.vamp_blood": "Vamp Blood",
+	"mmorpg.effect.vigor": "Vigor",
+	"mmorpg.effect.weak": "Elemental Weakness",
+	"mmorpg.effect.wounds": "Wounds",
+
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
+
+
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
 
 	"mmorpg.currency.affix_common_reroll": "Orb of New Beginnings",
@@ -682,49 +725,6 @@
 	"item.mmorpg.currency.upgrade_common_affix": "Orb of Fledgling's Reprieve",
 
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
-
-
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
-
-	"mmorpg.ailment.bleed": "Bleed",
-	"mmorpg.ailment.burn": "Burn",
-	"mmorpg.ailment.electrify": "Electrify",
-	"mmorpg.ailment.freeze": "Freeze",
-	"mmorpg.ailment.poison": "Poison",
-	"mmorpg.effect.agony": "Physical Agony",
-	"mmorpg.effect.blind": "Blind",
-	"mmorpg.effect.bone_chill": "Bone Chill",
-	"mmorpg.effect.charm": "Charm",
-	"mmorpg.effect.despair": "Despair of Chaos",
-	"mmorpg.effect.draconic_blood": "Dragon Blood",
-	"mmorpg.effect.endurance_charge": "Endurance Charge",
-	"mmorpg.effect.essence_of_frost": "Essence of Frost",
-	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
-	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
-	"mmorpg.effect.frost_lich": "Frost Lich",
-	"mmorpg.effect.gale_force": "Gale Force",
-	"mmorpg.effect.ground": "Grounding",
-	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
-	"mmorpg.effect.inner_calm": "Inner Calm",
-	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
-	"mmorpg.effect.mage_circle": "Mage Circle",
-	"mmorpg.effect.perseverance": "Perseverance",
-	"mmorpg.effect.petrify": "Petrify",
-	"mmorpg.effect.power_charge": "Power Charge",
-	"mmorpg.effect.rejuvenation": "Rejuvenation",
-	"mmorpg.effect.shred": "Shred",
-	"mmorpg.effect.slow": "Lethargy",
-	"mmorpg.effect.stun": "Stun",
-	"mmorpg.effect.taunt_stance": "Taunt Stance",
-	"mmorpg.effect.thorn": "Thorn",
-	"mmorpg.effect.undying_will": "Undying Will",
-	"mmorpg.effect.valor": "Valor",
-	"mmorpg.effect.vamp_blood": "Vamp Blood",
-	"mmorpg.effect.vigor": "Vigor",
-	"mmorpg.effect.weak": "Elemental Weakness",
-	"mmorpg.effect.wounds": "Wounds",
-
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
 
 
 "_comment": " [CATEGORY]: TALENTS - NAMES",
@@ -1904,21 +1904,6 @@
 "_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
-	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
-	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
-	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
-	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
-	"mmorpg.stat_priority.first": "FIRST",
-	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
-
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
@@ -1933,6 +1918,21 @@
 	"item.mmorpg.weapon.staff.wood": "Staff",
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
+	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
+	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
+	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
+	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
+	"mmorpg.stat_priority.first": "FIRST",
+	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",

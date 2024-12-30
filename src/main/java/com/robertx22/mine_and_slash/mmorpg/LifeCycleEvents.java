@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.registers.server.CommandRegister;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
@@ -30,27 +31,30 @@ public class LifeCycleEvents {
 
             LevelUtils.runTests();
 
+            if (CompatConfig.get().DISABLE_VANILLA_HEALTH_REGEN.get()) {
+                regenDefault = event.getServer()
+                        .getGameRules()
+                        .getRule(GameRules.RULE_NATURAL_REGENERATION)
+                        .get();
 
-            regenDefault = event.getServer()
-                    .getGameRules()
-                    .getRule(GameRules.RULE_NATURAL_REGENERATION)
-                    .get();
+                event.getServer()
+                        .getGameRules()
+                        .getRule(GameRules.RULE_NATURAL_REGENERATION)
+                        .set(false, event.getServer());
+            }
 
-            event.getServer()
-                    .getGameRules()
-                    .getRule(GameRules.RULE_NATURAL_REGENERATION)
-                    .set(false, event.getServer());
-
-         
             ExileDB.checkAllDatabasesHaveDefaultEmpty();
 
         });
 
         ForgeEvents.registerForgeEvent(ServerStoppingEvent.class, event -> {
-            event.getServer()
-                    .getGameRules()
-                    .getRule(GameRules.RULE_NATURAL_REGENERATION)
-                    .set(regenDefault, event.getServer());
+            if (CompatConfig.get().DISABLE_VANILLA_HEALTH_REGEN.get()) {
+                event.getServer()
+                        .getGameRules()
+                        .getRule(GameRules.RULE_NATURAL_REGENERATION)
+                        .set(regenDefault, event.getServer());
+
+            }
         });
 
     }

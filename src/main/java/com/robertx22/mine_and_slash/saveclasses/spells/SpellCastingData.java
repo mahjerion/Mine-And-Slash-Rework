@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.saveclasses.spells;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimations;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
@@ -415,18 +416,22 @@ public class SpellCastingData {
                     return ExplainedResult.failure(Chats.CANT_CAST_WITH_BROKEN_WEAPON.locName());
                 }
 
-                GearItemData wep = opt.map(x -> x.gear).orElse(null);
 
-                if (wep == null) {
-                    return ExplainedResult.failure(Chats.NOT_MNS_WEAPON.locName());
-                }
+                if (!CompatConfig.get().IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS.get()) {
 
-                if (!spell.getConfig().castingWeapon.predicate.predicate.test(player)) {
-                    return ExplainedResult.failure(Chats.WRONG_CASTING_WEAPON.locName());
-                }
+                    GearItemData wep = opt.map(x -> x.gear).orElse(null);
 
-                if (!wep.canPlayerWear(ctx.data)) {
-                    return ExplainedResult.failure(Chats.WEAPON_REQ_NOT_MET.locName());
+                    if (wep == null) {
+                        return ExplainedResult.failure(Chats.NOT_MNS_WEAPON.locName());
+                    }
+
+                    if (!spell.getConfig().castingWeapon.predicate.predicate.test(player)) {
+                        return ExplainedResult.failure(Chats.WRONG_CASTING_WEAPON.locName());
+                    }
+
+                    if (!wep.canPlayerWear(ctx.data)) {
+                        return ExplainedResult.failure(Chats.WEAPON_REQ_NOT_MET.locName());
+                    }
                 }
 
                 return ExplainedResult.success();

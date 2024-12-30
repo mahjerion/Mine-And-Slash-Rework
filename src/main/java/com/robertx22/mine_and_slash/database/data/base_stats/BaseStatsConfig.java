@@ -1,5 +1,8 @@
 package com.robertx22.mine_and_slash.database.data.base_stats;
 
+import com.robertx22.library_of_exile.registry.ExileRegistryType;
+import com.robertx22.library_of_exile.registry.IAutoGson;
+import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
@@ -9,9 +12,6 @@ import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
-import com.robertx22.library_of_exile.registry.ExileRegistryType;
-import com.robertx22.library_of_exile.registry.IAutoGson;
-import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
@@ -20,6 +20,16 @@ import java.util.List;
 
 public class BaseStatsConfig implements JsonExileRegistry<BaseStatsConfig>, IAutoGson<BaseStatsConfig>, IStatCtx {
     public static BaseStatsConfig SERIALIZER = new BaseStatsConfig();
+
+    public enum BaseStatsEnum {
+        ORIGINAL_BALANCE("original_mode_player"),
+        COMPAT_BALANCE("compat_mode_player");
+        public String id;
+
+        BaseStatsEnum(String id) {
+            this.id = id;
+        }
+    }
 
     public String id;
     List<OptScaleExactStat> base_stats = new ArrayList<>();

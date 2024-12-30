@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.a_libraries.player_animations.AnimationHolde
 import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimations;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.SpellAnimations;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellDesc;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
@@ -321,7 +322,9 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         list.add(ExileText.emptyLine().get());
 
-        list.add(getConfig().castingWeapon.predicate.text);
+        if (!CompatConfig.get().IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS.get()) {
+            list.add(getConfig().castingWeapon.predicate.text);
+        }
 
         list.add(ExileText.emptyLine().get());
 

@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -15,27 +16,51 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
 
     public static GameBalanceConfig SERIALIZER = new GameBalanceConfig();
 
-    public String id = "game_balance";
-    public static String ID = "game_balance";
+    public enum BalanceEnum {
+        ORIGINAL_BALANCE("original_balance"),
+        COMPAT_BALANCE("compat_mode_balance");
+        public String id;
+
+        BalanceEnum(String id) {
+            this.id = id;
+        }
+    }
+
+    public String id = BalanceEnum.ORIGINAL_BALANCE.id;
+
 
     public static GameBalanceConfig get() {
-        var d = Database.getRegistry(ExileRegistryTypes.GAME_BALANCE);
-        if (d.isRegistered(ID)) {
-            return (GameBalanceConfig) d.get(ID);
-        }
-        return SERIALIZER;
+        var reg = Database.getRegistry(ExileRegistryTypes.GAME_BALANCE);
+        var id = CompatConfig.get().BALANCE_DATAPACK.get().id;
+        return (GameBalanceConfig) reg.get(id);
     }
 
 
     public int MAX_LEVEL = 100;
 
     public LevelScalingConfig NORMAL_STAT_SCALING = new LevelScalingConfig(1, 0.2F, false);
-    public LevelScalingConfig SLOW_STAT_SCALING = new LevelScalingConfig(1, 0.01F, true);
+    public LevelScalingConfig SLOW_STAT_SCALING = new LevelScalingConfig(1, 0.01F, true); // todo this isnt used
     public LevelScalingConfig MANA_COST_SCALING = new LevelScalingConfig(1, 0.2F, true);
     public LevelScalingConfig CORE_STAT_SCALING = new LevelScalingConfig(1, 0.05F, true);
     public LevelScalingConfig STAT_REQ_SCALING = new LevelScalingConfig(2, 2, true);
     public LevelScalingConfig MOB_DAMAGE_SCALING = new LevelScalingConfig(1, 0.25F, false);
 
+
+    public void editForCompat() {
+
+        NORMAL_STAT_SCALING = new LevelScalingConfig(1, 0.02F, false);
+        SLOW_STAT_SCALING = new LevelScalingConfig(1, 0.01F, true);
+        MANA_COST_SCALING = new LevelScalingConfig(1, 0.0F, true);
+        CORE_STAT_SCALING = new LevelScalingConfig(1, 0.005F, true);
+        STAT_REQ_SCALING = new LevelScalingConfig(2, 0.2F, true);
+        MOB_DAMAGE_SCALING = new LevelScalingConfig(1, 0.025F, false);
+
+        MOB_HP_POWER_SCALING = 1;
+        MOB_DMG_POWER_SCALING = 1;
+        MOB_DMG_MULTI_PER_MAP_RES_REQ_LACKING = 1;
+
+        player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 0.2F, 25, 200));
+    }
 
     public HashMap<PlayerPointsType, PlayerPointsConfig> player_points = new HashMap<>();
 
@@ -48,7 +73,6 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
     public double MIN_SPELL_COOLDOWN_MULTI = 0.2;
 
     public double CRAFTED_GEAR_POTENTIAL_MULTI = 0.5;
-
 
     public int MAX_BONUS_SPELL_LEVELS = 5;
 

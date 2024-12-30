@@ -117,13 +117,20 @@ public class GeneratedData {
         new ProphecyModifiers().registerAll();
         UberBosses.init();
 
-        GameBalanceConfig c = new GameBalanceConfig();
-        c.player_points.put(PlayerPointsType.TALENTS, new PlayerPointsConfig(PlayerPointsType.TALENTS, 1, 1, 30, 200));
-        c.player_points.put(PlayerPointsType.ASCENDANCY, new PlayerPointsConfig(PlayerPointsType.ASCENDANCY, 0, 0.1F, 0, 9));
-        c.player_points.put(PlayerPointsType.SPELLS, new PlayerPointsConfig(PlayerPointsType.SPELLS, 0, 1, 10, 150));
-        c.player_points.put(PlayerPointsType.PASSIVES, new PlayerPointsConfig(PlayerPointsType.PASSIVES, 0, 1, 10, 150));
-        c.player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 2, 50, 300));
-        c.addToSerializables();
+        GameBalanceConfig orig = new GameBalanceConfig();
+        orig.id = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE.id;
+        orig.player_points.put(PlayerPointsType.TALENTS, new PlayerPointsConfig(PlayerPointsType.TALENTS, 1, 1, 30, 200));
+        orig.player_points.put(PlayerPointsType.ASCENDANCY, new PlayerPointsConfig(PlayerPointsType.ASCENDANCY, 0, 0.1F, 0, 9));
+        orig.player_points.put(PlayerPointsType.SPELLS, new PlayerPointsConfig(PlayerPointsType.SPELLS, 0, 1, 10, 150));
+        orig.player_points.put(PlayerPointsType.PASSIVES, new PlayerPointsConfig(PlayerPointsType.PASSIVES, 0, 1, 10, 150));
+        orig.player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 2, 50, 300));
+        orig.addToSerializables();
+
+        GameBalanceConfig com = orig.fromJson(orig.toJson());
+        com.id = GameBalanceConfig.BalanceEnum.COMPAT_BALANCE.id;
+        com.editForCompat();
+        com.addToSerializables();
+
 
         Omens.init();
 

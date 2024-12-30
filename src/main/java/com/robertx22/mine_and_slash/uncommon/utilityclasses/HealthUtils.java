@@ -8,6 +8,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class HealthUtils {
 
+    // todo disable this class if the hp is added normally
+
     public static void heal(LivingEntity en, float heal) {
         en.heal(heal);
     }

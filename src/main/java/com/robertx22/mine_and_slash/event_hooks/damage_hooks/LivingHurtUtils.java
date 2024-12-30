@@ -38,6 +38,7 @@ public class LivingHurtUtils {
         }
     }
 
+    // this is a bit hard to rework if i dont first change how hp works
     public static void tryAttack(AttackInformation event) {
 
         LivingEntity target = event.getTargetEntity();
@@ -52,7 +53,6 @@ public class LivingHurtUtils {
                 return;
             }
             if (!RangedDamageUtil.isValidAttack(event)) {
-                event.setAmount(0);
                 event.setCanceled(true);
                 return;
             }

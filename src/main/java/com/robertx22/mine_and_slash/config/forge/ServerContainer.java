@@ -94,9 +94,7 @@ public class ServerContainer {
         LOOT_CHEST_DROPRATE = b.defineInRange("loot_chest_drop_rate", 0.1D, 0, 1000);
         OMEN_DROPRATE = b.defineInRange("OMEN_DROPRATE", 0.1D, 0, 1000);
 
-        MOB_FLAT_DAMAGE_BONUS = b.defineInRange("MOB_FLAT_DAMAGE_BONUS", 6D, 0, 1000);
-
-
+   
         BLOCK_COST = b.defineInRange("block_cost", 0.25D, 0, 1000);
 
         PACK_MOB_MIN = b.defineInRange("pack_mob_min", 3, 0, 20);
@@ -254,7 +252,6 @@ public class ServerContainer {
     public ForgeConfigSpec.DoubleValue PROPHECY_COIN_DROPRATE;
     public ForgeConfigSpec.DoubleValue OMEN_DROPRATE;
 
-    public ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
 
     public ForgeConfigSpec.DoubleValue BLOCK_COST;
 

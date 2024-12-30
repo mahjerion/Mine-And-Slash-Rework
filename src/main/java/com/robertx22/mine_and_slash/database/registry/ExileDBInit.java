@@ -70,7 +70,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.TALENT_TREE, UNKNOWN_ID).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SPELL_SCHOOL, SpellSchoolsAdder.SORCERER).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.BASE_STATS, BaseStatsAdder.EMPTY).setIsDatapack());
-        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.GAME_BALANCE, GameBalanceConfig.ID).setIsDatapack());
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.GAME_BALANCE, GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE.id).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.VALUE_CALC, UNKNOWN_ID).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.STAT_EFFECT, "").setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.STAT_CONDITION, "").setIsDatapack());

@@ -25,6 +25,9 @@ public class OnClientTick {
         NO_MANA_SOUND_COOLDOWN = 30;
     }
 
+    public static int expChangedRecentlyTicks = 0;
+    static int lastExp = -1;
+
     public static void onEndTick(Minecraft mc) {
 
         try {
@@ -50,6 +53,13 @@ public class OnClientTick {
             }
 
             if (player.is(player)) {
+                var data = Load.Unit(player);
+
+                if (data.getExp() != lastExp) {
+                    lastExp = data.getExp();
+                    expChangedRecentlyTicks = 20 * 5;
+                }
+                expChangedRecentlyTicks--;
 
                 Load.Unit(player)
                         .getResources()

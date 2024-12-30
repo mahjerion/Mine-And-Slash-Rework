@@ -11,6 +11,7 @@ import com.robertx22.mine_and_slash.capability.bases.INeededForClient;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
@@ -484,7 +485,6 @@ public class EntityData implements ICap, INeededForClient {
         } else {
             if (event.data.getNumber() > resources.getEnergy()) {
                 data.setCanceled(true);
-                data.setAmount(0);
                 return;
             }
         }
@@ -734,7 +734,6 @@ public class EntityData implements ICap, INeededForClient {
             } else {
                 if (event.data.getNumber() > resources.getEnergy()) {
                     data.setCanceled(true);
-                    data.setAmount(0);
                     return;
                 }
             }
@@ -773,7 +772,7 @@ public class EntityData implements ICap, INeededForClient {
 
         float multi = (float) (ServerContainer.get().VANILLA_MOB_DMG_AS_EXILE_DMG.get().floatValue());
 
-        float num = (data.getAmount() * 0.33F) + ServerContainer.get().MOB_FLAT_DAMAGE_BONUS.get().floatValue();
+        float num = (data.getAmount() * CompatConfig.get().MOB_PERCENT_DAMAGE_AS_BONUS.get().floatValue()) + CompatConfig.get().MOB_FLAT_DAMAGE_BONUS.get().floatValue();
 
         num *= multi;
 

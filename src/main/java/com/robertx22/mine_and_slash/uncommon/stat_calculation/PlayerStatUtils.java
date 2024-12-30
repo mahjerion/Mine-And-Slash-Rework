@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.uncommon.stat_calculation;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.BonusExp;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
@@ -51,6 +52,10 @@ public class PlayerStatUtils {
 
     public static List<StatContext> addNewbieElementalResists(EntityData data) {
         List<ExactStatData> stats = new ArrayList<>();
+
+        if (CompatConfig.get().ENABLE_MINUS_RESISTS_PER_LEVEL.get()) {
+            return Arrays.asList(new SimpleStatCtx(StatContext.StatCtxType.NEWBIE_RESISTS, stats));
+        }
 
         int value = 50;
 

@@ -1,11 +1,12 @@
 package com.robertx22.mine_and_slash.event_hooks.damage_hooks.util;
 
 import com.google.common.base.Preconditions;
+import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
-import com.robertx22.library_of_exile.events.base.ExileEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -76,9 +77,15 @@ public class AttackInformation {
     }
 
     public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
-        if (event != null) {
-            this.event.canceled = canceled;
+        if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+            this.canceled = canceled;
+
+            if (canceled) {
+                this.setAmount(0);
+            }
+            if (event != null) {
+                this.event.canceled = canceled;
+            }
         }
     }
 

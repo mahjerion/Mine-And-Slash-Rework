@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailment;
 import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
@@ -357,7 +358,6 @@ public class DamageEvent extends EffectEvent {
 
         this.data.setBoolean(EventData.CANCELED, true);
         if (attackInfo != null) {
-            attackInfo.setAmount(0);
             attackInfo.setCanceled(true);
         }
         return;
@@ -539,7 +539,6 @@ public class DamageEvent extends EffectEvent {
 
         if (data.isHitAvoided()) {
             if (attackInfo != null) {
-                attackInfo.setAmount(0);
                 attackInfo.setCanceled(true);
             }
             cancelDamage();
@@ -628,33 +627,29 @@ public class DamageEvent extends EffectEvent {
                 attackInfo.setAmount(0.000001F);
             }
         } else {
+            DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
+            duck.setMnsDamage(vanillaDamage);
+
             if (attackInfo != null) {
-                DamageSourceDuck duck = (DamageSourceDuck) attackInfo.getSource();
-                duck.setMnsDamage(vanillaDamage);
-                duck.tryOverrideDmgWithMns(attackInfo);
-            } else {
-                if (target instanceof Player == false) {
-                    int inv = target.invulnerableTime;
-                    target.invulnerableTime = 0;
-                    target.hurt(dmgsource, vanillaDamage);
-                    target.invulnerableTime = inv;
-                } else {
-                    target.hurt(dmgsource, vanillaDamage);
+                if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+                    attackInfo.setAmount(0);
                 }
             }
+            if (target instanceof Player == false) {
+                int inv = target.invulnerableTime;
+                target.invulnerableTime = 0;
+                target.hurt(dmgsource, vanillaDamage);
+                target.invulnerableTime = inv;
+            } else {
+                target.hurt(dmgsource, vanillaDamage);
+            }
         }
-        //target.invulnerableTime = 20;
-        //target.hurtTime = 20;
-
 
         if (attri.hasModifier(NO_KNOCKBACK)) {
             attri.removeModifier(NO_KNOCKBACK);
         }
 
-
         if (dmg > 0) {
-
-
             // todo can this be done better?
             if (this.data.isBasicAttack()) {
                 for (Entry<String, ExileEffectInstanceData> e : targetData.getStatusEffectsData().exileMap.entrySet().stream().toList()) {

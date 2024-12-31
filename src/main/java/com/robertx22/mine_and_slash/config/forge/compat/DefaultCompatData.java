@@ -19,9 +19,11 @@ public class DefaultCompatData {
     }
 
     public DamageCompatibilityType dmgCompat = DamageCompatibilityType.FULL_COMPATIBILITY;
+    public HealthSystem healthSystem = HealthSystem.IMAGINARY_MINE_AND_SLASH_HEALTH;
     public boolean capItemDamage = true;
     public boolean disableVanillaHpRegen = true;
     public boolean ignoreWepSpellReq = true;
+    public boolean energyPenalty = true;
     public int itemDamageCapNumber = 3;
     public double mobFlatBonusDamage = 6;
     public double mobPercBonusDmg = 0.33F;

@@ -34,7 +34,6 @@ public class ServerContainer {
         b.comment("General Configs")
                 .push("general");
 
-        ENERGY_PENALTY = b.comment("When trying to attack on low energy, you will get slow and hunger.").define("ENERGY_PENALTY", true);
         //  DO_NOT_DESPAWN_MAP_MOBS = b.define("DO_NOT_DESPAWN_MAP_MOBS", true);
 
         GET_STARTER_ITEMS = b.define("GET_STARTER_ITEMS", true);
@@ -94,7 +93,7 @@ public class ServerContainer {
         LOOT_CHEST_DROPRATE = b.defineInRange("loot_chest_drop_rate", 0.1D, 0, 1000);
         OMEN_DROPRATE = b.defineInRange("OMEN_DROPRATE", 0.1D, 0, 1000);
 
-   
+
         BLOCK_COST = b.defineInRange("block_cost", 0.25D, 0, 1000);
 
         PACK_MOB_MIN = b.defineInRange("pack_mob_min", 3, 0, 20);
@@ -198,7 +197,6 @@ public class ServerContainer {
     public ForgeConfigSpec.BooleanValue SCALE_MOB_LEVEL_TO_NEAREST_PLAYER;
     public ForgeConfigSpec.BooleanValue LOG_ERRORS;
     public ForgeConfigSpec.BooleanValue STOP_ERROR_SPAM;
-    public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
     public ForgeConfigSpec.BooleanValue STATION_SUCK_NEARBY_CHESTS;
     public ForgeConfigSpec.BooleanValue SKULL_HIDES_LEVEL;
 

@@ -54,10 +54,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.threat_aggro.ThreatData;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityTypeUtils;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.NumberUtils;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.OnScreenMessageUtils;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.EntityUnitPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.potion_effects.EntityStatusEffectsData;
 import net.minecraft.ChatFormatting;
@@ -178,6 +175,8 @@ public class EntityData implements ICap, INeededForClient {
     public String mapUUID = "";
     public boolean isCorrectlySpawnedMapMob = false;
 
+
+    public int lastHealth = 0;
 
     // sync these for mobs
     transient Unit unit = new Unit();
@@ -655,6 +654,7 @@ public class EntityData implements ICap, INeededForClient {
         this.maxHealth = (int) getUnit().getCalculatedStat(Health.getInstance()).getValue();
         //watch.print("stat calc for " + (entity instanceof PlayerEntity ? "player " : "mob "));
 
+        HealthUtils.addHearts(entity);
     }
 
 

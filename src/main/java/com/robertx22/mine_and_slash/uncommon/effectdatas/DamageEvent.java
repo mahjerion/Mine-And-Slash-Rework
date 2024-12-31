@@ -617,7 +617,7 @@ public class DamageEvent extends EffectEvent {
         var config = ExileDB.getEntityConfig(target, Load.Unit(target));
 
         if (target instanceof Player == false && config != null && config.set_health_damage_override) {
-            float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth());
+            float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth() + 1);
             target.setHealth(hp);
             // todo this might create bugs but its probably better that damage actually works..
             if (target.getHealth() <= 0) {

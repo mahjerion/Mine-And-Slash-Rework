@@ -11,10 +11,12 @@ public class CompatData {
     public ForgeConfigSpec.BooleanValue IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS;
     public ForgeConfigSpec.IntValue ITEM_DAMAGE_CAP_PER_HIT;
     public ForgeConfigSpec.EnumValue<DamageCompatibilityType> DAMAGE_COMPATIBILITY;
+    public ForgeConfigSpec.EnumValue<HealthSystem> HEALTH_SYSTEM;
     public ForgeConfigSpec.EnumValue<GameBalanceConfig.BalanceEnum> BALANCE_DATAPACK;
     public ForgeConfigSpec.EnumValue<BaseStatsConfig.BaseStatsEnum> BASE_STATS_DATAPACK;
     public ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
     public ForgeConfigSpec.DoubleValue MOB_PERCENT_DAMAGE_AS_BONUS;
+    public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
 
 
     public void build(ForgeConfigSpec.Builder b, DefaultCompatData defaults) {
@@ -23,8 +25,14 @@ public class CompatData {
         DAMAGE_COMPATIBILITY = b.comment("Compat means mns dmg will act as bonus damage, while override means it will replace the vanilla damage.")
                 .defineEnum("DAMAGE_COMPATIBILITY", defaults.dmgCompat);
 
+        HEALTH_SYSTEM = b.comment("Vanilla means mns will add to your hearts, imaginary means mns won't add hearts but instead just scale damage based on mob's imaginry/mns hp")
+                .defineEnum("HEALTH_SYSTEM", defaults.healthSystem);
+
         DISABLE_VANILLA_HEALTH_REGEN = b
                 .define("DISABLE_VANILLA_HEALTH_REGEN", defaults.disableVanillaHpRegen);
+
+        ENERGY_PENALTY = b.comment("When trying to attack on low energy, you will get slow and hunger.")
+                .define("ENERGY_PENALTY", defaults.energyPenalty);
 
         IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS = b
                 .define("IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS", defaults.ignoreWepSpellReq);

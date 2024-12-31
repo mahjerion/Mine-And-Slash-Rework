@@ -13,8 +13,10 @@ public enum CompatConfigPreset {
         x.baseStats = BaseStatsConfig.BaseStatsEnum.COMPAT_BALANCE;
         x.enable_newbie_res = false;
         x.disableVanillaHpRegen = false;
+        x.energyPenalty = false;
         x.ignoreWepSpellReq = true;
         x.dmgCompat = DamageCompatibilityType.FULL_COMPATIBILITY;
+        x.healthSystem = HealthSystem.VANILLA_HEALTH;
 
     }), "Makes Mine and Slash play nice with other mods. By default other spell mods will work, mns damage will just be on top of vanilla and other mod damage etc"),
     ORIGINAL_OVERRIDE_MODE(new DefaultCompatData().edit(x -> {
@@ -25,9 +27,11 @@ public enum CompatConfigPreset {
         x.mobFlatBonusDamage = 6;
         x.mobPercBonusDmg = 0.33F;
         x.ignoreWepSpellReq = false;
+        x.energyPenalty = true;
         x.baseStats = BaseStatsConfig.BaseStatsEnum.ORIGINAL_BALANCE;
         x.balance = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE;
         x.dmgCompat = DamageCompatibilityType.FULL_DAMAGE_OVERRIDE;
+        x.healthSystem = HealthSystem.IMAGINARY_MINE_AND_SLASH_HEALTH;
     }), "Mine and Slash original mode, it makes it incompatible with some other mods, like spell mods and overrides damage fully. Makes balancing modpacks a lot easier at the cost of compatibility with some mods."
     );
 

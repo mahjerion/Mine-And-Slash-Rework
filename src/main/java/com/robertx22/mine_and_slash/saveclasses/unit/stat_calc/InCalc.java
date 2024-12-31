@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.saveclasses.unit.stat_calc;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.types.core_stats.base.ITransferToOtherStats;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.saveclasses.unit.InCalcStatContainer;
@@ -20,13 +21,12 @@ public class InCalc {
     // todo convert this to stat compat
     public void addVanillaHpToStats(LivingEntity entity, InCalcStatContainer calc) {
         if (entity instanceof Player) {
-
-            float maxhp = Mth.clamp(entity.getMaxHealth(), 0, 500);
-            // all increases after this would just reduce enviro damage
-
-            calc.getStatInCalculation(Health.getInstance()).addAlreadyScaledFlat(maxhp);
-
-            // add vanila hp to extra hp
+            if (CompatConfig.get().HEALTH_SYSTEM.get().addBonusHealthFromVanillaHearts()) {
+                float maxhp = Mth.clamp(entity.getMaxHealth(), 0, 500);
+                // all increases after this would just reduce enviro damage
+                calc.getStatInCalculation(Health.getInstance()).addAlreadyScaledFlat(maxhp);
+                // add vanila hp to extra hp
+            }
         }
     }
 

@@ -1,0 +1,33 @@
+
+# What are Compat Configs?
+
+These settings exist to switch Mine and Slash from a mostly incompatible mod that a modpack has to revolve around into a very compatible mod that can be placed in any modpack.
+If you're confused why this is a thing, read on
+
+# Where are these Configs?
+
+save_folder/serverconfig/mine_and_slash_compatibility-server.toml
+
+# What are the differences between the 2 configs?
+
+| Difference | Compatibility Mode    | Override Mode   |
+|-----------|------------------------------|------------------------------|
+|  Damage   | Damage is added on top of vanilla damage as bonus damage | Damage is overrided/replaced and if the damage is invalid type, it is cancelled |
+| Stat Scaling | Very Low stat scalings, you won't gain that much health, damage etc, but mobs won't either | Very high stat scaling, mob health will be in millions in endgame |
+| Spell Cast Weapon | No weapon requirement for spells | Spells have weapon requirements |
+| Vanilla Health Regen | Enabled plus you have mns health regen stat | Replaced with Mns health regen stat |
+| Mob Damage | Mobs get a slight amount of bonus damage | Mobs get a lot of extra damage |
+
+# What Config is best for me?
+
+If you are making a modpack focusing entirely on Mine and Slash, then the override config might be better:
+- this config makes sure you can kill mobs only with damage Mine and slash allows, so you only need to balance mine and Slash
+- you don't have to worry about the balance of other mods, whether they add a single OP item, spell etc
+- because only mns deals damage, balancing becomes easier
+- Stat scalings are higher, so leveling matters a lot more and it feels more like an rpg
+
+If your modpack doesn't revolve around Mine and Slash, an you have other spell mods in there, the compat mode is probably better:
+- Your other spell mods will work
+- Mine and Slash will no longer be required for progression and to kill mobs (depends on stat scalings though)
+- the gui overlays bars will try hide when full or not needed
+

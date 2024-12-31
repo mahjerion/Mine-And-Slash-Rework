@@ -21,3 +21,10 @@ Now Mns dmg can act as bonus damage, still within it's own systems but will now 
 - added option to choose which player base stat datapack is used, the compat option has less base stats, because the stat scaling is lower too
 - added MOB_PERCENT_DAMAGE_AS_BONUS and MOB_FLAT_DAMAGE_BONUS configs which will be lowered on the compat version of the default config
 - added option to ignore weapon spell casting requirements for compat mode
+- added stat requirement multi config
+- added config for disabling mob iframes
+
+Other:
+- procced spell stats now actually use mana cost
+- fixed dots dealing dmg 1 extra time, effectively making dot builds.. about 30% better sometimes
+- loot chests can no longer be salvaged

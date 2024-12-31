@@ -3,7 +3,7 @@ package com.robertx22.mine_and_slash.event_hooks.ontick;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
-import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.profession.StationPacket;
 import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
 import com.robertx22.mine_and_slash.database.data.profession.screen.CraftingStationMenu;
@@ -201,7 +201,7 @@ public class OnServerTick {
                         .getUnit()
                         .energyData()
                         .getValue() / 10) {
-                    if (ServerContainer.get().ENERGY_PENALTY.get()) {
+                    if (CompatConfig.get().ENERGY_PENALTY.get()) {
                         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20 * 3, 2));
                         player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20 * 3, 2));
                     }

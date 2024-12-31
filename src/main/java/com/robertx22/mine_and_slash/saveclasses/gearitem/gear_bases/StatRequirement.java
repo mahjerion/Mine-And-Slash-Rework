@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases;
 
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -136,11 +137,11 @@ public class StatRequirement {
     }
 
     private int getScalingReq(Stat stat, int lvl) {
-        return (int) StatScaling.STAT_REQ.scale(scaling_req.getOrDefault(stat.GUID(), 0F), lvl);
+        return (int) (StatScaling.STAT_REQ.scale(scaling_req.getOrDefault(stat.GUID(), 0F), lvl) * CompatConfig.get().STAT_REQUIREMENTS_MULTIPLIER.get());
     }
 
     private int getNonScalingReq(Stat stat, int lvl) {
-        return this.base_req.get(stat.GUID()).intValue();
+        return (int) (this.base_req.get(stat.GUID()).intValue() * CompatConfig.get().STAT_REQUIREMENTS_MULTIPLIER.get());
     }
 
     public StatRequirement setStyleReq(PlayStyle style, float req) {

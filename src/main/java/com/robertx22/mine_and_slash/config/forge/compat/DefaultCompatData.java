@@ -24,9 +24,11 @@ public class DefaultCompatData {
     public boolean disableVanillaHpRegen = true;
     public boolean ignoreWepSpellReq = true;
     public boolean energyPenalty = true;
+    public boolean disableMobIframes = true;
     public int itemDamageCapNumber = 3;
     public double mobFlatBonusDamage = 6;
     public double mobPercBonusDmg = 0.33F;
+    public double statReqMulti = 1;
     public boolean enable_newbie_res = false;
     public GameBalanceConfig.BalanceEnum balance = GameBalanceConfig.BalanceEnum.COMPAT_BALANCE;
     public BaseStatsConfig.BaseStatsEnum baseStats = BaseStatsConfig.BaseStatsEnum.COMPAT_BALANCE;

@@ -16,7 +16,9 @@ public class CompatData {
     public ForgeConfigSpec.EnumValue<BaseStatsConfig.BaseStatsEnum> BASE_STATS_DATAPACK;
     public ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
     public ForgeConfigSpec.DoubleValue MOB_PERCENT_DAMAGE_AS_BONUS;
+    public ForgeConfigSpec.DoubleValue STAT_REQUIREMENTS_MULTIPLIER;
     public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
+    public ForgeConfigSpec.BooleanValue DISABLE_MOB_IFRAMES;
 
 
     public void build(ForgeConfigSpec.Builder b, DefaultCompatData defaults) {
@@ -25,7 +27,7 @@ public class CompatData {
         DAMAGE_COMPATIBILITY = b.comment("Compat means mns dmg will act as bonus damage, while override means it will replace the vanilla damage.")
                 .defineEnum("DAMAGE_COMPATIBILITY", defaults.dmgCompat);
 
-        HEALTH_SYSTEM = b.comment("Vanilla means mns will add to your hearts, imaginary means mns won't add hearts but instead just scale damage based on mob's imaginry/mns hp")
+        HEALTH_SYSTEM = b.comment("Vanilla means mns will add to your hearts, imaginary means mns won't add hearts but instead just scale damage based on mob's imaginary/mns hp")
                 .defineEnum("HEALTH_SYSTEM", defaults.healthSystem);
 
         DISABLE_VANILLA_HEALTH_REGEN = b
@@ -57,6 +59,8 @@ public class CompatData {
 
         MOB_FLAT_DAMAGE_BONUS = b.defineInRange("MOB_FLAT_DAMAGE_BONUS", defaults.mobFlatBonusDamage, 0, 100);
         MOB_PERCENT_DAMAGE_AS_BONUS = b.defineInRange("MOB_PERCENT_DAMAGE_AS_BONUS", defaults.mobPercBonusDmg, 0, 100);
+        STAT_REQUIREMENTS_MULTIPLIER = b.defineInRange("STAT_REQUIREMENTS_MULTIPLIER", defaults.statReqMulti, 0, 100);
+        DISABLE_MOB_IFRAMES = b.define("DISABLE_MOB_IFRAMES", defaults.disableMobIframes);
 
 
     }

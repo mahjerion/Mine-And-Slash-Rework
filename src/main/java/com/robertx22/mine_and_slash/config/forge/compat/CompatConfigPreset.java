@@ -9,11 +9,13 @@ public enum CompatConfigPreset {
         x.itemDamageCapNumber = 3;
         x.mobFlatBonusDamage = 0;
         x.mobPercBonusDmg = 0.33F;
+        x.statReqMulti = 0.1F;
         x.balance = GameBalanceConfig.BalanceEnum.COMPAT_BALANCE;
         x.baseStats = BaseStatsConfig.BaseStatsEnum.COMPAT_BALANCE;
         x.enable_newbie_res = false;
         x.disableVanillaHpRegen = false;
         x.energyPenalty = false;
+        x.disableMobIframes = false;
         x.ignoreWepSpellReq = true;
         x.dmgCompat = DamageCompatibilityType.FULL_COMPATIBILITY;
         x.healthSystem = HealthSystem.VANILLA_HEALTH;
@@ -28,6 +30,8 @@ public enum CompatConfigPreset {
         x.mobPercBonusDmg = 0.33F;
         x.ignoreWepSpellReq = false;
         x.energyPenalty = true;
+        x.statReqMulti = 1;
+        x.disableMobIframes = true;
         x.baseStats = BaseStatsConfig.BaseStatsEnum.ORIGINAL_BALANCE;
         x.balance = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE;
         x.dmgCompat = DamageCompatibilityType.FULL_DAMAGE_OVERRIDE;

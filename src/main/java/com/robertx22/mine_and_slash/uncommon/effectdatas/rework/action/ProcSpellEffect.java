@@ -19,6 +19,9 @@ public class ProcSpellEffect extends StatEffect {
     EffectSides source = EffectSides.Source;
     EffectSides target = EffectSides.Target;
 
+    public boolean use_resource_costs = true;
+    
+
     public ProcSpellEffect(String spellId, PositionSource pos) {
         super("proc_spell_" + spellId, "proc_spell");
         this.spellId = spellId;
@@ -36,11 +39,24 @@ public class ProcSpellEffect extends StatEffect {
 
         // be careful not to make it proc itself
         var spell = ExileDB.Spells().get(spellId);
+
         var ctx = new SpellCastContext(SO, 0, spell);
+
+        var unit = Load.Unit(SO);
+        if (use_resource_costs) {
+            if (!unit.getResources().hasEnough(spell.getManaCostCtx(ctx))) {
+                return;
+            }
+            if (!unit.getResources().hasEnough(spell.getEnergyCostCtx(ctx))) {
+                return;
+            }
+            spell.spendResources(ctx);
+        }
+
         var c = SpellCtx.onCast(SO, ctx.calcData);
         c.setPositionSource(pos);
         c.target = TA;
-        
+
         // ALWAYS CHECK THIS BEFORE ACTUALLY CASTING THE PROC SPELL
         if (Load.Unit(event.source).getCooldowns().isOnCooldown(spell.GUID())) {
             return;

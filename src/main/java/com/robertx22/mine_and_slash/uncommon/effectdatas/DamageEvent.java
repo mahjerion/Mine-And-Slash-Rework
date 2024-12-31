@@ -695,9 +695,11 @@ public class DamageEvent extends EffectEvent {
 
             // target.invulnerableTime = 20;
 
-            if (attackInfo == null) {
-                if (target instanceof Player == false) {
-                    target.invulnerableTime = 0;
+            if (CompatConfig.get().DISABLE_MOB_IFRAMES.get()) {
+                if (attackInfo == null) {
+                    if (target instanceof Player == false) {
+                        target.invulnerableTime = 0;
+                    }
                 }
             }
 

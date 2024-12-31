@@ -120,6 +120,11 @@ public class LootChestData implements ICommonDataItem<GearRarity> {
     }
 
     @Override
+    public boolean isSalvagable(ExileStack stack) {
+        return false;
+    }
+
+    @Override
     public ItemstackDataSaver<LootChestData> getStackSaver() {
         return StackSaving.LOOT_CHEST;
     }

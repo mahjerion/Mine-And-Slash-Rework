@@ -175,10 +175,8 @@ public class EntityAilmentData {
 
             if (en.tickCount % 20 == 0) { // make sure the needed ticks is divisible by 20 for this reason, this is so this isn't calculated every tick
                 for (Map.Entry<String, Float> e : data.strMap.entrySet()) {
-
                     if (e.getValue() > 0) {
                         Ailment ail = ExileDB.Ailments().get(e.getKey());
-
                         e.setValue(e.getValue() - (e.getValue() * ail.percentLostEveryXSeconds));
                     }
                 }
@@ -200,7 +198,9 @@ public class EntityAilmentData {
                                 float dmg = 0;
 
                                 for (DotData d : e.getValue()) {
-                                    dmg += d.dmg;
+                                    if (d.ticks > 0) {
+                                        dmg += d.dmg;
+                                    }
                                 }
 
                                 if (dmg > 1) {
@@ -238,7 +238,7 @@ public class EntityAilmentData {
             });
         }
 
-        
+
     }
 
 

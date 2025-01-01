@@ -1,12 +1,14 @@
 package com.robertx22.mine_and_slash.gui.screens.skill_tree;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
+import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
@@ -18,6 +20,7 @@ import com.robertx22.mine_and_slash.gui.bases.IAlertScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons.PerkButton;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons.PerkConnectionRender;
+import com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons.PerkPointPair;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons.PerkScreenContext;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -25,6 +28,7 @@ import com.robertx22.mine_and_slash.saveclasses.PointData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,10 +36,15 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11C;
 
 import java.awt.*;
 import java.util.*;
@@ -48,14 +57,15 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
     public HashSet<PerkConnectionRender> buttonConnections = new HashSet<>();
 
     static ResourceLocation CON = SlashRef.id("textures/gui/skill_tree/skill_connection.png");
+    public VertexContainer vertexContainer = new VertexContainer();
 
 
-    private void renderConnection(GuiGraphics graphics, PerkConnectionRender connection) {
+    private void renderConnection(GuiGraphics graphics, PerkConnectionRender renderer) {
 
         graphics.pose().pushPose();
-
-        PerkButton button1 = pointPerkButtonMap.get(connection.perk1);
-        PerkButton button2 = pointPerkButtonMap.get(connection.perk2);
+        PerkPointPair pair = renderer.pair();
+        PerkButton button1 = pointPerkButtonMap.get(pair.data1());
+        PerkButton button2 = pointPerkButtonMap.get(pair.data2());
 
         PerkScreenContext ctx = new PerkScreenContext(this);
 
@@ -79,17 +89,21 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         int off = 0;
 
-        if (connection.connection == Perk.Connection.LINKED) {
+        if (renderer.connection() == Perk.Connection.LINKED) {
             off = 0;
         }
-        if (connection.connection == Perk.Connection.POSSIBLE) {
+        if (renderer.connection() == Perk.Connection.POSSIBLE) {
             off = 6;
         }
-        if (connection.connection == Perk.Connection.BLOCKED) {
-            off = 6 + 5;
+        if (renderer.connection() == Perk.Connection.BLOCKED) {
+            off = (6 + 5);
         }
 
-        graphics.blit(CON, 0, -3, length, 6, 0, off, length, 6, 50, 16);
+        HashMultimap<ResourceLocation, BufferInfo> map = this.vertexContainer.map;
+        map.put(SlashRef.id("textures/gui/skill_tree/skill_connection.png"), BufferInfo.of(0, -3,  length, 6, -5, (float) 0, off, length, 6, 50, 16, graphics.pose().last().pose()));
+
+
+        //graphics.blit(CON, 0, -3, length, 6, 0, off, length, 6, 50, 16);
 
         graphics.pose().popPose();
     }
@@ -153,7 +167,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
 
     private void renderConnections(GuiGraphics gui) {
-
         for (PerkConnectionRender con : this.buttonConnections) {
             this.renderConnection(gui, con);
         }
@@ -210,6 +223,12 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
     }
 
     @Override
+    public boolean charTyped(char pCodePoint, int pModifiers) {
+        SEARCH.setFocused(true);
+        return SEARCH.charTyped(pCodePoint, pModifiers);
+    }
+
+    @Override
     public void tick() {
         SEARCH.tick();
     }
@@ -242,37 +261,28 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
     private void addConnections() {
 
-        buttonConnections = new HashSet<>();
+        buttonConnections = new HashSet<>(2000);
 
-        HashSet<PointData> def = new HashSet();
-
-        Set<Set<PointData>> cons = new HashSet<>();
         var data = Load.player(ClientOnly.getPlayer());
 
+        IntOpenHashSet integers = new IntOpenHashSet(2000);
+        children().forEach(b -> {
+            if (b instanceof PerkButton pb) {
 
-        new ArrayList<>(children()).forEach(b -> {
-            if (b instanceof PerkButton) {
-                PerkButton pb = (PerkButton) b;
-
-                Set<PointData> connections = this.school.calcData.connections.getOrDefault(pb.point, def);
+                Set<PointData> connections = this.school.calcData.connections.getOrDefault(pb.point, Collections.EMPTY_SET);
 
                 for (PointData p : connections) {
 
-                    if (cons.stream().anyMatch(x -> x.contains(p) && x.contains(pb.point))) {
-                        continue;
-                    }
-
-                    cons.add(Sets.newHashSet(p, pb.point));
-
                     PerkButton sb = this.pointPerkButtonMap.get(p);
+                    PerkPointPair pair = new PerkPointPair(pb.point, sb.point);
+                    if (!integers.contains(pair.hashCode())) {
 
-                    if (sb == null) {
-                        continue;
+                        var con = data.talents.getConnection(this.school, sb.point, pb.point);
+                        var result = new PerkConnectionRender(pair, con);
+                        buttonConnections.add(result);
+                        integers.add(pair.hashCode());
                     }
 
-                    var con = data.talents.getConnection(school, sb.point, pb.point);
-                    var result = new PerkConnectionRender(pb.point, sb.point, con);
-                    buttonConnections.add(result);
                 }
             }
 
@@ -437,7 +447,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         renderBackgroundDirt(gui, this, 0);
         zoom = Mth.lerp(ClientConfigs.getConfig().SKILL_TREE_ZOOM_SPEED.get().floatValue(), zoom, targetZoom);
-
+        renderPanels(gui);
         gui.pose().scale(zoom, zoom, zoom);
 
         try {
@@ -462,7 +472,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
             this.renderConnections(gui);
 
-
             ticks++;
 
             if (mouseRecentlyClickedTicks > 1) {
@@ -472,7 +481,9 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
 
             super.render(gui, x, y, ticks);
-
+            // draw
+            this.vertexContainer.draw(gui.bufferSource());
+            this.vertexContainer.refresh();
             this.tick_count++;
 
         } catch (Exception e) {
@@ -482,7 +493,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         gui.pose().scale(1F / zoom, 1F / zoom, 1F / zoom);
 
-        renderPanels(gui);
+
 
         this.msstring = watch.getPrint();
 
@@ -497,17 +508,12 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
     public static void renderBackgroundDirt(GuiGraphics gui, Screen screen, int vOffset) {
         //copied from Screen
 
-        Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuilder();
-
-        RenderSystem.setShaderTexture(0, BACKGROUND);
-
         Minecraft mc = Minecraft.getInstance();
 
         // todo test
         //gui.setColor(0.25F, 0.25F, 0.25F, 1.0F);
         int i = 32;
-        gui.blit(BACKGROUND, 0, 0, 0, 0.0F, 0.0F, mc.screen.width, mc.screen.height, 32, 32);
+        gui.blit(BACKGROUND, 0, 0, -10, 0.0F, 0.0F, mc.screen.width, mc.screen.height, 32, 32);
         //gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
     }
@@ -517,18 +523,19 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         Minecraft mc = Minecraft.getInstance();
 
+
+
         RenderSystem.enableDepthTest();
-
-
+        RenderSystem.depthFunc(GL11.GL_ALWAYS);
         int BG_WIDTH = 256;
         int BG_HEIGHT = 22;
 
         int xp = (int) (mc.getWindow().getGuiScaledWidth() / 2F - BG_WIDTH / 2F);
         int yp = 0;
 
-        gui.blit(BIG_PANEL, xp, yp, 0, 0, BG_WIDTH, BG_HEIGHT);
+        gui.blit(BIG_PANEL, xp, yp,0, 0, BG_WIDTH, BG_HEIGHT);
 
-        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
         int savedx = xp;
         int savedy = yp;
@@ -557,6 +564,8 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
             MutableComponent debug = Component.literal("Widgets: " + this.children().size() + " - " + msstring);
             gui.drawString(mc.font, debug, savedx + 277, yx, ChatFormatting.GREEN.getColor());
         }
+
+
     }
 
 }

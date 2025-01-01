@@ -133,10 +133,12 @@ public class NewWikiScreen extends Screen implements INamedScreen {
     }
 
     public boolean charTyped(char pCodePoint, int pModifiers) {
+        this.searchBox.setFocused(true);
         return this.searchBox.charTyped(pCodePoint, pModifiers);
     }
 
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+
         this.list.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         this.searchBox.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         pGuiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 8, 16777215);

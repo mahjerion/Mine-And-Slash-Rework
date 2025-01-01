@@ -100,6 +100,7 @@ public class ToonScreen extends Screen implements INamedScreen {
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
+        this.searchBox.setFocused(true);
         return this.searchBox.charTyped(pCodePoint, pModifiers);
     }
 

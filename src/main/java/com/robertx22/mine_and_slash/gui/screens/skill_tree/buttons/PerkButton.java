@@ -1,11 +1,14 @@
 package com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons;
 
+import com.google.common.collect.HashMultimap;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.perks.PerkStatus;
 import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
 import com.robertx22.mine_and_slash.database.data.talent_tree.TalentTree;
+import com.robertx22.mine_and_slash.gui.screens.skill_tree.BufferInfo;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.SkillTreeScreen;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -24,6 +27,8 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.time.StopWatch;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -139,13 +144,13 @@ public class PerkButton extends ImageButton {
         }
     }
 
-    int xPos(float offset, float multi) {
-        return (int) ((this.getX() * multi) + offset);
+    float xPos(float offset, float multi) {
+        return ((this.getX() * multi) + offset);
 
     }
 
-    int yPos(float offset, float multi) {
-        return (int) ((getY() * multi) + offset);
+    float yPos(float offset, float multi) {
+        return ((getY() * multi) + offset);
     }
 
     @Override
@@ -169,7 +174,7 @@ public class PerkButton extends ImageButton {
         float add = MathHelper.clamp(scale - 1, 0, 2);
         float off = width / -2F * add;
         gui.pose().translate(off, off, 0);
-        gui.pose().scale(scale, scale, scale);
+        gui.pose().scale(scale, scale, 1.0f);
 
 
         PerkStatus status = playerData.talents.getStatus(Minecraft.getInstance().player, school, point);
@@ -182,14 +187,8 @@ public class PerkButton extends ImageButton {
 
         var search = SkillTreeScreen.SEARCH.getValue();
 
-        boolean containsSearchStat = perk.stats.stream()
-                .anyMatch(item -> item.getStat().locName().getString().toLowerCase().contains(search.toLowerCase()));
 
-        boolean containsName = perk.locName().getString().toLowerCase().contains(search.toLowerCase());
-
-
-        float opacity = search.isEmpty() || containsSearchStat || containsName ? 1F : 0.2f;
-
+        float opacity;
 
         if (!search.isEmpty()) {
             if (search.equals("all")) {
@@ -198,6 +197,12 @@ public class PerkButton extends ImageButton {
                 } else {
                     opacity = 1;
                 }
+            } else {
+                boolean containsSearchStat = perk.stats.stream()
+                        .anyMatch(item -> item.getStat().locName().getString().toLowerCase().contains(search.toLowerCase()));
+
+                boolean containsName = perk.locName().getString().toLowerCase().contains(search.toLowerCase());
+                opacity = containsSearchStat || containsName ? 1F : 0.2f;
             }
         } else {
             opacity = status.getOpacity();
@@ -214,25 +219,31 @@ public class PerkButton extends ImageButton {
 
         int offcolor = (int) ((perk.getType().size - 20) / 2F);
 
-        gui.setColor(1.0F, 1.0F, 1.0F, opacity);
+        //gui.setColor(1.0F, 1.0F, 1.0F, opacity);
+
+        HashMultimap<ResourceLocation, BufferInfo> container = screen.vertexContainer.map;
+
+        //BlitOffset indicate the distance to the camera.
+        //bigger = closer
+        container.put(perk.getType().getColorTexture(status), BufferInfo.of(xPos(offcolor, posMulti), yPos(offcolor, posMulti),20, 20, -3, 0.0f, 0, 20, 20, 20, 20, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
+
+        container.put(perk.getType().getBorderTexture(status), BufferInfo.of(xPos(0, posMulti), yPos(0, posMulti), -2, 0, 0, this.width, this.height, this.width, this.height, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
 
 
-        // if i can merge these 2 icons into 1, i can remove 20% of the lag todo
-        gui.blit(perk.getType().getColorTexture(status), xPos(offcolor, posMulti), yPos(offcolor, posMulti), 20, 20, 0, 0, 20, 20, 20, 20);
-        gui.blit(perk.getType().getBorderTexture(status), (int) xPos(0, posMulti), (int) yPos(0, posMulti), 0, 0, this.width, this.height, this.width, this.height);
 
         if (search.isEmpty()) {
             opacity += 0.2F;
         }
 
 
-        gui.setColor(1.0F, 1.0F, 1.0F, MathHelper.clamp(opacity, 0, 1));
+        //gui.setColor(1.0F, 1.0F, 1.0F, MathHelper.clamp(opacity, 0, 1));
 
-        gui.blit(perk.getIcon(), (int) xPos(offset, posMulti), (int) yPos(offset, posMulti), 0, 0, type.iconSize, type.iconSize, type.iconSize, type.iconSize);
+        container.put(perk.getIcon(), BufferInfo.of(xPos(offset, posMulti), yPos(offset, posMulti), -1, 0, 0, type.iconSize, type.iconSize, type.iconSize, type.iconSize, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
+
 
 
         //   gui.pose().scale(1F / scale, 1F / scale, 1F / scale);
-        gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        //gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         gui.pose().popPose();
 

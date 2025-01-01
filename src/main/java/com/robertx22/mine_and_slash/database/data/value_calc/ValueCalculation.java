@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
@@ -48,7 +49,11 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
             return 0;
         }
 
-        return (int) base_scaling_type.scale(base.getValue(en, provider), Load.Unit(en).getLevel());
+        float basedmg = base_scaling_type.scale(base.getValue(en, provider), Load.Unit(en).getLevel());
+
+        basedmg *= CompatConfig.get().SPELL_BASE_DAMAGE_MULTIPLIER.get();
+
+        return (int) basedmg;
     }
 
     public float getDamageEffectiveness(LivingEntity en, MaxLevelProvider provider) {

@@ -23,6 +23,7 @@ Now Mns dmg can act as bonus damage, still within it's own systems but will now 
 - added option to ignore weapon spell casting requirements for compat mode
 - added stat requirement multi config
 - added config for disabling mob iframes
+- damage number particles wont show by default on compat mode
 
 Other:
 - procced spell stats now actually use mana cost

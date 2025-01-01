@@ -10,6 +10,7 @@ public enum CompatConfigPreset {
         x.mobFlatBonusDamage = 0;
         x.mobPercBonusDmg = 0.33F;
         x.statReqMulti = 0.1F;
+        x.spellBaseDmgMulti = 2;
         x.balance = GameBalanceConfig.BalanceEnum.COMPAT_BALANCE;
         x.baseStats = BaseStatsConfig.BaseStatsEnum.COMPAT_BALANCE;
         x.enable_newbie_res = false;
@@ -28,6 +29,7 @@ public enum CompatConfigPreset {
         x.disableVanillaHpRegen = true;
         x.mobFlatBonusDamage = 6;
         x.mobPercBonusDmg = 0.33F;
+        x.spellBaseDmgMulti = 1;
         x.ignoreWepSpellReq = false;
         x.energyPenalty = true;
         x.statReqMulti = 1;

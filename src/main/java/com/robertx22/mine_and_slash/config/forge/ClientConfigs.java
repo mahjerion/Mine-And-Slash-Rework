@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.config.forge;
 
 
 import com.robertx22.mine_and_slash.a_libraries.dmg_number_particle.particle.InteractionResultHandler;
+import com.robertx22.mine_and_slash.config.forge.compat.DamageNumbersEnum;
 import com.robertx22.mine_and_slash.config.forge.overlay.OverlayConfig;
 import com.robertx22.mine_and_slash.config.forge.overlay.OverlayConfigBuilder;
 import com.robertx22.mine_and_slash.config.forge.overlay.OverlayPresets;
@@ -40,7 +41,7 @@ public class ClientConfigs {
         SHOW_DURABILITY = b.define("show_durability", true);
         RENDER_MOB_HEALTH_GUI = b.define("render_mob_hp_gui", true);
         ONLY_RENDER_MOB_LOOKED_AT = b.define("only_render_mob_looked_at", true);
-        ENABLE_FLOATING_DMG = b.define("render_floating_damage", true);
+        ENABLE_FLOATING_DMG = b.defineEnum("render_floating_damage", DamageNumbersEnum.DEFAULT);
         MODIFY_TOOLTIP_LENGTH = b.define("MODIFY_TOOLTIP_LENGTH", true);
         IN_DEPTH_TOOLTIPS_BY_DEFAULT = b.define("IN_DEPTH_TOOLTIPS_BY_DEFAULT", true);
         USE_SPELL_ANIMATIONS = b.comment("Use player animations when casting mns spells. Disable in case of other animation mod incompatibility").define("USE_SPELL_ANIMATIONS", true);
@@ -85,7 +86,7 @@ public class ClientConfigs {
 
 
     public ForgeConfigSpec.BooleanValue SHOW_LOW_ENERGY_MANA_WARNING;
-    public ForgeConfigSpec.BooleanValue ENABLE_FLOATING_DMG;
+    public ForgeConfigSpec.EnumValue<DamageNumbersEnum> ENABLE_FLOATING_DMG;
     public ForgeConfigSpec.BooleanValue RENDER_SIMPLE_MOB_BAR;
     public ForgeConfigSpec.BooleanValue RENDER_DEATH_STATISTICS;
     public ForgeConfigSpec.BooleanValue RENDER_ITEM_RARITY_BACKGROUND;

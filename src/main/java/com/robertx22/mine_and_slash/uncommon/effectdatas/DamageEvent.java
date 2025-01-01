@@ -527,7 +527,11 @@ public class DamageEvent extends EffectEvent {
         if (target.getHealth() <= 0F || !target.isAlive()) {
             return;
         }
-
+        if (attackInfo != null) {
+            if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+                attackInfo.setAmount(0);
+            }
+        }
         if (stopFriendlyFire()) {
             return;
         }
@@ -630,11 +634,7 @@ public class DamageEvent extends EffectEvent {
             DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
             duck.setMnsDamage(vanillaDamage);
 
-            if (attackInfo != null) {
-                if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
-                    attackInfo.setAmount(0);
-                }
-            }
+
             if (target instanceof Player == false) {
                 int inv = target.invulnerableTime;
                 target.invulnerableTime = 0;

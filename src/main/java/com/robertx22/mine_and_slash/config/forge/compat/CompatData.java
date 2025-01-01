@@ -17,6 +17,7 @@ public class CompatData {
     public ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
     public ForgeConfigSpec.DoubleValue MOB_PERCENT_DAMAGE_AS_BONUS;
     public ForgeConfigSpec.DoubleValue STAT_REQUIREMENTS_MULTIPLIER;
+    public ForgeConfigSpec.DoubleValue SPELL_BASE_DAMAGE_MULTIPLIER;
     public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
     public ForgeConfigSpec.BooleanValue DISABLE_MOB_IFRAMES;
 
@@ -60,6 +61,7 @@ public class CompatData {
         MOB_FLAT_DAMAGE_BONUS = b.defineInRange("MOB_FLAT_DAMAGE_BONUS", defaults.mobFlatBonusDamage, 0, 100);
         MOB_PERCENT_DAMAGE_AS_BONUS = b.defineInRange("MOB_PERCENT_DAMAGE_AS_BONUS", defaults.mobPercBonusDmg, 0, 100);
         STAT_REQUIREMENTS_MULTIPLIER = b.defineInRange("STAT_REQUIREMENTS_MULTIPLIER", defaults.statReqMulti, 0, 100);
+        SPELL_BASE_DAMAGE_MULTIPLIER = b.defineInRange("SPELL_BASE_DAMAGE_MULTIPLIER", defaults.spellBaseDmgMulti, 0, 100);
         DISABLE_MOB_IFRAMES = b.define("DISABLE_MOB_IFRAMES", defaults.disableMobIframes);
 
 

@@ -1,14 +1,10 @@
 
-# What are Compat Configs?
+# What is the Compatibility Addon?
 
-These settings exist to switch Mine and Slash from a mostly incompatible mod that a modpack has to revolve around into a very compatible mod that can be placed in any modpack.
+This addon exist to switch Mine and Slash from a mostly incompatible mod that a modpack has to revolve around into a very compatible mod that can be placed in any modpack.
 If you're confused why this is a thing, read on
 
-# Where are these Configs?
-
-save_folder/serverconfig/mine_and_slash_compatibility-server.toml
-
-# What are the differences between the 2 configs?
+# What are the differences between the 2 modes?
 
 | Difference | Compatibility Mode    | Override Mode   |
 |-----------|------------------------------|------------------------------|
@@ -18,16 +14,19 @@ save_folder/serverconfig/mine_and_slash_compatibility-server.toml
 | Vanilla Health Regen | Enabled plus you have mns health regen stat | Replaced with Mns health regen stat |
 | Mob Damage | Mobs get a slight amount of bonus damage | Mobs get a lot of extra damage |
 
-# What Config is best for me?
+# What Mode is best for me?
 
-If you are making a modpack focusing entirely on Mine and Slash, then the override config might be better:
-- this config makes sure you can kill mobs only with damage Mine and slash allows, so you only need to balance mine and Slash
+If you are making a modpack focusing entirely on Mine and Slash, then you don't need to install the addon:
+- this mode makes sure you can kill mobs only with damage Mine and slash allows, so you only need to balance mine and Slash
 - you don't have to worry about the balance of other mods, whether they add a single OP item, spell etc
 - because only mns deals damage, balancing becomes easier
 - Stat scalings are higher, so leveling matters a lot more and it feels more like an rpg
 
-If your modpack doesn't revolve around Mine and Slash, an you have other spell mods in there, the compat mode is probably better:
+If your modpack doesn't revolve around Mine and Slash, an you have other spell mods in there, you should install the compatibility addon:
 - Your other spell mods will work
 - Mine and Slash will no longer be required for progression and to kill mobs (depends on stat scalings though)
 - the gui overlays bars will try hide when full or not needed
 
+# Where can I tweak the settings?
+
+save_folder/serverconfig/mine_and_slash_compatibility-server.toml

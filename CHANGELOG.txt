@@ -2,6 +2,8 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 
 v.6.0.0
 
+[WARNING: these features will require the Compatibility addon, which will take a while to release! Maybe a few days to get approved on curseforge/modrinth!
+
 EXTREMELY EXPERIMENTAL UPDATE! 
 It's probably buggy, and maybe I missed some incompatibility problem, report please!
 
@@ -23,8 +25,14 @@ Now Mns dmg can act as bonus damage, still within it's own systems but will now 
 - added config for disabling mob iframes
 - damage number particles wont show by default on compat mode
 
+I contemplated between making the "compat mode" just a config, or an addon.
+I decided on addon because that way Mine and slash on its own will be the intended experience, and installing the addon is a clear way of changing how it works, as opposed to just toggling a config and wondering what the hell is happening.
+It's also probably easier to install the addon than to dig into configs.
+I'm not totally convinced either way yet but this should do for now.
+
 Other:
 - procced spell stats now actually use mana cost
 - fixed dots dealing dmg 1 extra time, effectively making dot builds.. about 30% better sometimes
 - loot chests can no longer be salvaged
 - merged clefal's PR to reduce talent tree lag
+

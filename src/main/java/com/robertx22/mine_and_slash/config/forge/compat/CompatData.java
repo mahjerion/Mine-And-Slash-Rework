@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.config.forge.compat;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModList;
 
 public class CompatData {
     public ForgeConfigSpec.BooleanValue CAP_ITEM_DAMAGE;
@@ -10,7 +11,7 @@ public class CompatData {
     public ForgeConfigSpec.BooleanValue DISABLE_VANILLA_HEALTH_REGEN;
     public ForgeConfigSpec.BooleanValue IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS;
     public ForgeConfigSpec.IntValue ITEM_DAMAGE_CAP_PER_HIT;
-    public ForgeConfigSpec.EnumValue<DamageCompatibilityType> DAMAGE_COMPATIBILITY;
+    //private ForgeConfigSpec.EnumValue<DamageCompatibilityType> DMG_COMPATIBILITY;
     public ForgeConfigSpec.EnumValue<HealthSystem> HEALTH_SYSTEM;
     public ForgeConfigSpec.EnumValue<GameBalanceConfig.BalanceEnum> BALANCE_DATAPACK;
     public ForgeConfigSpec.EnumValue<BaseStatsConfig.BaseStatsEnum> BASE_STATS_DATAPACK;
@@ -21,12 +22,19 @@ public class CompatData {
     public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
     public ForgeConfigSpec.BooleanValue DISABLE_MOB_IFRAMES;
 
+    public DamageCompatibilityType DAMAGE_COMPATIBILITY() {
+        if (!ModList.get().isLoaded("mns_compat")) {
+            return DamageCompatibilityType.FULL_DAMAGE_OVERRIDE;
+        }
+        return DamageCompatibilityType.FULL_COMPATIBILITY;
+        //   return DMG_COMPATIBILITY.get();
+    }
+
 
     public void build(ForgeConfigSpec.Builder b, DefaultCompatData defaults) {
 
-
-        DAMAGE_COMPATIBILITY = b.comment("Compat means mns dmg will act as bonus damage, while override means it will replace the vanilla damage.")
-                .defineEnum("DAMAGE_COMPATIBILITY", defaults.dmgCompat);
+        //     DMG_COMPATIBILITY = b.comment("Compat means mns dmg will act as bonus damage, while override means it will replace the vanilla damage. The Compat mode requires installing the Compatibility Addon Mod")
+        //           .defineEnum("DAMAGE_COMPATIBILITY", defaults.dmgCompat);
 
         HEALTH_SYSTEM = b.comment("Vanilla means mns will add to your hearts, imaginary means mns won't add hearts but instead just scale damage based on mob's imaginary/mns hp")
                 .defineEnum("HEALTH_SYSTEM", defaults.healthSystem);

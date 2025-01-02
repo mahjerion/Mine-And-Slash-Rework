@@ -8,7 +8,7 @@ public enum GuiBarRenderOption {
 
     public GuiBarRenderOption getReal() {
         if (this == DEFAULT) {
-            if (CompatConfig.get().DAMAGE_COMPATIBILITY.get() == DamageCompatibilityType.FULL_COMPATIBILITY) {
+            if (CompatConfig.get().DAMAGE_COMPATIBILITY() == DamageCompatibilityType.FULL_COMPATIBILITY) {
                 return WHEN_NOT_FULL;
             } else {
                 return ALWAYS;

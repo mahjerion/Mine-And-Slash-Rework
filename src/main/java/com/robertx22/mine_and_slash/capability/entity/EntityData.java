@@ -177,6 +177,7 @@ public class EntityData implements ICap, INeededForClient {
 
 
     public int lastHealth = 0;
+    public int heartsWithoutMnsHealth = 0;
 
     // sync these for mobs
     transient Unit unit = new Unit();

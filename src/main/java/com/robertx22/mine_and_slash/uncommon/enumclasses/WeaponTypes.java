@@ -6,7 +6,6 @@ import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 
@@ -98,11 +97,12 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
             public boolean isValid(DamageSource source, DamageValidityData data) {
                 var dmgid = source.getEntity().level().registryAccess().registry(Registries.DAMAGE_TYPE).get().getKey(source.type());
 
-                for (ResourceLocation id : data.valid_proj_dmg_id) {
-                    if (id.equals(dmgid)) {
+                for (String id : data.valid_proj_dmg_id) {
+                    if (id.equals(dmgid.toString())) {
                         return true;
                     }
                 }
+
                 String id = source.getMsgId();
                 // todo this seems to need fixing but im afraid itll fuck things up now id = dmgid.getPath();
                 for (String name : data.contains_in_dmg_id) {
@@ -123,10 +123,10 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
         private SourceCheck source_check = SourceCheck.ANY;
         private TagCheck tag_and_id_check = TagCheck.MATCH_ANY;
 
-        private List<ResourceLocation> valid_proj_dmg_id = Arrays.asList(new ResourceLocation("testmodid", "name"));
+        private List<String> valid_proj_dmg_id = Arrays.asList("testmodid:name");
         private List<String> contains_in_dmg_id = Arrays.asList("arrow", "bolt", "ammo", "bullet", "dart", "missile");
 
-        public DamageValidityData(SourceCheck shortcheck, TagCheck tag_and_id_check, List<ResourceLocation> valid_proj_dmg_id, List<String> contains_in_dmg_id) {
+        public DamageValidityData(SourceCheck shortcheck, TagCheck tag_and_id_check, List<String> valid_proj_dmg_id, List<String> contains_in_dmg_id) {
             this.tag_and_id_check = tag_and_id_check;
             this.source_check = shortcheck;
             this.valid_proj_dmg_id = valid_proj_dmg_id;

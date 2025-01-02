@@ -5,7 +5,7 @@ public enum DamageNumbersEnum {
 
     public boolean getReal() {
         if (this == DEFAULT) {
-            return CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage;
+            return CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage;
         }
         return this == ON;
     }

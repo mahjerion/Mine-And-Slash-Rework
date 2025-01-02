@@ -21,7 +21,7 @@ public enum CompatConfigPreset {
         x.dmgCompat = DamageCompatibilityType.FULL_COMPATIBILITY;
         x.healthSystem = HealthSystem.VANILLA_HEALTH;
 
-    }), "Makes Mine and Slash play nice with other mods. By default other spell mods will work, mns damage will just be on top of vanilla and other mod damage etc"),
+    }), "[Unlocked by installing Mine and Slash Compatibility Addon]: Makes Mine and Slash play nice with other mods. By default other spell mods will work, mns damage will just be on top of vanilla and other mod damage etc"),
     ORIGINAL_OVERRIDE_MODE(new DefaultCompatData().edit(x -> {
         x.capItemDamage = false;
         x.itemDamageCapNumber = 25;
@@ -38,7 +38,7 @@ public enum CompatConfigPreset {
         x.balance = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE;
         x.dmgCompat = DamageCompatibilityType.FULL_DAMAGE_OVERRIDE;
         x.healthSystem = HealthSystem.IMAGINARY_MINE_AND_SLASH_HEALTH;
-    }), "Mine and Slash original mode, it makes it incompatible with some other mods, like spell mods and overrides damage fully. Makes balancing modpacks a lot easier at the cost of compatibility with some mods."
+    }), "[Default Mine and Slash]: The Original mode, it makes it incompatible with some other mods, like spell mods and overrides damage fully. Makes balancing modpacks a lot easier at the cost of compatibility with some mods."
     );
 
     public DefaultCompatData defaults;

@@ -528,7 +528,7 @@ public class DamageEvent extends EffectEvent {
             return;
         }
         if (attackInfo != null) {
-            if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+            if (CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
                 attackInfo.setAmount(0);
             }
         }

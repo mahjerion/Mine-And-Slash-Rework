@@ -97,10 +97,10 @@ public class BaseStatsAdder implements ExileRegistryInit {
         c.scaled(Mana.getInstance(), 50);
         c.scaled(Energy.getInstance(), 50);
 
-        c.scaled(HealthRegen.getInstance(), 0.5F);
+        c.scaled(HealthRegen.getInstance(), 0.25F);
         c.scaled(MagicShieldRegen.getInstance(), 1);
-        c.scaled(ManaRegen.getInstance(), 3);
-        c.scaled(EnergyRegen.getInstance(), 4);
+        c.scaled(ManaRegen.getInstance(), 1);
+        c.scaled(EnergyRegen.getInstance(), 3);
 
         c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
 

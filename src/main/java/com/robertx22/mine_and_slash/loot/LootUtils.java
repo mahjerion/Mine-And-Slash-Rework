@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.loot;
 
-import com.robertx22.library_of_exile.utils.EntityUtils;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,10 +36,9 @@ public class LootUtils {
 
     public static float getMobHealthBasedLootMulti(LivingEntity entity) {
 
-
         float multi = 1;
 
-        float hp = EntityUtils.getVanillaMaxHealth(entity);
+        float hp = CompatConfig.get().HEALTH_SYSTEM.get().getOriginalMaxHealth(entity);
 
         var rar = Load.Unit(entity).getMobRarity();
 

@@ -35,7 +35,7 @@ public class NewDamageMain {
 
             @Override
             public void accept(ExileEvents.OnDamageEntity event) {
-                if (!CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+                if (!CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
                     if (event.source != null && !DmgSourceUtils.isMyDmgSource(event.source)) {
                         if (!LivingHurtUtils.isEnviromentalDmg(event.source)) {
                             float vanillaDamage = HealthUtils.realToVanilla(event.mob, event.damage);

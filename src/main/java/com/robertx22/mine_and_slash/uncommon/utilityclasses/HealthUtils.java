@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class HealthUtils {
 
-   
+
     static AttributeModifier getHeartsAttributeMod(float num) {
         return new AttributeModifier(
                 UUID.fromString("3fb10485-f309-128f-afc6-a55b0d6cf4c1"),
@@ -43,6 +43,8 @@ public class HealthUtils {
             if (en.getAttributes().hasModifier(Attributes.MAX_HEALTH, mod.getId())) {
                 at.removeModifier(mod.getId());
             }
+            data.heartsWithoutMnsHealth = (int) en.getMaxHealth();
+            
             at.addPermanentModifier(mod);
 
             var aftermax = en.getMaxHealth();

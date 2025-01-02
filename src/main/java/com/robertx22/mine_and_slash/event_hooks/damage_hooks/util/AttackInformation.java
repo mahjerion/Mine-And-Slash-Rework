@@ -77,7 +77,7 @@ public class AttackInformation {
     }
 
     public void setCanceled(boolean canceled) {
-        if (CompatConfig.get().DAMAGE_COMPATIBILITY.get().overridesDamage) {
+        if (CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
             this.canceled = canceled;
 
             if (canceled) {

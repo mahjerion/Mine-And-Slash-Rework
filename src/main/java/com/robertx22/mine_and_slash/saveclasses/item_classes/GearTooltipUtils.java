@@ -242,7 +242,7 @@ public class GearTooltipUtils {
                         return list;
                     }
                 })
-                .accept(CommonTooltips.potentialCorruptionAndQuality(exStack))
+                .accept(CommonTooltips.potentialCorruptionAndQuality(exStack, true))
                 .accept(CommonTooltips.craftedItem(exStack))
                 .accept(new AdditionalBlock(() -> {
                             int cost = (int) Energy.getInstance().scale(ModType.FLAT, gear.GetBaseGearType().getGearSlot().weapon_data.energy_cost_per_swing, data.getLevel());

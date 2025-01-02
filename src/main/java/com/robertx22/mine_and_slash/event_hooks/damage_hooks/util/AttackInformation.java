@@ -60,6 +60,12 @@ public class AttackInformation {
         }
     }
 
+    // setting it to super tiny number still allows the bit of damage to go through
+    // this makes sweeping edge work
+    public void setToMinimalNonZero() {
+        this.setAmount(0.0000001F);
+    }
+
     public LivingEntity getTargetEntity() {
         return targetEntity;
     }

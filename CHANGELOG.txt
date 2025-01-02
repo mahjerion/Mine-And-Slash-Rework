@@ -1,4 +1,4 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.0.txt
 
-v.6.0.1
-- fixed 1 hp mobs
+v.6.0.2
+- fixed sweeping

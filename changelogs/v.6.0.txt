@@ -37,3 +37,8 @@ Other:
 - loot chests can no longer be salvaged
 - merged clefal's PR to reduce talent tree lag
 
+v.6.0.1
+- fixed 1 hp mobs
+
+v.6.0.2
+- fixed sweeping

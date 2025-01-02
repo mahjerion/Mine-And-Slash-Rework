@@ -44,7 +44,7 @@ public class HealthUtils {
                 at.removeModifier(mod.getId());
             }
             data.heartsWithoutMnsHealth = (int) en.getMaxHealth();
-            
+
             at.addPermanentModifier(mod);
 
             var aftermax = en.getMaxHealth();
@@ -52,6 +52,12 @@ public class HealthUtils {
             if (aftermax > curmax) {
                 float toheal = aftermax - curmax;
                 en.heal(toheal); // todo maybe use sethealth here instead
+            }
+        } else {
+            var mod = getHeartsAttributeMod(0);
+            var at = en.getAttribute(Attributes.MAX_HEALTH);
+            if (en.getAttributes().hasModifier(Attributes.MAX_HEALTH, mod.getId())) {
+                at.removeModifier(mod.getId());
             }
         }
     }

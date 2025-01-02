@@ -2,3 +2,38 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 
 
 v.6.0.0
+
+[WARNING: these features will require the Compatibility addon, which will take a while to release! Maybe a few days to get approved on curseforge/modrinth!
+
+EXTREMELY EXPERIMENTAL UPDATE! 
+It's probably buggy, and maybe I missed some incompatibility problem, report please!
+
+New Compatibility Features and an Addon!!!
+Mine and Slash will now by default play the same as always, but you can now install the Compatibility Addon, making it suitable to place in any modpack as it will try not to invalidate other mod's damage.
+
+- With the addon installed Mns damage will just be on top of normal vanilla damage, instead of replacing or nullifying it. 
+Now Mns dmg can act as bonus damage, still within it's own systems but will now let you for example deal damage with other spell mods.
+- allows choosing to use vanilla hearts instead of imaginary mns health
+- Allows choosing which game balance datapack is used from the config 
+- option to disable newbie bonus resists and high lvl minus resists 
+- option to cap item durability loss
+- new client option to only render bars if not filled, this means at full hp mana etc your bars hide
+- added option to not disable vanilla hp regen mechanic
+- added option to choose which player base stat datapack is used, the compat option has less base stats, because the stat scaling is lower too
+- added MOB_PERCENT_DAMAGE_AS_BONUS and MOB_FLAT_DAMAGE_BONUS configs which will be lowered on the compat version of the default config
+- added option to ignore weapon spell casting requirements for compat mode
+- added stat requirement multi config
+- added config for disabling mob iframes
+- damage number particles wont show by default on compat mode
+
+I contemplated between making the "compat mode" just a config, or an addon.
+I decided on addon because that way Mine and slash on its own will be the intended experience, and installing the addon is a clear way of changing how it works, as opposed to just toggling a config and wondering what the hell is happening.
+It's also probably easier to install the addon than to dig into configs.
+I'm not totally convinced either way yet but this should do for now.
+
+Other:
+- procced spell stats now actually use mana cost
+- fixed dots dealing dmg 1 extra time, effectively making dot builds.. about 30% better sometimes
+- loot chests can no longer be salvaged
+- merged clefal's PR to reduce talent tree lag
+

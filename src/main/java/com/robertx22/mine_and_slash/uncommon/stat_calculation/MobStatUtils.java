@@ -4,7 +4,6 @@ import com.robertx22.library_of_exile.utils.EntityUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
-import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.DimensionConfig;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
@@ -151,13 +150,13 @@ public class MobStatUtils {
         int lvl = unitdata.getLevel();
 
         float vanillahp = 0;
-        if (CompatConfig.get().HEALTH_SYSTEM.get().usesVanillaHearts()) {
-            vanillahp = EntityUtils.getVanillaMaxHealth(en);
-            if (rar.forcesCustomHp()) {
-                vanillahp = rar.force_custom_hp;
-            }
+
+        vanillahp = EntityUtils.getVanillaMaxHealth(en);
+        if (rar.forcesCustomHp()) {
+            vanillahp = rar.force_custom_hp;
         }
         
+
         float hpToAdd = vanillahp * rar.ExtraHealthMulti();
 
         hpToAdd += (ServerContainer.get().EXTRA_MOB_STATS_PER_LEVEL.get() * lvl) * hpToAdd;

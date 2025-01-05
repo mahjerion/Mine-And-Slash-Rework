@@ -62,9 +62,11 @@ public class AttackInformation {
 
     // setting it to super tiny number still allows the bit of damage to go through
     // this makes sweeping edge work
+    // TODO this causes bug where too much damage is done.. why?
     public void setToMinimalNonZero() {
-        this.setAmount(0.0000001F);
+        this.setAmount(0.001F);
     }
+
 
     public LivingEntity getTargetEntity() {
         return targetEntity;

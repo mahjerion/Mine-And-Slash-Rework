@@ -529,7 +529,8 @@ public class DamageEvent extends EffectEvent {
         }
         if (attackInfo != null) {
             if (CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
-                attackInfo.setToMinimalNonZero();
+                //attackInfo.setToMinimalNonZero();
+                attackInfo.setAmount(0);
             }
         }
         if (stopFriendlyFire()) {

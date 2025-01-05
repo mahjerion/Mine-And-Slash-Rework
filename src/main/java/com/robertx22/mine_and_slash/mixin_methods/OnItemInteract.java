@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mixin_methods;
 
 import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.utils.SoundUtils;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
@@ -214,7 +215,7 @@ public class OnItemInteract {
 
                     GearItemData gear = StackSaving.GEARS.loadFrom(craftedStack);
 
-                    if (gear != null) {
+                    if (gear != null && ServerContainer.get().isSoulCleanBanned(craftedStack.getItem())) {
                         try {
                             craftedStack.getOrCreateTag().remove(StackSaving.GEARS.GUID());
                             currency.shrink(1);

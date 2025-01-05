@@ -42,3 +42,6 @@ v.6.0.1
 
 v.6.0.2
 - fixed sweeping
+
+v.6.0.3
+- reverted sweeping because it caused one shotting mobs bug

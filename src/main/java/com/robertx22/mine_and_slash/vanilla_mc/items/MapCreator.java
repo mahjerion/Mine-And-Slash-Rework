@@ -83,7 +83,7 @@ public class MapCreator extends AutoItem implements IShapedRecipe {
     @Override
     public ShapedRecipeBuilder getRecipe() {
         return shaped(this)
-                .define('X', RarityStoneItem.of(IRarity.EPIC_ID))
+                .define('X', RarityStoneItem.of(IRarity.RARE_ID))
                 .define('H', Items.IRON_INGOT)
                 .define('Y', Items.GOLD_INGOT)
                 .pattern("YYY")

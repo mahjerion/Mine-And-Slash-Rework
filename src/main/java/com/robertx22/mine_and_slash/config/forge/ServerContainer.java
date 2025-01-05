@@ -11,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -144,6 +145,12 @@ public class ServerContainer {
                     String str = (String) x;
                     return true;
                 });
+        
+        SOUL_CLEANER_ITEM_BLACKLIST = b.comment("")
+                .defineList("SOUL_CLEANER_ITEM_BLACKLIST", Arrays.asList(), x -> {
+                    String str = (String) x;
+                    return true;
+                });
         b.pop();
     }
 
@@ -185,8 +192,14 @@ public class ServerContainer {
         return BANNED_ITEMS.get().stream().anyMatch(x -> x.equals(id));
     }
 
+    public boolean isSoulCleanBanned(Item item) {
+        String id = VanillaUTIL.REGISTRY.items().getKey(item).toString();
+        return SOUL_CLEANER_ITEM_BLACKLIST.get().stream().anyMatch(x -> x.equals(id));
+    }
+
     public ForgeConfigSpec.ConfigValue<List<? extends String>> GEAR_COMPATS;
     public ForgeConfigSpec.ConfigValue<List<? extends String>> BANNED_ITEMS;
+    public ForgeConfigSpec.ConfigValue<List<? extends String>> SOUL_CLEANER_ITEM_BLACKLIST;
 
     //public ForgeConfigSpec.BooleanValue DO_NOT_DESPAWN_MAP_MOBS;
     public ForgeConfigSpec.BooleanValue GET_STARTER_ITEMS;

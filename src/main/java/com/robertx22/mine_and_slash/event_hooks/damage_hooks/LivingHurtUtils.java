@@ -52,10 +52,6 @@ public class LivingHurtUtils {
             if (DmgSourceUtils.isMyDmgSource(event.getSource())) {
                 return;
             }
-            if (!RangedDamageUtil.isValidAttack(event)) {
-                event.setCanceled(true);
-                return;
-            }
             if (event.getSource().getEntity() instanceof LivingEntity) {
                 onAttack(event);
             }

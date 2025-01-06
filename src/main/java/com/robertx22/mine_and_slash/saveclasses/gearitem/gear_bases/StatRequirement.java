@@ -137,11 +137,11 @@ public class StatRequirement {
     }
 
     private int getScalingReq(Stat stat, int lvl) {
-        return (int) (StatScaling.STAT_REQ.scale(scaling_req.getOrDefault(stat.GUID(), 0F), lvl) * CompatConfig.get().STAT_REQUIREMENTS_MULTIPLIER.get());
+        return (int) (StatScaling.STAT_REQ.scale(scaling_req.getOrDefault(stat.GUID(), 0F), lvl) * CompatConfig.get().statReqMulti());
     }
 
     private int getNonScalingReq(Stat stat, int lvl) {
-        return (int) (this.base_req.get(stat.GUID()).intValue() * CompatConfig.get().STAT_REQUIREMENTS_MULTIPLIER.get());
+        return (int) (this.base_req.get(stat.GUID()).intValue() * CompatConfig.get().statReqMulti());
     }
 
     public StatRequirement setStyleReq(PlayStyle style, float req) {

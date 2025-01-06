@@ -21,7 +21,7 @@ public class InCalc {
     // todo convert this to stat compat
     public void addVanillaHpToStats(LivingEntity entity, InCalcStatContainer calc) {
         if (entity instanceof Player) {
-            if (CompatConfig.get().HEALTH_SYSTEM.get().addBonusHealthFromVanillaHearts()) {
+            if (CompatConfig.get().healthSystem().addBonusHealthFromVanillaHearts()) {
                 float maxhp = Mth.clamp(entity.getMaxHealth(), 0, 500);
                 // all increases after this would just reduce enviro damage
                 calc.getStatInCalculation(Health.getInstance()).addAlreadyScaledFlat(maxhp);

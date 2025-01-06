@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public class DamageSourceMixin implements DamageSourceDuck {
 
     private float mnsDamage = 0;
+    private float originalDamage = 0;
     private float originalHP = 1;
 
     private boolean mnsOverride = false;
@@ -36,5 +37,17 @@ public class DamageSourceMixin implements DamageSourceDuck {
     @Override
     public boolean hasMnsDamageOverride() {
         return mnsOverride;
+    }
+
+    @Override
+    public void setOriginalDamage(float hp) {
+        if (originalDamage <= 0) {
+            originalDamage = hp;
+        }
+    }
+
+    @Override
+    public float getOriginalDamage() {
+        return originalDamage;
     }
 }

@@ -41,6 +41,7 @@ public class OnLogin {
             }
              */
 
+           
             if (ModList.get().isLoaded("majruszlibrary")) {
                 player.sendSystemMessage(Component.literal("[WARNING] You have majruszlibrary mod installed, which currently has a bug and makes Mine and Slash professions not work! It's recommended to remove the mod (and all the mods that depend on that library), until the issue is fixed."));
             }

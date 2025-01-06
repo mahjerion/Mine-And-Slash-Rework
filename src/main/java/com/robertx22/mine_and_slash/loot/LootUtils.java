@@ -38,7 +38,7 @@ public class LootUtils {
 
         float multi = 1;
 
-        float hp = CompatConfig.get().HEALTH_SYSTEM.get().getOriginalMaxHealth(entity);
+        float hp = CompatConfig.get().healthSystem().getOriginalMaxHealth(entity);
 
         var rar = Load.Unit(entity).getMobRarity();
 

@@ -31,7 +31,7 @@ public abstract class ItemStackMixin {
 
             ItemStack stack = (ItemStack) (Object) this;
 
-            if (CompatConfig.get().CAP_ITEM_DAMAGE.get()) {
+            if (CompatConfig.get().capItemDuraLoss()) {
                 ci.cancel();
                 ItemDamage.hurtAndBreak(stack, pAmount, pEntity, pOnBroken);
             }

@@ -51,7 +51,7 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
 
         float basedmg = base_scaling_type.scale(base.getValue(en, provider), Load.Unit(en).getLevel());
 
-        basedmg *= CompatConfig.get().SPELL_BASE_DAMAGE_MULTIPLIER.get();
+        basedmg *= CompatConfig.get().spellBaseDmgMulti();
 
         return (int) basedmg;
     }

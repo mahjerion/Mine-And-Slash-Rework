@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public class ItemDamage {
 
     public static <T extends LivingEntity> void hurtAndBreak(ItemStack stack, int pAmount, T pEntity, Consumer<T> pOnBroken) {
-        int max = CompatConfig.get().ITEM_DAMAGE_CAP_PER_HIT.get();
+        int max = CompatConfig.get().itemDuraLossCap();
 
         if (pAmount > max) {
             pAmount = max;

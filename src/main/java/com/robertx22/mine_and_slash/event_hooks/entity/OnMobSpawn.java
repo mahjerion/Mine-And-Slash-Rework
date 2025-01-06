@@ -80,7 +80,7 @@ public class OnMobSpawn {
 
             if (endata.needsToBeGivenStats()) {
                 setupNewMob(entity, endata, nearestPlayer);
-                entity.heal(Integer.MAX_VALUE);
+                //entity.heal(Integer.MAX_VALUE);
             } else {
                 if (endata.getUnit() == null) {
                     endata.setUnit(new Unit());

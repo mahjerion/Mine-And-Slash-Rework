@@ -53,7 +53,7 @@ public class PlayerStatUtils {
     public static List<StatContext> addNewbieElementalResists(EntityData data) {
         List<ExactStatData> stats = new ArrayList<>();
 
-        if (CompatConfig.get().ENABLE_MINUS_RESISTS_PER_LEVEL.get()) {
+        if (CompatConfig.get().newbieResists()) {
             return Arrays.asList(new SimpleStatCtx(StatContext.StatCtxType.NEWBIE_RESISTS, stats));
         }
 

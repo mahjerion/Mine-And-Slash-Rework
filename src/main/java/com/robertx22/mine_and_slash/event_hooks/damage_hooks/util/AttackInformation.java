@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
+import com.robertx22.mine_and_slash.mixin_ducks.DamageSourceDuck;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
@@ -33,10 +34,12 @@ public class AttackInformation {
         this.weapon = WeaponFinderUtil.getWeapon((LivingEntity) source.getEntity(), source.getDirectEntity());
         this.weaponData = StackSaving.GEARS.loadFrom(weapon);
 
+        if (source instanceof DamageSourceDuck duck) {
+            duck.setOriginalHP(amount);
+        }
 
         Preconditions.checkArgument(source.getEntity() instanceof LivingEntity);
         this.attackerEntity = (LivingEntity) source.getEntity();
-
     }
 
     public DamageSource getSource() {
@@ -59,6 +62,7 @@ public class AttackInformation {
             }
         }
     }
+
 
     // setting it to super tiny number still allows the bit of damage to go through
     // this makes sweeping edge work
@@ -85,7 +89,7 @@ public class AttackInformation {
     }
 
     public void setCanceled(boolean canceled) {
-        if (CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
+        if (CompatConfig.get().damageSystem().overridesDamage) {
             this.canceled = canceled;
 
             if (canceled) {

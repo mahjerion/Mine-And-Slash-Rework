@@ -3,38 +3,31 @@ package com.robertx22.mine_and_slash.config.forge.compat;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModList;
 
-public class CompatData {
-    public ForgeConfigSpec.BooleanValue CAP_ITEM_DAMAGE;
-    public ForgeConfigSpec.BooleanValue ENABLE_MINUS_RESISTS_PER_LEVEL;
-    public ForgeConfigSpec.BooleanValue DISABLE_VANILLA_HEALTH_REGEN;
-    public ForgeConfigSpec.BooleanValue IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS;
-    public ForgeConfigSpec.IntValue ITEM_DAMAGE_CAP_PER_HIT;
-    //private ForgeConfigSpec.EnumValue<DamageCompatibilityType> DMG_COMPATIBILITY;
-    public ForgeConfigSpec.EnumValue<HealthSystem> HEALTH_SYSTEM;
-    public ForgeConfigSpec.EnumValue<GameBalanceConfig.BalanceEnum> BALANCE_DATAPACK;
-    public ForgeConfigSpec.EnumValue<BaseStatsConfig.BaseStatsEnum> BASE_STATS_DATAPACK;
-    public ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
-    public ForgeConfigSpec.DoubleValue MOB_PERCENT_DAMAGE_AS_BONUS;
-    public ForgeConfigSpec.DoubleValue STAT_REQUIREMENTS_MULTIPLIER;
-    public ForgeConfigSpec.DoubleValue SPELL_BASE_DAMAGE_MULTIPLIER;
-    public ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
-    public ForgeConfigSpec.BooleanValue DISABLE_MOB_IFRAMES;
-
-    public DamageCompatibilityType DAMAGE_COMPATIBILITY() {
-        if (!ModList.get().isLoaded("mns_compat")) {
-            return DamageCompatibilityType.FULL_DAMAGE_OVERRIDE;
-        }
-        return DamageCompatibilityType.FULL_COMPATIBILITY;
-        //   return DMG_COMPATIBILITY.get();
-    }
+public class CompatData implements CompatDummy {
+    private ForgeConfigSpec.BooleanValue CAP_ITEM_DAMAGE;
+    private ForgeConfigSpec.BooleanValue ENABLE_MINUS_RESISTS_PER_LEVEL;
+    private ForgeConfigSpec.BooleanValue DISABLE_VANILLA_HEALTH_REGEN;
+    private ForgeConfigSpec.BooleanValue IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS;
+    private ForgeConfigSpec.IntValue ITEM_DAMAGE_CAP_PER_HIT;
+    private ForgeConfigSpec.EnumValue<DamageCompatibilityType> DAMAGE_SYSTEM;
+    private ForgeConfigSpec.EnumValue<HealthSystem> HEALTH_SYSTEM;
+    private ForgeConfigSpec.EnumValue<GameBalanceConfig.BalanceEnum> BALANCE_DATAPACK;
+    private ForgeConfigSpec.EnumValue<BaseStatsConfig.BaseStatsEnum> BASE_STATS_DATAPACK;
+    private ForgeConfigSpec.DoubleValue MOB_FLAT_DAMAGE_BONUS;
+    private ForgeConfigSpec.DoubleValue MOB_PERCENT_DAMAGE_AS_BONUS;
+    private ForgeConfigSpec.DoubleValue STAT_REQUIREMENTS_MULTIPLIER;
+    private ForgeConfigSpec.DoubleValue SPELL_BASE_DAMAGE_MULTIPLIER;
+    private ForgeConfigSpec.DoubleValue VANILLA_TO_WEAPON_DAMAGE_PERCENT;
+    private ForgeConfigSpec.BooleanValue ENERGY_PENALTY;
+    private ForgeConfigSpec.BooleanValue DISABLE_MOB_IFRAMES;
+    private ForgeConfigSpec.IntValue DAMAGE_CONVERSION_LOSS;
 
 
     public void build(ForgeConfigSpec.Builder b, DefaultCompatData defaults) {
 
-        //     DMG_COMPATIBILITY = b.comment("Compat means mns dmg will act as bonus damage, while override means it will replace the vanilla damage. The Compat mode requires installing the Compatibility Addon Mod")
-        //           .defineEnum("DAMAGE_COMPATIBILITY", defaults.dmgCompat);
+        DAMAGE_SYSTEM = b.comment("Bonus means mns dmg will act as bonus damage, while override means it will replace the vanilla damage. The Bonus mode requires installing the Compatibility Addon Mod")
+                .defineEnum("DAMAGE_SYSTEM", defaults.dmgCompat);
 
         HEALTH_SYSTEM = b.comment("Vanilla means mns will add to your hearts, imaginary means mns won't add hearts but instead just scale damage based on mob's imaginary/mns hp")
                 .defineEnum("HEALTH_SYSTEM", defaults.healthSystem);
@@ -72,6 +65,99 @@ public class CompatData {
         SPELL_BASE_DAMAGE_MULTIPLIER = b.defineInRange("SPELL_BASE_DAMAGE_MULTIPLIER", defaults.spellBaseDmgMulti, 0, 100);
         DISABLE_MOB_IFRAMES = b.define("DISABLE_MOB_IFRAMES", defaults.disableMobIframes);
 
+        DAMAGE_CONVERSION_LOSS = b
+                .comment("This decides how much of the vanilla>mns converted damage is lost.")
+                .defineInRange("DAMAGE_CONVERSION_LOSS", defaults.dmgConvertLoss, 0, 100);
 
+        VANILLA_TO_WEAPON_DAMAGE_PERCENT = b
+                .comment("When dealing damage with ways Mine and Slash can't detect. For example you cast a spell from another mod, it does 5 vanilla damage, your VANILLA_TO_WEAPON_DAMAGE_PERCENT config is 10, so you end up dealing 50% weapon damage Mine and Slash damage.")
+                .defineInRange("VANILLA_TO_WEAPON_DAMAGE_PERCENT", defaults.vanillaToweapondmgPercent, 0, 100);
+
+    }
+
+
+    @Override
+    public boolean capItemDuraLoss() {
+        return CAP_ITEM_DAMAGE.get();
+    }
+
+    @Override
+    public boolean newbieResists() {
+        return this.ENABLE_MINUS_RESISTS_PER_LEVEL.get();
+    }
+
+    @Override
+    public boolean disableVanillaHealthRegen() {
+        return DISABLE_VANILLA_HEALTH_REGEN.get();
+    }
+
+    @Override
+    public boolean ignoreWeaponReqForSpells() {
+        return IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS.get();
+    }
+
+    @Override
+    public int itemDuraLossCap() {
+        return ITEM_DAMAGE_CAP_PER_HIT.get();
+    }
+
+    @Override
+    public DamageCompatibilityType damageSystem() {
+        return DAMAGE_SYSTEM.get();
+    }
+
+    @Override
+    public HealthSystem healthSystem() {
+        return HEALTH_SYSTEM.get();
+    }
+
+    @Override
+    public GameBalanceConfig.BalanceEnum balanceDatapack() {
+        return BALANCE_DATAPACK.get();
+    }
+
+    @Override
+    public BaseStatsConfig.BaseStatsEnum baseStatsDatapack() {
+        return BASE_STATS_DATAPACK.get();
+    }
+
+    @Override
+    public double mobFlatDmg() {
+        return MOB_FLAT_DAMAGE_BONUS.get();
+    }
+
+    @Override
+    public double mobPercentBonusDamage() {
+        return MOB_PERCENT_DAMAGE_AS_BONUS.get();
+    }
+
+    @Override
+    public double statReqMulti() {
+        return STAT_REQUIREMENTS_MULTIPLIER.get();
+    }
+
+    @Override
+    public double spellBaseDmgMulti() {
+        return SPELL_BASE_DAMAGE_MULTIPLIER.get();
+    }
+
+    @Override
+    public double vanillaToWepDmgPercent() {
+        return VANILLA_TO_WEAPON_DAMAGE_PERCENT.get();
+    }
+
+    @Override
+    public boolean energyPenalty() {
+        return ENERGY_PENALTY.get();
+    }
+
+    @Override
+    public boolean disableMobIframes() {
+        return DISABLE_MOB_IFRAMES.get();
+    }
+
+    @Override
+    public int dmgConversionLoss() {
+        return DAMAGE_CONVERSION_LOSS.get();
     }
 }

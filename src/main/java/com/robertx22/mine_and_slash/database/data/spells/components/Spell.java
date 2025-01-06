@@ -322,7 +322,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         list.add(ExileText.emptyLine().get());
 
-        if (!CompatConfig.get().IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS.get()) {
+        if (!CompatConfig.get().ignoreWeaponReqForSpells()) {
             list.add(getConfig().castingWeapon.predicate.text);
         }
 

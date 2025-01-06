@@ -24,7 +24,7 @@ public class HealthUtils {
 
     public static void addHearts(LivingEntity en) {
 
-        if (CompatConfig.get().HEALTH_SYSTEM.get().usesVanillaHearts()) {
+        if (CompatConfig.get().healthSystem().usesVanillaHearts()) {
 
             var curmax = en.getMaxHealth();
 
@@ -68,7 +68,7 @@ public class HealthUtils {
 
 
     public static float realToVanilla(LivingEntity en, float dmg) {
-        if (CompatConfig.get().HEALTH_SYSTEM.get().usesVanillaHearts()) {
+        if (CompatConfig.get().healthSystem().usesVanillaHearts()) {
             return dmg;
         }
         float multi = dmg / getMaxHealth(en);
@@ -80,7 +80,7 @@ public class HealthUtils {
 
     public static float getMaxHealth(LivingEntity en) {
 
-        if (CompatConfig.get().HEALTH_SYSTEM.get().usesVanillaHearts()) {
+        if (CompatConfig.get().healthSystem().usesVanillaHearts()) {
             return en.getMaxHealth();
         }
 
@@ -98,7 +98,7 @@ public class HealthUtils {
     }
 
     public static int getCurrentHealth(LivingEntity entity) {
-        if (CompatConfig.get().HEALTH_SYSTEM.get().usesVanillaHearts()) {
+        if (CompatConfig.get().healthSystem().usesVanillaHearts()) {
             return (int) entity.getHealth();
         }
 

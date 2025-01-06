@@ -69,7 +69,7 @@ public class ServerContainer {
         MAX_TEAM_DISTANCE = b.defineInRange("max_team_distance", 75D, 0, 100000);
         MOB_DESPAWN_DISTANCE_IN_MAPS = b.comment("Distance needed from player to despawn mobs in maps, lower means more despawning")
                 .defineInRange("MOB_DESPAWN_DISTANCE_IN_MAPS", 30D, 5, 200);
-        MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA = b.comment("")
+        MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA = b
                 .defineInRange("MAP_PERCENT_COMPLETE_NEEDED_FOR_BOSS_ARENA", 50, 5, 99D);
         IN_COMBAT_REGEN_MULTI = b.defineInRange("in_combat_regen_multi", 0.5, 0, 10);
         COMBAT_TO_PROFESSION_RESTED_XP_GENERATION = b.defineInRange("COMBAT_TO_PROFESSION_RESTED_XP_GENERATION", 0.25, 0, 1);
@@ -145,10 +145,10 @@ public class ServerContainer {
                     String str = (String) x;
                     return true;
                 });
-        
-        SOUL_CLEANER_ITEM_BLACKLIST = b.comment("")
-                .defineList("SOUL_CLEANER_ITEM_BLACKLIST", Arrays.asList(), x -> {
-                    String str = (String) x;
+
+        SOUL_CLEANER_ITEM_BLACKLIST = b
+                .defineList("SOUL_CLEANER_ITEM_BLACKLIST", Arrays.asList("minecraft:diamond"), x -> {
+                    // String str = (String) x;
                     return true;
                 });
         b.pop();

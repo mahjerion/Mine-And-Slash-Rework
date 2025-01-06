@@ -31,7 +31,7 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
 
     public static GameBalanceConfig get() {
         var reg = Database.getRegistry(ExileRegistryTypes.GAME_BALANCE);
-        var id = CompatConfig.get().BALANCE_DATAPACK.get().id;
+        var id = CompatConfig.get().balanceDatapack().id;
         return (GameBalanceConfig) reg.get(id);
     }
 

@@ -417,7 +417,7 @@ public class SpellCastingData {
                 }
 
 
-                if (!CompatConfig.get().IGNORE_WEAPON_REQUIREMENTS_FOR_SPELLS.get()) {
+                if (!CompatConfig.get().ignoreWeaponReqForSpells()) {
 
                     GearItemData wep = opt.map(x -> x.gear).orElse(null);
 

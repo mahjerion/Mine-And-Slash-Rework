@@ -15,6 +15,9 @@ public interface DamageSourceDuck {
 
     public boolean hasMnsDamageOverride();
 
+    public void setOriginalDamage(float hp);
+
+    public float getOriginalDamage();
 
     default void tryOverrideDmgWithMns(AttackInformation info) {
         if (hasMnsDamageOverride()) {

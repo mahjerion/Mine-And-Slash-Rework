@@ -1,23 +1,21 @@
 package com.robertx22.mine_and_slash.config.forge.compat;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 
+// todo write wiki docs for the new preset
 public class CompatConfig {
     public static final ForgeConfigSpec spec;
     public static final CompatConfig CONTAINER;
 
-    public static CompatData get() {
-
-        if (ModList.get().isLoaded("mns_compat")) {
-            return CONTAINER.map.get(CompatConfigPreset.FULLY_COMPATIBLE);
+    public static CompatDummy get() {
+        if (!IRestrictedConfig.compatModeIsInstalled()) {
+            return CompatConfigPreset.ORIGINAL_MODE.defaults;
         }
-
-        return CONTAINER.map.get(CompatConfigPreset.ORIGINAL_OVERRIDE_MODE);
-
+        var c = CONTAINER.COMPATIBILITY_PRESETS.get().getReal();
+        return CONTAINER.map.get(c);
     }
 
     static {
@@ -29,24 +27,34 @@ public class CompatConfig {
 
     private HashMap<CompatConfigPreset, CompatData> map = new HashMap<>();
 
+    private ForgeConfigSpec.EnumValue<CompatConfigPreset> COMPATIBILITY_PRESETS;
+
+
     CompatConfig(ForgeConfigSpec.Builder b) {
 
-        b.comment("Compatibility presets: Fully compat mode means mine and slash will act as a nice mod to place in modpacks, it won't break anything and all other mods should work with it." +
-                        "Original mode on the other hand makes mns override damage mechanics and other things, making it only really good for a modpack specifically created around mine and slash." +
-                        "Installing the Mine and Slash Compatibility Addon mod enables the compatible mode preset")
-                .push("compatibility_configs");
+
+        b.comment("Compatibility Presets. Unlocked by installing the Compatibility addon");
 
 
-        for (CompatConfigPreset preset : CompatConfigPreset.values()) {
+        if (IRestrictedConfig.compatModeIsInstalled()) {
 
-            b.comment(preset.comment);
-            b.push(preset.name());
+            COMPATIBILITY_PRESETS = b.defineEnum("COMPATIBILITY_PRESETS", CompatConfigPreset.ORIGINAL_MODE);
 
-            var data = new CompatData();
-            data.build(b, preset.defaults);
-            map.put(preset, data);
+            b.comment("It's advised to ONLY pick a COMPATIBILITY_PRESETS and not mess further with the configs.")
+                    .push("compatibility_configs");
 
-            b.pop();
+            for (CompatConfigPreset preset : CompatConfigPreset.values()) {
+                b.comment(preset.comment);
+                b.push(preset.name());
+
+                var data = new CompatData();
+                data.build(b, preset.defaults);
+                map.put(preset, data);
+
+                b.pop();
+            }
+        } else {
+            b.define("addon_link", "https://www.curseforge.com/minecraft/mc-mods/mine-and-slash-compatibility");
         }
 
     }

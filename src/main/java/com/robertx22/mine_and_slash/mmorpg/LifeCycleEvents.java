@@ -31,7 +31,7 @@ public class LifeCycleEvents {
 
             LevelUtils.runTests();
 
-            if (CompatConfig.get().DISABLE_VANILLA_HEALTH_REGEN.get()) {
+            if (CompatConfig.get().disableVanillaHealthRegen()) {
                 regenDefault = event.getServer()
                         .getGameRules()
                         .getRule(GameRules.RULE_NATURAL_REGENERATION)
@@ -48,7 +48,7 @@ public class LifeCycleEvents {
         });
 
         ForgeEvents.registerForgeEvent(ServerStoppingEvent.class, event -> {
-            if (CompatConfig.get().DISABLE_VANILLA_HEALTH_REGEN.get()) {
+            if (CompatConfig.get().disableVanillaHealthRegen()) {
                 event.getServer()
                         .getGameRules()
                         .getRule(GameRules.RULE_NATURAL_REGENERATION)

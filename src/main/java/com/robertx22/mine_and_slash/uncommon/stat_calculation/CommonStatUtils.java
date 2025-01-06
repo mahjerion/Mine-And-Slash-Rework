@@ -49,7 +49,7 @@ public class CommonStatUtils {
 
         try {
 
-            String id = CompatConfig.get().BASE_STATS_DATAPACK.get().id;
+            String id = CompatConfig.get().baseStatsDatapack().id;
 
             if (en instanceof Player == false) {
                 id = BaseStatsAdder.MOB;

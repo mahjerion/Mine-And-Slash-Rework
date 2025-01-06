@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.Arrays;
 import java.util.List;
 
+// todo apparently this + black hole disappears mobs
 public class UnstuckMobs {
 
     static List<Direction> dirs = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP, Direction.DOWN);

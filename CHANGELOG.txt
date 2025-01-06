@@ -2,3 +2,9 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 
 v.6.0.4
 - added soul cleaner item blacklist
+- new experimental feature, damage conversion compatibility
+If you have the Compatibility addon installed, you can now play with other mod's spells having their damage turned into Mns damage
+- the compat presets are now 3 and renamed: Original, Compatible and Lite.
+Original is the original mns, Compatible is nearly the same as original except other mod's spells are scaled and turned to mns damage, and Lite is toned down mod to better fit into more vanilla modpacks
+- will no longer heal mobs to full at spawn, apparently some bosses dont like that
+- the compat addon is now required to use the compatibility config

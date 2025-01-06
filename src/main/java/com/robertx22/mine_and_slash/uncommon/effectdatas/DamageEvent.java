@@ -528,7 +528,7 @@ public class DamageEvent extends EffectEvent {
             return;
         }
         if (attackInfo != null) {
-            if (CompatConfig.get().DAMAGE_COMPATIBILITY().overridesDamage) {
+            if (CompatConfig.get().damageSystem().overridesDamage) {
                 //attackInfo.setToMinimalNonZero();
                 attackInfo.setAmount(0);
             }
@@ -696,7 +696,7 @@ public class DamageEvent extends EffectEvent {
 
             // target.invulnerableTime = 20;
 
-            if (CompatConfig.get().DISABLE_MOB_IFRAMES.get()) {
+            if (CompatConfig.get().disableMobIframes()) {
                 if (attackInfo == null) {
                     if (target instanceof Player == false) {
                         target.invulnerableTime = 0;

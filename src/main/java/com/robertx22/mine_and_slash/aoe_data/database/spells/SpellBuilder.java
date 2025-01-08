@@ -90,12 +90,7 @@ public class SpellBuilder {
 
     public SpellBuilder teleportForward() {
         this.onCast(PartBuilder.justAction(SpellAction.SUMMON_AT_SIGHT.create(SlashEntities.SIMPLE_PROJECTILE.get(), 1D, 0D)))
-                .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(Blocks.AIR, 1D)
-                        .put(MapField.ENTITY_NAME, "block")
-                        .put(MapField.BLOCK_FALL_SPEED, 0D)
-                        .put(MapField.FIND_NEAREST_SURFACE, false)
-                        .put(MapField.IS_BLOCK_FALLING, false)))
-                .onExpire("block", PartBuilder.justAction(SpellAction.TP_TARGET_TO_SELF.create())
+                .onExpire(PartBuilder.justAction(SpellAction.TP_TARGET_TO_SELF.create())
                         .addTarget(TargetSelector.CASTER.create()));
         return this;
     }

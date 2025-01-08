@@ -54,3 +54,10 @@ If you have the Compatibility addon installed, you can now play with other mod's
 Original is the original mns, Compatible is nearly the same as original except other mod's spells are scaled and turned to mns damage, and Lite is toned down mod to better fit into more vanilla modpacks
 - will no longer heal mobs to full at spawn, apparently some bosses dont like that
 - the compat addon is now required to use the compatibility config
+
+v.6.0.5
+- learning method 3x > 2x xp
+- fixed ailment resistance, was reducing instead of increasing damage when in minus
+- block chance now requires shield
+- attempt fix auto items
+- tweaked the dmg code

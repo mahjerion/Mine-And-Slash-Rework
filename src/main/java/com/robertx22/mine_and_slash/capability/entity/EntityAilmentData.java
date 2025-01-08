@@ -89,7 +89,10 @@ public class EntityAilmentData {
 
         dmg = dmg * ailment.damageEffectivenessMulti; // make sure this isnt done multiple times
         dmg *= Load.Unit(caster).getUnit().getCalculatedStat(eff).getMultiplier();
-        dmg *= Load.Unit(target).getUnit().getCalculatedStat(res).getMultiplier();
+
+        var resist = Load.Unit(target).getUnit().getCalculatedStat(res);
+        float resmulti = resist.getReverseMultiplier();
+        dmg *= resmulti;
 
         if (ailment.isDot) {
             // otherwise dots will add whole damage EVERY tick

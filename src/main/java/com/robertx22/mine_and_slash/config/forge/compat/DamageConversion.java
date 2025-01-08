@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.config.forge.compat;
 
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
+import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.AttackInformation;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.DmgSourceUtils;
 import com.robertx22.mine_and_slash.mixin_ducks.DamageSourceDuck;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class DamageConversion {
 
-    public static float tryConvert(DamageSource source, LivingEntity caster, LivingEntity target, float vanillaDmg) {
+    public static float tryConvert(AttackInformation info, DamageSource source, LivingEntity caster, LivingEntity target, float vanillaDmg) {
 
 
         if (DmgSourceUtils.isMyDmgSourceOrModified(source)) {
@@ -62,6 +63,10 @@ public class DamageConversion {
                     .setupDamage(AttackType.hit, WeaponTypes.none, PlayStyle.STR)
                     .setIsBasicAttack()
                     .build();
+
+            if (compat.dmgConversionLoss() >= 100) {
+                dmgEvent.attackInfo = info;
+            }
 
             dmgEvent.Activate();
 

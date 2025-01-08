@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.ShieldItem;
 
 public class BlockChance extends Stat {
 
@@ -81,7 +82,7 @@ public class BlockChance extends Stat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg; // && effect.target.getOffhandItem().getItem() instanceof ShieldItem; todo yes or no
+            return effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg && effect.target.getOffhandItem().getItem() instanceof ShieldItem;// todo ask for shield mns item
         }
     }
 

@@ -13,7 +13,7 @@ public class ExileStacklessData {
 
     private transient ExileStack stack = ExileStack.of(new ItemStack(Items.STONE_SWORD));
 
-    
+
     public <T> T get(StackKey<T> key) {
         return (T) map.get(key.key);
     }
@@ -41,5 +41,5 @@ public class ExileStacklessData {
         }
     }
 
-
+ 
 }

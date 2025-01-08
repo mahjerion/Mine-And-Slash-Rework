@@ -293,10 +293,11 @@ public class ProfessionBlockEntity extends BlockEntity {
         float expMulti = 1;
 
         boolean destroyOuput = false;
+        
 
         if (this.inventory.getInventory(INPUTS).countItem(SlashItems.DESTROY_OUTPUT.get()) > 0) {
             if (!getProfession().GUID().equals(Professions.SALVAGING)) {
-                expMulti = 3;
+                expMulti = 2;
                 destroyOuput = true;
             }
         }

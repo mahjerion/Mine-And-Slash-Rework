@@ -13,39 +13,51 @@ import net.minecraft.world.entity.player.Player;
 
 public class OnPlayerDamageEntityEvent extends EventConsumer<ExileEvents.OnDamageEntity> {
 
+    // this lock stops spawning new damage instances and infinite damage loops with other mods, hopefully
+    static boolean lock = false;
+
     @Override
+
     public void accept(ExileEvents.OnDamageEntity event) {
 
-        if (event.mob.level().isClientSide) {
-            event.canceled = true;
-            event.damage = 0;
+        if (lock) {
             return;
         }
-        if (event.source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
-            return;
-        }
-        if (DmgSourceUtils.isMyDmgSource(event.source)) {
-            return;
-        }
-        if (event.mob instanceof EnderDragon) {
-            return; // todo temp fix
-        }
-        if (event.source.getEntity() instanceof Player) {
+        lock = true;
 
-            var info = new AttackInformation(event, AttackInformation.Mitigation.PRE, event.mob, event.source, event.damage);
-
-            if (!ValidDamageUtil.isValidAttack(info)) {
-                if (event.source != null && event.source.getEntity() instanceof LivingEntity caster) {
-                    var num = DamageConversion.tryConvert(event.source, caster, event.mob, event.damage);
-                    event.damage = num;
-                }
-                info.setCanceled(true);
-            } else {
-
-                LivingHurtUtils.tryAttack(info);
-                var duck = (DamageSourceDuck) event.source;
-                duck.tryOverrideDmgWithMns(event);
+        try {
+            if (event.mob.level().isClientSide) {
+                event.canceled = true;
+                event.damage = 0;
+                return;
             }
+            if (event.source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
+                return;
+            }
+            if (DmgSourceUtils.isMyDmgSource(event.source)) {
+                return;
+            }
+            if (event.mob instanceof EnderDragon) {
+                return; // todo temp fix
+            }
+            if (event.source.getEntity() instanceof Player) {
+
+                var info = new AttackInformation(event, AttackInformation.Mitigation.PRE, event.mob, event.source, event.damage);
+
+                if (!ValidDamageUtil.isValidAttack(info)) {
+                    if (event.source != null && event.source.getEntity() instanceof LivingEntity caster) {
+                        var num = DamageConversion.tryConvert(info, event.source, caster, event.mob, event.damage);
+                        event.damage = num;
+                    }
+                } else {
+
+                    LivingHurtUtils.tryAttack(info);
+                    var duck = (DamageSourceDuck) event.source;
+                    duck.tryOverrideDmgWithMns(event);
+                }
+            }
+        } finally {
+            lock = false;
         }
     }
 

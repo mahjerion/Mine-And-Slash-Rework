@@ -76,7 +76,7 @@ public class DamageEvent extends EffectEvent {
     public LivingEntity petEntity;
     public float wepdmgMulti = 1;
     public boolean absorbedCompletely = false;
-    AttackInformation attackInfo;
+    public AttackInformation attackInfo;
     private HashMap<Elements, Integer> bonusElementDamageMap = new HashMap();
 
     public float unconvertedDamagePercent = 100;
@@ -632,17 +632,25 @@ public class DamageEvent extends EffectEvent {
                 attackInfo.setAmount(0.000001F);
             }
         } else {
-            DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
-            duck.setMnsDamage(vanillaDamage);
 
-
-            if (target instanceof Player == false) {
-                int inv = target.invulnerableTime;
-                target.invulnerableTime = 0;
-                target.hurt(dmgsource, vanillaDamage);
-                target.invulnerableTime = inv;
+            if (attackInfo != null && CompatConfig.get().damageSystem().overridesDamage) {
+                DamageSourceDuck duck = (DamageSourceDuck) attackInfo.getSource();
+                duck.setMnsDamage(vanillaDamage);
+                duck.tryOverrideDmgWithMns(attackInfo);
+                attackInfo.setAmount(vanillaDamage);
             } else {
-                target.hurt(dmgsource, vanillaDamage);
+
+                DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
+                duck.setMnsDamage(vanillaDamage);
+
+                if (target instanceof Player == false) {
+                    int inv = target.invulnerableTime;
+                    target.invulnerableTime = 0;
+                    target.hurt(dmgsource, vanillaDamage);
+                    target.invulnerableTime = inv;
+                } else {
+                    target.hurt(dmgsource, vanillaDamage);
+                }
             }
         }
 

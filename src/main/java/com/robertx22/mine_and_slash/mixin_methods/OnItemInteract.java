@@ -270,7 +270,9 @@ public class OnItemInteract {
                         stack.getOrCreateTag().putBoolean("free_souled", true);
 
                         var data = auto.create(x.getEntity());
-                        data.apply(ExileStack.of(stack));
+                        var ex = ExileStack.of(stack);
+                        data.apply(ex);
+                        stack.setTag(ex.getStack().getTag()); // todo this needs rework after 1.21
                     }
                 }
             }

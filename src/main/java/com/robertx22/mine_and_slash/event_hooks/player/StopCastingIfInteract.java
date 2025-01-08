@@ -14,7 +14,7 @@ public class StopCastingIfInteract {
         }
         var data = Load.player(player);
 
-        if (data.spellCastingData.isCasting()) {
+        if (data.spellCastingData.isCasting() && data.spellCastingData.castTickLeft > 0) {
             data.spellCastingData.cancelCast(player);
             data.playerDataSync.setDirty();
         }

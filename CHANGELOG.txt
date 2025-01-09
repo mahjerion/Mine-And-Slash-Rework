@@ -1,8 +1,5 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.0.txt
 
-v.6.0.5
-- learning method 3x > 2x xp
-- fixed ailment resistance, was reducing instead of increasing damage when in minus
-- block chance now requires shield
-- attempt fix auto items
-- tweaked the dmg code
+v.6.0.6
+- fixed soul cleaner config
+- set scale to nearest player true by default

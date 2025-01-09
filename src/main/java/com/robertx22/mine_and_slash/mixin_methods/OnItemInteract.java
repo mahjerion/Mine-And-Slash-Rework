@@ -215,7 +215,7 @@ public class OnItemInteract {
 
                     GearItemData gear = StackSaving.GEARS.loadFrom(craftedStack);
 
-                    if (gear != null && ServerContainer.get().isSoulCleanBanned(craftedStack.getItem())) {
+                    if (gear != null && !ServerContainer.get().isSoulCleanBanned(craftedStack.getItem())) {
                         try {
                             craftedStack.getOrCreateTag().remove(StackSaving.GEARS.GUID());
                             currency.shrink(1);

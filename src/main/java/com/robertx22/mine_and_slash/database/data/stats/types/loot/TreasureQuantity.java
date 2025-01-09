@@ -28,7 +28,7 @@ public class TreasureQuantity extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases amount of loot found in chests";
+        return "Increases amount of loot found";
     }
 
     @Override

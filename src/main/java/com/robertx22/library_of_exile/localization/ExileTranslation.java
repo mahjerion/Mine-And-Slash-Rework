@@ -22,7 +22,7 @@ public class ExileTranslation {
     }
 
     public static ExileTranslation registry(String modid, ExileRegistry<?> reg, String locname) {
-        return new ExileTranslation(modid + "." + reg.getExileRegistryType().id + "." + reg.GUID(), locname);
+        return new ExileTranslation(modid + "." + reg.getExileRegistryType().idWithoutModid + "." + reg.GUID(), locname);
     }
 
 

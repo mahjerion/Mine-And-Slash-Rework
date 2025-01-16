@@ -7,6 +7,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
+import com.robertx22.library_of_exile.localization.ExileLangFile;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.register_info.HardcodedRegistration;
 import com.robertx22.library_of_exile.registry.register_info.SeriazableRegistration;
@@ -22,6 +23,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatCondit
 import com.robertx22.mine_and_slash.aoe_data.database.stat_effects.StatEffects;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.AscensionStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.Stats;
+import com.robertx22.mine_and_slash.aoe_data.datapacks.lang_file.CreateLangFile;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
@@ -100,6 +102,12 @@ public class MMORPG {
         } else {
             return ((int) num) + "";
         }
+    }
+
+    // idk how else to pass arguments to a method reference
+    public static void createMnsLangFile() {
+        // todo eventually i'll replace the entire old CreateLangFile class
+        ExileLangFile.createFile(SlashRef.MODID, CreateLangFile.create());
     }
 
     // todo test
@@ -279,7 +287,7 @@ public class MMORPG {
 
     public void commonSetupEvent(FMLCommonSetupEvent event) {
 
-     
+
         GeneratedData.addAllObjectsToGenerate();
 
         BossSpells.init();

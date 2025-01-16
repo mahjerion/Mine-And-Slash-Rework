@@ -1,7 +1,11 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.soul;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
+import com.robertx22.library_of_exile.localization.ExileTranslation;
+import com.robertx22.library_of_exile.localization.TranslationBuilder;
+import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.mine_and_slash.database.data.profession.items.CraftedSoulItem;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.stat_soul.StatSoulData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.orbs_of_crafting.main.StackHolder;
@@ -53,7 +57,13 @@ public class ForceGearSlotSoulMod extends ItemModification {
 
     @Override
     public MutableComponent getDescWithParams() {
-        return this.getDescParams(data.gear_tag);
+        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName(data.gear_tag);
+    }
+
+    @Override
+    public TranslationBuilder createTranslationBuilder() {
+        return TranslationBuilder.of(SlashRef.MODID)
+                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Forces Soul to Produce %1$s"));
     }
 
 
@@ -63,8 +73,4 @@ public class ForceGearSlotSoulMod extends ItemModification {
     }
 
 
-    @Override
-    public String locDescForLangFile() {
-        return "Forces Soul to Produce %1$s";
-    }
 }

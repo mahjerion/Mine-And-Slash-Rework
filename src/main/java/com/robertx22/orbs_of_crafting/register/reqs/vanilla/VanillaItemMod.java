@@ -1,6 +1,9 @@
 package com.robertx22.orbs_of_crafting.register.reqs.vanilla;
 
 import com.google.gson.JsonObject;
+import com.robertx22.library_of_exile.localization.ExileTranslation;
+import com.robertx22.library_of_exile.localization.TranslationBuilder;
+import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.orbs_of_crafting.main.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
@@ -67,11 +70,13 @@ public class VanillaItemMod extends ItemModification {
 
     @Override
     public MutableComponent getDescWithParams() {
-        return getDescParams();
+        return getTranslation(TranslationType.DESCRIPTION).getTranslatedName();
     }
 
     @Override
-    public String locDescForLangFile() {
-        return desc;
+    public TranslationBuilder createTranslationBuilder() {
+        return TranslationBuilder.of(SlashRef.MODID)
+                .desc(ExileTranslation.registry(SlashRef.MODID, this, desc)
+                );
     }
 }

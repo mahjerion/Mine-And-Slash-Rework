@@ -1,13 +1,11 @@
 package com.robertx22.orbs_of_crafting.register.mods.base;
 
 import com.robertx22.library_of_exile.localization.ITranslated;
-import com.robertx22.library_of_exile.localization.TranslationKeyPrefix;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializer;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializers;
 import com.robertx22.orbs_of_crafting.custom_ser.GsonCustomSer;
@@ -20,8 +18,6 @@ import net.minecraft.world.entity.player.Player;
 // test if this loads correctly
 public abstract class ItemModification implements JsonExileRegistry<ItemModification>, GsonCustomSer<ItemModification>, ITranslated {
 
-    public static TranslationKeyPrefix KEY_PREFIX = new TranslationKeyPrefix("item_mods");
-    
     public static ItemModification SERIALIZER = new DestroyItemMod("");
 
     public String serializer = "";
@@ -92,15 +88,6 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
         return id;
     }
 
-    @Override
-    public AutoLocGroup locDescGroup() {
-        return AutoLocGroup.Currency_Items;
-    }
-
-    @Override
-    public static String locDescLangFileGUID() {
-        return SlashRef.MODID + ".item_mods." + GUID();
-    }
 
     @Override
     public int Weight() {

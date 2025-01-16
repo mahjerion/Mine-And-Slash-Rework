@@ -2,10 +2,14 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.GearModification;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModificationSers;
+import com.robertx22.library_of_exile.localization.ExileTranslation;
+import com.robertx22.library_of_exile.localization.TranslationBuilder;
+import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.itemstack.CustomItemData;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -40,7 +44,7 @@ public class AddQualityItemMod extends GearModification {
         if (data.add_quality.hasRange()) {
             text = data.add_quality.min + " - " + data.add_quality.max;
         }
-        return this.getDescParams(text);
+        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName(text);
     }
 
 
@@ -49,9 +53,12 @@ public class AddQualityItemMod extends GearModification {
         return AddQualityItemMod.class;
     }
 
-
     @Override
-    public String locDescForLangFile() {
-        return "Add %1$s Quality";
+    public TranslationBuilder createTranslationBuilder() {
+        return TranslationBuilder.of(SlashRef.MODID)
+                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Add %1$s Quality")
+                );
     }
+
+
 }

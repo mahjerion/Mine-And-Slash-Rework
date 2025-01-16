@@ -20,16 +20,12 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.DirUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CreateLangFile {
 
-    public static void create() {
+    public static String create() {
 
         List<String> translatorGuide = Lists.newArrayList(
                 "This section provides guidance to translators, offering insights into internal details:",
@@ -37,7 +33,7 @@ public class CreateLangFile {
                 "2. Certain lines contain line break format(\\n). translator can add/remove that format at will based on the actual length of the translated text."
         );
 
-        String json = "{\n";
+        String json = "";//"{\n";
 
         for (String x : translatorGuide) {
             json += "\t" + "\"" + "translator_guide_" + translatorGuide.indexOf(x) + "\": \"" + StringEscapeUtils.escapeJava(x) + "\",\n";
@@ -126,9 +122,13 @@ public class CreateLangFile {
 
         usedGUIDS.clear();
 
-        json += "\n}";
+        //   json += "\n}";
 
-        json = CreateLangFileUtils.replaceLast(json, ",", ""); // removes last , or else json wont work
+        // json = CreateLangFileUtils.replaceLast(json, ",", ""); // removes last , or else json wont work
+
+
+        return json;
+/*
 
         try {
             //  ExileLog.get().log("Starting to create lang file");
@@ -147,6 +147,8 @@ public class CreateLangFile {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+ */
 
     }
 

@@ -57,11 +57,13 @@ public class ExileLangFile {
     }
 
 
-    public static String createJsonForModid(String modid) {
+    public static String createJsonForModid(String modid, String extraManual) {
 
         gatherAll();
 
         String json = "{\n";
+
+        json += extraManual;
 
         var sorted = all.get(modid).values().stream().sorted(Comparator.comparing(x -> x.key)).collect(Collectors.toList());
 
@@ -77,10 +79,10 @@ public class ExileLangFile {
         return json;
     }
 
-    public static void createFile(String modid) {
+    public static void createFile(String modid, String extraManual) {
         try {
 
-            var json = createJsonForModid(modid);
+            var json = createJsonForModid(modid, extraManual);
 
             if (Files.exists(Paths.get(langFilePath())) == false) {
                 Files.createFile(Paths.get(langFilePath()));

@@ -1,10 +1,10 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.MaxLinks;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -47,7 +47,7 @@ public class SocketedGem {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.TOO_LOW_LEVEL));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.TOO_LOW_LEVEL));
 
         }
 
@@ -56,7 +56,7 @@ public class SocketedGem {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.CANT_EQUIP_THAT_MANY_SUPPORTS));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.CANT_EQUIP_THAT_MANY_SUPPORTS));
 
         }
 

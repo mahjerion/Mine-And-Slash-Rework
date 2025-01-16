@@ -3,7 +3,7 @@ package com.robertx22.orbs_of_crafting.api;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.events.base.ExileEvent;
 import com.robertx22.library_of_exile.events.base.ExileEventCaller;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.orbs_of_crafting.main.LocReqContext;
 
 public class OrbEvents {

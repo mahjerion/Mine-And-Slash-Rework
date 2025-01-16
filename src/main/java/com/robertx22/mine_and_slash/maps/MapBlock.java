@@ -3,9 +3,9 @@ package com.robertx22.mine_and_slash.maps;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.library_of_exile.utils.geometry.Circle2d;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlockEntity;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -94,7 +94,7 @@ public class MapBlock extends BaseEntityBlock {
         if (!level.isClientSide) {
 
             if (Load.Unit(p).getLevel() < ServerContainer.get().MIN_LEVEL_MAP_DROPS.get()) {
-                p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.TOO_LOW_LEVEL));
+                p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.TOO_LOW_LEVEL));
 
                 return InteractionResult.CONSUME;
             }
@@ -173,7 +173,7 @@ public class MapBlock extends BaseEntityBlock {
         if (!p.isCreative()) {
             if (cds.isOnCooldown("start_map")) {
                 int sec = cds.getCooldownTicks("start_map") / 20;
-                p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR.locName(), Words.MAP_START_COOLDOWN.locName(sec)));
+                p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR.locName(), Words.MAP_START_COOLDOWN.locName(sec)));
                 return false;
             }
         }
@@ -181,11 +181,11 @@ public class MapBlock extends BaseEntityBlock {
 
         if (!data.getStatReq().meetsReq(Load.Unit(p).getLevel(), Load.Unit(p))) {
 
-            ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
+            ExplainedResultUtil.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
 
             List<Component> reqDifference = data.getStatReq().getReqDifference(data.lvl, Load.Unit(p));
             if (!reqDifference.isEmpty()) {
-                ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
+                ExplainedResultUtil.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
                 reqDifference.forEach(p::sendSystemMessage);
             }
             return false;
@@ -201,17 +201,17 @@ public class MapBlock extends BaseEntityBlock {
         MapItemData map1 = mapData.map;
         if (!map1.getStatReq().meetsReq(map1.lvl, Load.Unit(p))) {
 
-            ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
+            ExplainedResultUtil.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
 
             List<Component> reqDifference = map1.getStatReq().getReqDifference(map1.lvl, Load.Unit(p));
             if (!reqDifference.isEmpty()) {
-                ExplainedResult.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
+                ExplainedResultUtil.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.NOT_MEET_MAP_REQ_FIRST_LINE);
                 reqDifference.forEach(p::sendSystemMessage);
             }
             return false;
         }
         if (Load.Unit(p).getLevel() < (map1.lvl - 5)) {
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.TOO_LOW_LEVEL));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.TOO_LOW_LEVEL));
 
             return false;
         }

@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.database.data.league;
 
 import com.robertx22.library_of_exile.main.ExileLog;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.library_of_exile.utils.TeleportUtils;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.mmorpg.ModErrors;
@@ -117,7 +117,7 @@ public abstract class LeagueStructure {
 
 
         try {
-            
+
             var opt = man.get(room);
             if (opt.isPresent()) {
                 var template = opt.get();

@@ -1,8 +1,8 @@
 package com.robertx22.addons.orbs_of_crafting.currency.base;
 
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.utils.SoundUtils;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
@@ -39,7 +39,7 @@ public abstract class GearCurrency extends CodeCurrency {
         ExileStack ex = ExileStack.of(ctx.stack);
 
         StackKeys.POTENTIAL.get(ex).edit(x -> x.spend(getPotentialLoss()));
-        
+
         ctx.stack = ex.getStack();
 
 

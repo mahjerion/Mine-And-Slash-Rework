@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.uncommon.coins;
 
 import com.robertx22.library_of_exile.registry.IGUID;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.profession.LeveledItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;

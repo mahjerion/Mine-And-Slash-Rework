@@ -2,7 +2,7 @@ package com.robertx22.addons.orbs_of_crafting.currency.base;
 
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.IWeighted;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;

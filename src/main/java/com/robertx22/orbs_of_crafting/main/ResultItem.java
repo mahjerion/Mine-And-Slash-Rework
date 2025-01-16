@@ -1,6 +1,6 @@
 package com.robertx22.orbs_of_crafting.main;
 
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import net.minecraft.world.item.ItemStack;
 

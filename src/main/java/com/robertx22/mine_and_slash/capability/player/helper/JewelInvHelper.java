@@ -1,10 +1,10 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.jewel.JewelItemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -79,7 +79,7 @@ public class JewelInvHelper implements IStatCtx {
 
                 }
                 if (total > max) {
-                    ExplainedResult.sendErrorMessage(p, Chats.EQUIP_JEWEL_ERROR, Chats.YOU_LACK_JEWEL_SLOTS);
+                    ExplainedResultUtil.sendErrorMessage(p, Chats.EQUIP_JEWEL_ERROR, Chats.YOU_LACK_JEWEL_SLOTS);
                     unequip(p, i);
                 }
             } else {

@@ -3,12 +3,12 @@ package com.robertx22.mine_and_slash.capability.player.helper;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGems;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.types.spirit.AuraCapacity;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -181,21 +181,21 @@ public class GemInventoryHelper {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.TOO_LOW_LEVEL));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.TOO_LOW_LEVEL));
         }
         if (getRemainingSpirit(p) < 0) {
             for (ItemStack s : getAuras()) {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.LACK_AURA_CAPACITY));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.LACK_AURA_CAPACITY));
         }
         if (hasDuplicates()) {
             for (ItemStack s : getAuras()) {
                 PlayerUtils.giveItem(s.copy(), p);
                 s.shrink(100);
             }
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.NO_DUPLICATE_AURA));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.NO_DUPLICATE_AURA));
 
         }
     }

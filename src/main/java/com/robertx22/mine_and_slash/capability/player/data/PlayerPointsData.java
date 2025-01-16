@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 
 import java.util.HashMap;

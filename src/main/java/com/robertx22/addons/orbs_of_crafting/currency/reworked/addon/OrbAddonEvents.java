@@ -2,7 +2,7 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.addon;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;

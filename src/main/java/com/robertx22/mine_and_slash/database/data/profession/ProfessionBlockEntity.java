@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession;
 
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.screen.CraftingStationMenu;
@@ -293,7 +294,7 @@ public class ProfessionBlockEntity extends BlockEntity {
         float expMulti = 1;
 
         boolean destroyOuput = false;
-        
+
 
         if (this.inventory.getInventory(INPUTS).countItem(SlashItems.DESTROY_OUTPUT.get()) > 0) {
             if (!getProfession().GUID().equals(Professions.SALVAGING)) {

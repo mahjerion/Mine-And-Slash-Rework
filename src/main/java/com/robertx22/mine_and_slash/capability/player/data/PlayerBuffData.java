@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuff;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -10,6 +9,7 @@ import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -96,7 +96,7 @@ public class PlayerBuffData implements IStatCtx {
     public boolean tryAdd(Player p, StatBuff buff, int lvl, int perc, Type type, int ticks) {
 
         if (lvl > Load.Unit(p).getLevel()) {
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.EAT_FOOD_ERROR, Chats.TOO_LOW_LEVEL));
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EAT_FOOD_ERROR, Chats.TOO_LOW_LEVEL));
             return false;
         }
 

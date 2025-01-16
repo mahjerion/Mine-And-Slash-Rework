@@ -1,15 +1,16 @@
 package com.robertx22.mine_and_slash.saveclasses.spells;
 
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.ChatFormatting;
@@ -119,7 +120,7 @@ public class SpellSchoolsData implements IStatCtx {
             return ExplainedResult.failure(Chats.NOT_ENOUGH_POINTS.locName().withStyle(ChatFormatting.RED));
         }
         if (!school.isLevelEnoughFor(en, perk)) {
-            return ExplainedResult.failure(ExplainedResult.createErrorAndReason(Chats.LEARN_ERROR, Chats.TOO_LOW_LEVEL));
+            return ExplainedResult.failure(ExplainedResultUtil.createErrorAndReason(Chats.LEARN_ERROR, Chats.TOO_LOW_LEVEL));
         }
         if (!school.isLevelEnoughForSpellLevelUp(en, perk, this.getLevel(perk.GUID()))) {
             return ExplainedResult.failure(Chats.TOO_LOW_LEVEL_TO_UPGRADE_SPELL.locName().withStyle(ChatFormatting.RED));

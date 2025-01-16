@@ -1,12 +1,12 @@
 package com.robertx22.mine_and_slash.maps;
 
 import com.robertx22.library_of_exile.main.ExileLog;
+import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.utils.TeleportUtils;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.database.data.league.LeagueStructure;
-import com.robertx22.mine_and_slash.database.data.profession.ExplainedResult;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.maps.spawned_map_mobs.SpawnedMobList;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;

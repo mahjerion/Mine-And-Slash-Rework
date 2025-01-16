@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database.data.value_calc;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 
 public class ValueCalcBuilder {
     ValueCalculation calc;
@@ -55,7 +56,7 @@ public class ValueCalcBuilder {
     }
 
     public ValueCalculation build() {
-        calc.addToSerializables();
+        calc.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return calc;
     }
 }

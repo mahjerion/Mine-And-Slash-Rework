@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.maps.spawned_map_mobs;
 
 import com.robertx22.mine_and_slash.database.registry.ExileDBInit;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.DungeonTags;
 import net.minecraft.world.entity.EntityType;
 
@@ -32,19 +33,19 @@ public class SpawnedMobs {
         defaultMobs.add(new SpawnedMob(EntityType.RAVAGER, 5));
         defaultMobs.add(new SpawnedMob(EntityType.STRAY, 300).setRanged().setUndead());
 
-        new SpawnedMobList("default", 1000, defaultMobs, DungeonTags.DEFAULT).addToSerializables();
+        new SpawnedMobList("default", 1000, defaultMobs, DungeonTags.DEFAULT).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         List<SpawnedMob> forest = new ArrayList<>();
         forest.add(new SpawnedMob(EntityType.CAVE_SPIDER, 1000).setSpider());
         forest.add(new SpawnedMob(EntityType.SPIDER, 500).setSpider());
         forest.add(new SpawnedMob(EntityType.WITCH, 100).setRanged().setCanBeBoss(true));
         forest.add(new SpawnedMob(EntityType.SLIME, 250));
-        new SpawnedMobList("forest", 1000, forest, DungeonTags.FOREST).addToSerializables();
+        new SpawnedMobList("forest", 1000, forest, DungeonTags.FOREST).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         List<SpawnedMob> unknown = new ArrayList<>();
         unknown.add(new SpawnedMob(EntityType.PIG, 200));
-        new SpawnedMobList(ExileDBInit.UNKNOWN_ID, 0, unknown).addToSerializables();
+        new SpawnedMobList(ExileDBInit.UNKNOWN_ID, 0, unknown).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
     }

@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.generated.Elementa
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.PhysicalToElement;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.ExtraMobDropsStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import net.minecraft.ChatFormatting;
@@ -31,7 +32,7 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(100, 100, new BonusPhysicalAsElemental(element), ModType.FLAT),
                         new StatMod(10, 10, ExtraMobDropsStat.getInstance()))
                 .setWeight(2000)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 
     static void fullEle(Elements element) {
@@ -42,9 +43,10 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(25, 25, new ElementalResist(element))
                 )
                 .setWeight(0)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 
+    
     @Override
     public void registerAll() {
 
@@ -65,7 +67,7 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(20, 20, ExtraMobDropsStat.getInstance()))
                 .icon(Cold.format + Cold.icon)
                 .setWeight(250)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new MobAffix("fire_lord", "Fire Lord", Fire.format, Affix.AffixSlot.prefix)
                 .setMods(
@@ -76,7 +78,7 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(20, 20, ExtraMobDropsStat.getInstance()))
                 .icon(Fire.format + Fire.icon)
                 .setWeight(250)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new MobAffix("nature_lord", "Chaos Lord", Shadow.format, Affix.AffixSlot.prefix)
                 .setMods(
@@ -87,7 +89,7 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(20, 20, ExtraMobDropsStat.getInstance()))
                 .icon(Shadow.format + Shadow.icon)
                 .setWeight(250)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new MobAffix("phys_lord", "Fighter Lord", ChatFormatting.GRAY, Affix.AffixSlot.prefix)
                 .setMods(
@@ -95,14 +97,14 @@ public class MobAffixes implements ExileRegistryInit {
                         new StatMod(100, 100, new BonusPhysicalAsElemental(Physical)),
                         new StatMod(20, 20, ExtraMobDropsStat.getInstance()))
                 .setWeight(250)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new MobAffix("vampire", "Vampriric", ChatFormatting.RED, Affix.AffixSlot.prefix)
                 .setMods(new StatMod(25, 25, Health.getInstance()),
                         new StatMod(15, 15, ResourceStats.LIFESTEAL.get()),
                         new StatMod(15, 15, ExtraMobDropsStat.getInstance()))
                 .setWeight(500)
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         fullEle(Cold);

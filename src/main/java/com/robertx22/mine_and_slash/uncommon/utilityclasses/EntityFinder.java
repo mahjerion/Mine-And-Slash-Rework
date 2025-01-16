@@ -23,7 +23,7 @@ public class EntityFinder {
         if (x instanceof OwnableEntity) {
             OwnableEntity tame = (OwnableEntity) x;
 
-            return tame.getOwner() instanceof Player p && TeamUtils.areOnSameTeam(other, p); // we dont want players killing pets of others either
+            return tame.getOwner() instanceof Player p && TeamUtils.areOnSameTeam(other, p, false); // we dont want players killing pets of others either
         }
         return false;
     }

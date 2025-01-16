@@ -10,17 +10,6 @@ public interface IRestrictedConfig<T> {
 
     public T getSelf();
 
-    public default T getReal() {
-        var cur = getSelf();
-
-        if (isRestricted(cur)) {
-            if (!compatModeIsInstalled()) {
-                return getDefaultConfig();
-            }
-        }
-        return cur;
-    }
-
     public static boolean compatModeIsInstalled() {
         return ModList.get().isLoaded("mns_compat");
     }

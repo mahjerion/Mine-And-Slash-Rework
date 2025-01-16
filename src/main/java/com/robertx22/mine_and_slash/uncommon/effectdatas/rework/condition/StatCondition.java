@@ -6,6 +6,7 @@ import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
@@ -55,8 +56,8 @@ public abstract class StatCondition implements JsonExileRegistry<StatCondition>,
     }
 
     @Override
-    public void addToSerializables() {
-        Database.getRegistry(this.getExileRegistryType()).addSerializable(this);
+    public void addToSerializables(ExileRegistrationInfo info) {
+        Database.getRegistry(this.getExileRegistryType()).addSerializable(this, info);
         addSer(this);
     }
 

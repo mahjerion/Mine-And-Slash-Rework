@@ -47,6 +47,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.summon.GolemSpellC
 import com.robertx22.mine_and_slash.database.data.stats.types.summon.SummonHealth;
 import com.robertx22.mine_and_slash.database.empty_entries.EmptyStat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IGenerated;
@@ -183,7 +184,7 @@ public class StatsRegister implements ExileRegistryInit {
                 All.add(stat);
             }
         }
-        All.forEach(x -> x.registerToExileRegistry());
+        All.forEach(x -> x.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO));
 
     }
 

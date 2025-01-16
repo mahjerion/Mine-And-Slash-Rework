@@ -172,7 +172,7 @@ public class ProcessChunkBlocks {
                                 var tc = ChatFormatting.YELLOW;
 
                                 for (ServerPlayer player : level.getPlayers(x -> {
-                                    return MapData.getStartChunk(new ChunkPos(x.blockPosition())).equals(MapData.getStartChunk(start));
+                                    return MapData.getStartChunk(new ChunkPos(x.blockPosition()), MapData.DUNGEON_LENGTH).equals(MapData.getStartChunk(start, MapData.DUNGEON_LENGTH));
                                 })) {
                                     player.sendSystemMessage(Chats.EXPLORED_X_MAP_ROOMS.locName(
                                             Component.literal(map.rooms.rooms.done + "").withStyle(tc),

@@ -15,6 +15,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_sh
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItemHolder;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
@@ -137,19 +138,19 @@ public class StatBuffs {
             StatBuff buff = new StatBuff();
             buff.id = al.id;
             buff.mods.add(al.mod.get());
-            buff.addToSerializables();
+            buff.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
         for (FoodBuff al : FOOD_BUFFS) {
             StatBuff buff = new StatBuff();
             buff.id = al.id;
             buff.mods.addAll(al.mod.get());
-            buff.addToSerializables();
+            buff.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
         for (SeaFoodBuff al : SEAFOOD_BUFFS) {
             StatBuff buff = new StatBuff();
             buff.id = al.id;
             buff.mods.addAll(al.mod.get());
-            buff.addToSerializables();
+            buff.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
     }

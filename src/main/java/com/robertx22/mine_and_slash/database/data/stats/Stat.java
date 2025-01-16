@@ -142,7 +142,7 @@ public abstract class Stat implements IGUID, IAutoLocName, IWeighted, IAutoLocDe
 
     public enum MultiUseType {
         // todo will this still be confusing
-        MULTIPLY_STAT(Words.MULTIPLY_STAT_INCREASED, Words.MULTIPLY_STAT_REDUCED),
+        MULTIPLY_STAT(Words.MULTIPLICATIVE_DAMAGE_MORE, Words.MULTIPLICATIVE_DAMAGE_LESS),
         MULTIPLICATIVE_DAMAGE(Words.MULTIPLICATIVE_DAMAGE_MORE, Words.MULTIPLICATIVE_DAMAGE_LESS);
 
         public Words prefixWord;

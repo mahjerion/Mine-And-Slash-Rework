@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.capability.world;
 
-import com.robertx22.mine_and_slash.maps.MapsData;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.components.ICap;
 import com.robertx22.library_of_exile.utils.LoadSave;
+import com.robertx22.mine_and_slash.maps.MapsData;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -59,6 +59,11 @@ public class WorldData implements ICap {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+
+        /*
+        TypeToken<?> token = TypeToken.getParameterized(MapsData.class, Integer.class);
+        IAutoGson.GSON.fromJson("", token);
+         */
 
         this.map = loadOrBlank(MapsData.class, new MapsData(), nbt, MAP, new MapsData());
 

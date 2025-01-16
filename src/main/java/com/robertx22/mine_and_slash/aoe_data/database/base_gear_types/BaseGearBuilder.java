@@ -1,15 +1,16 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_gear_types;
 
+import com.robertx22.library_of_exile.registry.DataGenKey;
+import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.aoe_data.database.GearDataHelper;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRequirement;
 import com.robertx22.mine_and_slash.tags.TagList;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.library_of_exile.registry.DataGenKey;
-import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class BaseGearBuilder implements GearDataHelper {
         type.style = style;
         type.req = req;
         type.possible_items = items;
-        type.addToSerializables();
+        type.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         return new DataGenKey<>(type.GUID());

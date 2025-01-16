@@ -15,6 +15,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.H
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 
 public class BaseStatsAdder implements ExileRegistryInit {
 
@@ -23,10 +24,10 @@ public class BaseStatsAdder implements ExileRegistryInit {
 
     @Override
     public void registerAll() {
-        playerStatsOverrideMode().addToSerializables();
-        playerStatsCompatMode().addToSerializables();
-        mob().addToSerializables();
-        empty().addToSerializables();
+        playerStatsOverrideMode().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        playerStatsCompatMode().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        mob().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        empty().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 
     public static BaseStatsConfig mob() {

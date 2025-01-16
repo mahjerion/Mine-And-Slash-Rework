@@ -19,6 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import java.util.Optional;
+
 public class LootInfo {
 
     private LootInfo(LootOrigin lootOrigin) {
@@ -175,7 +177,7 @@ public class LootInfo {
         if (world != null) {
             if (WorldUtils.isMapWorldClass(world)) {
 
-                var data = Load.worldData(world).map.getMap(this.pos);
+                Optional<MapData> data = Load.worldData(world).map.getMap(this.pos);
 
                 if (data.get() != null) {
                     this.isMapWorld = true;

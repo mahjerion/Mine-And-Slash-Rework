@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.data.stats.effects.defense.MaxElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 
 import java.util.Arrays;
@@ -21,20 +22,20 @@ public class Omens {
                         Mana.getInstance().mod(5, 25).percent(),
                         DatapackStats.INT.mod(1, 5).percent()
                 )
-        ).addToSerializables();
+        ).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new Omen("mirrors", "Omen of Mirrors", 0.3F,
                 Arrays.asList(
                         DefenseStats.DAMAGE_REDUCTION.get().mod(5, 10)
                 )
-        ).addToSerializables();
+        ).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new Omen("blood", "Omen of Blood", 0.3F,
                 Arrays.asList(
                         Health.getInstance().mod(5, 20).percent(),
                         DatapackStats.STR.mod(5, 10).percent()
                 )
-        ).addToSerializables();
+        ).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         // elemental
 
@@ -52,7 +53,7 @@ public class Omens {
                         OffenseStats.ELEMENTAL_DAMAGE.get(ele).mod(5, 20),
                         new MaxElementalResist(ele).mod(1, 5)
                 )
-        ).addToSerializables();
+        ).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
     }

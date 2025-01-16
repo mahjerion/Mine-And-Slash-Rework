@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.stats.types.special;
 
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.modify.IStatCtxModifier;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IStatEffect;
@@ -20,7 +21,7 @@ public class SpecialStat extends Stat {
         this.scaling = StatScaling.NONE;
 
         this.is_perc = true;
-        this.registerToExileRegistry();
+        this.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
     }
 
     public SpecialStat(String id, String longName, IStatCtxModifier ctxmod) {

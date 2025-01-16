@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.DamageTypeTags;
@@ -42,9 +43,10 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
 
     public static void registerAll() {
         for (WeaponTypes wep : ALL) {
-            wep.addToSerializables();
+            wep.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
     }
+    
 
     @Override
     public ExileRegistryType getExileRegistryType() {

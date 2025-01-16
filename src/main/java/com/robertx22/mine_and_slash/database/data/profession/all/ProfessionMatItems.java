@@ -1,18 +1,18 @@
 package com.robertx22.mine_and_slash.database.data.profession.all;
 
 import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.library_of_exile.recipe.RecipeGenerator;
 import com.robertx22.mine_and_slash.database.data.profession.items.ProfTierMatItem;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.advancements.critereon.EnchantedItemTrigger;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Item;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class ProfessionMatItems {
 
@@ -36,20 +36,24 @@ public class ProfessionMatItems {
 
     }
 
-    public static void addDownRankRecipes(Consumer<FinishedRecipe> con) {
+    public static void addDownRankRecipes() {
         for (Map.Entry<String, HashMap<SkillItemTier, RegObj<Item>>> en : TIERED_MAIN_MATS.entrySet()) {
             for (Map.Entry<SkillItemTier, RegObj<Item>> e : en.getValue().entrySet()) {
 
                 if (e.getKey().tier != SkillItemTier.TIER0.tier) {
 
-                    var lower = e.getKey().lowerTier();
+                    RecipeGenerator.addRecipe(SlashRef.MODID, () -> {
 
-                    var loweritem = en.getValue().get(lower).get();
+                        var lower = e.getKey().lowerTier();
 
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, loweritem, 1)
-                            .unlockedBy("player_level", EnchantedItemTrigger.TriggerInstance.enchantedItem())
-                            .requires(e.getValue().get(), 1)
-                            .save(con);
+                        var loweritem = en.getValue().get(lower).get();
+
+                        return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, loweritem, 1)
+                                .unlockedBy("player_level", EnchantedItemTrigger.TriggerInstance.enchantedItem())
+                                .requires(e.getValue().get(), 1);
+                    });
+
+
                 }
             }
         }

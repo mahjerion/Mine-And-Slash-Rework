@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.stats.layers;
 
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.STATICS;
 
 public class StatLayers {
@@ -60,7 +61,7 @@ public class StatLayers {
     public static void register() {
 
         for (StatLayer a : StatLayer.ALL) {
-            a.addToSerializables();
+            a.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
     }

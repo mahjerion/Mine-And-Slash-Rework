@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
+import com.robertx22.library_of_exile.localization.TranslationKeyBuilder;
 import net.minecraft.resources.ResourceLocation;
 
 public class SlashRef {
@@ -14,5 +15,7 @@ public class SlashRef {
 
     public static final String MODID = "mmorpg";
     public static final String MOD_NAME = "Mine and Slash";
+
+    public static TranslationKeyBuilder TRANSLATION_KEY = new TranslationKeyBuilder(MODID);
 
 }

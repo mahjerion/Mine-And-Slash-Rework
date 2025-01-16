@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.LearnSpellStat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +23,7 @@ public class PerkBuilder {
     }
 
     public Perk build() {
-        this.perk.addToSerializables();
+        this.perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 
@@ -38,7 +39,7 @@ public class PerkBuilder {
 
         perk.max_lvls = spell.max_lvl;
 
-        perk.addToSerializables();
+        perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 
@@ -52,7 +53,7 @@ public class PerkBuilder {
         perk.max_lvls = maxlvl;
         perk.icon = new ResourceLocation(SlashRef.MODID, "textures/gui/spells/passives/" + id + ".png").toString();
 
-        perk.addToSerializables();
+        perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 
@@ -65,7 +66,7 @@ public class PerkBuilder {
         perk.id = id;
         perk.icon = new ResourceLocation(SlashRef.MODID, "textures/gui/asc_classes/perk/" + id + ".png").toString();
 
-        perk.addToSerializables();
+        perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 
@@ -80,7 +81,7 @@ public class PerkBuilder {
                 .getStat()
                 .getIconLocation()
                 .toString();
-        perk.addToSerializables();
+        perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 
@@ -97,7 +98,7 @@ public class PerkBuilder {
         perk.id = id;
         perk.icon = new ResourceLocation(SlashRef.MODID, "textures/gui/stat_icons/game_changers/" + id + ".png")
                 .toString();
-        perk.addToSerializables();
+        perk.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return perk;
     }
 

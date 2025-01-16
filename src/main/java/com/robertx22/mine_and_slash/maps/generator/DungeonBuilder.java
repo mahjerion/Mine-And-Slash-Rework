@@ -17,8 +17,8 @@ public class DungeonBuilder {
 
 
     public static Random createRandom(long worldSeed, ChunkPos cpos) {
-        int chunkX = MapData.getStartChunk(cpos.getMiddleBlockPosition(55)).x;
-        int chunkZ = MapData.getStartChunk(cpos.getMiddleBlockPosition(55)).z;
+        int chunkX = MapData.getStartChunk(cpos.getMiddleBlockPosition(55), MapData.DUNGEON_LENGTH).x;
+        int chunkZ = MapData.getStartChunk(cpos.getMiddleBlockPosition(55), MapData.DUNGEON_LENGTH).z;
         long newSeed = (worldSeed + (long) (chunkX * chunkX * 4987142) + (long) (chunkX * 5947611) + (long) (chunkZ * chunkZ) * 4392871L + (long) (chunkZ * 389711) ^ worldSeed);
         return new Random(newSeed);
     }
@@ -35,7 +35,7 @@ public class DungeonBuilder {
 
         this.size = RandomUtils.RandomRange(ServerContainer.get().MIN_MAP_ROOMS.get(), ServerContainer.get().MAX_MAP_ROOMS.get(), rand);
 
- 
+
         // todo this needs the same random if i'll use at world gen async, if i do it myself, it doesnt
 
         if (RandomUtils.roll(5, rand)) {

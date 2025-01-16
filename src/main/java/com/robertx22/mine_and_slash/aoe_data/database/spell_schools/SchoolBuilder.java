@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.spell_schools;
 
 import com.google.common.base.Preconditions;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
 
 public class SchoolBuilder {
@@ -28,7 +29,7 @@ public class SchoolBuilder {
     }
 
     public SpellSchool build() {
-        school.addToSerializables();
+        school.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return school;
     }
 }

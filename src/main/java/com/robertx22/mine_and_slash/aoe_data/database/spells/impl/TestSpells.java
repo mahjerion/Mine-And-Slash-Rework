@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.actions.Spel
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -24,7 +25,7 @@ public class TestSpells implements ExileRegistryInit {
     public void registerAll() {
 
         TestSpell.get()
-                .addToSerializables();
+                .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         SpellBuilder.of("test_command", PlayStyle.INT, SpellConfiguration.Builder.instant(7, 15)
                                 .setSwingArm(), "Test command",

@@ -134,7 +134,7 @@ public class MapData {
 
 
     public static BlockPos getDungeonStartTeleportPos(ChunkPos pos) {
-        BlockPos p = getStartChunk(pos).getBlockAt(0, 0, 0);
+        BlockPos p = getStartChunk(pos, MapData.DUNGEON_LENGTH).getBlockAt(0, 0, 0);
         p = new BlockPos(p.getX() + 8, 57, p.getZ() + 8);
         return p;
     }
@@ -164,7 +164,7 @@ public class MapData {
             int z = RandomUtils.RandomRange(50, max);
 
             pos = new ChunkPos(x, z);
-            pos = getStartChunk(pos.getMiddleBlockPosition(50));
+            pos = getStartChunk(pos.getMiddleBlockPosition(50), MapData.DUNGEON_LENGTH);
 
         }
 
@@ -189,24 +189,30 @@ public class MapData {
     }
 
     public static BlockPos getDungeonStartTeleportPos(BlockPos pos) {
-        BlockPos p = getStartChunk(pos).getMiddleBlockPosition(55);
+        BlockPos p = getStartChunk(pos, MapData.DUNGEON_LENGTH).getMiddleBlockPosition(55);
         p = new BlockPos(p.getX(), 55, p.getZ());
         return p;
     }
 
 
     public boolean isMapHere(BlockPos pos) {
-        var cp = getStartChunk(pos);
+        var cp = getStartChunk(pos, MapData.DUNGEON_LENGTH);
         return cp.x == chunkX && cp.z == chunkZ;
     }
 
     public static int DUNGEON_LENGTH = 30;
 
-    public static ChunkPos getStartChunk(BlockPos pos) {
-        return getStartChunk(new ChunkPos(pos));
+    public static ChunkPos getStartChunk(BlockPos pos, int offset) {
+        return getStartChunk(new ChunkPos(pos), offset);
     }
 
-    public static ChunkPos getStartChunk(ChunkPos cp) {
+    // todo why the hell does this only work fine with the 11 minus
+    public static ChunkPos getStartChunk(ChunkPos cp, int offset) {
+        // var newcp = (new ChunkPos(cp.x / offset * offset, cp.z / offset * offset));
+
+        //return newcp;
+
+
         int chunkX = cp.x;
         int chunkZ = cp.z;
         int distToEntranceX = 11 - (chunkX % DUNGEON_LENGTH);
@@ -214,6 +220,8 @@ public class MapData {
         chunkX += distToEntranceX;
         chunkZ += distToEntranceZ;
         return new ChunkPos(chunkX, chunkZ);
+
+
     }
 
 }

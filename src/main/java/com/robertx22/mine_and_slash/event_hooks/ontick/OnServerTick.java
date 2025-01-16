@@ -68,6 +68,7 @@ public class OnServerTick {
                         if (playerData.emptyMapTicks > 30) {
                             player.sendSystemMessage(Chats.EMPTY_MAP_FORCED_TP.locName().withStyle(ChatFormatting.RED));
                             playerData.map.teleportBack(player);
+                            playerData.emptyMapTicks = 0;
                             return;
                         }
 
@@ -75,11 +76,19 @@ public class OnServerTick {
                         playerData.emptyMapTicks = 0;
                     }
 
+                    if (map != null && map.map != null) {
+                        if (!map.map.getStatReq().meetsReq(map.map.lvl, unitdata)) {
+                            //float minusres = map.map.getStatReq().getLackingResistNumber(map.map.lvl, unitdata);
+                            player.hurt(player.damageSources().generic(), player.getMaxHealth() * 0.1F);
+                        }
+                    }
 
                     var pro = Load.player(player).prophecy;
 
-                    if (!pro.mapid.equals(map.map.uuid)) {
-                        pro.clearIfNewMap(map.map);
+                    if (map != null) {
+                        if (!pro.mapid.equals(map.map.uuid)) {
+                            pro.clearIfNewMap(map.map);
+                        }
                     }
 
                     if (player.tickCount % (20 * 10) == 0) {

@@ -1,10 +1,11 @@
 package com.robertx22.mine_and_slash.aoe_data.database.unique_gears;
 
+import com.robertx22.library_of_exile.registry.DataGenKey;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ErrorUtils;
-import com.robertx22.library_of_exile.registry.DataGenKey;
 
 import java.util.List;
 
@@ -87,7 +88,7 @@ public class UniqueGearBuilder {
     public UniqueGear build() {
         ErrorUtils.ifFalse(!uniq.unique_stats.isEmpty());
 
-        uniq.addToSerializables();
+        uniq.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return uniq;
     }
 

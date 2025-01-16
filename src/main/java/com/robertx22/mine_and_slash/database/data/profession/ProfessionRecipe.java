@@ -8,6 +8,7 @@ import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.profession.stat.ProfExp;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
@@ -375,7 +376,7 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
                 for (Consumer<Data> action : this.actions) {
                     action.accept(data);
                 }
-                r.addToSerializables();
+                r.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             }
         }
     }

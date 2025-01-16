@@ -45,7 +45,7 @@ public class PlayerUtils {
     public static Player nearestPlayer(ServerLevel world, Vec3 pos) {
 
         Optional<ServerPlayer> player = world.players()
-                .stream()
+                .stream().filter(x -> !x.isSpectator())
                 .min(Comparator.comparingDouble(x -> x.distanceToSqr(pos)));
 
         return player.orElse(null);

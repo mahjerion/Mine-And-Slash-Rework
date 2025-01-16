@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.ProcSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.WaterSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.tags.ModTag;
 import com.robertx22.mine_and_slash.tags.TagType;
@@ -140,7 +141,7 @@ public class StatConditions implements ExileRegistryInit {
     @Override
     public void registerAll() {
         for (StatCondition c : StatCondition.ALL) {
-            c.addToSerializables();
+            c.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
     }
 }

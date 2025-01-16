@@ -11,8 +11,13 @@ public class LeaguePiecesList {
         this.list = list;
     }
 
+    // .. why does this exist?
     public LeagueStructurePieces get(String id) {
         return list.stream().filter(x -> x.folder.equals(id)).findAny().get();
+    }
+
+    public LeagueStructurePieces get() {
+        return list.stream().findAny().get();
     }
 
 }

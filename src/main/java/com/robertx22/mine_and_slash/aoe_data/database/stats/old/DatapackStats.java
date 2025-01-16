@@ -27,6 +27,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_sh
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -112,7 +113,7 @@ public class DatapackStats implements ExileRegistryInit {
     // bonus per percent of other
     public static Stat HEAL_TO_SKILL_DMG = new AddPerPercentOfOther(ResourceStats.HEAL_STRENGTH.get(), SkillDamage.getInstance());
     public static Stat PHYS_DMG_PER_MANA = new AddPerPercentOfOther(Mana.getInstance(), new BonusAttackDamage(Elements.Physical));
-  
+
     // more x per y
     public static Stat BLOOD_PER_10STR = new MoreXPerYOf(DatapackStats.STR, Blood.getInstance(), 10);
     public static Stat HEALTH_PER_10_INT = new MoreXPerYOf(DatapackStats.INT, Health.getInstance(), 10);
@@ -152,7 +153,7 @@ public class DatapackStats implements ExileRegistryInit {
     @Override
     public void registerAll() {
         for (BaseDatapackStat stat : all) {
-            stat.addToSerializables();
+            stat.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
     }

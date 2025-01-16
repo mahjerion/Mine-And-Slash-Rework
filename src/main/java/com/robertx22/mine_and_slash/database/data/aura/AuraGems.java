@@ -16,6 +16,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_sh
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -102,81 +103,81 @@ public class AuraGems {
         new AuraGem(cold_ailment, PlayStyle.DEX, 0.4F, Arrays.asList(
                 new StatMod(10, 50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Cold), ModType.FLAT),
                 new StatMod(5, 25, new AilmentChance(Ailments.FREEZE), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(fire_ailment, PlayStyle.STR, 0.4F, Arrays.asList(
                 new StatMod(10, 50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Fire), ModType.FLAT),
                 new StatMod(5, 25, new AilmentChance(Ailments.BURN), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(lightning_ailment, PlayStyle.INT, 0.4F, Arrays.asList(
                 new StatMod(10, 50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Nature), ModType.FLAT),
                 new StatMod(5, 25, new AilmentChance(Ailments.ELECTRIFY), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(physical_ailment, PlayStyle.STR, 0.4F, Arrays.asList(
                 new StatMod(10, 50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Physical), ModType.FLAT),
                 new StatMod(5, 25, new AilmentChance(Ailments.BLEED), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(chaos_ailment, PlayStyle.DEX, 0.4F, Arrays.asList(
                 new StatMod(10, 50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Shadow), ModType.FLAT),
                 new StatMod(5, 25, new AilmentChance(Ailments.POISON), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(summon_dmg, PlayStyle.INT, 0.3F, Arrays.asList(
                 new StatMod(10, 40, OffenseStats.SUMMON_DAMAGE.get(), ModType.MORE)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         // ele dmg
         new AuraGem(cold_damage, PlayStyle.DEX, 0.4F, Arrays.asList(
                 new StatMod(10, 35, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Cold), ModType.MORE)
-        )).levelReq(30).addToSerializables();
+        )).levelReq(30).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(fire_damage, PlayStyle.STR, 0.4F, Arrays.asList(
                 new StatMod(10, 35, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Fire), ModType.MORE)
-        )).levelReq(30).addToSerializables();
+        )).levelReq(30).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(lightning_damage, PlayStyle.INT, 0.4F, Arrays.asList(
                 new StatMod(10, 35, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Nature), ModType.MORE)
-        )).levelReq(30).addToSerializables();
+        )).levelReq(30).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(physical_damage, PlayStyle.STR, 0.4F, Arrays.asList(
                 new StatMod(10, 35, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Physical), ModType.MORE)
-        )).levelReq(30).addToSerializables();
+        )).levelReq(30).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(chaos_damage, PlayStyle.DEX, 0.4F, Arrays.asList(
                 new StatMod(10, 35, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Shadow), ModType.MORE)
-        )).levelReq(30).addToSerializables();
+        )).levelReq(30).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         // regens
         new AuraGem(magic_shield_reg, PlayStyle.INT, 0.25F, Arrays.asList(
                 new StatMod(1, 5, MagicShieldRegen.getInstance(), ModType.FLAT)
-        )).levelReq(1).addToSerializables();
+        )).levelReq(1).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(health_reg, PlayStyle.STR, 0.25F, Arrays.asList(
                 new StatMod(1, 5, HealthRegen.getInstance(), ModType.FLAT)
-        )).levelReq(1).addToSerializables();
+        )).levelReq(1).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(energy_reg, PlayStyle.DEX, 0.25F, Arrays.asList(
                 new StatMod(1, 5, EnergyRegen.getInstance(), ModType.FLAT)
-        )).levelReq(1).addToSerializables();
+        )).levelReq(1).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         new AuraGem(mana_reg, PlayStyle.INT, 0.25F, Arrays.asList(
                 new StatMod(1, 5, ManaRegen.getInstance(), ModType.FLAT)
-        )).levelReq(1).addToSerializables();
+        )).levelReq(1).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         // defenses
         new AuraGem(ARMOR, PlayStyle.STR, 0.4F, Arrays.asList(
                 new StatMod(10, 30, Armor.getInstance(), ModType.MORE),
                 new StatMod(5, 15, Armor.getInstance(), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(DODGE, PlayStyle.DEX, 0.4F, Arrays.asList(
                 new StatMod(10, 30, DodgeRating.getInstance(), ModType.MORE),
                 new StatMod(5, 15, DodgeRating.getInstance(), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(MAGIC_SHIELD, PlayStyle.INT, 0.4F, Arrays.asList(
                 new StatMod(12, 35, MagicShield.getInstance(), ModType.MORE),
                 new StatMod(2, 5, MagicShield.getInstance(), ModType.FLAT)
-        )).levelReq(10).addToSerializables();
+        )).levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(BLOCK, PlayStyle.INT, 0.4F, Arrays.asList(
                 new StatMod(5, 15, BlockChance.getInstance(), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         // resist
@@ -184,27 +185,27 @@ public class AuraGems {
                 new StatMod(15, 30, new ElementalResist(Elements.Fire), ModType.FLAT),
                 new StatMod(15, 30, new ElementalResist(Elements.Cold), ModType.FLAT),
                 new StatMod(15, 30, new ElementalResist(Elements.Nature), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(COLD_RESIST, PlayStyle.DEX, 0.35F, Arrays.asList(
                 new StatMod(25, 50, new ElementalResist(Elements.Cold), ModType.FLAT),
                 new StatMod(1, 5, new MaxElementalResist(Elements.Cold), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(FIRE_RESIST, PlayStyle.STR, 0.35F, Arrays.asList(
                 new StatMod(25, 50, new ElementalResist(Elements.Fire), ModType.FLAT),
                 new StatMod(1, 5, new MaxElementalResist(Elements.Fire), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(LIGHTNING_RESIST, PlayStyle.INT, 0.35F, Arrays.asList(
                 new StatMod(25, 50, new ElementalResist(Elements.Nature), ModType.FLAT),
                 new StatMod(1, 5, new MaxElementalResist(Elements.Nature), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         new AuraGem(CHAOS_RESIST, PlayStyle.INT, 0.35F, Arrays.asList(
                 new StatMod(25, 50, new ElementalResist(Elements.Shadow), ModType.FLAT),
                 new StatMod(1, 5, new MaxElementalResist(Elements.Shadow), ModType.FLAT)
-        )).levelReq(20).addToSerializables();
+        )).levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         WatcherEyeAffixes.init();
     }

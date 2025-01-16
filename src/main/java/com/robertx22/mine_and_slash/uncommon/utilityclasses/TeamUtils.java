@@ -46,7 +46,7 @@ public class TeamUtils {
             player.level()
                     .players()
                     .forEach(x -> {
-                        if (areOnSameTeam(player, x)) {
+                        if (areOnSameTeam(player, x, false)) {
                             players.add(x);
                         }
                     });
@@ -62,12 +62,14 @@ public class TeamUtils {
         return players;
     }
 
-    public static boolean areOnSameTeam(Player p1, Player p2) {
+    public static boolean areOnSameTeam(Player p1, Player p2, boolean doDistanceCheck) {
         if (p1 == p2) {
             return true;
         }
-        if (p1.distanceTo(p2) > ServerContainer.get().MAX_TEAM_DISTANCE.get()) {
-            return false;
+        if (doDistanceCheck) {
+            if (p1.distanceTo(p2) > ServerContainer.get().MAX_TEAM_DISTANCE.get()) {
+                return false;
+            }
         }
         if (Load.player(p1).config.isConfigEnabled(PlayerConfigData.Config.AUTO_PVE) && Load.player(p2).config.isConfigEnabled(PlayerConfigData.Config.AUTO_PVE)) {
             return true;

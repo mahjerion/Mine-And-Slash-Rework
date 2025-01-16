@@ -8,6 +8,8 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
+import com.robertx22.library_of_exile.registry.register_info.HardcodedRegistration;
+import com.robertx22.library_of_exile.registry.register_info.SeriazableRegistration;
 import com.robertx22.library_of_exile.registry.util.ExileRegistryUtil;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.a_libraries.curios.CurioEvents;
@@ -84,7 +86,12 @@ import java.util.function.Consumer;
 public class MMORPG {
 
     // DISABLE WHEN PUBLIC BUILD
-    public static boolean RUN_DEV_TOOLS = false;
+    public static boolean RUN_DEV_TOOLS = true;
+
+
+    public static SeriazableRegistration SERIAZABLE_REGISTRATION_INFO = new SeriazableRegistration(SlashRef.MODID);
+    public static HardcodedRegistration HARDCODED_REGISTRATION_INFO = new HardcodedRegistration(SlashRef.MODID);
+
 
     public static String formatNumber(float num) {
 
@@ -117,17 +124,15 @@ public class MMORPG {
 
     public MMORPG() {
 
-        ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
-
+        if (MMORPG.RUN_DEV_TOOLS) {
+            ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
+        }
         Watch watch = new Watch();
 
 
         ModLoadingContext.get()
                 .registerConfig(ModConfig.Type.SERVER, ServerContainer.spec, NeatForgeConfig.defaultConfigName(ModConfig.Type.SERVER, "mine_and_slash"));
 
-        ModLoadingContext.get()
-                .registerConfig(ModConfig.Type.SERVER, CompatConfig.spec, NeatForgeConfig.defaultConfigName(ModConfig.Type.SERVER, "mine_and_slash_compatibility"));
-        
 
         ExileEvents.CHECK_IF_DEV_TOOLS_SHOULD_RUN.register(new EventConsumer<ExileEvents.OnCheckIsDevToolsRunning>() {
             @Override
@@ -231,6 +236,7 @@ public class MMORPG {
 
         OrbAddonEvents.register();
 
+
         watch.print("Mine and slash mod initialization ");
 
 
@@ -266,12 +272,14 @@ public class MMORPG {
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.NECKLACE).size(1).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.OMEN).size(1).build());
 
+        ModLoadingContext.get()
+                .registerConfig(ModConfig.Type.SERVER, CompatConfig.spec, NeatForgeConfig.defaultConfigName(ModConfig.Type.SERVER, "mine_and_slash_compatibility"));
+
     }
 
     public void commonSetupEvent(FMLCommonSetupEvent event) {
 
-        ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
-
+     
         GeneratedData.addAllObjectsToGenerate();
 
         BossSpells.init();

@@ -16,9 +16,10 @@ public class LeagueStructurePieces implements IWeighted {
         this.folder = folder;
     }
 
-    public ResourceLocation getRoomForChunk(ChunkPos pos) {
+    public ResourceLocation getRoomForChunk(ChunkPos pos, LeagueStructure league) {
         try {
-            ChunkPos start = MapData.getStartChunk(pos.getMiddleBlockPosition(50));
+            ChunkPos start = MapData.getStartChunk(pos.getMiddleBlockPosition(50), league.league.getMapOffset());
+            //  start = pos;
             ChunkPos relative = new ChunkPos(pos.x - start.x, pos.z - start.z);
             int x = relative.x;
             int z = relative.z;

@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data;
 
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,9 +28,9 @@ public class DataHolder<Key, Item extends JsonExileRegistry> {
         });
     }
 
+
     public void addToSerializables() {
-        map.values()
-                .forEach(x -> x.addToSerializables());
+        map.values().forEach(x -> x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO));
     }
 
     private HashMap<Key, Item> map = new HashMap<>();
@@ -42,7 +43,7 @@ public class DataHolder<Key, Item extends JsonExileRegistry> {
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
-        
+
         }
 
         return map.get(key);

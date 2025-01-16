@@ -15,12 +15,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Arrays;
@@ -101,10 +101,11 @@ public abstract class LeagueStructure {
 
                 LeagueStructurePieces pieces = list.get(s);
 
-                var room = pieces.getRoomForChunk(pos);
+                var room = pieces.getRoomForChunk(pos, this);
                 if (room != null) {
-                    generateStructure(map, level, room, pos);
-
+                    if (!getPieces(map).list.isEmpty()) {
+                        generateStructure(level, level.getStructureManager(), room, pos);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -112,33 +113,29 @@ public abstract class LeagueStructure {
         }
     }
 
-
-    protected boolean generateStructure(MapItemData map, LevelAccessor world, ResourceLocation room, ChunkPos cpos) {
+    public boolean generateStructure(ServerLevelAccessor level, StructureTemplateManager man, ResourceLocation room, ChunkPos cpos) {
 
 
         try {
-            if (!getPieces(map).list.isEmpty()) {
+            
+            var opt = man.get(room);
+            if (opt.isPresent()) {
+                var template = opt.get();
+                StructurePlaceSettings settings = new StructurePlaceSettings().setMirror(Mirror.NONE).setIgnoreEntities(false);
 
+                settings.setBoundingBox(settings.getBoundingBox());
 
-                var opt = world.getServer().getStructureManager().get(room);
-                if (opt.isPresent()) {
-                    var template = opt.get();
-                    StructurePlaceSettings settings = new StructurePlaceSettings().setMirror(Mirror.NONE)
-                            .setIgnoreEntities(false);
+                BlockPos position = cpos.getBlockAt(0, startY(), 0);
 
-                    settings.setBoundingBox(settings.getBoundingBox());
-
-                    BlockPos position = cpos.getBlockAt(0, startY(), 0);
-
-                    if (template == null) {
-                        ExileLog.get().warn("FATAL ERROR: Structure does not exist (" + room.toString() + ")");
-                        return false;
-                    }
-                    settings.setRotation(Rotation.NONE);
-
-                    template.placeInWorld((ServerLevelAccessor) world, position, position, settings, world.getRandom(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+                if (template == null) {
+                    ExileLog.get().warn("FATAL ERROR: Structure does not exist (" + room.toString() + ")");
+                    return false;
                 }
+                settings.setRotation(Rotation.NONE);
+
+                template.placeInWorld(level, position, position, settings, level.getRandom(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
             }
+
         } catch (Exception e) {
             ModErrors.print(e);
             return false;

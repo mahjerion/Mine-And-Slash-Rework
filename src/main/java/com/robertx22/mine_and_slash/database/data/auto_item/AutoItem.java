@@ -8,6 +8,7 @@ import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.itemstack.ExileStacklessData;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.wip.ExileCached;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +36,7 @@ public class AutoItem implements JsonExileRegistry<AutoItem>, IAutoGson<AutoItem
         b.id = id;
         b.custom_item_generation = gen;
 
-        b.addToSerializables();
+        b.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 
     public ExileStacklessData create(Player p) {
@@ -45,7 +46,7 @@ public class AutoItem implements JsonExileRegistry<AutoItem>, IAutoGson<AutoItem
     public static ExileCached<HashMap<Item, List<AutoItem>>> CACHED_MAP = new ExileCached<>(() -> {
         HashMap<Item, List<AutoItem>> map = new HashMap<>();
 
-        
+
         for (AutoItem auto : ExileDB.AutoItems().getList()) {
             var item = VanillaUTIL.REGISTRY.items().get(new ResourceLocation(auto.item_id));
             if (item != Items.AIR) {

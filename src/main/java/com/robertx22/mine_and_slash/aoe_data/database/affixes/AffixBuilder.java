@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.requirements.Requirements;
 import com.robertx22.mine_and_slash.database.data.requirements.TagRequirement;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelEffect;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.TagType;
 import com.robertx22.mine_and_slash.tags.imp.SlotTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
@@ -180,7 +181,7 @@ public class AffixBuilder {
 
         affix.eye_aura_req = auraReq;
 
-        affix.addToSerializables();
+        affix.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
     }
 

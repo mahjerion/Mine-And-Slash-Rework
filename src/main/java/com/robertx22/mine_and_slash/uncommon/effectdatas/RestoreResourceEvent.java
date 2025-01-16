@@ -31,6 +31,14 @@ public class RestoreResourceEvent extends EffectEvent {
 
     @Override
     protected void activate() {
+
+        var map = Load.mapAt(this.target.level(), target.blockPosition());
+        if (map != null && map.map != null) {
+            if (!map.map.getStatReq().meetsReq(map.map.lvl, this.targetData)) {
+                return;
+            }
+        }
+
         if (data.isCanceled()) {
             return;
         }

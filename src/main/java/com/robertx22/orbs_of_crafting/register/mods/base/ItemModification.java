@@ -1,25 +1,28 @@
 package com.robertx22.orbs_of_crafting.register.mods.base;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.AddQualityItemMod;
+import com.robertx22.library_of_exile.localization.ITranslated;
+import com.robertx22.library_of_exile.localization.TranslationKeyPrefix;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
-import com.robertx22.mine_and_slash.database.data.MinMax;
+import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializer;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializers;
 import com.robertx22.orbs_of_crafting.custom_ser.GsonCustomSer;
 import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.register.mods.DestroyItemMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 
 // test if this loads correctly
-public abstract class ItemModification implements JsonExileRegistry<ItemModification>, IAutoLocDesc, GsonCustomSer<ItemModification> {
+public abstract class ItemModification implements JsonExileRegistry<ItemModification>, GsonCustomSer<ItemModification>, ITranslated {
 
-    public static ItemModification SERIALIZER = new AddQualityItemMod("", new AddQualityItemMod.Data(new MinMax(1, 1)));
+    public static TranslationKeyPrefix KEY_PREFIX = new TranslationKeyPrefix("item_mods");
+    
+    public static ItemModification SERIALIZER = new DestroyItemMod("");
 
     public String serializer = "";
 
@@ -60,11 +63,11 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
 
 
     @Override
-    public void addToSerializables() {
+    public void addToSerializables(ExileRegistrationInfo info) {
         // todo this might be bit bad..
         // i cant disable adding stuff to seriazable if i also do stuff like this like registering custom ser here
         getSerMap().register(this);
-        Database.getRegistry(this.getExileRegistryType()).addSerializable(this);
+        Database.getRegistry(this.getExileRegistryType()).addSerializable(this, info);
     }
 
     @Override
@@ -95,7 +98,7 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
     }
 
     @Override
-    public String locDescLangFileGUID() {
+    public static String locDescLangFileGUID() {
         return SlashRef.MODID + ".item_mods." + GUID();
     }
 

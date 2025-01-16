@@ -19,6 +19,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_sh
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.MapAffixTags;
 import com.robertx22.mine_and_slash.tags.imp.MapAffixTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
@@ -38,38 +39,38 @@ public class MapAffixes {
         List<Elements> elements = Elements.getAllSingle().stream().filter(x -> x != Elements.Physical).collect(Collectors.toList());
 
         for (EffectCtx curse : ModEffects.getCurses()) {
-            new MapAffix(curse.GUID() + "_curse").addMod(new StatMod(1, 1, EffectStats.CURSE_SELF.get(curse))).affectsPlayer().addToSerializables();
+            new MapAffix(curse.GUID() + "_curse").addMod(new StatMod(1, 1, EffectStats.CURSE_SELF.get(curse))).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
         for (Elements element : elements) {
 
             // mobs
-            new MapAffix(element.guidName + "_atk").addMod(new StatMod(25, 100, new BonusPhysicalAsElemental(element))).upsMapResistRequirement(element, 25).addToSerializables();
-            new MapAffix(element.guidName + "_res").addMod(new StatMod(20, 60, new ElementalResist(element))).addToSerializables();
+            new MapAffix(element.guidName + "_atk").addMod(new StatMod(25, 100, new BonusPhysicalAsElemental(element))).upsMapResistRequirement(element, 25).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+            new MapAffix(element.guidName + "_res").addMod(new StatMod(20, 60, new ElementalResist(element))).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
             // players
-            new MapAffix(element.guidName + "_minus_res").addMod(new StatMod(-3, -15, new MaxElementalResist(element))).affectsPlayer().addToSerializables();
+            new MapAffix(element.guidName + "_minus_res").addMod(new StatMod(-3, -15, new MaxElementalResist(element))).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
         // mobs
-        new MapAffix(crit).addMod(new StatMod(25, 100, OffenseStats.CRIT_CHANCE.get())).addToSerializables();
-        new MapAffix("crit_dmg").addMod(new StatMod(20, 50, OffenseStats.CRIT_DAMAGE.get())).addToSerializables();
+        new MapAffix(crit).addMod(new StatMod(25, 100, OffenseStats.CRIT_CHANCE.get())).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        new MapAffix("crit_dmg").addMod(new StatMod(20, 50, OffenseStats.CRIT_DAMAGE.get())).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         var allres = new MapAffix("all_ele_res");
         for (Elements ele : Elements.getAllSingle()) {
             allres.addMod(new StatMod(20, 50, new ElementalResist(ele), ModType.FLAT));
         }
-        allres.addToSerializables();
+        allres.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
-        new MapAffix("health").addMod(new StatMod(20, 50, Health.getInstance(), ModType.MORE)).addToSerializables();
-        new MapAffix("armor").addMod(new StatMod(20, 100, Armor.getInstance(), ModType.MORE)).addToSerializables();
+        new MapAffix("health").addMod(new StatMod(20, 50, Health.getInstance(), ModType.MORE)).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        new MapAffix("armor").addMod(new StatMod(20, 100, Armor.getInstance(), ModType.MORE)).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         // players
-        new MapAffix("minus_ene_reg").addMod(new StatMod(-20, -75, ManaRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables();
-        new MapAffix("minus_mana_reg").addMod(new StatMod(-20, -75, EnergyRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables();
-        new MapAffix("minus_hp_reg").addMod(new StatMod(-20, -75, HealthRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables();
-        new MapAffix("minus_ms_reg").addMod(new StatMod(-20, -75, MagicShieldRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables();
+        new MapAffix("minus_ene_reg").addMod(new StatMod(-20, -75, ManaRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        new MapAffix("minus_mana_reg").addMod(new StatMod(-20, -75, EnergyRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        new MapAffix("minus_hp_reg").addMod(new StatMod(-20, -75, HealthRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        new MapAffix("minus_ms_reg").addMod(new StatMod(-20, -75, MagicShieldRegen.getInstance(), ModType.MORE)).affectsPlayer().addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
     }
@@ -104,7 +105,7 @@ public class MapAffixes {
     static MapAffix prophecyAffix(String id, MapAffixTag tag) {
         var m = new MapAffix(id).setProphecyLeague().affectsPlayer();
         m.prophecy_type = tag.GUID();
-        m.addToSerializables();
+        m.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return m;
     }
 

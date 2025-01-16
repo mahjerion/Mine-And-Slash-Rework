@@ -64,12 +64,13 @@ public class BuiltDungeon {
 
     public BuiltRoom getRoomForChunk(ChunkPos pos) {
         try {
-            ChunkPos start = MapData.getStartChunk(pos.getMiddleBlockPosition(50));
+            ChunkPos start = MapData.getStartChunk(pos.getMiddleBlockPosition(50), MapData.DUNGEON_LENGTH);
             ChunkPos relative = new ChunkPos(pos.x - start.x, pos.z - start.z);
             return rooms[getMiddle() + relative.x][getMiddle() + relative.z];
         } catch (Exception e) {
         }
-        return null;
+        // todo.. why is this nulling now
+        return null;//  return BuiltRoom.getBarrier();
 
     }
 

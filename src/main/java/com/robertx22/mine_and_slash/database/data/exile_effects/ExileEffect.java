@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.AttachedSpel
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.value_calc.LeveledValue;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
@@ -217,6 +218,9 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                 int stacks = data.stacks;
                 mc_stats.forEach(x -> x.applyVanillaStats(entity, stacks));
                 Load.Unit(entity).equipmentCache.STATUS.setDirty();
+
+                Load.Unit(entity).getStatusEffectsData().exileMap.entrySet()
+                        .removeIf(x -> ExileDB.ExileEffects().get(x.getKey()).one_of_a_kind_id.equals(this.one_of_a_kind_id));
             }
 
             Load.Unit(entity).setEquipsChanged();

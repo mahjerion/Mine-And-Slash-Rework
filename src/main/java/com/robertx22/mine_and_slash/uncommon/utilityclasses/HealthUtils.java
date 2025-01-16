@@ -105,7 +105,18 @@ public class HealthUtils {
         float multi = entity.getHealth() / entity.getMaxHealth();
         float max = getMaxHealth(entity);
         return (int) (max * multi);
+    }
 
+    public static int getCurrentHealthPlusMagicShield(LivingEntity entity) {
+        return (int) (getCurrentHealth(entity) + Load.Unit(entity).getResources().getMagicShield());
+    }
+
+    public static int getMaxHealthPlusMagicShield(LivingEntity entity) {
+        int num = (int) (getMaxHealth(entity) + Load.Unit(entity).getUnit().magicShieldData().getValue());
+        if (num <= 0) {
+            return 1;
+        }
+        return num;
     }
 
 }

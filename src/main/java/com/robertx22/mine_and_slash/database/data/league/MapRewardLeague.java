@@ -40,7 +40,7 @@ public class MapRewardLeague extends LeagueMechanic {
     public void generateManually(MapData map, ServerLevel world, BlockPos pos) {
         world.setBlock(pos, SlashBlocks.REWARD_TELEPORT.get().defaultBlockState(), Block.UPDATE_ALL);
 
-        ChunkPos cpos = MapData.getStartChunk(pos);
+        ChunkPos cpos = MapData.getStartChunk(pos, MapData.DUNGEON_LENGTH);
 
         var chunk = world.getChunk(cpos.x, cpos.z);
 

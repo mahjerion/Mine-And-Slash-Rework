@@ -55,7 +55,7 @@ public class DungeonFeature {
             settings.setRotation(Rotation.NONE);
         }
 
-        
+
         // Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE is experimental thing that should reduce updatenighbor block lag in map generation
         var done = template.placeInWorld((ServerLevelAccessor) world, position, position, settings, random, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
 
@@ -74,7 +74,7 @@ public class DungeonFeature {
 
         var bpos = cpos.getMiddleBlockPosition(50);
 
-        ChunkPos start = MapData.getStartChunk(bpos);
+        ChunkPos start = MapData.getStartChunk(bpos, MapData.DUNGEON_LENGTH);
 
         // if its the start of the dungeon, we init some stuff
         if (cpos.equals(start)) {

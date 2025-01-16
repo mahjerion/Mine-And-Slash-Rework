@@ -44,6 +44,7 @@ import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.support_gem.SupportGems;
 import com.robertx22.mine_and_slash.maps.dungeon_reg.Dungeons;
 import com.robertx22.mine_and_slash.maps.spawned_map_mobs.SpawnedMobs;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 
 public class GeneratedData {
@@ -124,12 +125,12 @@ public class GeneratedData {
         orig.player_points.put(PlayerPointsType.SPELLS, new PlayerPointsConfig(PlayerPointsType.SPELLS, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.PASSIVES, new PlayerPointsConfig(PlayerPointsType.PASSIVES, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 2, 50, 300));
-        orig.addToSerializables();
+        orig.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         GameBalanceConfig com = orig.fromJson(orig.toJson());
         com.id = GameBalanceConfig.BalanceEnum.COMPAT_BALANCE.id;
         com.editForCompat();
-        com.addToSerializables();
+        com.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
 
         Omens.init();

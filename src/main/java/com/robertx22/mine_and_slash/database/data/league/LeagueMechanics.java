@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.mechanics.base.LeagueBlockData;
 import com.robertx22.mine_and_slash.mechanics.base.LeagueControlBlockEntity;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -105,10 +106,10 @@ public class LeagueMechanics {
 
 
     public static void init() {
-        UBER.registerToExileRegistry();
-        HARVEST.registerToExileRegistry();
-        PROPHECY.registerToExileRegistry();
-        MAP_BOSS.registerToExileRegistry();
-        MAP_REWARD.registerToExileRegistry();
+        UBER.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        HARVEST.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        PROPHECY.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        MAP_BOSS.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        MAP_REWARD.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
     }
 }

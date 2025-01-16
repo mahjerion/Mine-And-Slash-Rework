@@ -14,7 +14,7 @@ public class CompatConfig {
         if (!IRestrictedConfig.compatModeIsInstalled()) {
             return CompatConfigPreset.ORIGINAL_MODE.defaults;
         }
-        var c = CONTAINER.COMPATIBILITY_PRESETS.get().getReal();
+        var c = CONTAINER.COMPATIBILITY_PRESETS.get();
         return CONTAINER.map.get(c);
     }
 

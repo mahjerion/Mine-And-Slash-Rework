@@ -147,7 +147,7 @@ public enum AllyOrEnemy {
                     if (!caster.level().getServer().isPvpAllowed()) {
                         return false;
                     }
-                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target)) {
+                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target, false)) {
                         return false;
                     } else {
                         return true;

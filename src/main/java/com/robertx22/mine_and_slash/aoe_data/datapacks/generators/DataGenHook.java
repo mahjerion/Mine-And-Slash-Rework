@@ -1,6 +1,8 @@
 package com.robertx22.mine_and_slash.aoe_data.datapacks.generators;
 
+import com.robertx22.library_of_exile.recipe.RecipeGenerator;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 
@@ -17,7 +19,10 @@ public class DataGenHook implements DataProvider {
 
 
         new LootTableGenerator().generateAll(pOutput);
-        new RecipeGenerator().generateAll(pOutput);
+
+        MnsRecipeGenerator.addRecipes();
+
+        new RecipeGenerator().generateAll(pOutput, SlashRef.MODID);
 
         for (ExileRegistryType type : ExileRegistryType.getAllInRegisterOrder()) {
             type.getDatapackGenerator().run(pOutput);

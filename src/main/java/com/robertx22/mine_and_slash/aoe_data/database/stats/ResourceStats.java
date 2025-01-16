@@ -112,7 +112,7 @@ public class ResourceStats {
                 x.min = 0;
                 x.max = 10;
                 x.is_perc = true;
-                x.scaling = StatScaling.NORMAL;
+                x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.RESTORATION;
             })
             .build();
@@ -212,7 +212,7 @@ public class ResourceStats {
                 x.group = Stat.StatGroup.RESTORATION;
             })
             .build();
-    
+
     public static DataPackStatAccessor<EmptyAccessor> HEALING_RECEIVED = DatapackStatBuilder
             .ofSingle("heal_effect_on_self", Elements.ALL)
             .worksWithEvent(RestoreResourceEvent.ID)

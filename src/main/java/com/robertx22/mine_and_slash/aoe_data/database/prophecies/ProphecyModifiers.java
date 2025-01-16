@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.base_gear_types.BaseGearTy
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.prophecy.ProphecyModifier;
 import com.robertx22.mine_and_slash.database.data.prophecy.ProphecyModifierType;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 
 public class ProphecyModifiers implements ExileRegistryInit {
@@ -15,10 +16,10 @@ public class ProphecyModifiers implements ExileRegistryInit {
         of(IRarity.UNCOMMON, 100, ProphecyModifierType.GEAR_RARITY, IRarity.UNCOMMON, 1.1F);
         of(IRarity.RARE_ID, 500, ProphecyModifierType.GEAR_RARITY, IRarity.RARE_ID, 1.5F);
         of(IRarity.EPIC_ID, 1000, ProphecyModifierType.GEAR_RARITY, IRarity.EPIC_ID, 2F).levelReq(25).tierReq(20);
-        of(IRarity.LEGENDARY_ID, 500, ProphecyModifierType.GEAR_RARITY, IRarity.LEGENDARY_ID, 3).levelReq(40).tierReq(25);
-        of(IRarity.MYTHIC_ID, 100, ProphecyModifierType.GEAR_RARITY, IRarity.MYTHIC_ID, 4).levelReq(50).tierReq(50);
+        of(IRarity.LEGENDARY_ID, 500, ProphecyModifierType.GEAR_RARITY, IRarity.LEGENDARY_ID, 5).levelReq(40).tierReq(25);
+        of(IRarity.MYTHIC_ID, 100, ProphecyModifierType.GEAR_RARITY, IRarity.MYTHIC_ID, 10).levelReq(50).tierReq(50);
 
-        of(IRarity.UNIQUE_ID, 50, ProphecyModifierType.GEAR_RARITY, IRarity.UNIQUE_ID, 10).levelReq(25).tierReq(25);
+        of(IRarity.UNIQUE_ID, 50, ProphecyModifierType.GEAR_RARITY, IRarity.UNIQUE_ID, 12).levelReq(25).tierReq(25);
         ///   of(IRarity.UNIQUE_ID, 10, ProphecyModifierType.GEAR_RARITY, IRarity.UNIQUE_ID, 3).levelReq(25).tierReq(25).forceLeagueUniques(LeagueMechanics.PROPHECY);
 
 
@@ -70,7 +71,7 @@ public class ProphecyModifiers implements ExileRegistryInit {
         m.data = data;
         m.cost_multi = costmulti;
 
-        m.addToSerializables();
+        m.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         return new Builder(m);
     }

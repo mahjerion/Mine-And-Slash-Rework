@@ -2,12 +2,14 @@ package com.robertx22.mine_and_slash.aoe_data.datapacks.lang_file;
 
 import com.google.common.collect.Lists;
 import com.robertx22.library_of_exile.registry.Database;
+import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatGuiGroupSection;
 import com.robertx22.mine_and_slash.loot.LootModifierEnum;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.tags.ModTag;
 import com.robertx22.mine_and_slash.tags.TagType;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
@@ -153,13 +155,17 @@ public class CreateLangFile {
 
         for (ExileRegistryContainer reg : Database.getAllRegistries()) {
             for (Object o : reg.getSerializable()) {
-                if (o instanceof IAutoLocName loc) {
-                    list.add(loc);
+                if (o instanceof IAutoLocName loc && o instanceof ExileRegistry<?> r) {
+                    if (r.getRegistrationInfo().modid.equals(SlashRef.MODID)) {
+                        list.add(loc);
+                    }
                 }
             }
             for (Object o : reg.getList()) {
-                if (o instanceof IAutoLocName loc) {
-                    list.add(loc);
+                if (o instanceof IAutoLocName loc && o instanceof ExileRegistry<?> r) {
+                    if (r.getRegistrationInfo().modid.equals(SlashRef.MODID)) {
+                        list.add(loc);
+                    }
                 }
             }
 
@@ -218,34 +224,22 @@ public class CreateLangFile {
 
         for (ExileRegistryContainer reg : Database.getAllRegistries()) {
             for (Object o : reg.getSerializable()) {
-                if (o instanceof IAutoLocDesc loc) {
-                    list.add(loc);
+                if (o instanceof IAutoLocDesc loc && o instanceof ExileRegistry<?> r) {
+                    if (r.getRegistrationInfo().modid.equals(SlashRef.MODID)) {
+                        list.add(loc);
+                    }
                 }
             }
             for (Object o : reg.getList()) {
-                if (o instanceof IAutoLocDesc loc) {
-                    list.add(loc);
+                if (o instanceof IAutoLocDesc loc && o instanceof ExileRegistry<?> r) {
+                    if (r.getRegistrationInfo().modid.equals(SlashRef.MODID)) {
+                        list.add(loc);
+                    }
                 }
             }
 
         }
-        /*
-        list.addAll(ExileDB.Professions().getSerializable());
-        list.addAll(ExileDB.Spells().getSerializable());
-        list.addAll(ExileDB.UberBoss().getSerializable());
 
-        List<Stat> stats = ExileDB.Stats()
-                .getList()
-                .stream()
-                .filter(x -> !x.isFromDatapack())
-                .collect(Collectors.toList());
-        list.addAll(ExileDB.Stats()
-                .getSerializable());
-
-        list.addAll(stats);
-        list.addAll(ExileDB.UniqueGears().getSerializable());
-
-         */
 
         HashMap<IAutoLocName.AutoLocGroup, List<IAutoLocDesc>> map = new HashMap<>();
 

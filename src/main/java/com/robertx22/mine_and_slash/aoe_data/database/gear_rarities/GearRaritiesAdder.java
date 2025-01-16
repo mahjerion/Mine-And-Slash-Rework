@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
 import com.robertx22.mine_and_slash.database.data.rarities.MapRarityRewardData;
 import com.robertx22.mine_and_slash.maps.processors.reward.ModLootTables;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 
 // check if loot drops in maps
@@ -45,7 +46,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.UNCOMMON;
             x.stat_percents = new MinMax(0, 10);
             x.setCommonFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
             x.map_reward = new MapRarityRewardData(0, ModLootTables.TIER_1_DUNGEON_CHEST, 1, 1);
         });
@@ -75,7 +76,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.RARE_ID;
             x.stat_percents = new MinMax(10, 20);
             x.setUncommonFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         });
 
@@ -106,7 +107,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.EPIC_ID;
             x.stat_percents = new MinMax(20, 40);
             x.setRareFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         });
         GearRarity epic = new GearRarity().edit(x -> {
@@ -137,7 +138,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.LEGENDARY_ID;
             x.stat_percents = new MinMax(40, 60);
             x.setEpicFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
         GearRarity legendary = new GearRarity().edit(x -> {
@@ -172,7 +173,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.MYTHIC_ID;
             x.stat_percents = new MinMax(60, 80);
             x.setLegendFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
         GearRarity mythic = new GearRarity().edit(x -> {
@@ -209,7 +210,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.announce_in_chat = true;
             x.stat_percents = new MinMax(80, 100);
             x.setMythicFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
 
@@ -228,7 +229,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.item_value_multi = 2;
             x.item_tier = 5;
             x.setUniqueFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             x.announce_in_chat = true;
             x.is_unique_item = true;
         });
@@ -252,7 +253,7 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.item_value_multi = 2;
             x.item_tier = 10;
             x.setRunewordFields();
-            x.addToSerializables();
+            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             x.announce_in_chat = false;
             x.can_have_runewords = true;
             x.is_unique_item = false;

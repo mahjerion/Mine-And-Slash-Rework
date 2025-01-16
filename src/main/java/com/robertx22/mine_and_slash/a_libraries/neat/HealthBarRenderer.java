@@ -345,15 +345,15 @@ public class HealthBarRenderer {
                 int h = NeatConfig.instance.hpTextHeight();
 
                 if (NeatConfig.instance.showCurrentHP()) {
-                    String hpStr = MMORPG.formatBigNumber(HealthUtils.getCurrentHealth(living));
+                    String hpStr = MMORPG.formatBigNumber(HealthUtils.getCurrentHealthPlusMagicShield(living));
                     mc.font.drawInBatch(hpStr, 2, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.showMaxHP()) {
-                    String maxHpStr = ChatFormatting.BOLD + MMORPG.formatBigNumber(HealthUtils.getMaxHealth(living));
+                    String maxHpStr = ChatFormatting.BOLD + MMORPG.formatBigNumber(HealthUtils.getMaxHealthPlusMagicShield(living));
                     mc.font.drawInBatch(maxHpStr, (int) (halfSize / healthValueTextScale * 2) - mc.font.width(maxHpStr) - 2, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.showPercentage()) {
-                    String percStr = (int) (100 * living.getHealth() / living.getMaxHealth()) + "%";
+                    String percStr = (int) (100 * HealthUtils.getCurrentHealthPlusMagicShield(living) / HealthUtils.getMaxHealthPlusMagicShield(living)) + "%";
                     mc.font.drawInBatch(percStr, (int) (halfSize / healthValueTextScale) - mc.font.width(percStr) / 2.0F, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.enableDebugInfo() && mc.options.renderDebug) {

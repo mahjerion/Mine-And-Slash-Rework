@@ -32,6 +32,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MapBlock extends BaseEntityBlock {
     public MapBlock() {
@@ -132,7 +133,8 @@ public class MapBlock extends BaseEntityBlock {
 
                 MapBlockEntity be = (MapBlockEntity) level.getBlockEntity(pPos);
 
-                var map = Load.worldData(level).map.getMapFromPlayerID(be.getMapId());
+                Optional<MapData> map = Load.worldData(level).map.getMapFromPlayerID(be.getMapId());
+
 
                 if (map.isPresent()) {
                     MapData mapData = map.get();
@@ -168,10 +170,12 @@ public class MapBlock extends BaseEntityBlock {
 
         var cds = Load.Unit(p).getCooldowns();
 
-        if (cds.isOnCooldown("start_map")) {
-            int sec = cds.getCooldownTicks("start_map") / 20;
-            p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR.locName(), Words.MAP_START_COOLDOWN.locName(sec)));
-            return false;
+        if (!p.isCreative()) {
+            if (cds.isOnCooldown("start_map")) {
+                int sec = cds.getCooldownTicks("start_map") / 20;
+                p.sendSystemMessage(ExplainedResult.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR.locName(), Words.MAP_START_COOLDOWN.locName(sec)));
+                return false;
+            }
         }
 
 

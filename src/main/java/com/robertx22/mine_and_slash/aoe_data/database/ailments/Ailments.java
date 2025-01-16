@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.aoe_data.database.ailments;
 
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import net.minecraft.ChatFormatting;
 
@@ -21,11 +22,11 @@ public class Ailments {
 
     public static void init() {
 
-        BURN.registerToExileRegistry();
-        POISON.registerToExileRegistry();
-        BLEED.registerToExileRegistry();
-        FREEZE.registerToExileRegistry();
-        ELECTRIFY.registerToExileRegistry();
+        BURN.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        POISON.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        BLEED.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        FREEZE.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        ELECTRIFY.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
 
     }
 }

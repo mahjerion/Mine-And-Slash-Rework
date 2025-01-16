@@ -3,3 +3,11 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 v.6.0.6
 - fixed soul cleaner config
 - set scale to nearest player true by default
+- fixed leech cap stat scaling: normal > none
+- maybe fix compat config resetting
+- hp bars now show magic shield
+- should check some 'is teamed' methods to work even when far away, so friendly traps dont turn on you as soon as the friend teleports away
+- if youre lacking resists in map you'll now take 10% of your hp as damage per second and you wont regenerate any resource
+- spectators now dont count as nearest players
+- messed with recipe gen code, report if any recipes are missing please
+- one of a kind should now work for effects

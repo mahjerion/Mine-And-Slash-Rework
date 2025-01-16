@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
 import com.robertx22.mine_and_slash.database.data.requirements.Requirements;
 import com.robertx22.mine_and_slash.database.data.requirements.TagRequirement;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.ModTag;
 import com.robertx22.mine_and_slash.tags.TagType;
 
@@ -105,7 +106,7 @@ public class GenericAffixBuilder<T> {
             affix.weight = weight;
             affix.loc_name = nameMap.get(element);
 
-            affix.addToSerializables();
+            affix.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
 
     }

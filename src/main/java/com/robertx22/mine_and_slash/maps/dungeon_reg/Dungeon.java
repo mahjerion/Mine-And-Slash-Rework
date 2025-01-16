@@ -1,19 +1,20 @@
 package com.robertx22.mine_and_slash.maps.dungeon_reg;
 
+import com.robertx22.library_of_exile.registry.ExileRegistryType;
+import com.robertx22.library_of_exile.registry.IAutoGson;
+import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.maps.DungeonRoom;
 import com.robertx22.mine_and_slash.maps.generator.RoomType;
 import com.robertx22.mine_and_slash.maps.room_adders.BaseRoomAdder;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.tags.TagList;
 import com.robertx22.mine_and_slash.tags.all.DungeonTags;
 import com.robertx22.mine_and_slash.tags.imp.DungeonTag;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
-import com.robertx22.library_of_exile.registry.ExileRegistryType;
-import com.robertx22.library_of_exile.registry.IAutoGson;
-import com.robertx22.library_of_exile.registry.JsonExileRegistry;
-import com.robertx22.library_of_exile.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,7 +190,7 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
         }
 
         public Dungeon build() {
-            dungeon.addToSerializables();
+            dungeon.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             return dungeon;
         }
 

@@ -21,12 +21,17 @@ import net.minecraft.world.level.block.Block;
 public abstract class LeagueMechanic implements ExileRegistry<LeagueMechanic>, IAutoLocName {
 
     public abstract LeagueStructure getStructure(MapItemData map);
+   
 
     public float getBaseSpawnChance() {
         return 100;
     }
 
     public abstract int getDefaultSpawns();
+
+    public int getMapOffset() {
+        return MapData.DUNGEON_LENGTH;
+    }
 
     public MapField<String> getStructureId() {
         return new MapField<>(GUID() + "_structure");

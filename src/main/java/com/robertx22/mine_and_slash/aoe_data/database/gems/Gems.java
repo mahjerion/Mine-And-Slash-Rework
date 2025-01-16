@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.GemItems;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
 
@@ -38,7 +39,7 @@ public class Gems implements ExileRegistryInit {
 
             gem.weight = x.weight;
 
-            gem.addToSerializables();
+            gem.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
     }
 }

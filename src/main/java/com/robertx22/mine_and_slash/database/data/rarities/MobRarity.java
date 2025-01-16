@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import net.minecraft.ChatFormatting;
@@ -41,7 +42,7 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
             r.dmg_multi = 1;
         }
 
-        r.addToSerializables();
+        r.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         return r;
     }

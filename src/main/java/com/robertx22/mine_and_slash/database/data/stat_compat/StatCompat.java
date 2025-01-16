@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.Attribut
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mixin_ducks.IDirty;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -52,7 +53,7 @@ public class StatCompat implements JsonExileRegistry<StatCompat>, IAutoGson<Stat
 
     public void editAndReg(Consumer<StatCompat> co) {
         co.accept(this);
-        addToSerializables();
+        addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 
     private Attribute getAttribute() {

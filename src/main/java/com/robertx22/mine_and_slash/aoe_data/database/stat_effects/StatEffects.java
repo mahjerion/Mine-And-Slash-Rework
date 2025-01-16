@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.PositionSource;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
@@ -178,7 +179,7 @@ public class StatEffects implements ExileRegistryInit {
 
         for (StatEffect v : StatEffect.ALL_SERIAZABLE) {
             if (!v.id.isEmpty()) {
-                v.addToSerializables();
+                v.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             }
         }
     }

@@ -1,10 +1,11 @@
 package com.robertx22.mine_and_slash.aoe_data.database.runes;
 
-import com.robertx22.mine_and_slash.database.data.runes.Rune;
-import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RuneItems;
-import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneItem;
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
+import com.robertx22.mine_and_slash.database.data.runes.Rune;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RuneItems;
+import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneItem;
 
 public class Runes implements ExileRegistryInit {
     @Override
@@ -29,7 +30,7 @@ public class Runes implements ExileRegistryInit {
             rune.on_weapons_stats.addAll(type.stats.get().weapon);
             rune.on_armor_stats.addAll(type.stats.get().armor);
 
-            rune.addToSerializables();
+            rune.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
     }
 }

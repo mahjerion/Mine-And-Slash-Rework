@@ -2,13 +2,14 @@ package com.robertx22.orbs_of_crafting.keys;
 
 import com.google.common.base.Preconditions;
 import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.library_of_exile.recipe.RecipeGenerator;
 import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
-import com.robertx22.mine_and_slash.aoe_data.datapacks.generators.RecipeGenerator;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 import java.util.function.BiFunction;
@@ -50,7 +51,7 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
 
 
     public ExileKey<T, Info> addRecipe(ExileRegistryType type, Function<ExileKey<T, Info>, ShapedRecipeBuilder> b) {
-        RecipeGenerator.addRecipe(new ResourceLocation(type.id + this.GUID()), () -> {
+        RecipeGenerator.addRecipe(SlashRef.MODID, () -> {
             return b.apply(this);
         });
         return this;
@@ -79,9 +80,9 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
         obj = sup.apply(id, info);
 
         if (obj instanceof JsonExileRegistry<?> j) {
-            j.addToSerializables();
+            j.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         } else {
-            obj.registerToExileRegistry();
+            obj.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         }
     }
 }

@@ -4,6 +4,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.gear.Lev
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
@@ -37,9 +38,9 @@ public abstract class ItemRequirement implements JsonExileRegistry<ItemRequireme
 
 
     @Override
-    public void addToSerializables() {
+    public void addToSerializables(ExileRegistrationInfo info) {
         getSerMap().register(this);
-        Database.getRegistry(this.getExileRegistryType()).addSerializable(this);
+        Database.getRegistry(this.getExileRegistryType()).addSerializable(this, info);
     }
 
     @Override

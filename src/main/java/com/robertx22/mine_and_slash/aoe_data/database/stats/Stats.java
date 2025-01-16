@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.stats;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.DatapackStatBuilder;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 
 
 // todo split this into multiple classes
@@ -23,6 +24,6 @@ public class Stats implements ExileRegistryInit {
     public void registerAll() {
 
 
-        DatapackStatBuilder.STATS_TO_ADD_TO_SERIALIZATION.forEach(x -> x.addToSerializables());
+        DatapackStatBuilder.STATS_TO_ADD_TO_SERIALIZATION.forEach(x -> x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO));
     }
 }

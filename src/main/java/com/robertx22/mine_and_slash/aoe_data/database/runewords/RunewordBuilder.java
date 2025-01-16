@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.runewords;
 
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneType;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class RunewordBuilder {
                 .map(x -> x.id)
                 .collect(Collectors.toList());
         word.slots.addAll(Arrays.asList(gear_slots));
-        word.addToSerializables();
+        word.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
     }
 

@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.content.ubers;
 
 import com.robertx22.mine_and_slash.database.data.league.LeaguePiecesList;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -59,7 +60,7 @@ public enum UberEnum {
 
         boss.structure = struc;
 
-        boss.addToSerializables();
+        boss.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         c.accept(boss);
     }

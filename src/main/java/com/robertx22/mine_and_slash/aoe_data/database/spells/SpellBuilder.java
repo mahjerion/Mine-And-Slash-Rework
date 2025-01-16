@@ -7,8 +7,8 @@ import com.robertx22.mine_and_slash.database.data.spells.components.*;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
-import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -16,7 +16,6 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,7 +215,7 @@ public class SpellBuilder {
 
     public Spell build() {
         Objects.requireNonNull(spell);
-        this.spell.addToSerializables();
+        this.spell.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return spell;
     }
 

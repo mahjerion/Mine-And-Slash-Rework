@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.VanillaStatData;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.EffectTags;
 import com.robertx22.mine_and_slash.tags.imp.EffectTag;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
@@ -108,7 +109,7 @@ public class ExileEffectBuilder {
     }
 
     public ExileEffect build() {
-        effect.addToSerializables();
+        effect.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return effect;
     }
 

@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
@@ -16,8 +15,10 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.parts.ResetPlayerData;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
-import com.robertx22.orbs_of_crafting.main.LocReqContext;
-import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.LocReqContext;
+import com.robertx22.orbs_of_crafting.misc.StackHolder;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.ChatFormatting;
@@ -35,7 +36,7 @@ public class PlayerCommands {
         // todo also add a currenccy apply command
         CommandBuilder.of(dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
-            RegistryWrapper<ItemModification> MOD = new RegistryWrapper(ExileRegistryTypes.ITEM_MOD);
+            RegistryWrapper<ItemModification> MOD = new RegistryWrapper(OrbDatabase.ITEM_MOD);
 
             x.addLiteral("item_mod", PermWrapper.OP);
             x.addLiteral("use", PermWrapper.OP);
@@ -64,7 +65,7 @@ public class PlayerCommands {
 
         CommandBuilder.of(dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
-            RegistryWrapper<ExileCurrency> CURRENCY = new RegistryWrapper(ExileRegistryTypes.CURRENCY);
+            RegistryWrapper<ExileCurrency> CURRENCY = new RegistryWrapper(OrbDatabase.CURRENCY);
 
             x.addLiteral("currency", PermWrapper.OP);
             x.addLiteral("use", PermWrapper.OP);

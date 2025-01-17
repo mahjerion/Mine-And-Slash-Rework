@@ -1,10 +1,10 @@
 package com.robertx22.orbs_of_crafting.register;
 
+import com.robertx22.library_of_exile.registry.helpers.ExileKey;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
+import com.robertx22.library_of_exile.registry.helpers.KeyInfo;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
-import com.robertx22.orbs_of_crafting.keys.ExileKey;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
-import com.robertx22.orbs_of_crafting.keys.KeyInfo;
 import com.robertx22.orbs_of_crafting.register.reqs.HasNoEnchantsReq;
 import com.robertx22.orbs_of_crafting.register.reqs.IsDamagedReq;
 import com.robertx22.orbs_of_crafting.register.reqs.IsSingleStack;

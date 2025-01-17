@@ -1,37 +1,37 @@
-package com.robertx22.addons.orbs_of_crafting.currency.reworked;
+package com.robertx22.orbs_of_crafting.register;
 
+import com.robertx22.library_of_exile.localization.ExileTranslation;
+import com.robertx22.library_of_exile.localization.ITranslated;
+import com.robertx22.library_of_exile.localization.TranslationBuilder;
+import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.helpers.ExileKey;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
+import com.robertx22.library_of_exile.registry.helpers.IdKey;
 import com.robertx22.library_of_exile.util.ExplainedResult;
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.AdditionalBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.NameBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.LeagueBlock;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
-import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
-import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.wip.ExileCached;
 import com.robertx22.orbs_of_crafting.api.OrbEvents;
-import com.robertx22.orbs_of_crafting.keys.ExileKey;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
-import com.robertx22.orbs_of_crafting.keys.IdKey;
-import com.robertx22.orbs_of_crafting.main.LocReqContext;
-import com.robertx22.orbs_of_crafting.main.ModifyResult;
-import com.robertx22.orbs_of_crafting.main.ResultItem;
-import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.lang.OrbWords;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.LocReqContext;
+import com.robertx22.orbs_of_crafting.misc.ModifyResult;
+import com.robertx22.orbs_of_crafting.misc.ResultItem;
+import com.robertx22.orbs_of_crafting.misc.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
@@ -45,8 +45,9 @@ import net.minecraft.world.item.Items;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, JsonExileRegistry<ExileCurrency>, IRarity {
+public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, JsonExileRegistry<ExileCurrency>, IRarity {
 
     public static ExileCurrency SERIALIZER = new ExileCurrency();
 
@@ -55,20 +56,34 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
     public int weight = 1000;
 
     public transient String locname = "";
+    public transient String modid = "";
 
     List<ItemModData> pick_one_item_mod = new ArrayList<>();
     List<ItemModData> always_do_item_mods = new ArrayList<>();
     List<String> req = new ArrayList<>();
 
-    String rar = IRarity.RARE_ID;
-
-
     // todo this needs some extension system..
+    String rar = IRarity.RARE_ID;
+    // public List<WorksOnBlock.ItemType> item_type = new ArrayList<>(Arrays.asList(WorksOnBlock.ItemType.GEAR));
     public DropRequirement drop_req = DropRequirement.Builder.of().build();
+
+    public List<String> item_type_requirement = new ArrayList<>();
 
     public PotentialData potential = new PotentialData(true, 1);
 
     public String item_id = "";
+
+    @Override
+    public TranslationBuilder createTranslationBuilder() {
+        return new TranslationBuilder(modid).name(ExileTranslation.item(getItem(), locname));
+
+    }
+
+    public List<ItemRequirement> getItemTypeRequirement() {
+
+        return item_type_requirement.stream().map(x -> OrbDatabase.ItemReq().get(x)).collect(Collectors.toList());
+
+    }
 
     // this needs reworking cus library doesnt have all these classes
     public static class PotentialData {
@@ -104,7 +119,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         }
 
         public ItemModification get() {
-            return ExileDB.ItemMods().get(id);
+            return OrbDatabase.ItemMods().get(id);
         }
 
         @Override
@@ -112,9 +127,6 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             return weight;
         }
     }
-
-
-    public List<WorksOnBlock.ItemType> item_type = new ArrayList<>(Arrays.asList(WorksOnBlock.ItemType.GEAR));
 
 
     @Override
@@ -125,7 +137,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
     public static ExileCached<HashMap<Item, ExileCurrency>> CACHED_MAP = new ExileCached<>(() -> {
         HashMap<Item, ExileCurrency> map = new HashMap<>();
-        for (ExileCurrency cur : ExileDB.Currency().getList()) {
+        for (ExileCurrency cur : OrbDatabase.Currency().getList()) {
             var i = cur.getItem();
             if (i != Items.AIR) {
                 map.put(i, cur);
@@ -185,9 +197,15 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
         ExileTooltips tip = new ExileTooltips();
 
-        tip.accept(new NameBlock(locName().withStyle(ChatFormatting.BOLD)));
+        tip.accept(new NameBlock(getTranslation(TranslationType.NAME).getTranslatedName().withStyle(ChatFormatting.BOLD)));
         tip.accept(new RarityBlock(getRarity()));
-        tip.accept(WorksOnBlock.usableOn(this.item_type));
+        tip.accept(new AdditionalBlock(() -> {
+            var list = new ArrayList<MutableComponent>();
+            for (ItemRequirement req : getItemTypeRequirement()) {
+                list.add(req.getDescWithParams().withStyle(ChatFormatting.YELLOW));
+            }
+            return list;
+        }));
         tip.accept(new AdditionalBlock(() -> {
             List<MutableComponent> all = new ArrayList<>();
 
@@ -197,7 +215,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             if (!this.pick_one_item_mod.isEmpty()) {
                 all.add(Component.empty());
 
-                all.add(Words.RANDOM_OUTCOME.locName().withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+                all.add(OrbWords.RANDOM_OUTCOME.get().withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
 
                 for (ItemModData data : this.pick_one_item_mod) {
                     var color = data.get().getOutcomeType().color;
@@ -207,7 +225,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
             if (!this.always_do_item_mods.isEmpty()) {
                 all.add(Component.empty());
-                all.add(Words.ALWAYS_DOES.locName().withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                all.add(OrbWords.ALWAYS_DOES.get().withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
                 for (ItemModData data : this.always_do_item_mods) {
                     var color = data.get().getOutcomeType().color;
                     all.add(getChanceTooltip(data, data.weight, false).withStyle(color));
@@ -215,20 +233,20 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
             }
             all.add(Component.empty());
 
-            all.add(Words.Requirements.locName().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+            all.add(OrbWords.Requirements.get().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
             for (String s : this.req) {
-                var req = ExileDB.ItemReq().get(s);
+                var req = OrbDatabase.ItemReq().get(s);
                 all.add(Component.literal(UNICODE.ROTATED_CUBE + " ").append(req.getDescWithParams()).withStyle(ChatFormatting.LIGHT_PURPLE));
             }
             return all;
         }));
 
         if (this.potential.potential_cost > 0) {
-            tip.accept(new AdditionalBlock(Collections.singletonList(Words.POTENTIAL_COST.locName(Component.literal("" + potential.potential_cost).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD))));
+            tip.accept(new AdditionalBlock(Collections.singletonList(OrbWords.POTENTIAL_COST.get(Component.literal("" + potential.potential_cost).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD))));
         } else {
-            tip.accept(new AdditionalBlock(Collections.singletonList(Words.NOT_A_POTENTIAL_CONSUMER.locName().withStyle(ChatFormatting.GOLD))));
+            tip.accept(new AdditionalBlock(Collections.singletonList(OrbWords.NOT_A_POTENTIAL_CONSUMER.get().withStyle(ChatFormatting.GOLD))));
         }
-        tip.accept(new AdditionalBlock(Words.Currency.locName().withStyle(ChatFormatting.GOLD)));
+        tip.accept(new AdditionalBlock(OrbWords.Currency.get().withStyle(ChatFormatting.GOLD)));
 
 
         if (ExileDB.OrbExtension().isRegistered(GUID())) {
@@ -248,18 +266,19 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         }
 
         int chance = (int) (((float) mod.weight / (float) totalweight) * 100F);
-        return Component.literal(UNICODE.STAR + " ").append(Itemtips.OUTCOME_TIP.locName(mod.get().getDescWithParams(), Component.literal(chance + "%").withStyle(ChatFormatting.YELLOW)));
+        return Component.literal(UNICODE.STAR + " ").append(OrbWords.OUTCOME_TIP.get(mod.get().getDescWithParams(), Component.literal(chance + "%").withStyle(ChatFormatting.YELLOW)));
     }
 
     public ExplainedResult canItemBeModified(LocReqContext context) {
 
+        var type = getItemTypeRequirement();
 
-        if (item_type.stream().noneMatch(type -> type.worksOn.apply(context.stack))) {
-            if (item_type.size() == 1) {
-                return ExplainedResult.failure(Words.THIS_IS_NOT_A.locName(item_type.get(0).name.locName()));
+        if (type.stream().noneMatch(x -> x.isValid(context.player, new StackHolder(context.stack)))) {
+            if (type.size() == 1) {
+                return ExplainedResult.failure(OrbWords.THIS_IS_NOT_A.get(type.get(0).getTranslation(TranslationType.NAME).getTranslatedName()));
 
             } else {
-                return ExplainedResult.failure(Words.THIS_IS_NOT_A.locName(TooltipUtils.joinMutableComps(item_type.stream().map(x -> x.name.locName()).iterator(), Component.literal(" or "))));
+                return ExplainedResult.failure(OrbWords.THIS_IS_NOT_A.get(TooltipUtils.joinMutableComps(type.stream().map(x -> x.getTranslation(TranslationType.NAME).getTranslatedName()).iterator(), Component.literal(" or "))));
             }
         }
 
@@ -271,7 +290,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         }
 
         for (String s : this.req) {
-            var r = ExileDB.ItemReq().get(s);
+            var r = OrbDatabase.ItemReq().get(s);
             if (!r.isValid(context.player, new StackHolder(context.stack))) {
                 // todo do i want to add custom fail messages instead?
                 return ExplainedResult.failure(r.getDescWithParams());
@@ -287,7 +306,7 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
     @Override
     public ExileRegistryType getExileRegistryType() {
-        return ExileRegistryTypes.CURRENCY;
+        return OrbDatabase.CURRENCY;
     }
 
     @Override
@@ -295,20 +314,6 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         return ExileCurrency.class;
     }
 
-    @Override
-    public AutoLocGroup locNameGroup() {
-        return AutoLocGroup.Currency_Items;
-    }
-
-    @Override
-    public String locNameLangFileGUID() {
-        return SlashRef.MODID + ".currency." + GUID();
-    }
-
-    @Override
-    public String locNameForLangFile() {
-        return locname;
-    }
 
     @Override
     public String GUID() {
@@ -332,17 +337,20 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
         public PotentialData pot = new PotentialData(1);
         public int weight = 1000;
         public String name;
-        public List<WorksOnBlock.ItemType> type;
+        public List<String> type = new ArrayList<>();
         public String rar = IRarity.RARE_ID;
 
-        public static Builder of(String id, String name, WorksOnBlock.ItemType... type) {
+        public static Builder of(String id, String name, ExileKey<ItemRequirement, ?>... type) {
             return new Builder(id, name, type);
         }
 
-        public Builder(String id, String name, WorksOnBlock.ItemType... type) {
+        public Builder(String id, String name, ExileKey<ItemRequirement, ?>... type) {
             this.id = id;
-            this.type = Arrays.asList(type);
             this.name = name;
+
+            for (ExileKey<ItemRequirement, ?> t : type) {
+                this.type.add(t.GUID());
+            }
         }
 
 
@@ -389,20 +397,16 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
         public ExileKey<ExileCurrency, IdKey> build(ExileKeyHolder<ExileCurrency> holder) {
             return new ExileKey<>(holder, new IdKey(id), (x, y) -> this.buildCurrency(holder), id);
-            /*
-            return new MnsKey<>(holder, new IdKey(id), (x, y) -> {
-                return buildCurrency(holder);
-            }, id);
-             */
         }
 
         public ExileCurrency buildCurrency(ExileKeyHolder<ExileCurrency> holder) {
             ExileCurrency currency = new ExileCurrency();
+            currency.modid = holder.modRegisterInfo.modid;
             currency.id = id;
             currency.pick_one_item_mod = this.pickOneMods;
             currency.req = this.req;
             currency.always_do_item_mods = useAllMods;
-            currency.item_type = type;
+            currency.item_type_requirement = type;
             currency.rar = rar;
             currency.locname = name;
             currency.weight = weight;

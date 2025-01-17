@@ -18,7 +18,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
-import com.robertx22.orbs_of_crafting.main.LocReqContext;
+import com.robertx22.orbs_of_crafting.misc.LocReqContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;

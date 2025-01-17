@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.gui.texts.textblocks;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;

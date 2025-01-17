@@ -4,9 +4,9 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqS
 import com.robertx22.library_of_exile.localization.ExileTranslation;
 import com.robertx22.library_of_exile.localization.TranslationBuilder;
 import com.robertx22.library_of_exile.localization.TranslationType;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +42,7 @@ public class IsAnyReq extends ItemRequirement {
 
     @Override
     public boolean isValid(Player p, StackHolder obj) {
-        var all = data.requirements.stream().map(x -> ExileDB.ItemReq().get(x)).collect(Collectors.toList());
+        var all = data.requirements.stream().map(x -> OrbDatabase.ItemReq().get(x)).collect(Collectors.toList());
 
         for (ItemRequirement req : all) {
             if (!req.isValid(p, obj)) {

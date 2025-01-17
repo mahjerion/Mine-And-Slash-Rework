@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.gui.wiki.reworked.filters.all;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanic;
 import com.robertx22.mine_and_slash.gui.wiki.BestiaryEntry;
 import com.robertx22.mine_and_slash.gui.wiki.reworked.filters.GroupFilterEntry;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.network.chat.MutableComponent;
 
 public class CurrencyLeagueFilter extends GroupFilterEntry {

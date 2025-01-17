@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.keys;
+package com.robertx22.library_of_exile.registry.helpers;
 
 import com.google.common.base.Preconditions;
 import com.robertx22.library_of_exile.deferred.RegObj;

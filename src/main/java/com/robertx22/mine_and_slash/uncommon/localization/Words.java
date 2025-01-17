@@ -148,8 +148,7 @@ public enum Words implements IAutoLocName {
     Configs("Features"),
     POSSIBLE_DROPS("Possible Gear Drops:"),
     USABLE_ON("Usable On:"),
-    ALWAYS_DOES("Always does:"),
-    RANDOM_OUTCOME("Random Outcome:"),
+
     CAN_UPGRADE_MAP_RARITY("Can Upgrade Map Rarity\nThis Depends on Map level"),
     LASTS_SEC("Lasts %1$ss"),
     MOD_NAME("Mine and Slash"),
@@ -173,8 +172,7 @@ public enum Words implements IAutoLocName {
     CHARGE_REGEN("Charge Regen: %1$ss"),
 
     GAME_CHANGER("Game Changer Talent"),
-    POTENTIAL_COST("Potential Cost: %1$s"),
-    NOT_A_POTENTIAL_CONSUMER("Does not consume potential when used"),
+
     STATUS_EFFECT("Status Effect"),
     PET_BASIC("Pet Basic Attack:"),
     PER_STACK(" (per stack): "),
@@ -280,7 +278,6 @@ public enum Words implements IAutoLocName {
     Normal_Gear("Normal Gear"),
     NORMAL_RARITY("Normal Rarity"),
 
-    Requirements("Requirements: "),
     AreaContains("Area Contains an Uber Boss Portal"),
 
 
@@ -328,8 +325,7 @@ public enum Words implements IAutoLocName {
     UNSALVAGEABLE("Unsalvageable"),
 
     SALVAGEABLE("Salvageable"),
-    THIS_IS_NOT_A("This is not a %1$s"),
-
+   
     UsableOn("Usable On: "),
 
     Energy_Cost_Per_Mob("Energy Cost: %1$s + %2$s Per mob, x %3$s Dmg"),

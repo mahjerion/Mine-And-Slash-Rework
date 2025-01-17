@@ -6,17 +6,20 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.H
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotCorruptedReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.gear.*;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeGearReq;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeJewelReq;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeSoulReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.jewel.JewelHasAffixesReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.map.MapHasHigherRarityReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
+import com.robertx22.library_of_exile.registry.helpers.ExileKey;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyMap;
+import com.robertx22.library_of_exile.registry.helpers.KeyInfo;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.orbs_of_crafting.keys.ExileKey;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyMap;
-import com.robertx22.orbs_of_crafting.keys.KeyInfo;
 import com.robertx22.orbs_of_crafting.register.reqs.IsAnyReq;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 
@@ -89,6 +92,12 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
 
 
     public ExileKey<ItemRequirement, KeyInfo> JEWEL_HAS_AFFIXES = ExileKey.ofId(this, "jewel_has_affixes", x -> new JewelHasAffixesReq(x.GUID()));
+
+
+    // item types
+    public ExileKey<ItemRequirement, KeyInfo> IS_SOUL = ExileKey.ofId(this, "is_soul", x -> new BeSoulReq());
+    public ExileKey<ItemRequirement, KeyInfo> IS_JEWEL = ExileKey.ofId(this, "is_jewel", x -> new BeJewelReq());
+    public ExileKey<ItemRequirement, KeyInfo> IS_GEAR = ExileKey.ofId(this, "is_gear", x -> new BeGearReq());
 
 
     @Override

@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.main;
+package com.robertx22.orbs_of_crafting.misc;
 
 import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;

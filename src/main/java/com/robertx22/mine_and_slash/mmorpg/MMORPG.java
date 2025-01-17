@@ -56,7 +56,7 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffect;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.VanillaRarities;
-import com.robertx22.orbs_of_crafting.main.OnClick;
+import com.robertx22.orbs_of_crafting.misc.OnClick;
 import com.robertx22.orbs_of_crafting.register.Modifications;
 import com.robertx22.orbs_of_crafting.register.Orbs;
 import com.robertx22.orbs_of_crafting.register.Requirements;

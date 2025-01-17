@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.database.registry;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.Database;
@@ -54,8 +53,6 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffec
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.MapManager;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
-import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -221,18 +218,6 @@ public class ExileDB {
 
     public static ExileRegistryContainer<Omen> Omens() {
         return Database.getRegistry(ExileRegistryTypes.OMEN);
-    }
-
-    public static ExileRegistryContainer<ExileCurrency> Currency() {
-        return Database.getRegistry(ExileRegistryTypes.CURRENCY);
-    }
-
-    public static ExileRegistryContainer<ItemModification> ItemMods() {
-        return Database.getRegistry(ExileRegistryTypes.ITEM_MOD);
-    }
-
-    public static ExileRegistryContainer<ItemRequirement> ItemReq() {
-        return Database.getRegistry(ExileRegistryTypes.ITEM_REQ);
     }
 
 

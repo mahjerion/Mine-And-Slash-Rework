@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.main;
+package com.robertx22.orbs_of_crafting.misc;
 
 import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;

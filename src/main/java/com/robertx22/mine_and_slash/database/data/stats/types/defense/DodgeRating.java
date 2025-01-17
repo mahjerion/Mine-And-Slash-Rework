@@ -1,12 +1,12 @@
 package com.robertx22.mine_and_slash.database.data.stats.types.defense;
 
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.data.stats.IUsableStat;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;

@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.database.registry;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.SyncTime;
@@ -48,8 +47,6 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffect;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
-import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.ChatFormatting;
 
 public class ExileRegistryTypes {
@@ -120,9 +117,6 @@ public class ExileRegistryTypes {
     public static ExileRegistryType SPAWNED_MOBS = ExileRegistryType.register(SlashRef.MODID, "map_mob_list", 46, SpawnedMobList.SERIALIZER, SyncTime.NEVER);
     public static ExileRegistryType OMEN = ExileRegistryType.register(SlashRef.MODID, "omen", 47, Omen.SERIALIZER, SyncTime.ON_LOGIN);
 
-    public static ExileRegistryType ITEM_MOD = ExileRegistryType.register(SlashRef.MODID, "item_modification", 48, ItemModification.SERIALIZER, SyncTime.ON_LOGIN);
-    public static ExileRegistryType ITEM_REQ = ExileRegistryType.register(SlashRef.MODID, "item_requirement", 49, ItemRequirement.SERIALIZER, SyncTime.ON_LOGIN);
-    public static ExileRegistryType CURRENCY = ExileRegistryType.register(SlashRef.MODID, "currency", 50, ExileCurrency.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType BOSS_ARENA = ExileRegistryType.register(SlashRef.MODID, "boss_arena", 51, BossArena.SERIALIZER, SyncTime.NEVER);
     public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 

@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.main;
+package com.robertx22.orbs_of_crafting.misc;
 
 import net.minecraft.world.item.ItemStack;
 

@@ -101,9 +101,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.UBER_BOSS, ""));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SPAWNED_MOBS, UNKNOWN_ID));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.OMEN, ""));
-        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ITEM_MOD, ""));
-        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ITEM_REQ, ""));
-        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.CURRENCY, "socket_adder"));
+
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.BOSS_ARENA, "sandstone"));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ORB_EXTEND, ExtendedOrbs.DEFAULT));
 

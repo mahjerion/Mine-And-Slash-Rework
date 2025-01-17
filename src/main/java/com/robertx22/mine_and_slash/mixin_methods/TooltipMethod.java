@@ -1,9 +1,8 @@
 package com.robertx22.mine_and_slash.mixin_methods;
 
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
-import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.mixin_ducks.tooltip.ItemTooltip;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;
@@ -15,6 +14,7 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.INeedsNBT;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

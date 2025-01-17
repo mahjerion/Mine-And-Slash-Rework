@@ -8,16 +8,16 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.library_of_exile.registry.helpers.*;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.orbs_of_crafting.keys.*;
-import com.robertx22.orbs_of_crafting.main.ShapedRecipeUTIL;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.ShapedRecipeUTIL;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import com.robertx22.orbs_of_crafting.register.Modifications;
 import com.robertx22.orbs_of_crafting.register.Requirements;
 import net.minecraft.world.item.Item;
@@ -52,7 +52,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                     new NamedKey(SlotTags.dodge_stat.GUID(), "Dodge")
             ))
             .build((id, info) -> {
-                return ExileCurrency.Builder.of(id, info.name + "-Gear Soul Modifier", WorksOnBlock.ItemType.SOUL)
+                return ExileCurrency.Builder.of(id, info.name + "-Gear Soul Modifier", ItemReqs.INSTANCE.IS_GEAR)
                         .rarity(IRarity.UNCOMMON)
                         .addRequirement(Requirements.INSTANCE.IS_SINGLE_ITEM)
                         .addAlwaysUseModification(ItemMods.INSTANCE.FORCE_SOUL_TAG.get(info))
@@ -64,7 +64,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKeyMap<ExileCurrency, SkillItemTierKey> SHARPEN_STONE_QUALITY = new ExileKeyMap<ExileCurrency, SkillItemTierKey>(this, "sharpening_stone")
             .ofList(ExileKeyUtil.ofSkillItemTiers())
             .build((id, info) -> {
-                return ExileCurrency.Builder.of(id, info.tier.word + " Sharpening Stone", WorksOnBlock.ItemType.GEAR)
+                return ExileCurrency.Builder.of(id, info.tier.word + " Sharpening Stone", ItemReqs.INSTANCE.IS_GEAR)
                         .rarity(info.tier.rar)
                         .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
                         .addAlwaysUseModification(ItemMods.INSTANCE.SHARPEN_STONE_QUALITY.get(info))
@@ -75,7 +75,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             });
 
 
-    public ExileKey<ExileCurrency, IdKey> CORRUPT_GEAR = ExileCurrency.Builder.of("chaos_orb", "Orb of Chaos", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> CORRUPT_GEAR = ExileCurrency.Builder.of("chaos_orb", "Orb of Chaos", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .rarity(IRarity.UNIQUE_ID)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR, 75)
@@ -84,7 +84,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(1000)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> LEVEL_GEAR = ExileCurrency.Builder.of("level_up_orb", "Orb of Infinity", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> LEVEL_GEAR = ExileCurrency.Builder.of("level_up_orb", "Orb of Infinity", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .rarity(IRarity.UNCOMMON)
             .addRequirement(ItemReqs.INSTANCE.LEVEL_NOT_MAX)
@@ -94,7 +94,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(1000)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> ADD_SOCKET = ExileCurrency.Builder.of("socket_adder", "Orb of Digging", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> ADD_SOCKET = ExileCurrency.Builder.of("socket_adder", "Orb of Digging", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.CAN_ADD_SOCKETS)
             .rarity(IRarity.RARE_ID)
@@ -104,7 +104,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(1000)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> UNIQUE_STAT_REROLL = ExileCurrency.Builder.of("unique_reroll", "Orb of Imperfection", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> UNIQUE_STAT_REROLL = ExileCurrency.Builder.of("unique_reroll", "Orb of Imperfection", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.map.get(new RarityKeyInfo(IRarity.UNIQUE_ID)))
@@ -114,7 +114,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.UBER)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_common_reroll", "Orb of New Beginnings", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_common_reroll", "Orb of New Beginnings", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
@@ -123,7 +123,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX_TO_MYTHIC = ExileCurrency.Builder.of("affix_random_mythic_reroll", "Orb of Divine Benevolence", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX_TO_MYTHIC = ExileCurrency.Builder.of("affix_random_mythic_reroll", "Orb of Divine Benevolence", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.MYTHIC_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
@@ -135,7 +135,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.MEGA_UBER)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> UPGRADE_OR_DOWNGRADE_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_tier_up_down", "Orb of Imbalance", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> UPGRADE_OR_DOWNGRADE_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_tier_up_down", "Orb of Imbalance", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
@@ -145,7 +145,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> UPGRADE_QUALITY = ExileCurrency.Builder.of("orb_of_quality", "Orb of Quality", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> UPGRADE_QUALITY = ExileCurrency.Builder.of("orb_of_quality", "Orb of Quality", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.UNDER_20_QUALITY)
             .rarity(IRarity.UNCOMMON)
@@ -154,7 +154,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> REROLL_INFUSION = ExileCurrency.Builder.of("enchant_reroll", "Orb of Second Guessing", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> REROLL_INFUSION = ExileCurrency.Builder.of("enchant_reroll", "Orb of Second Guessing", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.HAS_INFUSION)
             .rarity(IRarity.UNCOMMON)
@@ -176,7 +176,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
  */
 
 
-    public ExileKey<ExileCurrency, IdKey> UPGRADE_COMMON_AFFIX = ExileCurrency.Builder.of("upgrade_common_affix", "Orb of Fledgling's Reprieve", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> UPGRADE_COMMON_AFFIX = ExileCurrency.Builder.of("upgrade_common_affix", "Orb of Fledgling's Reprieve", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIX_OF_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
@@ -185,7 +185,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
-    public ExileKey<ExileCurrency, IdKey> REROLL_AFFIX_NUMBERS = ExileCurrency.Builder.of("affix_number_reroll", "Orb of Ciphers", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> REROLL_AFFIX_NUMBERS = ExileCurrency.Builder.of("affix_number_reroll", "Orb of Ciphers", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
@@ -195,7 +195,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .build(this);
 
     public ExileKey<ExileCurrency, IdKey> UPGRADE_CORRUPTION_AFFIX = ExileCurrency.Builder.of("up_corrupt_affix", "Orb of Foolish Risk",
-                    WorksOnBlock.ItemType.GEAR, WorksOnBlock.ItemType.JEWEL)
+                    ItemReqs.INSTANCE.IS_GEAR, ItemReqs.INSTANCE.IS_JEWEL)
             .rarity(IRarity.EPIC_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_CORRUPTION_AFFIXES)
             .addModification(ItemMods.INSTANCE.UPGRADE_CORRUPTION_AFFIX_RARITY, 90)
@@ -205,7 +205,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .build(this);
 
     public ExileKey<ExileCurrency, IdKey> EXTRACT_GEM = ExileCurrency.Builder.of("extract_gem", "Gem Extractor",
-                    WorksOnBlock.ItemType.GEAR)
+                    ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.UNCOMMON)
             .addRequirement(ItemReqs.INSTANCE.HAS_GEM_SOCKETED)
             .addAlwaysUseModification(ItemMods.INSTANCE.EXTRACT_GEM)
@@ -214,7 +214,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .build(this);
 
     public ExileKey<ExileCurrency, IdKey> EXTRACT_RUNE = ExileCurrency.Builder.of("extract_rune", "Rune Extractor",
-                    WorksOnBlock.ItemType.GEAR)
+                    ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.UNCOMMON)
             .addRequirement(ItemReqs.INSTANCE.HAS_RUNE_SOCKETED)
             .addAlwaysUseModification(ItemMods.INSTANCE.EXTRACT_RUNE)
@@ -238,7 +238,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
          */
 
-        EXTRACT_GEM.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        EXTRACT_GEM.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 3)
                     .define('X', Items.GOLD_INGOT)
                     .define('Y', Items.STICK)
@@ -247,7 +247,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                     .pattern(" Y ");
         });
 
-        EXTRACT_RUNE.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        EXTRACT_RUNE.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 3)
                     .define('X', Items.DIAMOND)
                     .define('Y', Items.STICK)
@@ -267,7 +267,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                 item = Items.LEATHER;
             }
             Item finalItem = item;
-            en.getValue().addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+            en.getValue().addRecipe(OrbDatabase.CURRENCY, x -> {
                 return ShapedRecipeUTIL.of(x.getItem(), 1)
                         .define('X', finalItem)
                         .define('Y', Items.IRON_INGOT)

@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.vanilla_mc.items.crates.gem_crate;
 
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.utils.SoundUtils;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
 import com.robertx22.mine_and_slash.database.data.runes.Rune;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -16,6 +15,8 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TierColors;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -80,11 +81,11 @@ public class LootCrateItem extends Item implements IGUID {
                             .random();
                     reward = new ItemStack(rune.getItem());
                 } else if (data.type == LootType.Currency) {
-                    ExileCurrency currency = ExileDB.Currency()
+                    ExileCurrency currency = OrbDatabase.Currency()
                             .getFilterWrapped(x -> true)
                             .random();
                     if (currency == null) {
-                        currency = ExileDB.Currency().random();
+                        currency = OrbDatabase.Currency().random();
                     }
                     reward = new ItemStack(currency.getItem());
                 }

@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.main;
+package com.robertx22.orbs_of_crafting.misc;
 
 import net.minecraft.advancements.critereon.EnchantedItemTrigger;
 import net.minecraft.data.recipes.RecipeCategory;

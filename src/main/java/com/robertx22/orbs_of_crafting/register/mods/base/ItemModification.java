@@ -5,11 +5,11 @@ import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializer;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializers;
 import com.robertx22.orbs_of_crafting.custom_ser.GsonCustomSer;
-import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.StackHolder;
 import com.robertx22.orbs_of_crafting.register.mods.DestroyItemMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
@@ -79,7 +79,7 @@ public abstract class ItemModification implements JsonExileRegistry<ItemModifica
 
     @Override
     public ExileRegistryType getExileRegistryType() {
-        return ExileRegistryTypes.ITEM_MOD;
+        return OrbDatabase.ITEM_MOD;
     }
 
 

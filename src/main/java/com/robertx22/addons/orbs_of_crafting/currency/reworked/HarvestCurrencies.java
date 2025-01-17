@@ -5,18 +5,18 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.library_of_exile.registry.helpers.ExileKey;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolderSection;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyMap;
+import com.robertx22.library_of_exile.registry.helpers.IdKey;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mechanics.harvest.HarvestItems;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.orbs_of_crafting.keys.ExileKey;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyHolderSection;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyMap;
-import com.robertx22.orbs_of_crafting.keys.IdKey;
-import com.robertx22.orbs_of_crafting.main.ShapedRecipeUTIL;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.ShapedRecipeUTIL;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import com.robertx22.orbs_of_crafting.register.Modifications;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.world.item.Items;
@@ -35,7 +35,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
     public ExileKeyMap<ExileCurrency, SkillItemTierKey> HARVEST_ESSENCE = new ExileKeyMap<ExileCurrency, SkillItemTierKey>(get(), "harvest_essence")
             .ofList(Arrays.stream(SkillItemTier.values()).toList().stream().filter(x -> x != SkillItemTier.TIER5).map(x -> new SkillItemTierKey(x)).collect(Collectors.toList()))
             .build((id, info) -> {
-                return ExileCurrency.Builder.of(id, "Harvested " + info.tier.word + " Essence", WorksOnBlock.ItemType.GEAR)
+                return ExileCurrency.Builder.of(id, "Harvested " + info.tier.word + " Essence", ItemReqs.INSTANCE.IS_GEAR)
                         .rarity(info.tier.rar)
                         .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
                         .addRequirement(ItemReqs.INSTANCE.NOT_CRAFTED)
@@ -48,7 +48,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                         .buildCurrency(get());
             });
 
-    public ExileKey<ExileCurrency, IdKey> HARVEST_AFFIX_UPGRADE = ExileCurrency.Builder.of("entangled_affix_upgrade", "Entangled Orb of Upgrade", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> HARVEST_AFFIX_UPGRADE = ExileCurrency.Builder.of("entangled_affix_upgrade", "Entangled Orb of Upgrade", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
@@ -60,7 +60,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .build(get());
 
 
-    public ExileKey<ExileCurrency, IdKey> HARVEST_POTENTIAL_UPGRADE = ExileCurrency.Builder.of("entangled_potential", "Entangled Orb of Potential", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> HARVEST_POTENTIAL_UPGRADE = ExileCurrency.Builder.of("entangled_potential", "Entangled Orb of Potential", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addModification(ItemMods.INSTANCE.ADD_25_POTENTIAL, 75)
@@ -71,7 +71,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .build(get());
 
 
-    public ExileKey<ExileCurrency, IdKey> HARVEST_QUALITY = ExileCurrency.Builder.of("entangled_quality", "Entangled Orb of Quality", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> HARVEST_QUALITY = ExileCurrency.Builder.of("entangled_quality", "Entangled Orb of Quality", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.UNDER_21_QUALITY)
@@ -82,7 +82,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
             .build(get());
 
-    public ExileKey<ExileCurrency, IdKey> HARVEST_UNIQUE_STATS = ExileCurrency.Builder.of("entangled_unique_reroll", "Entangled Orb of Imperfection", WorksOnBlock.ItemType.GEAR)
+    public ExileKey<ExileCurrency, IdKey> HARVEST_UNIQUE_STATS = ExileCurrency.Builder.of("entangled_unique_reroll", "Entangled Orb of Imperfection", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.UNIQUE_ID)))
@@ -98,7 +98,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
 
 
         for (Map.Entry<SkillItemTierKey, ExileKey<ExileCurrency, SkillItemTierKey>> en : HARVEST_ESSENCE.map.entrySet()) {
-            en.getValue().addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+            en.getValue().addRecipe(OrbDatabase.CURRENCY, x -> {
                 return ShapedRecipeUTIL.of(x.getItem(), 1)
                         .define('X', HARVEST_AFFIX_UPGRADE.getItem())
                         .define('Y', RarityItems.RARITY_STONE.get(x.info.tier.higherTier().rar).get())
@@ -109,7 +109,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
         }
 
 
-        HARVEST_AFFIX_UPGRADE.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        HARVEST_AFFIX_UPGRADE.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 1)
                     .define('X', Items.IRON_INGOT)
                     .define('Y', HarvestItems.BLUE_INGOT.get())
@@ -118,7 +118,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                     .pattern("YYY");
         });
 
-        HARVEST_POTENTIAL_UPGRADE.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        HARVEST_POTENTIAL_UPGRADE.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 1)
                     .define('X', Items.GOLD_INGOT)
                     .define('Y', HarvestItems.PURPLE_INGOT.get())
@@ -126,7 +126,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                     .pattern("YXY")
                     .pattern("YYY");
         });
-        HARVEST_QUALITY.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        HARVEST_QUALITY.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 1)
                     .define('X', Items.DIAMOND)
                     .define('Y', HarvestItems.GREEN_INGOT.get())
@@ -135,7 +135,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                     .pattern("YYY");
         });
 
-        HARVEST_UNIQUE_STATS.addRecipe(ExileRegistryTypes.CURRENCY, x -> {
+        HARVEST_UNIQUE_STATS.addRecipe(OrbDatabase.CURRENCY, x -> {
             return ShapedRecipeUTIL.of(x.getItem(), 1)
                     .define('X', Items.DIAMOND_BLOCK)
                     .define('Y', HarvestItems.PURPLE_INGOT.get())

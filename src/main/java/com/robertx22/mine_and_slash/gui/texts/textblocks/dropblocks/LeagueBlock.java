@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks;
 
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanic;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.AbstractTextBlock;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

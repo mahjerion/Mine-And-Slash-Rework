@@ -1,12 +1,12 @@
 package com.robertx22.addons.orbs_of_crafting.currency.base;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.IAutoModel;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ItemModelManager;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IRarityItem;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ItemModelManager;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ModelHelper;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
@@ -15,7 +16,6 @@ import com.robertx22.mine_and_slash.gui.texts.textblocks.affixdatablocks.SimpleI
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.ProfessionDropSourceBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.CraftedRarity;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.ModRange;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;

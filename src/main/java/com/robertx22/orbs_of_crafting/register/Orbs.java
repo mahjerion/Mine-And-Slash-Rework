@@ -1,15 +1,14 @@
 package com.robertx22.orbs_of_crafting.register;
 
 import com.robertx22.addons.orbs_of_crafting.currency.base.ExileCurrencyItem;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.SlashDeferred;
-import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
 
 public class Orbs extends ExileKeyHolder<ExileCurrency> {
 

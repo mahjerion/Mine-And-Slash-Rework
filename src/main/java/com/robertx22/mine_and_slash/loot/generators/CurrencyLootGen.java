@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.ItemBlueprint;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.LootType;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.world.item.ItemStack;
 
 public class CurrencyLootGen extends BaseLootGen<ItemBlueprint> {
@@ -33,7 +33,7 @@ public class CurrencyLootGen extends BaseLootGen<ItemBlueprint> {
     @Override
     public ItemStack generateOne() {
 
-        ExileCurrency currency = ExileDB.Currency()
+        ExileCurrency currency = OrbDatabase.Currency()
                 .getFilterWrapped(x -> x.drop_req.canDropInLeague(info.league, info.level))
                 .random();
 

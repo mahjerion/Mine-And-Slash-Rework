@@ -8,9 +8,9 @@ import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
-import com.robertx22.orbs_of_crafting.main.LocReqContext;
-import com.robertx22.orbs_of_crafting.main.ModifyResult;
-import com.robertx22.orbs_of_crafting.main.ResultItem;
+import com.robertx22.orbs_of_crafting.misc.LocReqContext;
+import com.robertx22.orbs_of_crafting.misc.ModifyResult;
+import com.robertx22.orbs_of_crafting.misc.ResultItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 

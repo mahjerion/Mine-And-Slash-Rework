@@ -4,7 +4,6 @@ import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AttributeStat;
@@ -13,6 +12,7 @@ import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
 import com.robertx22.mine_and_slash.uncommon.error_checks.base.ErrorChecks;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.Cached;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.TellClientResetCaches;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 

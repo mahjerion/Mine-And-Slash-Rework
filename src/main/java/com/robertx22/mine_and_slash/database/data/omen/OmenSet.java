@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.omen;
 
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.AffixData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -29,7 +29,7 @@ public class OmenSet {
         for (Integer num : data.rarities.values()) {
             max += num;
         }
-      
+
         int index = max;
 
 

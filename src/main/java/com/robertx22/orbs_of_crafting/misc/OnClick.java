@@ -1,8 +1,8 @@
-package com.robertx22.orbs_of_crafting.main;
+package com.robertx22.orbs_of_crafting.misc;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;

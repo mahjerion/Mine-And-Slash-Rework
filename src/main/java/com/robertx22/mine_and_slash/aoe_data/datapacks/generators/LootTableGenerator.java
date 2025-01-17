@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.aoe_data.datapacks.generators;
 
 import com.google.gson.Gson;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.GemItems;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RuneItems;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -93,7 +93,7 @@ public class LootTableGenerator {
         LootPool.Builder curLoot = LootPool.lootPool();
         curLoot.setRolls(UniformGenerator.between(1, 3));
 
-        for (ExileCurrency x : ExileDB.Currency().getList()) {
+        for (ExileCurrency x : OrbDatabase.Currency().getList()) {
             curLoot.add(LootItem.lootTableItem(x.getItem()).setWeight(x.Weight()));
         }
         currencies.withPool(curLoot);

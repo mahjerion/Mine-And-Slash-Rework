@@ -13,12 +13,12 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.library_of_exile.registry.helpers.*;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.orbs_of_crafting.keys.*;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
         super(modRegisterInfo);
     }
 
- 
+
     public ExileKeyMap<ItemModification, SkillItemTierKey> SHARPEN_STONE_QUALITY = new ExileKeyMap<ItemModification, SkillItemTierKey>(this, "sharpening_stone_quality")
             .ofList(ExileKeyUtil.ofSkillItemTiers())
             .build((id, info) -> {

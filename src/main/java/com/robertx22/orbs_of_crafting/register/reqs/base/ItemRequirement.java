@@ -6,11 +6,11 @@ import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.library_of_exile.registry.register_info.ExileRegistrationInfo;
-import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializer;
 import com.robertx22.orbs_of_crafting.custom_ser.CustomSerializers;
 import com.robertx22.orbs_of_crafting.custom_ser.GsonCustomSer;
-import com.robertx22.orbs_of_crafting.main.StackHolder;
+import com.robertx22.orbs_of_crafting.main.OrbDatabase;
+import com.robertx22.orbs_of_crafting.misc.StackHolder;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 
@@ -55,7 +55,7 @@ public abstract class ItemRequirement implements JsonExileRegistry<ItemRequireme
 
     @Override
     public ExileRegistryType getExileRegistryType() {
-        return ExileRegistryTypes.ITEM_REQ;
+        return OrbDatabase.ITEM_REQ;
     }
 
 

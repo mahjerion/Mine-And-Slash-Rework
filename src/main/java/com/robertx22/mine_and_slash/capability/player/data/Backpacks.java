@@ -1,16 +1,16 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
 import com.robertx22.mine_and_slash.capability.player.helper.BackpackInventory;
-import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;

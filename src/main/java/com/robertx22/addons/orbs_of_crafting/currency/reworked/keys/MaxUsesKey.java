@@ -1,10 +1,10 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked.keys;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
-import com.robertx22.orbs_of_crafting.keys.KeyInfo;
+import com.robertx22.library_of_exile.registry.helpers.KeyInfo;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 
 import java.util.function.Consumer;
 

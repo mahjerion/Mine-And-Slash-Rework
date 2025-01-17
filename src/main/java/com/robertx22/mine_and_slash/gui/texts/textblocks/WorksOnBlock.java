@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.gui.texts.textblocks;
 
+import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
-import com.robertx22.mine_and_slash.mmorpg.UNICODE;
 import com.robertx22.mine_and_slash.saveclasses.stat_soul.StatSoulData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
@@ -144,7 +144,7 @@ public class WorksOnBlock extends AbstractTextBlock {
     public enum ItemType {
         ANY(Words.ANY_ITEM, Words.ANY_ITEM, x -> true),
         GEAR(Words.Gear, Words.Gear_DESC, x -> StackSaving.GEARS.has(x)),
-        TOOL(Words.TOOL, Words.TOOL_DESC, x -> StackSaving.TOOL.has(x)),
+        //TOOL(Words.TOOL, Words.TOOL_DESC, x -> StackSaving.TOOL.has(x)),
         JEWEL(Words.Jewel, Words.Jewel_DESC, x -> StackSaving.JEWEL.has(x)),
         MAP(Words.Map, Words.MapDESC, x -> StackSaving.MAP.has(x)),
         SOUL(Words.Soul, Words.GEAR_SOUL_DESC, x -> StatSoulData.has(x)),
@@ -160,6 +160,6 @@ public class WorksOnBlock extends AbstractTextBlock {
             this.desc = desc;
             this.worksOn = worksOn;
         }
-        
+
     }
 }

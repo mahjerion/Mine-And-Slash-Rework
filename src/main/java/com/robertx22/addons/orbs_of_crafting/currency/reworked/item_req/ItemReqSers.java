@@ -22,5 +22,8 @@ public class ItemReqSers {
     public static String HAS_NO_ENCHANTS = "has_no_enchants";
     public static String VANILLA_CONDITION = "vanilla_condition";
     public static String IS_DAMAGED = "is_damaged";
+    public static String IS_GEAR = "is_gear";
+    public static String IS_JEWEL = "is_jewel";
+    public static String IS_SOUL = "is_soul";
 
 }

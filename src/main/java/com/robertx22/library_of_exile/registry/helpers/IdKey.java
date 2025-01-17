@@ -1,4 +1,4 @@
-package com.robertx22.orbs_of_crafting.keys;
+package com.robertx22.library_of_exile.registry.helpers;
 
 public class IdKey extends KeyInfo {
 

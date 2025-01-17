@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data.database.stats.base;
 
 import com.robertx22.library_of_exile.registry.IGUID;
+import com.robertx22.library_of_exile.util.AutoHashClass;
 
 public class EmptyAccessor extends AutoHashClass implements IGUID {
     public static EmptyAccessor INSTANCE = new EmptyAccessor();

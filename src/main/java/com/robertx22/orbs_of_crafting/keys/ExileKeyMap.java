@@ -43,12 +43,16 @@ public class ExileKeyMap<T extends ExileRegistry<T>, Info extends KeyInfo> {
         return this;
     }
 
-  
-    public ExileKeyMap<T, Info> build(BiFunction<String, Info, T> classMaker) {
+
+    private void b(BiFunction<String, Info, T> classMaker) {
         for (Info info : all) {
             var key = new ExileKey<>(holder, info, classMaker, idMaker.apply(info));
             map.put(info, key);
         }
+    }
+
+    public ExileKeyMap<T, Info> build(BiFunction<String, Info, T> classMaker) {
+        b(classMaker);
         return this;
     }
 }

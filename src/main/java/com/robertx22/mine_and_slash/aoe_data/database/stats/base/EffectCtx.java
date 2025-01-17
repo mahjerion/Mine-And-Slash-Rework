@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data.database.stats.base;
 
+import com.robertx22.library_of_exile.registry.IGUID;
+import com.robertx22.library_of_exile.util.AutoHashClass;
 import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEffects;
 import com.robertx22.mine_and_slash.database.data.exile_effects.EffectType;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
@@ -7,7 +9,6 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
-import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 

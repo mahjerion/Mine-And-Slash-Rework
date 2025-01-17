@@ -1,5 +1,7 @@
 package com.robertx22.orbs_of_crafting.register;
 
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.orbs_of_crafting.keys.ExileKey;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
 import com.robertx22.orbs_of_crafting.keys.KeyInfo;
@@ -11,7 +13,13 @@ import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunctio
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 public class Modifications extends ExileKeyHolder<ItemModification> {
-    public static Modifications INSTANCE = new Modifications();
+    public Modifications(ModRequiredRegisterInfo modRegisterInfo) {
+        super(modRegisterInfo);
+    }
+
+
+    public static Modifications INSTANCE = new Modifications(MMORPG.REGISTER_INFO);
+
     public ExileKey<ItemModification, KeyInfo> DESTROY_ITEM = ExileKey.ofId(this, "destroy_item", x -> new DestroyItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> DO_NOTHING = ExileKey.ofId(this, "do_nothing", x -> new DoNothingItemMod(x.GUID()));
 

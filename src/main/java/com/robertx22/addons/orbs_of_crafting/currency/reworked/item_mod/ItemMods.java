@@ -13,7 +13,9 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.database.data.MinMax;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.keys.*;
@@ -24,8 +26,13 @@ import java.util.Arrays;
 // i think i like this way of registering. one liner, holds id and lazy supplier for when needs to register
 public class ItemMods extends ExileKeyHolder<ItemModification> {
 
-    public static ItemMods INSTANCE = new ItemMods();
+    public static ItemMods INSTANCE = new ItemMods(MMORPG.REGISTER_INFO);
 
+    public ItemMods(ModRequiredRegisterInfo modRegisterInfo) {
+        super(modRegisterInfo);
+    }
+
+ 
     public ExileKeyMap<ItemModification, SkillItemTierKey> SHARPEN_STONE_QUALITY = new ExileKeyMap<ItemModification, SkillItemTierKey>(this, "sharpening_stone_quality")
             .ofList(ExileKeyUtil.ofSkillItemTiers())
             .build((id, info) -> {

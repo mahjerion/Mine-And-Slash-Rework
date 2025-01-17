@@ -1,10 +1,11 @@
 package com.robertx22.mine_and_slash.aoe_data.database.stats.base;
 
+import com.robertx22.library_of_exile.registry.IGUID;
+import com.robertx22.library_of_exile.util.AutoHashClass;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatConditions;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
-import com.robertx22.library_of_exile.registry.IGUID;
 
 import java.util.Arrays;
 import java.util.List;

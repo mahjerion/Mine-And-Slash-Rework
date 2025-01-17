@@ -7,8 +7,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
-import com.robertx22.mine_and_slash.mmorpg.MMORPG;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Item;
 
@@ -23,6 +22,7 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
     ExileKeyHolder holder;
     String id;
     RegObj<Item> item = null;
+    ModRequiredRegisterInfo modRegisterInfo;
 
 
     private boolean cancelItemCreation = false;
@@ -31,6 +31,7 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
     public ExileKey(ExileKeyHolder holder, Info info, BiFunction<String, Info, T> sup, String id) {
         this.holder = holder;
         this.info = info;
+        this.modRegisterInfo = holder.modRegisterInfo;
         this.sup = sup;
         this.id = id;
 
@@ -51,7 +52,7 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
 
 
     public ExileKey<T, Info> addRecipe(ExileRegistryType type, Function<ExileKey<T, Info>, ShapedRecipeBuilder> b) {
-        RecipeGenerator.addRecipe(SlashRef.MODID, () -> {
+        RecipeGenerator.addRecipe(modRegisterInfo.modid, () -> {
             return b.apply(this);
         });
         return this;
@@ -67,22 +68,22 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
     }
 
 
-    public static <T extends ExileRegistry<T>, Info extends KeyInfo> ExileKey<T, Info> ofId(ExileKeyHolder holder, String id, Function<Info, T> sup) {
-        return new ExileKey<>(holder, (Info) new IdKey(id), (s, info) -> sup.apply(info), id);
-    }
-
     @Override
     public String GUID() {
         return id;
+    }
+
+    public static <T extends ExileRegistry<T>, Info extends KeyInfo> ExileKey<T, Info> ofId(ExileKeyHolder holder, String id, Function<Info, T> sup) {
+        return new ExileKey<>(holder, (Info) new IdKey(id), (s, info) -> sup.apply(info), id);
     }
 
     public void register() {
         obj = sup.apply(id, info);
 
         if (obj instanceof JsonExileRegistry<?> j) {
-            j.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+            j.addToSerializables(modRegisterInfo.ser);
         } else {
-            obj.registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+            obj.registerToExileRegistry(modRegisterInfo.hard);
         }
     }
 }

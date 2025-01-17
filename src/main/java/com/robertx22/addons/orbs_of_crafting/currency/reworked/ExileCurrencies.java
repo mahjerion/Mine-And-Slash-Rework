@@ -8,8 +8,10 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
@@ -27,7 +29,11 @@ import java.util.Map;
 
 public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
-    public static ExileCurrencies INSTANCE = (ExileCurrencies) new ExileCurrencies()
+    public ExileCurrencies(ModRequiredRegisterInfo modRegisterInfo) {
+        super(modRegisterInfo);
+    }
+
+    public static ExileCurrencies INSTANCE = (ExileCurrencies) new ExileCurrencies(MMORPG.REGISTER_INFO)
             // todo is this a good way to check? I'm thinking note 1 layer of dep
             .itemIds(new ItemIdProvider(x -> SlashRef.id("currency/" + x)))
             .createItems(new ItemCreator<ExileCurrency>(x -> new ExileCurrencyItem(x.get())), x -> Def.item(x.itemID(), x.item()))

@@ -3,6 +3,7 @@ package com.robertx22.orbs_of_crafting.keys;
 import com.google.common.base.Preconditions;
 import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.library_of_exile.registry.ExileRegistry;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -18,6 +19,10 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
 
     public List<ExileKeyHolderSection> sections = new ArrayList<>();
 
+    public ExileKeyHolder(ModRequiredRegisterInfo modRegisterInfo) {
+        this.modRegisterInfo = modRegisterInfo;
+    }
+
     public static class ItemIdProvider {
 
         Function<String, ResourceLocation> itemIdMaker = null;
@@ -28,6 +33,9 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
         }
     }
 
+    public ModRequiredRegisterInfo modRegisterInfo;
+
+    
     public static record ItemRegistratorData(String itemID, Supplier<Item> item) {
     }
 

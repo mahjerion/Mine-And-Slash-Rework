@@ -10,6 +10,8 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.jewel.Je
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.map.MapHasHigherRarityReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.keys.ExileKey;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
@@ -24,6 +26,10 @@ import java.util.List;
 
 // todo add a has x rarity affix
 public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
+    public ItemReqs(ModRequiredRegisterInfo modRegisterInfo) {
+        super(modRegisterInfo);
+    }
+
 
     public static class Datas {
 
@@ -37,7 +43,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
         }
     }
 
-    public static ItemReqs INSTANCE = new ItemReqs();
+    public static ItemReqs INSTANCE = new ItemReqs(MMORPG.REGISTER_INFO);
 
     public ExileKeyMap<ItemRequirement, RarityKeyInfo> IS_RARITY = new ExileKeyMap<ItemRequirement, RarityKeyInfo>(this, "is")
             .ofList(ExileKeyUtil.ofGearRarities())

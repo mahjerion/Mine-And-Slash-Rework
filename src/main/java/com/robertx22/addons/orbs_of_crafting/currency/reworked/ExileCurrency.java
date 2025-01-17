@@ -388,9 +388,12 @@ public class ExileCurrency implements IAutoLocName, IAutoGson<ExileCurrency>, Js
 
 
         public ExileKey<ExileCurrency, IdKey> build(ExileKeyHolder<ExileCurrency> holder) {
-            return new ExileKey<>(holder, new IdKey(id), (x, y) -> {
+            return new ExileKey<>(holder, new IdKey(id), (x, y) -> this.buildCurrency(holder), id);
+            /*
+            return new MnsKey<>(holder, new IdKey(id), (x, y) -> {
                 return buildCurrency(holder);
             }, id);
+             */
         }
 
         public ExileCurrency buildCurrency(ExileKeyHolder<ExileCurrency> holder) {

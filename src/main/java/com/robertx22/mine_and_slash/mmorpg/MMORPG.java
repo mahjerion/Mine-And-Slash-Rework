@@ -10,6 +10,7 @@ import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.localization.ExileLangFile;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.register_info.HardcodedRegistration;
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.library_of_exile.registry.register_info.SeriazableRegistration;
 import com.robertx22.library_of_exile.registry.util.ExileRegistryUtil;
 import com.robertx22.library_of_exile.utils.Watch;
@@ -94,6 +95,7 @@ public class MMORPG {
     public static SeriazableRegistration SERIAZABLE_REGISTRATION_INFO = new SeriazableRegistration(SlashRef.MODID);
     public static HardcodedRegistration HARDCODED_REGISTRATION_INFO = new HardcodedRegistration(SlashRef.MODID);
 
+    public static ModRequiredRegisterInfo REGISTER_INFO = new ModRequiredRegisterInfo(SlashRef.MODID);
 
     public static String formatNumber(float num) {
 

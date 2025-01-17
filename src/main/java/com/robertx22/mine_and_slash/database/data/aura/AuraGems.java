@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.database.data.aura;
 
+import com.robertx22.library_of_exile.util.AutoHashClass;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
-import com.robertx22.mine_and_slash.aoe_data.database.stats.base.AutoHashClass;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.stats.effects.defense.MaxElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentChance;

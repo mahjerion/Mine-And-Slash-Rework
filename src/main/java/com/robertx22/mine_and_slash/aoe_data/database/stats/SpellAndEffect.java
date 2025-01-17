@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.aoe_data.database.stats;
 
-import com.robertx22.mine_and_slash.aoe_data.database.stats.base.AutoHashClass;
+import com.robertx22.library_of_exile.util.AutoHashClass;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 
 import java.util.Objects;

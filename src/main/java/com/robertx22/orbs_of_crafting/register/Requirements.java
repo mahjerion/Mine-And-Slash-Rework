@@ -1,5 +1,7 @@
 package com.robertx22.orbs_of_crafting.register;
 
+import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.orbs_of_crafting.keys.ExileKey;
 import com.robertx22.orbs_of_crafting.keys.ExileKeyHolder;
 import com.robertx22.orbs_of_crafting.keys.KeyInfo;
@@ -13,7 +15,13 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 
 public class Requirements extends ExileKeyHolder<ItemRequirement> {
-    public static Requirements INSTANCE = new Requirements();
+    public static Requirements INSTANCE = new Requirements(MMORPG.REGISTER_INFO);
+
+    public Requirements(ModRequiredRegisterInfo modRegisterInfo) {
+        super(modRegisterInfo);
+    }
+
+
     //vanilla
     public ExileKey<ItemRequirement, KeyInfo> IS_SINGLE_ITEM = ExileKey.ofId(this, "is_single_item", x -> new IsSingleStack(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_DAMAGED = ExileKey.ofId(this, "is_damaged", x -> new IsDamagedReq(x.GUID()));

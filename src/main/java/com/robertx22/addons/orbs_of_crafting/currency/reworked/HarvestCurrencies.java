@@ -1,6 +1,7 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked;
 
 import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInfo;
@@ -12,6 +13,7 @@ import com.robertx22.library_of_exile.registry.helpers.IdKey;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mechanics.harvest.HarvestItems;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.main.OrbDatabase;
@@ -32,9 +34,16 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
         super(holder);
     }
 
+    public static void harvestOnlyDrop(String id) {
+        new ExtendedOrb(id, DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build()).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+    }
+
     public ExileKeyMap<ExileCurrency, SkillItemTierKey> HARVEST_ESSENCE = new ExileKeyMap<ExileCurrency, SkillItemTierKey>(get(), "harvest_essence")
             .ofList(Arrays.stream(SkillItemTier.values()).toList().stream().filter(x -> x != SkillItemTier.TIER5).map(x -> new SkillItemTierKey(x)).collect(Collectors.toList()))
             .build((id, info) -> {
+
+                harvestOnlyDrop(id);
+
                 return ExileCurrency.Builder.of(id, "Harvested " + info.tier.word + " Essence", ItemReqs.INSTANCE.IS_GEAR)
                         .rarity(info.tier.rar)
                         .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
@@ -44,7 +53,6 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                         .addModification(ItemMods.INSTANCE.UPGRADE_SPECIFIC_AFFIX_RARITY.get(new RarityKeyInfo(info.tier.rar)), 85)
                         .potentialCost(1)
                         .weight(5)
-                        .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
                         .buildCurrency(get());
             });
 
@@ -56,7 +64,6 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 50)
             .potentialCost(1)
             .weight(CodeCurrency.Weights.UBER)
-            .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
             .build(get());
 
 
@@ -67,7 +74,6 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 25)
             .potentialCost(0)
             .weight(CodeCurrency.Weights.UBER)
-            .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
             .build(get());
 
 
@@ -79,7 +85,6 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 25)
             .potentialCost(0)
             .weight(CodeCurrency.Weights.UBER)
-            .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> HARVEST_UNIQUE_STATS = ExileCurrency.Builder.of("entangled_unique_reroll", "Entangled Orb of Imperfection", ItemReqs.INSTANCE.IS_GEAR)
@@ -90,11 +95,15 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 70)
             .potentialCost(0)
             .weight(CodeCurrency.Weights.UBER)
-            .dropsOnlyIn(DropRequirement.Builder.of().setOnlyDropsInLeague(LeagueMechanics.HARVEST_ID).build())
             .build(get());
 
     @Override
     public void init() {
+
+        harvestOnlyDrop(HARVEST_UNIQUE_STATS.GUID());
+        harvestOnlyDrop(HARVEST_QUALITY.GUID());
+        harvestOnlyDrop(HARVEST_POTENTIAL_UPGRADE.GUID());
+        harvestOnlyDrop(HARVEST_AFFIX_UPGRADE.GUID());
 
 
         for (Map.Entry<SkillItemTierKey, ExileKey<ExileCurrency, SkillItemTierKey>> en : HARVEST_ESSENCE.map.entrySet()) {

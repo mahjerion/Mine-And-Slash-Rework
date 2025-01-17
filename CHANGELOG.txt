@@ -11,3 +11,4 @@ v.6.0.6
 - spectators now dont count as nearest players
 - messed with recipe gen code, report if any recipes are missing please
 - one of a kind should now work for effects
+- tp to caster spell action added

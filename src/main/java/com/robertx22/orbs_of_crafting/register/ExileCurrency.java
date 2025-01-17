@@ -11,17 +11,14 @@ import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.library_of_exile.registry.helpers.ExileKey;
 import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
 import com.robertx22.library_of_exile.registry.helpers.IdKey;
+import com.robertx22.library_of_exile.tooltip.CurrencyTooltip;
+import com.robertx22.library_of_exile.tooltip.TooltipBuilder;
+import com.robertx22.library_of_exile.tooltip.order.ExileTooltipPart;
+import com.robertx22.library_of_exile.tooltip.order.TooltipOrder;
 import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.AdditionalBlock;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.NameBlock;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.LeagueBlock;
-import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.wip.ExileCached;
@@ -43,7 +40,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -63,9 +63,9 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
     List<String> req = new ArrayList<>();
 
     // todo this needs some extension system..
-    String rar = IRarity.RARE_ID;
+    public String rar = IRarity.RARE_ID;
     // public List<WorksOnBlock.ItemType> item_type = new ArrayList<>(Arrays.asList(WorksOnBlock.ItemType.GEAR));
-    public DropRequirement drop_req = DropRequirement.Builder.of().build();
+    // public DropRequirement drop_req = DropRequirement.Builder.of().build();
 
     public List<String> item_type_requirement = new ArrayList<>();
 
@@ -189,24 +189,21 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
         return res;
     }
 
-    // todo this needs refactoring to work as a separate mod..
-    // either not use exiletips system or transfer exiletips to library + make it an event
-    // tooltip modifier register in library? so i can do: TooltipModifiers.CURRENCY.blabla( ... )
-    // so the tooltip is added only to currency tooltips
+
     public List<Component> getTooltip() {
 
-        ExileTooltips tip = new ExileTooltips();
 
-        tip.accept(new NameBlock(getTranslation(TranslationType.NAME).getTranslatedName().withStyle(ChatFormatting.BOLD)));
-        tip.accept(new RarityBlock(getRarity()));
-        tip.accept(new AdditionalBlock(() -> {
+        TooltipBuilder<CurrencyTooltip> b = new TooltipBuilder<>(new CurrencyTooltip(ItemStack.EMPTY, this));
+
+        b.add(x -> new ExileTooltipPart(TooltipOrder.FIRST, getTranslation(TranslationType.NAME).getTranslatedName().withStyle(ChatFormatting.BOLD)));
+        b.add(x -> {
             var list = new ArrayList<MutableComponent>();
             for (ItemRequirement req : getItemTypeRequirement()) {
                 list.add(req.getDescWithParams().withStyle(ChatFormatting.YELLOW));
             }
-            return list;
-        }));
-        tip.accept(new AdditionalBlock(() -> {
+            return new ExileTooltipPart(TooltipOrder.EARLY, list);
+        });
+        b.add(x -> {
             List<MutableComponent> all = new ArrayList<>();
 
             int totalWeight = this.pick_one_item_mod.stream().mapToInt(IWeighted::Weight).sum();
@@ -238,26 +235,24 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
                 var req = OrbDatabase.ItemReq().get(s);
                 all.add(Component.literal(UNICODE.ROTATED_CUBE + " ").append(req.getDescWithParams()).withStyle(ChatFormatting.LIGHT_PURPLE));
             }
-            return all;
-        }));
-
-        if (this.potential.potential_cost > 0) {
-            tip.accept(new AdditionalBlock(Collections.singletonList(OrbWords.POTENTIAL_COST.get(Component.literal("" + potential.potential_cost).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD))));
-        } else {
-            tip.accept(new AdditionalBlock(Collections.singletonList(OrbWords.NOT_A_POTENTIAL_CONSUMER.get().withStyle(ChatFormatting.GOLD))));
-        }
-        tip.accept(new AdditionalBlock(OrbWords.Currency.get().withStyle(ChatFormatting.GOLD)));
+            return new ExileTooltipPart(TooltipOrder.EARLY, all);
+        });
 
 
-        if (ExileDB.OrbExtension().isRegistered(GUID())) {
-            var req = ExileDB.OrbExtension().get(this.GUID());
-
-            if (req != null && req.drop_req.getLeague() != null) {
-                tip.accept(new LeagueBlock(req.drop_req.getLeague()));
+        b.add(x -> {
+            var list = new ArrayList<MutableComponent>();
+            if (this.potential.potential_cost > 0) {
+                list.add(OrbWords.POTENTIAL_COST.get(Component.literal("" + potential.potential_cost).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD));
+            } else {
+                list.add(OrbWords.NOT_A_POTENTIAL_CONSUMER.get().withStyle(ChatFormatting.GOLD));
             }
-        }
+            list.add(OrbWords.Currency.get().withStyle(ChatFormatting.GOLD));
 
-        return tip.release();
+            return new ExileTooltipPart(TooltipOrder.MIDDLE, list);
+        });
+
+
+        return b.build();
     }
 
     private MutableComponent getChanceTooltip(ItemModData mod, int totalweight, boolean addchance) {
@@ -332,7 +327,6 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
         public List<ItemModData> useAllMods = new ArrayList<>();
         public List<String> req = new ArrayList<>();
 
-        public DropRequirement drop = DropRequirement.Builder.of().build();
         public String id;
         public PotentialData pot = new PotentialData(1);
         public int weight = 1000;
@@ -369,10 +363,6 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
             return this;
         }
 
-        public Builder dropsOnlyIn(DropRequirement req) {
-            this.drop = req;
-            return this;
-        }
 
         public Builder rarity(String rar) {
             this.rar = rar;
@@ -410,7 +400,6 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
             currency.rar = rar;
             currency.locname = name;
             currency.weight = weight;
-            currency.drop_req = drop;
             currency.potential = pot;
             currency.item_id = holder.getItemId(currency.id).toString();
             return currency;

@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 
+import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.mine_and_slash.database.data.spells.components.BaseFieldNeeder;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.vanity.*;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
-import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collection;
@@ -60,6 +60,7 @@ public abstract class SpellAction extends BaseFieldNeeder implements IGUID {
     public static KnockbackAction KNOCKBACK = of(new KnockbackAction());
     public static GiveArrowsIfNotInfinity GIVE_ARROWS = of(new GiveArrowsIfNotInfinity());
     public static AddChargeAction ADD_CHARGE = of(new AddChargeAction());
+    public static TpToCaster TELEPORT_TO_CASTER = of(new TpToCaster());
 
 
     private static <T extends SpellAction> T of(T s) {

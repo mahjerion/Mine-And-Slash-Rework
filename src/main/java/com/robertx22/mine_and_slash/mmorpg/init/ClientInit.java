@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.init;
 
 import com.mojang.datafixers.util.Either;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.OrbAddonClientInit;
 import com.robertx22.mine_and_slash.a_libraries.dmg_number_particle.DamageParticle;
 import com.robertx22.mine_and_slash.a_libraries.dmg_number_particle.DamageParticleRenderer;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimations;
@@ -38,6 +39,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ClientInit {
 
     public static void onInitializeClient(final FMLClientSetupEvent event) {
+
+        OrbAddonClientInit.init();
+        
         OverlayPresets.init();
 
         PlayerAnimations.initClient();

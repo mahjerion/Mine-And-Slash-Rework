@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.ItemBlueprint;
@@ -34,7 +35,15 @@ public class CurrencyLootGen extends BaseLootGen<ItemBlueprint> {
     public ItemStack generateOne() {
 
         ExileCurrency currency = OrbDatabase.Currency()
-                .getFilterWrapped(x -> x.drop_req.canDropInLeague(info.league, info.level))
+                .getFilterWrapped(x -> {
+                    var ext = ExtendedOrb.from(x);
+                    if (ext != null) {
+                        if (ext.drop_req.hasLeague() && !ext.drop_req.canDropInLeague(info.league, info.level)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
                 .random();
 
         return currency.getItem().getDefaultInstance();

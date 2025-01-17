@@ -1,11 +1,10 @@
 package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 
-import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
-import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.google.common.collect.Lists;
 import com.robertx22.library_of_exile.utils.EntityUtils;
 import com.robertx22.library_of_exile.utils.geometry.MyPosition;
-
+import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
+import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
@@ -53,20 +52,16 @@ public class TeleportTargetToSourceAction extends SpellAction {
 
     @Override
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
-
         targets.forEach(x -> {
             if (x.level() == ctx.sourceEntity.level()) { // don't allow teleport in wrong dimension
                 teleportEntitySafe(x, ctx.sourceEntity.position());
             }
         });
-
     }
 
-    private void teleportEntitySafe(LivingEntity entity, Vec3 destination) {
-
+    public void teleportEntitySafe(LivingEntity entity, Vec3 destination) {
         Vec3 tpPosition = findSafeTeleportPosition(entity, destination).add(0.0, -entity.getBbHeight() / 2.0, 0.0);
         EntityUtils.setLoc(entity, new MyPosition(tpPosition).asVector3D(), entity.getYRot(), entity.getXRot());
-
     }
 
     // find a safe position to teleport to, getting as close to the destination as possible

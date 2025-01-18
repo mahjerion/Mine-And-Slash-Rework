@@ -1,5 +1,6 @@
 package com.robertx22.addons.orbs_of_crafting.currency.base;
 
+import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.library_of_exile.util.ExplainedResult;
@@ -70,14 +71,19 @@ public abstract class CodeCurrency implements IWeighted, IAutoLocName, IAutoLocD
     }
 
     public ResultItem modifyItem(LocReqContext context) {
-        var can = context.effect.canItemBeModified(context);
-        if (can.can) {
-            //ExileStack copy = ExileStack.of(context.stack.getStack());
-            context.effect.internalModifyMethod(context);
-            return new ResultItem(context.stack, ModifyResult.SUCCESS, can);
-        } else {
-            return new ResultItem(ItemStack.EMPTY, ModifyResult.NONE, can);
+        if (context.Currency.getItem() instanceof IItemAsCurrency cur) {
+            var effect = cur.currencyEffect(context.Currency);
+
+            var can = effect.canItemBeModified(context);
+            if (can.can) {
+                //ExileStack copy = ExileStack.of(context.stack.getStack());
+                effect.internalModifyMethod(context);
+                return new ResultItem(context.stack, ModifyResult.SUCCESS, can);
+            } else {
+                return new ResultItem(ItemStack.EMPTY, ModifyResult.NONE, can);
+            }
         }
+        return new ResultItem(ItemStack.EMPTY, ModifyResult.NONE, ExplainedResult.silentlyFail());
 
     }
 

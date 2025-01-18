@@ -44,7 +44,7 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffect;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.VanillaRarities;
-import com.robertx22.orbs_of_crafting.misc.OnClick;
+import com.robertx22.orbs_of_crafting.main.OrbsOfCraftingMain;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -119,10 +119,13 @@ public class MMORPG {
 
     public MMORPG() {
 
-
         if (MMORPG.RUN_DEV_TOOLS) {
             ExileRegistryUtil.setCurrentRegistarMod(SlashRef.MODID);
         }
+        if (OrbsOfCraftingMain.RUN_DEV_TOOLS) {
+            throw new RuntimeException("CANT RUN DEV TOOLS ON DEP MOD");
+        }
+
         Watch watch = new Watch();
 
 
@@ -148,8 +151,7 @@ public class MMORPG {
             x.register(SocketTooltip.SocketComponent.class, SocketTooltip::new);
         });
 
-        final IEventBus bus = FMLJavaModLoadingContext.get()
-                .getModEventBus();
+        final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ForgeEvents.registerForgeEvent(AddReloadListenerEvent.class, event -> {
             ExileRegistryType.registerJsonListeners(event);
@@ -225,7 +227,7 @@ public class MMORPG {
 
         DerivedRegistries.init();
 
-        OnClick.register();
+        // OnClick.register();
 
         watch.print("Mine and slash mod initialization ");
 

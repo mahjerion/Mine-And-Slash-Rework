@@ -18,10 +18,6 @@ import com.robertx22.mine_and_slash.database.data.stats.types.special.SpecialSta
 import com.robertx22.mine_and_slash.database.registrators.StatsRegister;
 import com.robertx22.mine_and_slash.database.registry.ExileDBInit;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.SlashDeferred;
-import com.robertx22.orbs_of_crafting.main.OrbDatabase;
-import com.robertx22.orbs_of_crafting.register.Modifications;
-import com.robertx22.orbs_of_crafting.register.Orbs;
-import com.robertx22.orbs_of_crafting.register.Requirements;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.Arrays;
@@ -47,11 +43,11 @@ public class MnsConstructor extends OrderedModConstructor {
         List<ExileKeyHolder> all = Arrays.asList(
                 ItemReqs.INSTANCE,
                 ItemMods.INSTANCE,
-                ExileCurrencies.INSTANCE,
+                ExileCurrencies.INSTANCE
                 // todo split these
-                Modifications.INSTANCE,
-                Requirements.INSTANCE,
-                Orbs.INSTANCE
+                //  Modifications.INSTANCE,
+                // Requirements.INSTANCE,
+                // Orbs.INSTANCE
         );
         return all;
     }
@@ -68,7 +64,7 @@ public class MnsConstructor extends OrderedModConstructor {
 
     @Override
     public void registerDatabases() {
-        OrbDatabase.INSTANCE.initDatabases();
+        //OrbDatabase.INSTANCE.initDatabases();
 
         ExileDBInit.initRegistries();
     }

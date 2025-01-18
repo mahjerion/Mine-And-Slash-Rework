@@ -14,7 +14,6 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.INeedsNBT;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
-import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -67,19 +66,7 @@ public class TooltipMethod {
                 }
             }
 
-
-            var opt = ExileCurrency.get(stack);
-
-            if (opt.isPresent()) {
-                var cur = opt.get();
-
-                if (cur != null) {
-                    tooltip.clear();
-                    tooltip.addAll(cur.getTooltip());
-                }
-            }
-
-
+            
             TooltipContext ctx = new TooltipContext(stack, tooltip, unitdata);
 
             boolean hasdata = false;

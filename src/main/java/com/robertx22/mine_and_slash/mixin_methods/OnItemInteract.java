@@ -154,16 +154,19 @@ public class OnItemInteract {
                     LocReqContext ctx = new LocReqContext(player, craftedStack, currency);
 
                     if (!craftedStack.isEmpty()) {
-                        var can = ctx.effect.canItemBeModified(ctx);
-                        if (can.can) {
-                            ItemStack result = ctx.effect.modifyItem(ctx).stack.copy();
-                            craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
-                            currency.shrink(1);
-                            // PlayerUtils.giveItem(result, player);
-                            slot.set(result);
-                            return new Result(true);
-                        } else {
-                            player.sendSystemMessage(can.answer);
+                        if (ctx.Currency.getItem() instanceof IItemAsCurrency c) {
+                            var effect = c.currencyEffect(ctx.Currency);
+                            var can = effect.canItemBeModified(ctx);
+                            if (can.can) {
+                                ItemStack result = effect.modifyItem(ctx).stack.copy();
+                                craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
+                                currency.shrink(1);
+                                // PlayerUtils.giveItem(result, player);
+                                slot.set(result);
+                                return new Result(true);
+                            } else {
+                                player.sendSystemMessage(can.answer);
+                            }
                         }
                     }
                 }

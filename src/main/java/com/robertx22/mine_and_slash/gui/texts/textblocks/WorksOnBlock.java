@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.texts.textblocks;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
@@ -10,7 +11,6 @@ import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -92,7 +92,7 @@ public class WorksOnBlock extends AbstractTextBlock {
                 all.add(desc);
             }
         } else {
-            MutableComponent c = Component.literal(" " + UNICODE.ROTATED_CUBE + " ").append(TooltipUtils.joinMutableComps(items.stream().map(x -> x.name.locName()).iterator(), Gui.COMMA_SEPARATOR.locName())).withStyle(ChatFormatting.YELLOW);
+            MutableComponent c = Component.literal(" " + UNICODE.ROTATED_CUBE + " ").append(ExileTooltipUtils.joinMutableComps(items.stream().map(x -> x.name.locName()).iterator(), Gui.COMMA_SEPARATOR.locName())).withStyle(ChatFormatting.YELLOW);
             //all.add(c);
 
             all.add(types.append(c));

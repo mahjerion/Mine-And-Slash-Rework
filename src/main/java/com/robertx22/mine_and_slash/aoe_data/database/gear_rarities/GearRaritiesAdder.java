@@ -1,34 +1,34 @@
 package com.robertx22.mine_and_slash.aoe_data.database.gear_rarities;
 
-import com.robertx22.library_of_exile.registry.ExileRegistryInit;
+import com.robertx22.library_of_exile.registry.ExileRegistryEvent;
+import com.robertx22.library_of_exile.registry.ExileRegistryEventClass;
+import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.database.data.omen.OmenDifficulty;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
 import com.robertx22.mine_and_slash.database.data.rarities.MapRarityRewardData;
+import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.maps.processors.reward.ModLootTables;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 
 // check if loot drops in maps
-public class GearRaritiesAdder implements ExileRegistryInit {
+public class GearRaritiesAdder extends ExileRegistryEventClass {
 
     @Override
-    public void registerAll() {
-/*
-        new OmenDifficulty(new MinMax(1, 1), new MinMax(1, 1), new MinMax(1, 1), new MinMax(0, 0), new MinMax(1, 1)),
-                new OmenDifficulty(new MinMax(1, 2), new MinMax(1, 2), new MinMax(1, 2), new MinMax(1, 1), new MinMax(1, 2)),
-                new OmenDifficulty(new MinMax(1, 3), new MinMax(1, 2), new MinMax(1, 2), new MinMax(2, 3), new MinMax(2, 3));
+    public ExileRegistryType getType() {
+        return ExileRegistryTypes.GEAR_TYPE;
+    }
 
- */
+    @Override
+    public void init(ExileRegistryEvent event) {
+
 
         GearRarity common = new GearRarity().edit(x -> {
 
             x.omens = new OmenDifficulty(new MinMax(1, 1), new MinMax(1, 1), new MinMax(1, 1), new MinMax(0, 0), new MinMax(1, 1), 0.3f);
-
             x.map_resist_req = 0;
-
-
             x.map_tiers = new MinMax(0, 10);
             x.favor_per_hour = 60;
             x.favor_loot_multi = 1;
@@ -107,7 +107,6 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.EPIC_ID;
             x.stat_percents = new MinMax(20, 40);
             x.setRareFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         });
         GearRarity epic = new GearRarity().edit(x -> {
@@ -138,7 +137,6 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.LEGENDARY_ID;
             x.stat_percents = new MinMax(40, 60);
             x.setEpicFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
         GearRarity legendary = new GearRarity().edit(x -> {
@@ -173,7 +171,6 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.higher_rar = IRarity.MYTHIC_ID;
             x.stat_percents = new MinMax(60, 80);
             x.setLegendFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
         GearRarity mythic = new GearRarity().edit(x -> {
@@ -210,7 +207,6 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.announce_in_chat = true;
             x.stat_percents = new MinMax(80, 100);
             x.setMythicFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         });
 
 
@@ -229,7 +225,6 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.item_value_multi = 2;
             x.item_tier = 5;
             x.setUniqueFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             x.announce_in_chat = true;
             x.is_unique_item = true;
         });
@@ -253,12 +248,20 @@ public class GearRaritiesAdder implements ExileRegistryInit {
             x.item_value_multi = 2;
             x.item_tier = 10;
             x.setRunewordFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             x.announce_in_chat = false;
             x.can_have_runewords = true;
             x.is_unique_item = false;
         });
 
+        var info = MMORPG.SERIAZABLE_REGISTRATION_INFO;
 
+        event.addSeriazable(common, info);
+        event.addSeriazable(uncommon, info);
+        event.addSeriazable(rar, info);
+        event.addSeriazable(epic, info);
+        event.addSeriazable(legendary, info);
+        event.addSeriazable(mythic, info);
+        event.addSeriazable(runeword, info);
+        event.addSeriazable(unique, info);
     }
 }

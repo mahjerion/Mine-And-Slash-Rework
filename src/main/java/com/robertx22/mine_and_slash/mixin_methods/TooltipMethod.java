@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-import static com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils.splitLongText;
+import static com.robertx22.library_of_exile.tooltip.ExileTooltipUtils.splitLongText;
 
 // todo rework this so each data component adds its thing to exiletooltip
 public class TooltipMethod {

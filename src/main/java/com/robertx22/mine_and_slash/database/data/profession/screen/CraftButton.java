@@ -1,13 +1,13 @@
 package com.robertx22.mine_and_slash.database.data.profession.screen;
 
 import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.database.data.profession.Crafting_State;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.CraftPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -74,7 +74,7 @@ public class CraftButton extends ImageButton {
         }
 
 
-        this.setTooltip(Tooltip.create(TooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"))));
+        this.setTooltip(Tooltip.create(ExileTooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"))));
     }
 
 }

@@ -59,10 +59,11 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
     private List<Supplier<ExileKeyHolder<?>>> deps = new ArrayList<>();
 
 
-    private boolean init = false;
+    private boolean initEntries = false;
+    private boolean initItems = false;
 
     public ExileKeyHolder<T> dependsOn(Supplier<ExileKeyHolder<?>> dep) {
-        this.deps.add(dep);
+        // todo this.deps.add(dep);
         return this;
     }
 
@@ -100,40 +101,49 @@ public abstract class ExileKeyHolder<T extends ExileRegistry<T>> {
     public abstract void loadClass();
 
     public void init() {
+        prepareInit();
+        initItems();
+        initExileDBEntries();
+    }
 
+    private void initExileDBEntries() {
+
+        for (ExileKey<T, ?> key : all.values()) {
+            key.register();
+        }
+
+        initEntries = true;
+    }
+
+    private void prepareInit() {
         for (Supplier<ExileKeyHolder<?>> dep : deps) {
             if (dep.get() == null) {
                 throw new RuntimeException("Dependency is null");
             }
-            if (dep.get().init == false) {
+            if (dep.get().initEntries == false) {
                 throw new RuntimeException("Dependency wasn't initialized");
             }
         }
 
         loadClass();
 
-
-        for (ExileKey<T, ?> key : all.values()) {
-            key.register();
-        }
-
         for (ExileKeyHolderSection section : this.sections) {
             section.init();
         }
-
-        init = true;
-
-        this.initItems();
     }
 
     private void initItems() {
 
-        if (this.itemCreator.maker != null && this.itemIdProvider.itemIdMaker != null) {
-            for (ExileKey<T, ?> key : this.all.values()) {
-                if (!key.isCancelItemCreation()) {
-                    var id = this.getItemId(key.GUID());
-                    var data = new ItemRegistratorData(id.getPath(), () -> this.itemCreator.maker.apply(key));
-                    key.item = this.itemRegistrator.apply(data);
+        if (!initItems) {
+            initItems = true;
+
+            if (this.itemCreator.maker != null && this.itemIdProvider.itemIdMaker != null) {
+                for (ExileKey<T, ?> key : this.all.values()) {
+                    if (!key.isCancelItemCreation()) {
+                        var id = this.getItemId(key.GUID());
+                        var data = new ItemRegistratorData(id.getPath(), () -> this.itemCreator.maker.apply(key));
+                        key.item = this.itemRegistrator.apply(data);
+                    }
                 }
             }
         }

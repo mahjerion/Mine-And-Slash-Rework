@@ -1,7 +1,7 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked;
 
-import com.robertx22.library_of_exile.tooltip.CurrencyTooltip;
 import com.robertx22.library_of_exile.tooltip.register.ExileTooltipHooks;
+import com.robertx22.orbs_of_crafting.api.CurrencyTooltip;
 
 public class OrbAddonClientInit {
 

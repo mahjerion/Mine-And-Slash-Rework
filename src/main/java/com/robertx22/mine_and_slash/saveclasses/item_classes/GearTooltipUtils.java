@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.saveclasses.item_classes;
 
 import com.google.common.collect.ImmutableList;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
@@ -26,7 +27,6 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -253,7 +253,7 @@ public class GearTooltipUtils {
                 )
                 .accept(new AdditionalBlock(() -> {
                             return ImmutableList.of(Itemtips.ITEM_TYPE.locName(gear.GetBaseGearType().locName().withStyle(ChatFormatting.BLUE)),
-                                    Words.TAGS.locName().append(TooltipUtils.joinMutableComps(gear.GetBaseGearType().getTags().getTags(SlotTag.SERIALIZER).stream().map(x -> ((SlotTag) x).locName()).toList().iterator(), Gui.COMMA_SEPARATOR.locName())));
+                                    Words.TAGS.locName().append(ExileTooltipUtils.joinMutableComps(gear.GetBaseGearType().getTags().getTags(SlotTag.SERIALIZER).stream().map(x -> ((SlotTag) x).locName()).toList().iterator(), Gui.COMMA_SEPARATOR.locName())));
                         }).showWhen(() -> info.hasShiftDown)
                 );
 

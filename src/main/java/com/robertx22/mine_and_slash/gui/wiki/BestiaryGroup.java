@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.gui.wiki;
 
 import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.utils.CLOC;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
@@ -30,7 +31,6 @@ import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.orbs_of_crafting.main.OrbDatabase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -106,7 +106,7 @@ public abstract class BestiaryGroup<T> {
 
                 List<MutableComponent> list = x.slots.stream().map(string -> ExileDB.GearSlots().get(string).locName()).toList();
 
-                tooltip.add(slotsText.append(TooltipUtils.joinMutableComps(list.iterator(), Gui.COMMA_SEPARATOR.locName())));
+                tooltip.add(slotsText.append(ExileTooltipUtils.joinMutableComps(list.iterator(), Gui.COMMA_SEPARATOR.locName())));
                 tooltip.add(Component.empty());
 
 

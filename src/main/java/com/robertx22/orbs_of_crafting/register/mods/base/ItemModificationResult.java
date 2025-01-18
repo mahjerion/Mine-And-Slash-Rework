@@ -1,6 +1,6 @@
 package com.robertx22.orbs_of_crafting.register.mods.base;
 
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
+import com.robertx22.library_of_exile.utils.PlayerUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -16,7 +16,7 @@ public class ItemModificationResult {
     public void onFinish(Player p) {
 
         for (ItemStack stack : extraItemsCreated) {
-            PlayerUtils.giveItem(stack, p);
+            PlayerUtil.giveItem(stack, p);
         }
 
     }

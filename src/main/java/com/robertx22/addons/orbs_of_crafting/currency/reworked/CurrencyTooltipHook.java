@@ -1,12 +1,13 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked;
 
-import com.robertx22.library_of_exile.tooltip.CurrencyTooltip;
 import com.robertx22.library_of_exile.tooltip.TooltipBuilder;
 import com.robertx22.library_of_exile.tooltip.order.ExileTooltipPart;
 import com.robertx22.library_of_exile.tooltip.order.TooltipOrder;
 import com.robertx22.library_of_exile.tooltip.register.ExileTooltipHook;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
+import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.LeagueBlock;
+import com.robertx22.orbs_of_crafting.api.CurrencyTooltip;
 
 public class CurrencyTooltipHook extends ExileTooltipHook<CurrencyTooltip> {
 
@@ -20,7 +21,7 @@ public class CurrencyTooltipHook extends ExileTooltipHook<CurrencyTooltip> {
             var req = ExileDB.OrbExtension().get(b.item.currency.GUID());
             if (req != null && req.drop_req.getLeague() != null) {
                 b.add(x -> {
-                    return new ExileTooltipPart(TooltipOrder.LATE, new RarityBlock(ExileDB.GearRarities().get(b.item.currency.rar)).getAvailableComponents());
+                    return new ExileTooltipPart(TooltipOrder.LATE, new LeagueBlock(req.drop_req.getLeague()).getAvailableComponents());
                 });
             }
         }

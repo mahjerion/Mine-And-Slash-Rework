@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession.items;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ItemModelManager;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ModelHelper;
@@ -23,7 +24,6 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IRarityItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Formatter;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -129,7 +129,7 @@ public class CraftedBuffFoodItem extends AutoItem implements IRarityItem, ICreat
 
             List<MutableComponent> info = new ArrayList<>();
             info.add(Component.literal(UNICODE.STAR + " ").append(Itemtips.BUFF_CONSUMABLE_TYPE.locName(this.type.locName().withStyle(ChatFormatting.YELLOW))).withStyle(ChatFormatting.AQUA));
-            info.addAll(TooltipUtils.splitLongText(Itemtips.BUFF_CONSUMABLE_INFO.locName().withStyle(ChatFormatting.AQUA)));
+            info.addAll(ExileTooltipUtils.splitLongText(Itemtips.BUFF_CONSUMABLE_INFO.locName().withStyle(ChatFormatting.AQUA)));
             info.add(Component.literal(UNICODE.ROTATED_CUBE + " ")
                     .append(Itemtips.BUFF_CONSUMABLE_DURATION_MINUTES.locName(Component.literal((getTicksDuration() / 20 / 60) + "").withStyle(ChatFormatting.YELLOW))).withStyle(ChatFormatting.GREEN));
 

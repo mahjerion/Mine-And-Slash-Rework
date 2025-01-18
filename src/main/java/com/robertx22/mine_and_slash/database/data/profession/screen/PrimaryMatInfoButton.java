@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.database.data.profession.screen;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -86,12 +86,12 @@ public class PrimaryMatInfoButton extends ImageButton {
 
         list.add(Component.literal(""));
 
-        list.addAll(TooltipUtils.splitLongText(Itemtips.PRIMARY_PROFESSION_MAT_INFO.locName().withStyle(ChatFormatting.RED)));
+        list.addAll(ExileTooltipUtils.splitLongText(Itemtips.PRIMARY_PROFESSION_MAT_INFO.locName().withStyle(ChatFormatting.RED)));
 
         list.add(Itemtips.PRIMARY_PROFESSION_USE_JEI.locName().withStyle(ChatFormatting.GREEN));
 
 
-        this.setTooltip(Tooltip.create(TooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"))));
+        this.setTooltip(Tooltip.create(ExileTooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"))));
     }
 
 }

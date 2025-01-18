@@ -1,9 +1,7 @@
 package com.robertx22.mine_and_slash.database.registry;
 
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrbs;
 import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
-import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.base_gear_types.BaseGearTypes;
 import com.robertx22.mine_and_slash.aoe_data.database.base_stats.BaseStatsAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.boss_spell.SummonExplodyMobs;
@@ -21,7 +19,6 @@ import com.robertx22.mine_and_slash.database.data.loot_chest.GearLootChest;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffixes;
 import com.robertx22.mine_and_slash.database.data.support_gem.SupportGems;
 import com.robertx22.mine_and_slash.database.empty_entries.EmptyStat;
-import com.robertx22.mine_and_slash.database.registrators.StatsRegister;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
@@ -29,21 +26,6 @@ import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneType;
 
 public class ExileDBInit {
 
-    public static void registerAllItems() {
-        try {
-            registerAllNonDatapackEntries();
-        } catch (ExceptionInInitializerError e) {
-            // leave this, once this error happened and we don't know why. this is to know the cause if it happens again
-            e.printStackTrace();
-            e.getCause()
-                    .printStackTrace();
-        }
-    }
-
-    private static void registerAllNonDatapackEntries() {
-        Ailments.init(); // todo will this cause problems. I need to really figure a good way to know when each registry should register
-        new StatsRegister().registerAll();
-    }
 
     public static String UNKNOWN_ID = "unknown";
 
@@ -103,7 +85,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.OMEN, ""));
 
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.BOSS_ARENA, "sandstone"));
-        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ORB_EXTEND, ExtendedOrbs.DEFAULT));
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ORB_EXTEND, ""));
 
     }
 }

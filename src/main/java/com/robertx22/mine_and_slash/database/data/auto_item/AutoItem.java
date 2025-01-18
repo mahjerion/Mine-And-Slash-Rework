@@ -3,13 +3,13 @@ package com.robertx22.mine_and_slash.database.data.auto_item;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.helpers.ExileCached;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.itemstack.ExileStacklessData;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
-import com.robertx22.mine_and_slash.wip.ExileCached;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -46,7 +46,6 @@ public class AutoItem implements JsonExileRegistry<AutoItem>, IAutoGson<AutoItem
     public static ExileCached<HashMap<Item, List<AutoItem>>> CACHED_MAP = new ExileCached<>(() -> {
         HashMap<Item, List<AutoItem>> map = new HashMap<>();
 
-
         for (AutoItem auto : ExileDB.AutoItems().getList()) {
             var item = VanillaUTIL.REGISTRY.items().get(new ResourceLocation(auto.item_id));
             if (item != Items.AIR) {
@@ -57,7 +56,7 @@ public class AutoItem implements JsonExileRegistry<AutoItem>, IAutoGson<AutoItem
             }
         }
         return map;
-    });
+    }).clearOnDatabaseChange();
 
 
     public static AutoItem getRandom(Item item) {

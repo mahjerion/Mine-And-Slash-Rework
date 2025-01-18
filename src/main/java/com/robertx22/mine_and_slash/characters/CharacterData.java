@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils.splitLongText;
+import static com.robertx22.library_of_exile.tooltip.ExileTooltipUtils.splitLongText;
 
 
 // todo have to make sure loading and saving works perfectly

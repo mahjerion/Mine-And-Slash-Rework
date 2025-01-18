@@ -12,7 +12,7 @@ public class TellClientResetCaches extends MyPacket<TellClientResetCaches> {
 
     @Override
     public ResourceLocation getIdentifier() {
-        return new ResourceLocation(SlashRef.MODID, "totemanim");
+        return new ResourceLocation(SlashRef.MODID, "reset_caches");
     }
 
     @Override
@@ -27,9 +27,7 @@ public class TellClientResetCaches extends MyPacket<TellClientResetCaches> {
 
     @Override
     public void onReceived(ExilePacketContext ctx) {
-
         DatabaseCaches.resetCaches();
-
     }
 
     @Override
@@ -37,5 +35,5 @@ public class TellClientResetCaches extends MyPacket<TellClientResetCaches> {
         return new TellClientResetCaches();
     }
 
- 
+
 }

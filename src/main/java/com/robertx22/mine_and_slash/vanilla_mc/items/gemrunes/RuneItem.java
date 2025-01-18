@@ -56,7 +56,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils.splitLongText;
+import static com.robertx22.library_of_exile.tooltip.ExileTooltipUtils.splitLongText;
 
 
 public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, IWeighted, IItemAsCurrency {

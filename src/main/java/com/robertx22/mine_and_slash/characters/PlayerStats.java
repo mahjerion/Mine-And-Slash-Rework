@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.characters;
 
-import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.Blood;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
@@ -53,7 +52,7 @@ public class PlayerStats {
         return registrations.computeIfAbsent(ModLoadingContext.get().getActiveNamespace(), it -> new Registrations());
     }
 
-    public static void addReg(String id){
+    public static void addReg(String id) {
         REGISTERED_STATS.put(id, new ResourceLocation(SlashRef.MODID, id));
     }
 
@@ -63,13 +62,16 @@ public class PlayerStats {
         addReg(Blood.getInstance().GUID());
         addReg(Energy.getInstance().GUID());
         addReg(MagicShield.getInstance().GUID());
+        /*
         addReg(DatapackStats.DEX.GUID());
         addReg(DatapackStats.INT.GUID());
         addReg(DatapackStats.STR.GUID());
         addReg(DatapackStats.MOVE_SPEED.GUID());
 
+         */
+
         registerCustomStat(LEVELS_GAINED);
-        for(ResourceLocation rl : REGISTERED_STATS.values())
+        for (ResourceLocation rl : REGISTERED_STATS.values())
             registerCustomStat(rl);
     }
 

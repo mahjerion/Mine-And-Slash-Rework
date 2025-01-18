@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.texts;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.AbstractTextBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
@@ -110,7 +111,7 @@ public class ExileTooltips {
             list.remove(list.size() - 1);
         }
 
-        List<Component> postEditList = TooltipUtils.splitLongText(list);
+        List<Component> postEditList = ExileTooltipUtils.splitLongText(list);
 
         postEditList = TooltipUtils.removeDoubleBlankLines(postEditList);
 

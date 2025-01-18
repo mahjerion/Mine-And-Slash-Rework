@@ -18,9 +18,6 @@ import net.minecraft.world.entity.MobCategory;
 
 public class SlashEntities {
 
-    public static void init() {
-
-    }
 
     public static RegObj<EntityType<SimpleProjectileEntity>> SIMPLE_PROJECTILE = projectile(SimpleProjectileEntity::new, "spell_projectile");
     public static RegObj<EntityType<SimpleArrowEntity>> SIMPLE_ARROW = projectile(SimpleArrowEntity::new, "spell_arrow");
@@ -71,6 +68,10 @@ public class SlashEntities {
                 .build(id));
 
         return def;
+    }
+
+    public static void init() {
+
     }
 
 }

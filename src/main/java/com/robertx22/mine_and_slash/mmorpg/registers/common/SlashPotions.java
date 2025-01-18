@@ -21,6 +21,7 @@ public class SlashPotions {
 
     public static void init() {
 
+      
         // todo make my own potions so i'm not screwed by vanilla's 255 registry limit
         // todo check if this version still has that limit or not
 

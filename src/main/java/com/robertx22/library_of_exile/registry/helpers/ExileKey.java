@@ -2,11 +2,10 @@ package com.robertx22.library_of_exile.registry.helpers;
 
 import com.google.common.base.Preconditions;
 import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.library_of_exile.events.base.EventConsumer;
+import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.recipe.RecipeGenerator;
-import com.robertx22.library_of_exile.registry.ExileRegistry;
-import com.robertx22.library_of_exile.registry.ExileRegistryType;
-import com.robertx22.library_of_exile.registry.IGUID;
-import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.*;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Item;
@@ -80,10 +79,18 @@ public class ExileKey<T extends ExileRegistry<T>, Info extends KeyInfo> implemen
     public void register() {
         obj = sup.apply(id, info);
 
-        if (obj instanceof JsonExileRegistry<?> j) {
-            j.addToSerializables(modRegisterInfo.ser);
-        } else {
-            obj.registerToExileRegistry(modRegisterInfo.hard);
-        }
+        ExileEvents.EXILE_REGISTRY_GATHER.register(new EventConsumer<ExileRegistryEvent>() {
+            @Override
+            public void accept(ExileRegistryEvent e) {
+                if (e.type == obj.getExileRegistryType()) {
+                    if (obj instanceof JsonExileRegistry<?> j) {
+                        e.addSeriazable(j, modRegisterInfo.ser);
+                    } else {
+                        e.add(obj, modRegisterInfo.hard);
+                    }
+                }
+            }
+        });
+
     }
 }

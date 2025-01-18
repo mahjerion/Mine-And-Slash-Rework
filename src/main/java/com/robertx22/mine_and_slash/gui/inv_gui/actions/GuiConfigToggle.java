@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.gui.inv_gui.actions;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -51,7 +51,7 @@ public class GuiConfigToggle extends GuiAction {
 
         t.add(config.title.locName().withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD));
 
-        t.addAll(TooltipUtils.splitLongText(config.word.locName()));
+        t.addAll(ExileTooltipUtils.splitLongText(config.word.locName()));
 
         var text = Component.literal("");
         if (Load.player(p).config.isConfigEnabled(config)) {

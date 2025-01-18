@@ -10,7 +10,6 @@ import com.robertx22.mine_and_slash.aoe_data.database.custom_item_gens.CustomIte
 import com.robertx22.mine_and_slash.aoe_data.database.dim_configs.DimConfigs;
 import com.robertx22.mine_and_slash.aoe_data.database.entity_configs.EntityConfigs;
 import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEffects;
-import com.robertx22.mine_and_slash.aoe_data.database.gear_rarities.GearRaritiesAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.gear_slots.GearSlots;
 import com.robertx22.mine_and_slash.aoe_data.database.gems.Gems;
 import com.robertx22.mine_and_slash.aoe_data.database.mob_affixes.MobAffixes;
@@ -37,7 +36,6 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPoin
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffixes;
 import com.robertx22.mine_and_slash.database.data.omen.Omens;
-import com.robertx22.mine_and_slash.database.data.profession.all.ProfessionRecipes;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
@@ -65,7 +63,7 @@ public class GeneratedData {
         new Stats().registerAll();
         new DatapackStats().registerAll();
 
-        new GearRaritiesAdder().registerAll();
+        //new GearRaritiesAdder().registerAll();
 
         SpellCalcs.init();
         new Spells().registerAll();
@@ -106,7 +104,6 @@ public class GeneratedData {
         BossArenas.init();
 
         Professions.init();
-        ProfessionRecipes.init();
         StatBuffs.init();
 
         MapAffixes.init();

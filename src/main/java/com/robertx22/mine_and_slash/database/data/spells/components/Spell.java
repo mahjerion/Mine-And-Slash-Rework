@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.wrappers.ExileText;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.AnimationHolder;
@@ -396,7 +397,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             }
         }
 
-        MutableComponent taglist = TooltipUtils.joinMutableComps(this.config.tags.getTags(SpellTag.SERIALIZER).stream().map(x -> x.locName()).iterator(), Gui.COMMA_SEPARATOR.locName());
+        MutableComponent taglist = ExileTooltipUtils.joinMutableComps(this.config.tags.getTags(SpellTag.SERIALIZER).stream().map(x -> x.locName()).iterator(), Gui.COMMA_SEPARATOR.locName());
         MutableComponent tagtext = Words.TAGS.locName().append(taglist);
 
         list.add(tagtext);
@@ -428,7 +429,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         var others = this.getSpellsThatBenefitFromSupportGemsOfThis();
 
         if (!others.isEmpty()) {
-            var merged = TooltipUtils.joinMutableComps(others.stream().map(x -> x.locName()).iterator(), Component.literal(", "));
+            var merged = ExileTooltipUtils.joinMutableComps(others.stream().map(x -> x.locName()).iterator(), Component.literal(", "));
             list.add(Component.literal(UNICODE.STAR + " ").append(Words.SUPPORT_GEMS_ALSO_BENEFIT.locName(merged)).withStyle(ChatFormatting.GREEN));
         }
 

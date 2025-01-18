@@ -18,7 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -34,11 +33,7 @@ public class SlashDeferred {
     public static final DeferredRegister<MobEffect> POTIONS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, SlashRef.MODID);
     public static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SlashRef.MODID);
 
-
-    public static void registerDefferedAtStartOfModLoading() {
-        IEventBus bus = FMLJavaModLoadingContext.get()
-                .getModEventBus();
-
+    public static void initContainers(IEventBus bus) {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITIES.register(bus);
@@ -48,6 +43,10 @@ public class SlashDeferred {
         PARTICLES.register(bus);
         POTIONS.register(bus);
         TAB.register(bus);
+    }
+
+
+    public static void registerEntries() {
 
         SlashTabs.init();
         SlashPotions.init();
@@ -74,7 +73,6 @@ public class SlashDeferred {
 
         ProfessionMatItems.init();
         ProfessionProductItems.init();
-
         SlashFeatures.init();
 
 

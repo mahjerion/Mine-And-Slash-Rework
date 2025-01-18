@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.uncommon.levels;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.database.data.MinMax;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -36,7 +36,7 @@ public class LevelInfo {
 
         list.add(Component.literal("Final Level: " + level));
 
-        return TooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"));
+        return ExileTooltipUtils.joinMutableComps(list.listIterator(), Component.literal("\n"));
 
     }
 

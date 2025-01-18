@@ -12,6 +12,8 @@ import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.SlashDefer
 
 public class Orbs extends ExileKeyHolder<ExileCurrency> {
 
+    // uh, how do i make sure the order of class instantiations is correct across mods..?
+
     public static Orbs INSTANCE = (Orbs) new Orbs(MMORPG.REGISTER_INFO)
             // todo is this a good way to check? I'm thinking note 1 layer of dep
             .itemIds(new ItemIdProvider(x -> SlashRef.id("currency/" + x)))

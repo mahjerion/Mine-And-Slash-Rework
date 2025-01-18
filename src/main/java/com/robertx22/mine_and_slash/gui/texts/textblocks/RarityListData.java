@@ -1,12 +1,12 @@
 package com.robertx22.mine_and_slash.gui.texts.textblocks;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryContainer;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -57,7 +57,7 @@ public class RarityListData {
                     })
                     .toList();
 
-            tip.add(TooltipUtils.joinMutableComps(list.iterator(), Gui.COMMA_SEPARATOR.locName()));
+            tip.add(ExileTooltipUtils.joinMutableComps(list.iterator(), Gui.COMMA_SEPARATOR.locName()));
             return tip;
 
         }

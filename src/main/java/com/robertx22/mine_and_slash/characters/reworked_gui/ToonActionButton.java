@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.characters.reworked_gui;
 
 import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.utils.TextUTIL;
 import com.robertx22.mine_and_slash.characters.CreateCharPacket;
 import com.robertx22.mine_and_slash.characters.ToonActionPacket;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -46,7 +46,7 @@ public class ToonActionButton extends AbstractButton {
         this.action = action;
         this.screen = screen;
 
-        var tip = Tooltip.create(TextUTIL.mergeList(TooltipUtils.splitLongText(action.desc.locName())));
+        var tip = Tooltip.create(TextUTIL.mergeList(ExileTooltipUtils.splitLongText(action.desc.locName())));
         this.setTooltip(tip);
     }
 

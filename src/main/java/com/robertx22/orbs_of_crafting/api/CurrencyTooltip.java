@@ -1,5 +1,6 @@
-package com.robertx22.library_of_exile.tooltip;
+package com.robertx22.orbs_of_crafting.api;
 
+import com.robertx22.library_of_exile.tooltip.TooltipItem;
 import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.world.item.ItemStack;
 

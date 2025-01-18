@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-import static com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils.splitLongText;
+import static com.robertx22.library_of_exile.tooltip.ExileTooltipUtils.splitLongText;
 
 public class SoulCleanerItem extends AutoItem implements IShapelessRecipe {
 

@@ -1,5 +1,9 @@
 package com.robertx22.mine_and_slash.gui.screens.stat_gui;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
+import com.robertx22.library_of_exile.utils.GuiUtils;
+import com.robertx22.library_of_exile.utils.RenderUtils;
+import com.robertx22.library_of_exile.utils.TextUTIL;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.stats.IUsableStat;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
@@ -12,10 +16,6 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.NumberUtils;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
-import com.robertx22.library_of_exile.utils.GuiUtils;
-import com.robertx22.library_of_exile.utils.RenderUtils;
-import com.robertx22.library_of_exile.utils.TextUTIL;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
@@ -70,7 +70,7 @@ public class StatInfoButton extends ImageButton implements IStatInfoButton {
             RenderUtils.render16Icon(gui, this.type.getIcon(), getX() + iconX - 3, getY() + iconY - 3);
         }
         var text = type.getRenderText(stat, Load.Unit(ClientOnly.getPlayer()));
-      
+
         if (text != null) {
             GuiUtils.renderScaledText(gui, getX() + numX, getY() + numY, 0.8F, text.getString(), ChatFormatting.YELLOW);
         }
@@ -125,7 +125,7 @@ public class StatInfoButton extends ImageButton implements IStatInfoButton {
 
             @Override
             public List<MutableComponent> getTooltip(StatData data) {
-                return TooltipUtils.splitLongText(Words.UsableValueInfo.locName());
+                return ExileTooltipUtils.splitLongText(Words.UsableValueInfo.locName());
             }
         },
         MIN_VAL("min", true) {

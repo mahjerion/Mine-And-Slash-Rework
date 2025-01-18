@@ -3,25 +3,20 @@ package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.CLOC;
 import com.robertx22.library_of_exile.wrappers.ExileText;
-import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
-import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.Rarity;
-import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRequirement;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,21 +31,6 @@ public class TooltipUtils {
         return Component.literal(format + "").append(comp);
     }
 
-    public static void addRequirements(List<Component> tip, int lvl, StatRequirement req, EntityData data) {
-/*
-        if (data.getLevel() >= lvl) {
-            tip.add(Component.literal(ChatFormatting.GREEN + "" + ChatFormatting.BOLD + StatRequirement.CHECK_YES_ICON + ChatFormatting.GRAY)
-                    .append(ChatFormatting.GRAY + " Level: " + lvl + " "));
-
-        } else {
-            tip.add(Component.literal(ChatFormatting.RED + "" + ChatFormatting.BOLD + StatRequirement.NO_ICON + ChatFormatting.GRAY)
-                    .append(ChatFormatting.GRAY + " Level: " + lvl + " ")
-            );
-        }
-
- */
-        tip.addAll(req.GetTooltipString(lvl, data));
-    }
 
     public static void addEmpty(List<Component> tooltip) {
         tooltip.add(CLOC.blank(""));
@@ -152,10 +132,6 @@ public class TooltipUtils {
         return null;
     }
 
-    public static List<Component> mutableToComp(List<MutableComponent> list) {
-        return new ArrayList<Component>(list);
-    }
-
     public static List<Component> removeDoubleBlankLines(List<Component> list) {
         return removeDoubleBlankLines(list, ClientConfigs.getConfig().REMOVE_EMPTY_TOOLTIP_LINES_IF_MORE_THAN_X_LINES.get());
     }
@@ -228,84 +204,5 @@ public class TooltipUtils {
         return Itemtips.ITEM_TIER_TIP.locName(Component.literal(tier + "").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD);
     }
 
-    public static MutableComponent gearRarity(GearRarity rarity) {
-        return Itemtips.RARITY_TIP.locName().withStyle(ChatFormatting.WHITE)
-                .append(rarity.locName()
-                        .withStyle(rarity.textFormatting()));
-    }
 
-    public static MutableComponent levelAndRarity(int lvl, int playerlvl, GearRarity rar) {
-
-        ChatFormatting color = ChatFormatting.YELLOW;
-        if (lvl > playerlvl) {
-            color = ChatFormatting.RED;
-        }
-
-        return Itemtips.LEVEL_TIP.locName()
-                .withStyle(color)
-                .append(Component.literal(lvl + "")
-                        .withStyle(color)).append(" ").append(rar.locName().withStyle(rar.textFormatting())).append(" ").append(Words.ITEM.locName());
-    }
-
-    public static MutableComponent gearLevel(int lvl, int playerlvl) {
-
-        ChatFormatting color = ChatFormatting.YELLOW;
-        if (lvl > playerlvl) {
-            color = ChatFormatting.RED;
-        }
-        return Itemtips.LEVEL_TIP.locName()
-                .withStyle(color)
-                .append(Component.literal(lvl + "")
-                        .withStyle(color));
-    }
-
-
-    public static List<MutableComponent> splitLongText(MutableComponent comp) {
-        //   if (true) return Arrays.asList(comp);
-        List<MutableComponent> componentList = new ArrayList<>();
-        Style format = comp.getStyle();
-        String[] originalList = comp.getString().split("\n");
-
-        for (String comp1 : originalList) {
-            componentList.add(ExileText.ofText(comp1).get().withStyle(format));
-        }
-        return componentList;
-    }
-
-
-    public static List<Component> splitLongText(List<? extends Component> comps) {
-        //  if (true) return comps.stream().collect(Collectors.toList());
-
-        ArrayList<Component> arrayList = new ArrayList<>();
-        for (Component target : comps) {
-            if (target.getString().contains("\n")) {
-                Style format = target.getStyle();
-                String[] originalList = target.getString().split("\n");
-
-                for (String comp1 : originalList) {
-                    arrayList.add(Component.literal(comp1).withStyle(format));
-                }
-            } else {
-                arrayList.add(target);
-            }
-
-        }
-        return arrayList;
-    }
-
-
-    public static MutableComponent joinMutableComps(Iterator<? extends Component> iterator, MutableComponent separator) {
-        if (separator == null) {
-            separator = Component.literal("");
-        }
-
-        MutableComponent starter = Component.literal("");
-        while (iterator.hasNext()) {
-            starter.append(iterator.next());
-            if (iterator.hasNext()) {
-                starter.append(separator);
-            }
-        }
-        return starter;
-    }
 }

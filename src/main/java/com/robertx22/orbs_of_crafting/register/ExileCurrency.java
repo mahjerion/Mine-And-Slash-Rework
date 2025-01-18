@@ -8,10 +8,11 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.library_of_exile.registry.helpers.ExileCached;
 import com.robertx22.library_of_exile.registry.helpers.ExileKey;
 import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
 import com.robertx22.library_of_exile.registry.helpers.IdKey;
-import com.robertx22.library_of_exile.tooltip.CurrencyTooltip;
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.tooltip.TooltipBuilder;
 import com.robertx22.library_of_exile.tooltip.order.ExileTooltipPart;
 import com.robertx22.library_of_exile.tooltip.order.TooltipOrder;
@@ -19,9 +20,7 @@ import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
-import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
-import com.robertx22.mine_and_slash.wip.ExileCached;
+import com.robertx22.orbs_of_crafting.api.CurrencyTooltip;
 import com.robertx22.orbs_of_crafting.api.OrbEvents;
 import com.robertx22.orbs_of_crafting.lang.OrbWords;
 import com.robertx22.orbs_of_crafting.main.OrbDatabase;
@@ -47,7 +46,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, JsonExileRegistry<ExileCurrency>, IRarity {
+public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, JsonExileRegistry<ExileCurrency> {
 
     public static ExileCurrency SERIALIZER = new ExileCurrency();
 
@@ -62,10 +61,7 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
     List<ItemModData> always_do_item_mods = new ArrayList<>();
     List<String> req = new ArrayList<>();
 
-    // todo this needs some extension system..
-    public String rar = IRarity.RARE_ID;
-    // public List<WorksOnBlock.ItemType> item_type = new ArrayList<>(Arrays.asList(WorksOnBlock.ItemType.GEAR));
-    // public DropRequirement drop_req = DropRequirement.Builder.of().build();
+    public String rar = "rare";
 
     public List<String> item_type_requirement = new ArrayList<>();
 
@@ -129,12 +125,6 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
     }
 
 
-    @Override
-    public String getRarityId() {
-        return rar;
-    }
-
-
     public static ExileCached<HashMap<Item, ExileCurrency>> CACHED_MAP = new ExileCached<>(() -> {
         HashMap<Item, ExileCurrency> map = new HashMap<>();
         for (ExileCurrency cur : OrbDatabase.Currency().getList()) {
@@ -144,7 +134,7 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
             }
         }
         return map;
-    });
+    }).clearOnDatabaseChange();
 
     public static Optional<ExileCurrency> get(ItemStack stack) {
         var res = CACHED_MAP.get().get(stack.getItem());
@@ -273,7 +263,7 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
                 return ExplainedResult.failure(OrbWords.THIS_IS_NOT_A.get(type.get(0).getTranslation(TranslationType.NAME).getTranslatedName()));
 
             } else {
-                return ExplainedResult.failure(OrbWords.THIS_IS_NOT_A.get(TooltipUtils.joinMutableComps(type.stream().map(x -> x.getTranslation(TranslationType.NAME).getTranslatedName()).iterator(), Component.literal(" or "))));
+                return ExplainedResult.failure(OrbWords.THIS_IS_NOT_A.get(ExileTooltipUtils.joinMutableComps(type.stream().map(x -> x.getTranslation(TranslationType.NAME).getTranslatedName()).iterator(), Component.literal(" or "))));
             }
         }
 
@@ -332,7 +322,7 @@ public class ExileCurrency implements ITranslated, IAutoGson<ExileCurrency>, Jso
         public int weight = 1000;
         public String name;
         public List<String> type = new ArrayList<>();
-        public String rar = IRarity.RARE_ID;
+        public String rar = "rare";
 
         public static Builder of(String id, String name, ExileKey<ItemRequirement, ?>... type) {
             return new Builder(id, name, type);

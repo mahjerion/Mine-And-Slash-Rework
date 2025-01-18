@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.IAutoModel;
 import com.robertx22.mine_and_slash.aoe_data.datapacks.models.ItemModelManager;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IRarityItem;
 import com.robertx22.orbs_of_crafting.register.ExileCurrency;
@@ -52,7 +53,7 @@ public class ExileCurrencyItem extends Item implements IAutoLocName, IAutoModel,
     @Override
     public GearRarity getItemRarity(ItemStack stack) {
         try {
-            return ExileCurrency.get(stack).get().getRarity();
+            return ExileDB.GearRarities().get(ExileCurrency.get(stack).get().rar);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items.misc;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.network.chat.Component;
@@ -96,7 +96,7 @@ public class ResetPotion extends AutoItem implements IShapedRecipe {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> l, TooltipFlag pIsAdvanced) {
         if (reset == ResetType.ADD_POINTS) {
-            l.addAll(TooltipUtils.splitLongText(Chats.RESET_POINTS_POTION_DESC.locName().withStyle(ChatFormatting.AQUA)));
+            l.addAll(ExileTooltipUtils.splitLongText(Chats.RESET_POINTS_POTION_DESC.locName().withStyle(ChatFormatting.AQUA)));
         } else {
             l.add(Chats.RESET_FULL_POTION_DESC.locName().withStyle(ChatFormatting.AQUA));
         }

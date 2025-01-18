@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils.splitLongText;
+import static com.robertx22.library_of_exile.tooltip.ExileTooltipUtils.splitLongText;
 
 public class MainProphecyButton extends ImageButton {
 

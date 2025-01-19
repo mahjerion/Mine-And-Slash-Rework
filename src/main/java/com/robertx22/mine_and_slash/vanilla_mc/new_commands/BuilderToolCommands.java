@@ -1,14 +1,15 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.robertx22.library_of_exile.command_wrapper.CommandBuilder;
+import com.robertx22.library_of_exile.command_wrapper.PermWrapper;
+import com.robertx22.library_of_exile.command_wrapper.PlayerWrapper;
+import com.robertx22.library_of_exile.command_wrapper.RegistryWrapper;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.maps.DungeonRoom;
 import com.robertx22.mine_and_slash.maps.dungeon_reg.Dungeon;
 import com.robertx22.mine_and_slash.maps.generator.RoomType;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.CommandBuilder;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.PermWrapper;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.PlayerWrapper;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.RegistryWrapper;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +27,7 @@ import java.util.Map;
 public class BuilderToolCommands {
     public static void reg(CommandDispatcher dis) {
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper enarg = new PlayerWrapper();
             var DUNGEON = new RegistryWrapper<Dungeon>(ExileRegistryTypes.DUNGEON);
 
@@ -78,7 +79,7 @@ public class BuilderToolCommands {
 
         }, "Gens all dungeon pieces sorting them by type");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper enarg = new PlayerWrapper();
 
             x.addLiteral("builder_tool_warning", PermWrapper.OP);

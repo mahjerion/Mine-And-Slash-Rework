@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.robertx22.library_of_exile.command_wrapper.*;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
@@ -12,18 +13,9 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.parts.ResetPlayerData;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
-import com.robertx22.orbs_of_crafting.main.OrbDatabase;
-import com.robertx22.orbs_of_crafting.misc.LocReqContext;
-import com.robertx22.orbs_of_crafting.misc.StackHolder;
-import com.robertx22.orbs_of_crafting.register.ExileCurrency;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModification;
-import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -33,66 +25,8 @@ public class PlayerCommands {
 
     public static void init(CommandDispatcher dis) {
 
-        // todo also add a currenccy apply command
-        CommandBuilder.of(dis, x -> {
-            PlayerWrapper PLAYER = new PlayerWrapper();
-            RegistryWrapper<ItemModification> MOD = new RegistryWrapper(OrbDatabase.ITEM_MOD);
 
-            x.addLiteral("item_mod", PermWrapper.OP);
-            x.addLiteral("use", PermWrapper.OP);
-            x.addArg(PLAYER);
-            x.addArg(MOD);
-
-            x.action(e -> {
-
-                var res = new ItemModificationResult();
-
-                var p = PLAYER.get(e);
-                var mod = MOD.getFromRegistry(e);
-                ItemStack stack = p.getMainHandItem();
-
-                var ex = new StackHolder(stack);
-                mod.applyMod(p, ex, res);
-
-                res.onFinish(p);
-
-                p.setItemSlot(EquipmentSlot.MAINHAND, ex.stack);
-
-                p.sendSystemMessage(Component.literal("Applied Item Modification from Command").withStyle(ChatFormatting.GREEN));
-            });
-
-        }, "Applies an item modification to the item in player's hand.");
-
-        CommandBuilder.of(dis, x -> {
-            PlayerWrapper PLAYER = new PlayerWrapper();
-            RegistryWrapper<ExileCurrency> CURRENCY = new RegistryWrapper(OrbDatabase.CURRENCY);
-
-            x.addLiteral("currency", PermWrapper.OP);
-            x.addLiteral("use", PermWrapper.OP);
-            x.addArg(PLAYER);
-            x.addArg(CURRENCY);
-
-            x.action(e -> {
-                var p = PLAYER.get(e);
-                var mod = CURRENCY.getFromRegistry(e);
-                ItemStack stack = p.getMainHandItem();
-
-                var ctx = new LocReqContext(p, stack, mod.getItem().getDefaultInstance());
-
-                var ex = mod.canItemBeModified(ctx);
-                if (ex.can) {
-                    var res = mod.modifyItem(ctx);
-                    p.setItemSlot(EquipmentSlot.MAINHAND, res.stack.copy());
-
-                } else {
-                    p.sendSystemMessage(ex.answer);
-                }
-
-            });
-
-        }, "Tries to apply an item currency to the item in player's hand.");
-
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
 
             x.addLiteral("info", PermWrapper.OP);
@@ -109,7 +43,7 @@ public class PlayerCommands {
         }, "Tells you how exactly the area level was calculated.");
 
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             IntWrapper LEVEL = new IntWrapper("level");
             IntWrapper NUMBER = new IntWrapper("amount");
@@ -136,7 +70,7 @@ public class PlayerCommands {
 
         }, "Gives a random watcher eye jewel, affix count depends on level");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             IntWrapper NUMBER = new IntWrapper("point_amount");
             StringWrapper POINT_TYPE = new StringWrapper("point_type", () -> Arrays.stream(PlayerPointsType.values()).map(e -> e.name()).collect(Collectors.toList()));
@@ -164,7 +98,7 @@ public class PlayerCommands {
 
         }, "Give player bonus points. The amount you can give is managed by the Game balance datapack. These are separate from points gained per level");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             IntWrapper NUMBER = new IntWrapper("point_amount");
             StringWrapper POINT_TYPE = new StringWrapper("point_type", () -> Arrays.stream(PlayerPointsType.values()).map(e -> e.name()).collect(Collectors.toList()));
@@ -193,7 +127,7 @@ public class PlayerCommands {
         }, "Give player bonus points. These are considered cheats and uncapped. Only meant for testing. These are separate from points gained per level");
 
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             StringWrapper POINT_TYPE = new StringWrapper("point_type", () -> Arrays.stream(PlayerPointsType.values()).map(e -> e.name()).collect(Collectors.toList()));
 
@@ -217,7 +151,7 @@ public class PlayerCommands {
         }, "Resets bonus points of player");
 
         // for map chat click event
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
 
             x.addLiteral("open", PermWrapper.ANY_PLAYER);
             x.addLiteral("map_gui", PermWrapper.ANY_PLAYER);
@@ -230,7 +164,7 @@ public class PlayerCommands {
 
         }, "");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             StringWrapper TYPE = new StringWrapper("gui_type", () -> Arrays.stream(OpenGuiPacket.GuiType.values()).map(e -> e.name()).collect(Collectors.toList()));
 
@@ -264,7 +198,7 @@ public class PlayerCommands {
         }, "Opens MNS Hub Gui");
          */
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             IntWrapper NUMBER = new IntWrapper("level");
 
@@ -283,7 +217,7 @@ public class PlayerCommands {
         }, "Sets Favor");
 
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             var PROFESSION = new RegistryWrapper<Profession>(ExileRegistryTypes.PROFESSION);
             IntWrapper NUMBER = new IntWrapper("level");
@@ -307,7 +241,7 @@ public class PlayerCommands {
 
         }, "Sets Mine and Slash Profession level");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();
             StringWrapper STRING = new StringWrapper("reset_type", () -> Arrays.stream(ResetPlayerData.values()).map(e -> e.name()).collect(Collectors.toList()));
 

@@ -69,18 +69,19 @@ dependencies {
 
 }
 
-
 publishMods {
 
     curseforge {
         requires { slug = "library-of-exile" }
         requires { slug = "curios" }
         requires { slug = "playeranimator" }
+        requires { slug = "orbs-of-crafting" }
     }
     modrinth {
         requires { slug = "library-of-exile" }
         requires { slug = "curios" }
         requires { slug = "playeranimator" }
+        requires { slug = "orbs-of-crafting" }
     }
 }
 

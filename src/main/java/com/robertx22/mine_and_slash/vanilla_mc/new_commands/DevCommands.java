@@ -1,12 +1,13 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.robertx22.library_of_exile.command_wrapper.CommandBuilder;
+import com.robertx22.library_of_exile.command_wrapper.PermWrapper;
+import com.robertx22.library_of_exile.command_wrapper.PlayerWrapper;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.CommandBuilder;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.PermWrapper;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.PlayerWrapper;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -22,7 +23,7 @@ public class DevCommands {
         if (MMORPG.RUN_DEV_TOOLS) {
 
 
-            CommandBuilder.of(dis, x -> {
+            CommandBuilder.of(CommandRefs.ID, dis, x -> {
                 PlayerWrapper enarg = new PlayerWrapper();
 
                 x.addLiteral("builder_tool_warning", PermWrapper.OP);
@@ -60,7 +61,7 @@ public class DevCommands {
             }, "");
 
 
-            CommandBuilder.of(dis, x -> {
+            CommandBuilder.of(CommandRefs.ID, dis, x -> {
                 PlayerWrapper enarg = new PlayerWrapper();
 
                 x.addLiteral("dev", PermWrapper.OP);

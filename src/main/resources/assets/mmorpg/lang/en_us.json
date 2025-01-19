@@ -2867,18 +2867,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -2891,6 +2879,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3449,13 +3449,6 @@
 "_comment": " [CATEGORY]: SPELLS - DESCRIPTIONS",
 
 
-"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
-
-	"mmorpg.uber_map.desc.uber1": "A living mortal, in MY Realm?",
-
-"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
-
-
 "_comment": " [CATEGORY]: STATUSEFFECTS - DESCRIPTIONS",
 
 	"mmorpg.ailment.desc.bleed": "Deals 120% of the damage as \u00A76\u2600 Physical\u00A77\u00A79 Damage for 5s.",
@@ -3466,6 +3459,13 @@
 	"mmorpg.effect.desc.thorn": "Attacking an enemy with Thorns consumes the thorns to deal [calc:thorn_bush] \u00A76\u2600 Physical\u00A77 Damage",
 
 "_comment": " [CATEGORY]: STATUSEFFECTS - DESCRIPTIONS",
+
+
+"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
+
+	"mmorpg.uber_map.desc.uber1": "A living mortal, in MY Realm?",
+
+"_comment": " [CATEGORY]: UBER MAP - DESCRIPTIONS",
 
 	"item.mmorpg.currency.affix_common_reroll": "Orb of New Beginnings",
 	"item.mmorpg.currency.affix_number_reroll": "Orb of Ciphers",

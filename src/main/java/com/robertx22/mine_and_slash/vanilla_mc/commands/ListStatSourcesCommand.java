@@ -6,7 +6,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.CommandSuggestions;
+import com.robertx22.library_of_exile.command_wrapper.CommandSuggestions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;

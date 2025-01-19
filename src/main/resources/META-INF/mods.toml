@@ -29,7 +29,13 @@ side = "BOTH"
 [[dependencies.mmorpg]]
 modId = "library_of_exile"
 mandatory = true
-versionRange = "[1.5.8,)"
+versionRange = "[${exile_library_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.mmorpg]]
+modId = "orbs_of_crafting"
+mandatory = true
+versionRange = "[${orbs_of_crafting_version},)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.mmorpg]]

@@ -1,18 +1,19 @@
 package com.robertx22.mine_and_slash.vanilla_mc.new_commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.robertx22.library_of_exile.command_wrapper.*;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.vanilla_mc.new_commands.wrapper.*;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 
 public class EntityCommands {
 
     public static void init(CommandDispatcher dis) {
 
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             EntityWrapper enarg = new EntityWrapper();
             IntWrapper intarg = new IntWrapper("level");
 
@@ -31,7 +32,7 @@ public class EntityCommands {
             });
         }, "Sets Mine and Slash level of entity.");
 
-        CommandBuilder.of(dis, x -> {
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
             EntityWrapper enarg = new EntityWrapper();
             var strarg = new RegistryWrapper<MobRarity>(ExileRegistryTypes.MOB_RARITY);
 

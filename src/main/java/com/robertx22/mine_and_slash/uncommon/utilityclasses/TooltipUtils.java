@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.library_of_exile.utils.CLOC;
 import com.robertx22.library_of_exile.wrappers.ExileText;
@@ -138,48 +139,15 @@ public class TooltipUtils {
 
     private static List<Component> removeDoubleBlankLines(List<Component> list, int minLinesCutAllBlanks) {
 
-        List<Component> newt = removeDoubleBlankLines(list, minLinesCutAllBlanks, false);
+        List<Component> newt = ExileTooltipUtils.removeBlankLines(list, ExileTooltipUtils.RemoveOption.ONLY_DOUBLE_BLANK_LINES);
         boolean alwaysRemoveEmpty = newt.size() > minLinesCutAllBlanks;
         if (alwaysRemoveEmpty) {
-            newt = removeDoubleBlankLines(newt, minLinesCutAllBlanks, true);
+            newt = ExileTooltipUtils.removeBlankLines(newt, ExileTooltipUtils.RemoveOption.ALL_BLANK_LINES);
         }
         return newt;
 
     }
 
-    private static List<Component> removeDoubleBlankLines(List<Component> list, int minLinesCutAllBlanks, boolean alwaysRemoveEmpty) {
-
-        List<Component> newt = new ArrayList<>();
-
-        boolean lastIsEmpty = false;
-
-        for (int i = 0; i < list.size(); i++) {
-
-            if (!list.get(i)
-                    .getString()
-                    .isBlank()) {
-                lastIsEmpty = false;
-                newt.add(list.get(i));
-            } else {
-
-                if ((lastIsEmpty || alwaysRemoveEmpty)) {
-
-                } else {
-                    newt.add(list.get(i));
-                }
-
-                lastIsEmpty = true;
-
-            }
-        }
-
-        list.clear();
-
-        list.addAll(newt);
-
-
-        return newt;
-    }
 
     public static MutableComponent rarity(Rarity rarity) {
         return Itemtips.RARITY_TIP.locName().withStyle(ChatFormatting.WHITE)

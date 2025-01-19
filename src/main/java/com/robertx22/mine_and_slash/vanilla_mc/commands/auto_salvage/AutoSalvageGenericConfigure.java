@@ -8,7 +8,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
-import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.CommandSuggestions;
+import com.robertx22.library_of_exile.command_wrapper.CommandSuggestions;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.DatabaseSuggestions;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import net.minecraft.ChatFormatting;

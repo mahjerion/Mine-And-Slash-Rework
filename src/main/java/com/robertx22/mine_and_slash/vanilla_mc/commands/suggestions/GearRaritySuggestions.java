@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions;
 
+import com.robertx22.library_of_exile.command_wrapper.CommandSuggestions;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 
 import java.util.ArrayList;

@@ -48,6 +48,10 @@ public class OnPlayerDamageEntityEvent extends EventConsumer<ExileEvents.OnDamag
                     if (event.source != null && event.source.getEntity() instanceof LivingEntity caster) {
                         var num = DamageConversion.tryConvert(info, event.source, caster, event.mob, event.damage);
                         event.damage = num;
+
+                        if (num <= 0) {
+                            event.canceled = true;
+                        }
                     }
                 } else {
 

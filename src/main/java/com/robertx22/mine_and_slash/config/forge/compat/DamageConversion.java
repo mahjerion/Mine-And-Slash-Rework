@@ -71,6 +71,8 @@ public class DamageConversion {
             dmgEvent.Activate();
 
 
+        } else {
+            return 0;
         }
         return vanillaDmg;
     }

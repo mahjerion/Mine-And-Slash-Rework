@@ -113,7 +113,9 @@ public class ExileRegistryTypes {
     public static ExileRegistryType PROPHECY_START = ExileRegistryType.register(SlashRef.MODID, "prophecy_start", 41, null, SyncTime.NEVER);
     public static ExileRegistryType CHAOS_STAT = ExileRegistryType.register(SlashRef.MODID, "chaos_stat", 42, ChaosStat.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType STAT_COMPAT = ExileRegistryType.register(SlashRef.MODID, "stat_compat", 44, StatCompat.SERIALIZER, SyncTime.ON_LOGIN);
+    // these 2 need to go in lib, at least the mob one
     public static ExileRegistryType UBER_BOSS = ExileRegistryType.register(SlashRef.MODID, "uber_boss", 45, UberBossArena.SERIALIZER, SyncTime.ON_LOGIN);
+    // mobs could be deterministic per pos, based on the current map world? but with an event to change it to specific if needed
     public static ExileRegistryType SPAWNED_MOBS = ExileRegistryType.register(SlashRef.MODID, "map_mob_list", 46, SpawnedMobList.SERIALIZER, SyncTime.NEVER);
     public static ExileRegistryType OMEN = ExileRegistryType.register(SlashRef.MODID, "omen", 47, Omen.SERIALIZER, SyncTime.ON_LOGIN);
 

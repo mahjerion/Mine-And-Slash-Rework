@@ -1,19 +1,7 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.0.txt
 
-v.6.1.0
+v.6.1.1
 
-- big refactor to a lot of code, specifically currencies, now called crafting orbs.
-Orbs of Crafting is now a separate dependency mod and will be used in my other mods, hopefully coming soon
-- fixed soul cleaner config
-- set scale to nearest player true by default
-- fixed leech cap stat scaling: normal > none
-- maybe fix compat config resetting
-- hp bars now show magic shield
-- should check some 'is teamed' methods to work even when far away, so friendly traps dont turn on you as soon as the friend teleports away
-- if youre lacking resists in map you'll now take 10% of your hp as damage per second and you wont regenerate any resource
-- spectators now dont count as nearest players
-- messed with recipe gen code, report if any recipes are missing please
-- one of a kind should now work for effects
-- tp to caster spell action added
-
-Please report any weird things or bugs!
+- fix soul modifiers
+- fixed default invalid dmg conversion being 10 instead of 0%
+- 

@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SpawnPlacements.class)
 public class DisableMobSpawnsInDungeon {
 
+    // todo maybe needed for map mods too
     @Inject(method = "checkSpawnRules", at = @At(value = "HEAD"), cancellable = true)
     private static <T extends Entity> void disableCanSpawn(EntityType<T> pEntityType, ServerLevelAccessor pServerLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom, CallbackInfoReturnable<Boolean> cir) {
         if (WorldUtils.isMapWorldClass(pServerLevel.getLevel())) {

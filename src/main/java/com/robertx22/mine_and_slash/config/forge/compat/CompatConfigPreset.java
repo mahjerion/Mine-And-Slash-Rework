@@ -16,7 +16,6 @@ public enum CompatConfigPreset implements IRestrictedConfig<CompatConfigPreset> 
         x.enable_newbie_res = false;
         x.disableVanillaHpRegen = false;
         x.energyPenalty = false;
-        x.dmgConvert = 30;
         x.dmgConvertLoss = 0;
         x.disableMobIframes = false;
         x.ignoreWepSpellReq = true;
@@ -25,7 +24,6 @@ public enum CompatConfigPreset implements IRestrictedConfig<CompatConfigPreset> 
 
     }), "[Unlocked by installing Mine and Slash Compatibility Addon]: Mine and Slash will be lighted, less invasive and work more like other vanilla-like mods. No more mobs with 1 million hp and so on."),
     ORIGINAL_MODE(new DefaultCompatData().edit(x -> {
-        x.dmgConvert = 0;
         x.dmgConvertLoss = 100;
         x.capItemDamage = false;
         x.itemDamageCapNumber = 25;
@@ -38,6 +36,7 @@ public enum CompatConfigPreset implements IRestrictedConfig<CompatConfigPreset> 
         x.energyPenalty = true;
         x.statReqMulti = 1;
         x.disableMobIframes = true;
+        x.vanillaToweapondmgPercent = 0;
         x.baseStats = BaseStatsConfig.BaseStatsEnum.ORIGINAL_BALANCE;
         x.balance = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE;
         x.dmgCompat = DamageCompatibilityType.DAMAGE_OVERRIDE;
@@ -45,7 +44,6 @@ public enum CompatConfigPreset implements IRestrictedConfig<CompatConfigPreset> 
     }), "[Default Mine and Slash]: The Original mode, it makes it incompatible with some other mods, like spell mods and overrides damage fully. Makes balancing modpacks a lot easier at the cost of compatibility with some mods."
     ),
     COMPATIBLE_MODE(new DefaultCompatData().edit(x -> {
-        x.dmgConvert = 100;
         x.dmgConvertLoss = 100;
         x.capItemDamage = false;
         x.itemDamageCapNumber = 25;

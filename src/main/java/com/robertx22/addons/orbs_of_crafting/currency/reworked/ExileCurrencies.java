@@ -52,7 +52,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                     new NamedKey(SlotTags.dodge_stat.GUID(), "Dodge")
             ))
             .build((id, info) -> {
-                return ExileCurrency.Builder.of(id, info.name + "-Gear Soul Modifier", ItemReqs.INSTANCE.IS_GEAR)
+                return ExileCurrency.Builder.of(id, info.name + "-Gear Soul Modifier", ItemReqs.INSTANCE.IS_SOUL)
                         .rarity(IRarity.UNCOMMON)
                         .addRequirement(Requirements.INSTANCE.IS_SINGLE_ITEM)
                         .addAlwaysUseModification(ItemMods.INSTANCE.FORCE_SOUL_TAG.get(info))

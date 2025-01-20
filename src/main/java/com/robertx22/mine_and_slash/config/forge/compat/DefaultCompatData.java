@@ -26,7 +26,6 @@ public class DefaultCompatData implements CompatDummy {
     public boolean energyPenalty = true;
     public boolean disableMobIframes = true;
     public int itemDamageCapNumber = 3;
-    public int dmgConvert = 0;
     public int dmgConvertLoss = 100;
     public double mobFlatBonusDamage = 6;
     public double mobPercBonusDmg = 0.33F;

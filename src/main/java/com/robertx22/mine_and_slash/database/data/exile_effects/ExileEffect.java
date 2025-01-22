@@ -219,8 +219,15 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                 mc_stats.forEach(x -> x.applyVanillaStats(entity, stacks));
                 Load.Unit(entity).equipmentCache.STATUS.setDirty();
 
-                Load.Unit(entity).getStatusEffectsData().exileMap.entrySet()
-                        .removeIf(x -> ExileDB.ExileEffects().get(x.getKey()).one_of_a_kind_id.equals(this.one_of_a_kind_id));
+                if (!this.one_of_a_kind_id.isEmpty()) {
+                    Load.Unit(entity).getStatusEffectsData().exileMap.entrySet()
+                            .removeIf(x -> {
+                                if (x.getKey().equals(this.GUID())) {
+                                    return false;
+                                }
+                                return ExileDB.ExileEffects().get(x.getKey()).one_of_a_kind_id.equals(this.one_of_a_kind_id);
+                            });
+                }
             }
 
             Load.Unit(entity).setEquipsChanged();

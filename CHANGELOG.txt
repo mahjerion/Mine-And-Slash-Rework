@@ -1,7 +1,7 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.0.txt
 
-v.6.1.1
+v.6.1.2
 
-- fix soul modifiers
-- fixed default invalid dmg conversion being 10 instead of 0%
-- 
+- try fix visual talent connection bug
+- new currency, orb of relief
+- fix effects not applying.. damn one of a kind code deleted them all

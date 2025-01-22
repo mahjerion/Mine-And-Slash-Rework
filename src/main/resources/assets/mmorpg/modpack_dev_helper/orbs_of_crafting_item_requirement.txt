@@ -5,6 +5,14 @@ has_affix_common
 has_affix_epic
 has_affix_legendary
 has_affix_mythic
+has_affix_of_rar_or_lower_common
+has_affix_of_rar_or_lower_epic
+has_affix_of_rar_or_lower_legendary
+has_affix_of_rar_or_lower_mythic
+has_affix_of_rar_or_lower_rare
+has_affix_of_rar_or_lower_runeword
+has_affix_of_rar_or_lower_uncommon
+has_affix_of_rar_or_lower_unique
 has_affix_rare
 has_affix_runeword
 has_affix_uncommon
@@ -38,6 +46,7 @@ lvl_not_max
 map_has_higher_rar
 max_uses_level_up
 max_uses_random_mythic_affix
+max_uses_relief
 max_uses_sharpening_stone
 max_uses_sure_jewel_up
 not_crafted_gear

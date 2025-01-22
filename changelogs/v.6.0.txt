@@ -79,3 +79,8 @@ Orbs of Crafting is now a separate dependency mod and will be used in my other m
 - tp to caster spell action added
 
 Please report any weird things or bugs!
+
+v.6.1.1
+
+- fix soul modifiers
+- fixed default invalid dmg conversion being 10 instead of 0%

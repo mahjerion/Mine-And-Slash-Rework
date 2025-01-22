@@ -36,29 +36,24 @@ public class PointData {
         return new PointData(x + 1, y);
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PointData pointData = (PointData) o;
+
+        if (x != pointData.x) return false;
+        return y == pointData.y;
+    }
+
     @Override
     public int hashCode() {
-        long bitsX = Double.doubleToLongBits(x);
-        long bitsY = Double.doubleToLongBits(y);
 
-        long h = bitsX ^ (bitsY * 31);
-        h = (h >>> 32) ^ h;
-        h = h * 0x27d4eb2d;
-        h = h ^ (h >>> 33);
-        h = h * 0x165667b1;
-        h = h ^ (h >>> 31);
+        int result = x;
+        result = 31 * result + y;
+        return result;
 
-        return Long.hashCode(h);
     }
-
-    @Override
-    public boolean equals(Object obj) { // otherwise hashmaps dont work
-        if (obj instanceof PointData) {
-            PointData pt = (PointData) obj;
-            return (x == pt.x) && (y == pt.y);
-        }
-        return false;
-    }
-
-
 }

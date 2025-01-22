@@ -223,6 +223,18 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .build(this);
 
 
+    public ExileKey<ExileCurrency, IdKey> EASY_ONE_TIME_UPGRADE = ExileCurrency.Builder.of("orb_of_relief", "Orb of Relief", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIX_OF_RARITY_OR_LOWER.get(new RarityKeyInfo(IRarity.EPIC_ID)))
+            .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_LOWEST_AFFIX)
+            .potentialCost(1)
+            .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_RELIEF_USES.toKey()))
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+
     @Override
     public void loadClass() {
 

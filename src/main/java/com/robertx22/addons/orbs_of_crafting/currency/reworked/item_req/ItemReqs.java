@@ -39,10 +39,11 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
         public static MaximumUsesReq.Data MAX_LEVEL_USES = new MaximumUsesReq.Data("level_up", 5);
         public static MaximumUsesReq.Data RANDOM_MYTHIC_AFFIX = new MaximumUsesReq.Data("random_mythic_affix", 1);
         public static MaximumUsesReq.Data MAX_SHARPENING_STONE_USES = new MaximumUsesReq.Data("sharpening_stone", 1);
+        public static MaximumUsesReq.Data MAX_RELIEF_USES = new MaximumUsesReq.Data("relief", 5);
         public static MaximumUsesReq.Data MAX_JEWEL_UPGRADE_USES = new MaximumUsesReq.Data("sure_jewel_up", 3);
 
         public static List<MaximumUsesReq.Data> allMaxUses() {
-            return Arrays.asList(MAX_JEWEL_UPGRADE_USES, MAX_LEVEL_USES, RANDOM_MYTHIC_AFFIX, MAX_SHARPENING_STONE_USES);
+            return Arrays.asList(MAX_RELIEF_USES, MAX_JEWEL_UPGRADE_USES, MAX_LEVEL_USES, RANDOM_MYTHIC_AFFIX, MAX_SHARPENING_STONE_USES);
         }
     }
 
@@ -56,9 +57,14 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
             .ofList(ExileKeyUtil.ofGearRarities())
             .build((id, info) -> new HasAffixOfRarity(id, new HasAffixOfRarity.Data(info.rar)));
 
+    public ExileKeyMap<ItemRequirement, RarityKeyInfo> HAS_AFFIX_OF_RARITY_OR_LOWER = new ExileKeyMap<ItemRequirement, RarityKeyInfo>(this, "has_affix_of_rar_or_lower")
+            .ofList(ExileKeyUtil.ofGearRarities())
+            .build((id, info) -> new HasAffixUnderRarity(id, new HasAffixUnderRarity.Data(info.rar)));
+
     public ExileKeyMap<ItemRequirement, MaxUsesKey> MAXIMUM_USES = new ExileKeyMap<ItemRequirement, MaxUsesKey>(this, "max_uses")
             .ofList(Datas.allMaxUses(), x -> new MaxUsesKey(x))
             .build((id, info) -> new MaximumUsesReq(id, info.data));
+
 
     public ExileKey<ItemRequirement, KeyInfo> LEVEL_NOT_MAX = ExileKey.ofId(this, "lvl_not_max", x -> new LevelNotMaxReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_AFFIXES = ExileKey.ofId(this, "has_affixes", x -> new MustHaveAffixesReq(x.GUID()));

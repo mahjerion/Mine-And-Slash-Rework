@@ -84,3 +84,14 @@ v.6.1.1
 
 - fix soul modifiers
 - fixed default invalid dmg conversion being 10 instead of 0%
+
+v.6.1.2
+
+- try fix visual talent connection bug
+- new currency, orb of relief
+- fix effects not applying.. damn one of a kind code deleted them all
+
+v.6.1.2
+
+- special drops like uber frags and watchers eyes are no longer affected by item caps and generate separately
+- should fix compat mode dmg override 

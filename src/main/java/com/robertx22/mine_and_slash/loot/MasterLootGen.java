@@ -59,6 +59,8 @@ public class MasterLootGen {
                 items.remove(RandomUtils.RandomRange(0, items.size() - 1));
             }
 
+            items.addAll(populateOnceSpecialDrops(info));
+
 
             items.forEach(x -> {
                 ItemUtils.tryAnnounceItem(x, info.player);
@@ -70,6 +72,25 @@ public class MasterLootGen {
         return items;
     }
 
+    private static List<ItemStack> populateOnceSpecialDrops(LootInfo info) {
+        List<ItemStack> items = new ArrayList<ItemStack>();
+
+        if (info == null) {
+            return items;
+        }
+
+        try {
+            items.addAll(new UberFragLootGen(info).tryGenerate());
+            items.addAll(new WatcherEyeLootGen(info).tryGenerate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return items.stream()
+                .filter(x -> x != null && !x.isEmpty())
+                .collect(Collectors.toList());
+    }
 
     private static List<ItemStack> populateOnce(LootInfo info) {
         List<ItemStack> items = new ArrayList<ItemStack>();
@@ -81,7 +102,7 @@ public class MasterLootGen {
         try {
             items.addAll(new GearLootGen(info).tryGenerate());
             items.addAll(new SoulLootGen(info).tryGenerate());
-            items.addAll(new UberFragLootGen(info).tryGenerate());
+            //           items.addAll(new UberFragLootGen(info).tryGenerate());
 
             items.addAll(new AuraGemLootGen(info).tryGenerate());
             items.addAll(new SuppGemLootGen(info).tryGenerate());
@@ -94,7 +115,7 @@ public class MasterLootGen {
             items.addAll(new RuneLootGen(info).tryGenerate());
             items.addAll(new LootChestGen(info).tryGenerate());
 
-            items.addAll(new WatcherEyeLootGen(info).tryGenerate());
+//            items.addAll(new WatcherEyeLootGen(info).tryGenerate());
             items.addAll(new ProphecyCoinLootGen(info).tryGenerate());
             items.addAll(new OmenLootGen(info).tryGenerate());
 

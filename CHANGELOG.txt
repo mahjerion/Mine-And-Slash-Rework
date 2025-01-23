@@ -1,7 +1,7 @@
-Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.0.txt
+Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.1.txt
 
 v.6.1.2
 
-- try fix visual talent connection bug
-- new currency, orb of relief
-- fix effects not applying.. damn one of a kind code deleted them all
+- special drops like uber frags and watchers eyes are no longer affected by item caps and generate separately
+- should fix compat mode dmg override 
+- spider summons now have size of cave spiders

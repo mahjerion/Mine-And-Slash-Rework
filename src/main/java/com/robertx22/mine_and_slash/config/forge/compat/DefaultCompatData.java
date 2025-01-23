@@ -119,6 +119,7 @@ public class DefaultCompatData implements CompatDummy {
 
     @Override
     public int dmgConversionLoss() {
+
         return dmgConvertLoss;
     }
 }

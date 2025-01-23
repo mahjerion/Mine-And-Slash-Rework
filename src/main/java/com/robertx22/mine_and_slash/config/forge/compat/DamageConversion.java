@@ -70,10 +70,17 @@ public class DamageConversion {
 
             dmgEvent.Activate();
 
+            // if fully converted it just replaces the dmg
+            if (compat.dmgConversionLoss() >= 100) {
+                return dmgEvent.attackInfo.getAmount();
+            } else {
+                // otherwise it leaves the vanilla damage + does extra mns dmg source
+                return vanillaDmg;
+            }
 
         } else {
             return 0;
         }
-        return vanillaDmg;
+        /// return vanillaDmg;
     }
 }

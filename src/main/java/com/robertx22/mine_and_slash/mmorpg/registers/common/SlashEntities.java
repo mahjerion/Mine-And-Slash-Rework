@@ -30,7 +30,7 @@ public class SlashEntities {
     public static RegObj<EntityType<WolfSummon>> SPIRIT_WOLF = mob(WolfSummon::new, EntityType.WOLF, "spirit_wolf");
     public static RegObj<EntityType<ZombieSummon>> ZOMBIE = mob(ZombieSummon::new, EntityType.SKELETON, "zombie");
     public static RegObj<EntityType<SkeletonSummon>> SKELETON = mob(SkeletonSummon::new, EntityType.SKELETON, "skeleton");
-    public static RegObj<EntityType<SpiderPet>> SPIDER = mob(SpiderPet::new, EntityType.SPIDER, "spider");
+    public static RegObj<EntityType<SpiderPet>> SPIDER = mob(SpiderPet::new, EntityType.CAVE_SPIDER, "spider");
 
     public static RegObj<EntityType<FireGolem>> FIRE_GOLEM = mob(FireGolem::new, EntityType.WOLF, "fire_golem");
     public static RegObj<EntityType<ColdGolem>> COLD_GOLEM = mob(ColdGolem::new, EntityType.WOLF, "cold_golem");

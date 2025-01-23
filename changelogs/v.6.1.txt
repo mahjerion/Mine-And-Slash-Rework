@@ -34,3 +34,4 @@ v.6.1.2
 
 - special drops like uber frags and watchers eyes are no longer affected by item caps and generate separately
 - should fix compat mode dmg override 
+- spider summons now have size of cave spiders

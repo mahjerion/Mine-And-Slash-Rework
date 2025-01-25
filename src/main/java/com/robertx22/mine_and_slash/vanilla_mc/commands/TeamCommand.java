@@ -33,7 +33,7 @@ public class TeamCommand {
             Component playerName = allPlayersName.get(i);
             Player player = allPlayer.get(i);
             if (asker.getDisplayName().equals(playerName)) {
-                if (Load.player(asker).team.isLeader){
+                if (Load.player(asker).team.isLeader()){
                     allPlayersName.set(i, playerName.copy().withStyle(ChatFormatting.GOLD).append(" \u2605"));
                 }
                 Collections.swap(allPlayersName, 0, i);
@@ -47,7 +47,7 @@ public class TeamCommand {
                         if (tooFar){
                             allPlayersName.set(i, Component.literal("").append(playerName.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)).append(Command.NOT_IN_SAME_TEAM_DUE_TO_DISTANCE.locName().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
                         } else {
-                            if (Load.player(player).team.isLeader){
+                            if (Load.player(player).team.isLeader()){
                                 allPlayersName.set(i, playerName.copy().withStyle(ChatFormatting.GOLD).append(" \u2605"));
                             } else {
                                 allPlayersName.set(i, playerName.copy().withStyle(ChatFormatting.WHITE));
@@ -136,7 +136,7 @@ public class TeamCommand {
                                                     other.displayClientMessage(Command.JOIN_TIP.locName(player.getDisplayName()), false);
                                                     other.displayClientMessage(Command.CLICK_TO_JOIN.locName().withStyle(Style.EMPTY.withClickEvent(new ClickEvent(RUN_COMMAND, "/" + CommandRefs.ID + " teams join " + player.getDisplayName().getString())).withUnderlined(true).withColor(ChatFormatting.GREEN)), false);
 
-                                                    Load.player(other).team.invitedToTeam = Load.player(player).team.team_id;
+                                                    Load.player(other).team.receiveInvitation(Load.player(player).team.getTeam());
 
                                                     player.displayClientMessage(Command.INVITE_INFO.locName(other.getDisplayName()), false);
 
@@ -153,7 +153,7 @@ public class TeamCommand {
                                                     Player other = EntityArgument.getPlayer(x, "player");
                                                     TeamData team = Load.player(player).team;
 
-                                                    if (!team.isLeader){
+                                                    if (!team.isLeader()){
                                                         player.displayClientMessage(Command.YOU_ARE_NOT_LEADER.locName(), false);
                                                         return 0;
                                                     }
@@ -172,7 +172,7 @@ public class TeamCommand {
 
                                                     other.displayClientMessage(Command.YOU_ARE_LEADER.locName(), false);
 
-                                                    Load.player(other).team.isLeader = true;
+                                                    Load.player(other).team.promoteSelf();
 
                                                     return 0;
                                                 })
@@ -186,13 +186,13 @@ public class TeamCommand {
 
                                                     Player other = EntityArgument.getPlayer(x, "player");
 
-                                                    if (!Load.player(player).team.isLeader) {
+                                                    if (!Load.player(player).team.isLeader()) {
                                                         player.displayClientMessage(Command.YOU_ARE_NOT_LEADER.locName(), false);
                                                         return 0;
                                                     }
                                                     if (player.getDisplayName().equals(other.getDisplayName())){
                                                         player.displayClientMessage(Command.LEAVE_TEAM.locName(), false);
-                                                        Load.player(player).team.team_id = "";
+                                                        Load.player(player).team.leaveTeam();
                                                         return 0;
                                                     } else {
                                                         if (!Load.player(player).team
@@ -203,7 +203,7 @@ public class TeamCommand {
                                                     }
 
 
-                                                    Load.player(other).team.team_id = "";
+                                                    Load.player(other).team.leaveTeam();
 
                                                     other.displayClientMessage(Command.BEEN_KICKED.locName(), false);
 
@@ -224,7 +224,7 @@ public class TeamCommand {
                                                     if (Load.player(other).team
                                                             .isOnTeam()) {
 
-                                                        if (Load.player(player).team.invitedToTeam.equals(Load.player(other).team.team_id)) {
+                                                        if (Load.player(player).team.isInvitedBy(other)) {
                                                             Load.player(player).team.joinTeamOf(other);
 
                                                             player.displayClientMessage(Command.JOIN_TEAM.locName(other.getDisplayName()), false);

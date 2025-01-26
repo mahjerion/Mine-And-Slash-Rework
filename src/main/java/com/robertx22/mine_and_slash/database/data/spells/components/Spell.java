@@ -57,9 +57,7 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -338,7 +336,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         boolean showeffect = Screen.hasShiftDown();
 
 
-        List<ExileEffect> effect = new ArrayList<>();
+        Set<ExileEffect> effect = new HashSet<>();
         List<String> ticks = new ArrayList<>();
         //In CTE2 the duration of some effects is not an integer.
         DecimalFormat decimalFormat = new DecimalFormat("0.0");

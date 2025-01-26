@@ -90,6 +90,9 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
             }
 
 
+            addRenderableWidget(new BigSchoolButton(this, guiLeft + 107, guiTop + 8));
+
+
             addRenderableWidget(new LeftRightButton(this, guiLeft + 100 - LeftRightButton.xSize - 5, guiTop + 25 - LeftRightButton.ySize / 2, true));
             addRenderableWidget(new LeftRightButton(this, guiLeft + 150 + 5, guiTop + 25 - LeftRightButton.ySize / 2, false));
 
@@ -142,7 +145,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
             mnsRenderBG(gui);
 
             gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            gui.blit(currentSchool().getIconLoc(), guiLeft + 107, guiTop + 8, 36, 36, 36, 36, 36, 36);
+            // gui.blit(currentSchool().getIconLoc(), guiLeft + 107, guiTop + 8, 36, 36, 36, 36, 36, 36);
 
             // background
             gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);

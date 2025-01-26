@@ -11,13 +11,16 @@ public class Client {
     public static void register() {
 
 
+        // todo
+        // InputEvent.Key.class
+
         ForgeEvents.registerForgeEvent(TickEvent.ClientTickEvent.class, event -> {
             if (event.phase != TickEvent.Phase.END) {
                 return;
             }
             OnClientTick.onEndTick(Minecraft.getInstance());
             OnKeyPress.onEndTick(Minecraft.getInstance());
-            
+
         });
 
 

@@ -86,10 +86,13 @@ public class DamageEvent extends EffectEvent {
         this.attackInfo = attackInfo;
         calcBlock();
 
-
         if (this.targetData.immuneTicks > 0 && attackInfo != null) {
             this.cancelDamage();
         }
+
+
+        var initevent = new DamageInitEvent(this);
+        initevent.Activate();
     }
 
     @Override

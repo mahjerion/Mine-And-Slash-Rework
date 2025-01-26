@@ -3,7 +3,7 @@ package com.robertx22.mine_and_slash.tags.all;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 
 public class SpellTags {
-
+    public static SpellTag SELF_DAMAGE = SpellTag.of("self_damage");
     public static SpellTag projectile = SpellTag.of("projectile");
     public static SpellTag not_affected_by_cast_speed = SpellTag.of("not_affected_by_cast_speed");
     public static SpellTag melee = SpellTag.of("melee");

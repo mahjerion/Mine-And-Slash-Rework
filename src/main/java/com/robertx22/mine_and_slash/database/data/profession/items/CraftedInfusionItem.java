@@ -158,6 +158,7 @@ public class CraftedInfusionItem extends AutoItem implements IRarityItem, IItemA
                             public void modify(LocReqContext ctx) {
                                 ExileStack ex = ExileStack.of(ctx.stack);
                                 ex.get(StackKeys.CUSTOM).edit(x -> CustomItemData.KEYS.ENCHANT_TIMES.add(x, 1));
+                                ctx.stack = ex.getStack();
                             }
 
                             @Override

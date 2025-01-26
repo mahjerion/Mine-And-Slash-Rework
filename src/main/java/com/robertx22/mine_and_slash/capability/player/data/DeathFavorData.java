@@ -27,7 +27,7 @@ public class DeathFavorData {
 
         boolean upped = f > favor;
 
-        this.favor = MathHelper.clamp(f, 0, Integer.MAX_VALUE);
+        this.favor = MathHelper.clamp(f, 0, ServerContainer.get().MAX_POSSIBLE_FAVOR.get());
 
         if (rar != getRarity()) {
             if (upped) {

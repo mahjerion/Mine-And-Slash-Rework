@@ -1,7 +1,9 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.1.txt
 
-v.6.1.2
+v.6.1.3
 
-- special drops like uber frags and watchers eyes are no longer affected by item caps and generate separately
-- should fix compat mode dmg override 
-- spider summons now have size of cave spiders
+- added max possible favor config
+- fixed infusion fails not incrementing uses
+- added names to classes gui
+- added check_combined_hp_and_ms to is_target_low condition
+- added no_attacker_stats_on_selfdmg stat, added to base stats, and the stat conditions and effects required for it

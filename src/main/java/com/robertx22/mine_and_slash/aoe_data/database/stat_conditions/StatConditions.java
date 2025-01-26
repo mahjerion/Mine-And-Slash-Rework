@@ -135,6 +135,8 @@ public class StatConditions implements ExileRegistryInit {
 
     public static StatCondition IS_NOT_DOT = new StringMatchesCondition(EventData.ATTACK_TYPE, AttackType.dot.name()).flipCondition();
 
+    public static StatCondition SOURCE_IS_TARGET = new SourceAndTargetAreSame();
+
     public static void loadClass() {
     }
 

@@ -78,6 +78,7 @@ restore_type_is_heal
 restore_type_is_leech
 restore_type_is_potion
 restore_type_is_regen
+source_is_target
 spell_has_resource_type_cost_blood
 spell_has_resource_type_cost_energy
 spell_has_resource_type_cost_health
@@ -133,6 +134,8 @@ spell_has_tag_ranged
 spell_has_tag_ranged_is_false
 spell_has_tag_rejuvenate
 spell_has_tag_rejuvenate_is_false
+spell_has_tag_self_damage
+spell_has_tag_self_damage_is_false
 spell_has_tag_shatter
 spell_has_tag_shatter_is_false
 spell_has_tag_shield

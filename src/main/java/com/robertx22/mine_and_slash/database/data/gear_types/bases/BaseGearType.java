@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,11 @@ public final class BaseGearType implements IAutoLocName, JsonExileRegistry<BaseG
 
     public Item getRandomItem(GearRarity rar) {
         var list = this.possible_items.stream().filter(x -> rar.item_tier >= ExileDB.GearRarities().get(x.min_rar).item_tier).collect(Collectors.toList());
+
+        if (list.isEmpty()) {
+            return Items.AIR;
+        }
+
         return RandomUtils.weightedRandom(list).getItem();
     }
 

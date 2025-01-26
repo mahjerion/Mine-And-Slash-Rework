@@ -154,8 +154,9 @@ public class StatEffects implements ExileRegistryInit {
     public static StatEffect INCREASE_AREA = new IncreaseNumberByPercentEffect(EventData.AREA_MULTI);
     public static StatEffect APPLY_CAST_SPEED_TO_CD = new ApplyCooldownAsCastTimeEffect();
     public static StatEffect CANCEL_EVENT = new CancelEvent();
+    public static StatEffect DISABLE_ATTACKER_STAT_EFFECTS = new DisableSourceStatsEffect();
 
-
+    
     public static DataHolder<SetCooldownEffect.Data, StatEffect> SET_COOLDOWN = new DataHolder<>(
             Arrays.asList(
                     SetCooldownEffect.BONE_SHATTER

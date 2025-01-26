@@ -1,14 +1,16 @@
 package com.robertx22.mine_and_slash.gui.inv_gui;
 
+import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.library_of_exile.utils.TextUTIL;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.InvGuiPacket;
-import com.robertx22.library_of_exile.main.Packets;
-import com.robertx22.library_of_exile.utils.TextUTIL;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -36,6 +38,11 @@ public class InvGuiButton extends ImageButton {
         });
         this.data = data;
 
+    }
+
+    @Override
+    protected ClientTooltipPositioner createTooltipPositioner() {
+        return DefaultTooltipPositioner.INSTANCE;
     }
 
     @Override

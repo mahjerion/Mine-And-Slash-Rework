@@ -22,6 +22,15 @@ public class HealthUtils {
         );
     }
 
+    /*
+    public static void removeHeartsOnSpawnIfNotLiteMode(LivingEntity en) {
+        if (!CompatConfig.get().healthSystem().usesVanillaHearts()) {
+
+        }
+    }
+
+     */
+
     public static void addHearts(LivingEntity en) {
 
         if (CompatConfig.get().healthSystem().usesVanillaHearts()) {

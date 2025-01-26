@@ -8,13 +8,34 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.test.DataPackStatAccessor;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
+import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageInitEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
 public class DefenseStats {
+
+    public static DataPackStatAccessor<EmptyAccessor> NO_SELF_DAMAGE_STATS = DatapackStatBuilder
+            .ofSingle("no_attacker_stats_on_selfdmg", Elements.Physical)
+            .worksWithEvent(DamageInitEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.SELF_DAMAGE))
+            .addCondition(StatConditions.SOURCE_IS_TARGET)
+            .addEffect(StatEffects.DISABLE_ATTACKER_STAT_EFFECTS)
+            .setLocName(x -> "Spells tagged as [Self Damage] do not trigger attacker's stat effects on the attacker")
+            .setLocDesc(x -> "")
+            .modifyAfterDone(x -> {
+                x.is_long = true;
+                x.scaling = StatScaling.NONE;
+                x.group = Stat.StatGroup.Misc;
+                x.min = 0;
+                x.max = 1;
+            })
+            .build();
 
     public static DataPackStatAccessor<Elements> ALWAYS_CRIT_WHEN_HIT_BY_ELEMENT = DatapackStatBuilder
             .<Elements>of(x -> x.guidName + "_vuln_crit", x -> x)

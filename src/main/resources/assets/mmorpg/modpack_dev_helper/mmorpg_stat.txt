@@ -528,6 +528,7 @@ movement_cdr
 movement_spell_dmg
 movement_spell_dmg_taken
 negative_eff_dur_u_cast
+no_attacker_stats_on_selfdmg
 non_crit_damage
 not_affected_by_cast_speed_cast_time
 not_affected_by_cast_speed_cdr
@@ -587,6 +588,7 @@ plus_lvl_physical_spells
 plus_lvl_projectile_spells
 plus_lvl_ranged_spells
 plus_lvl_rejuvenate_spells
+plus_lvl_self_damage_spells
 plus_lvl_shatter_spells
 plus_lvl_shield_spells
 plus_lvl_shout_spells
@@ -640,6 +642,10 @@ salvaging_core_drop_bonus
 salvaging_double_drop
 salvaging_exp_bonus
 salvaging_triple_drop
+self_damage_cast_time
+self_damage_cdr
+self_damage_spell_dmg
+self_damage_spell_dmg_taken
 shatter_cast_time
 shatter_cdr
 shatter_spell_dmg

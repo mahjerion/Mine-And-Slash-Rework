@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_stats;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
+import com.robertx22.mine_and_slash.aoe_data.database.stats.DefenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
@@ -71,6 +72,8 @@ public class BaseStatsAdder implements ExileRegistryInit {
 
         c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
 
+        c.nonScaled(DefenseStats.NO_SELF_DAMAGE_STATS.get(), 1);
+
         // why did i add this again? I think its a must
         c.nonScaled(OffenseStats.CRIT_CHANCE.get(), 1);
         c.nonScaled(OffenseStats.CRIT_DAMAGE.get(), 1);
@@ -102,6 +105,8 @@ public class BaseStatsAdder implements ExileRegistryInit {
         c.scaled(MagicShieldRegen.getInstance(), 1);
         c.scaled(ManaRegen.getInstance(), 1);
         c.scaled(EnergyRegen.getInstance(), 3);
+        
+        c.nonScaled(DefenseStats.NO_SELF_DAMAGE_STATS.get(), 1);
 
         c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
 

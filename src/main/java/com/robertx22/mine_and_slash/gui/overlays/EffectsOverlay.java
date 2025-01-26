@@ -60,9 +60,9 @@ public class EffectsOverlay {
                 }
 
 
-                PointData textOff = new PointData(9, -5);
+                PointData textOff = new PointData(9, -12);
                 if (!horizontal) {
-                    textOff = new PointData(11, -12);
+                    //  textOff = new PointData(11, -12);
                 }
                 // todo check
 

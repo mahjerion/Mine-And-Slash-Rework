@@ -12,6 +12,9 @@ public class IsTargetLow extends StatCondition {
     EffectSides side;
     int perc;
 
+
+    boolean check_combined_hp_and_ms = true;
+
     public IsTargetLow(String id, int percent, EffectSides side) {
         super(id, "is_target_low");
         this.side = side;
@@ -33,6 +36,13 @@ public class IsTargetLow extends StatCondition {
         float hp = en.getHealth();
         float maxhp = en.getMaxHealth();
 
+
+        if (check_combined_hp_and_ms) {
+            float perchp = hp / maxhp * 100;
+            float percms = ms / msmax * 100;
+            float average = (perchp + percms) / 2F;
+            return perc > average;
+        }
         if (maxhp > msmax) {
             return perc > hp / maxhp * 100;
         } else {

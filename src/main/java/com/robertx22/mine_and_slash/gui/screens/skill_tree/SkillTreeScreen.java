@@ -1,14 +1,10 @@
 package com.robertx22.mine_and_slash.gui.screens.skill_tree;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
-import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
@@ -36,15 +32,11 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL11C;
 
 import java.awt.*;
 import java.util.*;
@@ -100,7 +92,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         }
 
         HashMultimap<ResourceLocation, BufferInfo> map = this.vertexContainer.map;
-        map.put(SlashRef.id("textures/gui/skill_tree/skill_connection.png"), BufferInfo.of(0, -3,  length, 6, -5, (float) 0, off, length, 6, 50, 16, graphics.pose().last().pose()));
+        map.put(SlashRef.id("textures/gui/skill_tree/skill_connection.png"), BufferInfo.of(0, -3, length, 6, -5, (float) 0, off, length, 6, 50, 16, graphics.pose().last().pose()));
 
 
         //graphics.blit(CON, 0, -3, length, 6, 0, off, length, 6, 50, 16);
@@ -261,11 +253,11 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
     private void addConnections() {
 
-        buttonConnections = new HashSet<>(2000);
+        buttonConnections = new HashSet<>(3000);
 
         var data = Load.player(ClientOnly.getPlayer());
 
-        IntOpenHashSet integers = new IntOpenHashSet(2000);
+        IntOpenHashSet integers = new IntOpenHashSet(3000);
         children().forEach(b -> {
             if (b instanceof PerkButton pb) {
 
@@ -494,7 +486,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         gui.pose().scale(1F / zoom, 1F / zoom, 1F / zoom);
 
 
-
         this.msstring = watch.getPrint();
 
         //watch.print(" rendering ");
@@ -524,7 +515,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         Minecraft mc = Minecraft.getInstance();
 
 
-
         RenderSystem.enableDepthTest();
         RenderSystem.depthFunc(GL11.GL_ALWAYS);
         int BG_WIDTH = 256;
@@ -533,7 +523,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         int xp = (int) (mc.getWindow().getGuiScaledWidth() / 2F - BG_WIDTH / 2F);
         int yp = 0;
 
-        gui.blit(BIG_PANEL, xp, yp,0, 0, BG_WIDTH, BG_HEIGHT);
+        gui.blit(BIG_PANEL, xp, yp, 0, 0, BG_WIDTH, BG_HEIGHT);
 
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
 

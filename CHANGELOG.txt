@@ -1,6 +1,7 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.1.txt
 
-v.6.1.4
+v.6.1.5
 
-- extracted gear souls can no longer be used to generate random items
-- should fix the no self damage stat effects stat
+- tweaked is target low code
+- fix newbie res config
+- try fix talent tree visual lines bug

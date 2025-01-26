@@ -36,12 +36,10 @@ public class IsTargetLow extends StatCondition {
         float hp = en.getHealth();
         float maxhp = en.getMaxHealth();
 
-
         if (check_combined_hp_and_ms) {
-            float perchp = hp / maxhp * 100;
-            float percms = ms / msmax * 100;
-            float average = (perchp + percms) / 2F;
-            return perc > average;
+            float current = ms + hp;
+            float max = msmax + maxhp;
+            return perc > current / max * 100;
         }
         if (maxhp > msmax) {
             return perc > hp / maxhp * 100;

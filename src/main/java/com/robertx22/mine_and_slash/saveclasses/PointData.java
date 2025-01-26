@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.saveclasses;
 
+import java.util.Objects;
+
 public class PointData {
     public int x;
     public int y;
@@ -19,6 +21,18 @@ public class PointData {
         return x + "_" + y;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PointData pointData = (PointData) o;
+        return x == pointData.x && y == pointData.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 
     public PointData up() {
         return new PointData(x, y + 1);
@@ -37,23 +51,4 @@ public class PointData {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PointData pointData = (PointData) o;
-
-        if (x != pointData.x) return false;
-        return y == pointData.y;
-    }
-
-    @Override
-    public int hashCode() {
-
-        int result = x;
-        result = 31 * result + y;
-        return result;
-
-    }
 }

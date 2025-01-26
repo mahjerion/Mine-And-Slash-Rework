@@ -90,9 +90,6 @@ public class DamageEvent extends EffectEvent {
             this.cancelDamage();
         }
 
-
-        var initevent = new DamageInitEvent(this);
-        initevent.Activate();
     }
 
     @Override
@@ -401,6 +398,10 @@ public class DamageEvent extends EffectEvent {
 
     @Override
     public void initBeforeActivating() {
+
+        var initevent = new DamageInitEvent(this);
+        initevent.Activate();
+
         calcAttackCooldown();
 
         addMobDamageMultipliers();

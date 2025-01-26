@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.value_calc.ValueCalculation;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
@@ -55,7 +56,11 @@ public class DamageAction extends SpellAction {
                         .build();
 
                 dmg.allowSelfDamage = data.getOrDefault(MapField.ALLOW_SELF_DAMAGE, false);
-                
+
+                if (MMORPG.RUN_DEV_TOOLS) {
+                    //     dmg.allowSelfDamage = true; // todo
+                }
+
 
                 dmg.data.setupNumber(EventData.DMG_EFFECTIVENESS, dmgEffectiveness);
 

@@ -77,7 +77,7 @@ public class ServerContainer {
         RESTED_XP_DEATH_PENALTY = b.defineInRange("RESTED_XP_DEATH_PENALTY", 0.5F, 0, 1);
 
         FAVOR_DEATH_LOSS = b.defineInRange("favor_death_loss", 50D, 0, 10000);
-        MAX_POSSIBLE_FAVOR = b.defineInRange("MAX_POSSIBLE_FAVOR", 0, 0, 10000000);
+        MAX_POSSIBLE_FAVOR = b.defineInRange("MAX_POSSIBLE_FAVOR", 10000000, 0, 10000000);
         FAVOR_CHEST_GAIN = b.defineInRange("favor_chest_gain", 1D, 0, 10000);
 
         GEAR_DROPRATE = b.defineInRange("gear_drop_rate", 7D, 0, 1000);

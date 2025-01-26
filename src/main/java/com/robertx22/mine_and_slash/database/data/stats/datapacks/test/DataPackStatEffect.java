@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.stats.datapacks.test;
 
 import com.robertx22.library_of_exile.main.ExileLog;
-import com.robertx22.mine_and_slash.aoe_data.database.stats.MobDeathStats;
+import com.robertx22.mine_and_slash.aoe_data.database.stats.DefenseStats;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -83,7 +83,7 @@ public class DataPackStatEffect implements IStatEffect {
     public void TryModifyEffect(EffectEvent effect, EffectSides statSource, StatData data, Stat stat) {
 
         if (MMORPG.RUN_DEV_TOOLS) {
-            if (stat.GUID().equals(MobDeathStats.IGNITE_EXPLODE_ON_KILL.getId())) {
+            if (stat.GUID().equals(DefenseStats.NO_SELF_DAMAGE_STATS.getId())) {
                 boolean bo = true;
             }
         }

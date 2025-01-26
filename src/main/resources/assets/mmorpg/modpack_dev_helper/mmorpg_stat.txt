@@ -420,6 +420,7 @@ learn_summon_zombie
 learn_taunt
 learn_teleport
 learn_test_command
+learn_test_self_damage_spell
 learn_test_spell
 learn_thorn_bush
 learn_tidal_strike

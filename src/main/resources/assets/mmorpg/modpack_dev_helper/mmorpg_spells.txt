@@ -89,6 +89,7 @@ summon_zombie
 taunt
 teleport
 test_command
+test_self_damage_spell
 test_spell
 thorn_bush
 tidal_strike

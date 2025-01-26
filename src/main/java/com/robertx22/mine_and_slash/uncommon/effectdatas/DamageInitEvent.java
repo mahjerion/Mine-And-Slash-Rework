@@ -7,6 +7,7 @@ public class DamageInitEvent extends EffectEvent {
 
     public DamageInitEvent(DamageEvent dmg) {
         super(1, dmg.source, dmg.target);
+        this.data = dmg.data;
         this.dmg = dmg;
     }
 

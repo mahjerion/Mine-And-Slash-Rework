@@ -27,6 +27,20 @@ public class TestSpells implements ExileRegistryInit {
         TestSpell.get()
                 .addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
+
+        SpellBuilder.of("test_self_damage_spell", PlayStyle.INT, SpellConfiguration.Builder.instant(7, 20)
+                                .setSwingArm()
+                                .applyCastSpeedToCooldown(), "self damage Ball",
+                        Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.SELF_DAMAGE))
+                .weaponReq(CastingWeapon.MAGE_WEAPON)
+
+                .onCast(PartBuilder.damage(SpellCalcs.FIREBALL, Elements.Fire).addTarget(TargetSelector.CASTER.create()))
+                .onCast(PartBuilder.playSound(SoundEvents.BLAZE_SHOOT, 1D, 0.6D))
+
+
+                .weight(0).build();
+
+
         SpellBuilder.of("test_command", PlayStyle.INT, SpellConfiguration.Builder.instant(7, 15)
                                 .setSwingArm(), "Test command",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage))

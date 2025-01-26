@@ -190,6 +190,8 @@ public class OnItemInteract {
                                 soul.slot = gear.GetBaseGearType().getGearSlot().GUID();
                                 var ex = ExileStack.of(craftedStack);
 
+                                soul.rar = gear.rar;
+
                                 soul.gear = new SavedGearSoul(ex.get(StackKeys.GEAR).get(), ex.get(StackKeys.POTENTIAL).getOrCreate(), ex.get(StackKeys.CUSTOM).getOrCreate());
 
                                 ItemStack soulstack = soul.toStack();

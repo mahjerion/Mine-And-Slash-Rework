@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MyCurioUtils {
 
@@ -43,8 +44,15 @@ public class MyCurioUtils {
     }
 
     public static List<ItemStack> getAllSlots(Player player) {
-        return getAllSlots(SLOTS, player);
+        ICuriosItemHandler handler = CuriosApi.getCuriosHelper()
+                .getCuriosHandler(player)
+                .orElse(null);
 
+        if (handler != null) {
+            var slots = handler.getCurios().entrySet().stream().map(x -> x.getKey()).collect(Collectors.toList());
+            return getAllSlots(slots, player);
+        }
+        return Arrays.asList();
     }
 
     public static ItemStack get(String slot, Player player, int num) {

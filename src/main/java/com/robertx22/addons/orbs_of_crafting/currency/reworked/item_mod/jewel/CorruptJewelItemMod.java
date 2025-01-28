@@ -39,6 +39,6 @@ public class CorruptJewelItemMod extends JewelModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Corrupts the Jewel"));
+                .desc(ExileTranslation.registry(this, "Corrupts the Jewel"));
     }
 }

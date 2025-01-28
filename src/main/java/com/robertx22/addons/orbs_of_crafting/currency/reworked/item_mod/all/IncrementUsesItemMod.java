@@ -56,7 +56,7 @@ public class IncrementUsesItemMod extends ItemModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Increments Uses"));
+                .desc(ExileTranslation.registry(this, "Increments Uses"));
     }
 
 }

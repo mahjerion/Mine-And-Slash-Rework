@@ -31,7 +31,7 @@ public class IsNotCorruptedReq extends ItemRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Must not be corrupted")
+                .desc(ExileTranslation.registry(this, "Must not be corrupted")
                 );
     }
 

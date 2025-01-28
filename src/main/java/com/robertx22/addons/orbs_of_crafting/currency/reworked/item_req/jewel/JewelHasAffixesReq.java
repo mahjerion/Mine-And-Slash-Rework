@@ -33,7 +33,7 @@ public class JewelHasAffixesReq extends JewelRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Jewel Has Affixes")
+                .desc(ExileTranslation.registry(this, "Jewel Has Affixes")
                 );
     }
 

@@ -53,7 +53,7 @@ public class DowngradeAffixItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Downgrades Rarity and re-rolls Numbers of %1$s"));
+                .desc(ExileTranslation.registry(this, "Downgrades Rarity and re-rolls Numbers of %1$s"));
     }
 
 }

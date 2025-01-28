@@ -31,7 +31,7 @@ public class IsGearNotCraftedReq extends GearRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Must not be a Crafted Item")
+                .desc(ExileTranslation.registry(this, "Must not be a Crafted Item")
                 );
     }
 

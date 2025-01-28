@@ -63,7 +63,7 @@ public class ForceGearSlotSoulMod extends ItemModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Forces Soul to Produce %1$s"));
+                .desc(ExileTranslation.registry(this, "Forces Soul to Produce %1$s"));
     }
 
 

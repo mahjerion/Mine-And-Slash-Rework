@@ -1,7 +1,13 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.1.txt
 
-v.6.1.5
+v.6.1.6
 
-- tweaked is target low code
-- fix newbie res config
-- try fix talent tree visual lines bug
+- fix is low code, again
+- made all curio slots work for gear stats
+- changed heal strenght stat to work on ms or hp heals but heal > ms heal conversion now happens first 
+- show decimals now to any number under 10 in stats, and its a client config now 
+- auto items now happen on craft too
+- added 2 new harvest maps
+- improved effect overlay, text is now visibler
+- removed name from dungeon datapacks, they will error but work fine
+- changed how translation modids work, they now use the id of the mod that created the datapack type

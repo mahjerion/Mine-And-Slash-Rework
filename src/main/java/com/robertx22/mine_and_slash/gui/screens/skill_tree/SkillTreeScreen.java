@@ -24,7 +24,6 @@ import com.robertx22.mine_and_slash.saveclasses.PointData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -257,7 +256,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         var data = Load.player(ClientOnly.getPlayer());
 
-        IntOpenHashSet integers = new IntOpenHashSet(3000);
+        HashSet<PerkPointPair> integers = new HashSet(3000);
         children().forEach(b -> {
             if (b instanceof PerkButton pb) {
 
@@ -267,12 +266,12 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
                     PerkButton sb = this.pointPerkButtonMap.get(p);
                     PerkPointPair pair = new PerkPointPair(pb.point, sb.point);
-                    if (!integers.contains(pair.hashCode())) {
+                    if (!integers.contains(pair)) {
 
                         var con = data.talents.getConnection(this.school, sb.point, pb.point);
                         var result = new PerkConnectionRender(pair, con);
                         buttonConnections.add(result);
-                        integers.add(pair.hashCode());
+                        integers.add(pair);
                     }
 
                 }

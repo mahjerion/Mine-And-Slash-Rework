@@ -63,7 +63,9 @@ public class HarvestLeague extends LeagueMechanic {
             public LeaguePiecesList getPieces(MapItemData map) {
                 return new LeaguePiecesList(Arrays.asList(
                         // todo this will be used by uber for now new LeagueStructurePieces(2, "harvest/river"),
-                        new LeagueStructurePieces(2, "harvest/circle")
+                        new LeagueStructurePieces(2, "harvest/circle"),
+                        new LeagueStructurePieces(2, "harvest/aztec"),
+                        new LeagueStructurePieces(2, "harvest/theevent")
                 ));
             }
 

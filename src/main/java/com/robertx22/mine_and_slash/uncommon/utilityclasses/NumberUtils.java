@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 
@@ -46,7 +47,7 @@ public class NumberUtils {
     }
 
     public static String formatForTooltip(float num) {
-        if (Math.abs(num) < 1) {
+        if (Math.abs(num) < ClientConfigs.getConfig().SHOW_DECIMALS_ON_NUMBER_SMALLER_THAN.get()) {
             return format.format(num);
         } else {
             return (int) num + "";

@@ -96,7 +96,7 @@ public class ExtractSocketItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Extracts %1$s from a Socket"));
+                .desc(ExileTranslation.registry(this, "Extracts %1$s from a Socket"));
     }
 
     @Override

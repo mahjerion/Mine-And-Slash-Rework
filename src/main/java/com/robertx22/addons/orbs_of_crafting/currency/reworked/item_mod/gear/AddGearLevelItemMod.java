@@ -20,7 +20,7 @@ public class AddGearLevelItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Adds %1$s Gear Levels")
+                .desc(ExileTranslation.registry(this, "Adds %1$s Gear Levels")
                 );
     }
 

@@ -88,6 +88,14 @@ public class StatConditions implements ExileRegistryInit {
     public static DataHolder<ResourceType, StatCondition> IS_RESOURCE = new DataHolder<>(ResourceType.values(), x -> new StringMatchesCondition(EventData.RESOURCE_TYPE, x.name()));
     public static DataHolder<ResourceType, StatCondition> SPELL_HAS_RESOURCE_TYPE_COST = new DataHolder<>(ResourceType.values(), x -> new SpellHasResourceCost(x));
 
+    public static StatCondition IS_HEALTH_OR_MS_RESTORE = new EitherIsTrueCondition(
+            "is_hp_or_ms_restore",
+            Arrays.asList(
+                    IS_RESOURCE.get(ResourceType.health).GUID(),
+                    IS_RESOURCE.get(ResourceType.magic_shield).GUID()
+            )
+    );
+
     public static DataHolder<ThreatGenType, StatCondition> IS_THREAT_GEN_TYPE = new DataHolder<>(
             ThreatGenType.values()
             , x -> new StringMatchesCondition(EventData.THREAT_GEN_TYPE, x.name()));

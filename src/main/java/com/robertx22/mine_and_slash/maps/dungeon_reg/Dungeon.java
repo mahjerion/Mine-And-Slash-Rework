@@ -1,5 +1,8 @@
 package com.robertx22.mine_and_slash.maps.dungeon_reg;
 
+import com.robertx22.library_of_exile.localization.ExileTranslation;
+import com.robertx22.library_of_exile.localization.ITranslated;
+import com.robertx22.library_of_exile.localization.TranslationBuilder;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -10,11 +13,9 @@ import com.robertx22.mine_and_slash.maps.DungeonRoom;
 import com.robertx22.mine_and_slash.maps.generator.RoomType;
 import com.robertx22.mine_and_slash.maps.room_adders.BaseRoomAdder;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.tags.TagList;
 import com.robertx22.mine_and_slash.tags.all.DungeonTags;
 import com.robertx22.mine_and_slash.tags.imp.DungeonTag;
-import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,13 +23,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, IAutoLocName {
+public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, ITranslated {
 
     public static Dungeon SERIALIZER = new Dungeon();
 
     public String id = "";
     public int weight = 1000;
-    public String name = "";
+    public transient String name = "";
+    public transient String modid = "";
 
     public boolean can_be_main = true;
 
@@ -147,29 +149,21 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
         return weight;
     }
 
-    @Override
-    public AutoLocGroup locNameGroup() {
-        return AutoLocGroup.DUNGEON;
-    }
 
     @Override
-    public String locNameLangFileGUID() {
-        return SlashRef.MODID + ".mmorpg." + GUID();
-    }
-
-    @Override
-    public String locNameForLangFile() {
-        return name;
+    public TranslationBuilder createTranslationBuilder() {
+        return TranslationBuilder.of(modid).name(ExileTranslation.registry(this, name));
     }
 
     public static class Builder {
 
         Dungeon dungeon = new Dungeon();
 
-        public static Builder of(String id, String name, BaseRoomAdder adder) {
+        public static Builder of(String id, String name, BaseRoomAdder adder, String modid) {
             Builder b = new Builder();
             b.dungeon.id = id;
             b.dungeon.name = name;
+            b.dungeon.modid = modid;
             adder.addRoomsToDungeon(b.dungeon);
             return b;
         }

@@ -83,8 +83,7 @@ public class MMORPG {
     public static ModRequiredRegisterInfo REGISTER_INFO = new ModRequiredRegisterInfo(SlashRef.MODID);
 
     public static String formatNumber(float num) {
-
-        if (num < 10) {
+        if (num < ClientConfigs.getConfig().SHOW_DECIMALS_ON_NUMBER_SMALLER_THAN.get()) {
             return DECIMAL_FORMAT.format(num);
         } else {
             return ((int) num) + "";

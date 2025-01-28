@@ -162,7 +162,7 @@ public class ResourceStats {
             .setUsesMoreMultiplier()
             .setSide(EffectSides.Source)
             .addCondition(StatConditions.IS_SPELL)
-            .addCondition(StatConditions.IS_RESOURCE.get(ResourceType.health))
+            .addCondition(StatConditions.IS_HEALTH_OR_MS_RESTORE)
             .addCondition(StatConditions.IS_RESTORE_TYPE.get(RestoreType.heal))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> "Heal Strength")

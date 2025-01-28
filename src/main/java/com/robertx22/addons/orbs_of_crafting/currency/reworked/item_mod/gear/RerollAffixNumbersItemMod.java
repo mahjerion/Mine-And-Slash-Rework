@@ -48,6 +48,6 @@ public class RerollAffixNumbersItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Re-rolls Affix Numbers"));
+                .desc(ExileTranslation.registry(this, "Re-rolls Affix Numbers"));
     }
 }

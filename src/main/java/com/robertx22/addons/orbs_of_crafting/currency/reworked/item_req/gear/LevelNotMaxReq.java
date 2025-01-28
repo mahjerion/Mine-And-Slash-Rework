@@ -31,7 +31,7 @@ public class LevelNotMaxReq extends GearRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Level must be below %1$s")
+                .desc(ExileTranslation.registry(this, "Level must be below %1$s")
                 );
     }
 

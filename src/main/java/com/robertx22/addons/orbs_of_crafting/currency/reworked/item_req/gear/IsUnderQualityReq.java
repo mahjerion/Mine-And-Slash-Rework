@@ -40,7 +40,7 @@ public class IsUnderQualityReq extends GearRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Must be under %1$s Quality")
+                .desc(ExileTranslation.registry(this, "Must be under %1$s Quality")
                 );
     }
 

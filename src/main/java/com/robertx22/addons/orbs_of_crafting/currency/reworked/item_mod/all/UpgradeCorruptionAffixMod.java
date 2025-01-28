@@ -61,7 +61,7 @@ public class UpgradeCorruptionAffixMod extends ItemModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Upgrades Rarity of %1$s of Corruption"));
+                .desc(ExileTranslation.registry(this, "Upgrades Rarity of %1$s of Corruption"));
     }
 
 }

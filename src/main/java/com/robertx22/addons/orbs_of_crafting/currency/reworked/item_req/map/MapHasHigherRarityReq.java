@@ -41,7 +41,7 @@ public class MapHasHigherRarityReq extends MapRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Map Rarity Must be lower than Mythic and Map Level high enough for the Rarity upgrade")
+                .desc(ExileTranslation.registry(this, "Map Rarity Must be lower than Mythic and Map Level high enough for the Rarity upgrade")
                 );
     }
 

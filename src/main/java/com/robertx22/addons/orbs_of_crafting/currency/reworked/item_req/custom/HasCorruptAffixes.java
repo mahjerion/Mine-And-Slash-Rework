@@ -45,7 +45,7 @@ public class HasCorruptAffixes extends ItemRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Must have Corruption affixes")
+                .desc(ExileTranslation.registry(this, "Must have Corruption affixes")
                 );
     }
 

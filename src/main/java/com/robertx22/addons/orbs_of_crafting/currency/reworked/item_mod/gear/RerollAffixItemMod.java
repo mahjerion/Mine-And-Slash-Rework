@@ -75,7 +75,7 @@ public class RerollAffixItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Rerolls %1$s into a new %2$s"));
+                .desc(ExileTranslation.registry(this, "Rerolls %1$s into a new %2$s"));
     }
 
 }

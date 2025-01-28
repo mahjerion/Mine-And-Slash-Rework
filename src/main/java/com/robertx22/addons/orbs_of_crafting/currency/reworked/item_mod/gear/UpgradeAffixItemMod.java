@@ -116,7 +116,7 @@ public class UpgradeAffixItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Upgrades Rarity and re-rolls Numbers of %1$s"));
+                .desc(ExileTranslation.registry(this, "Upgrades Rarity and re-rolls Numbers of %1$s"));
     }
 
 }

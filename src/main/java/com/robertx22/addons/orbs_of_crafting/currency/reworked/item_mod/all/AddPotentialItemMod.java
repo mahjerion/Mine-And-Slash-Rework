@@ -55,7 +55,7 @@ public class AddPotentialItemMod extends ItemModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Add %1$s Potential")
+                .desc(ExileTranslation.registry(this, "Add %1$s Potential")
                 );
     }
 }

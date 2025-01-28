@@ -43,7 +43,7 @@ public class MaximumUsesReq extends ItemRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Maximum %1$s uses")
+                .desc(ExileTranslation.registry(this, "Maximum %1$s uses")
                 );
     }
 

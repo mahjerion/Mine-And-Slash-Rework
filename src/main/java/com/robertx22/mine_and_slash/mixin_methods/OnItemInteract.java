@@ -27,6 +27,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemStackedOnOtherEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -265,22 +266,14 @@ public class OnItemInteract {
 
 
         });
+        ForgeEvents.registerForgeEvent(PlayerEvent.ItemCraftedEvent.class, x -> {
+            ItemStack stack = x.getCrafting();
+            AutoItem.tryInsertTo(stack, x.getEntity());
+        });
 
         ForgeEvents.registerForgeEvent(EntityItemPickupEvent.class, x -> {
             ItemStack stack = x.getItem().getItem();
-            if (!StackSaving.GEARS.has(stack)) {
-                if (!stack.hasTag() || (stack.hasTag() && !stack.getTag().getBoolean("free_souled"))) {
-                    var auto = AutoItem.getRandom(stack.getItem());
-                    if (auto != null) {
-                        stack.getOrCreateTag().putBoolean("free_souled", true);
-
-                        var data = auto.create(x.getEntity());
-                        var ex = ExileStack.of(stack);
-                        data.apply(ex);
-                        stack.setTag(ex.getStack().getTag()); // todo this needs rework after 1.21
-                    }
-                }
-            }
+            AutoItem.tryInsertTo(stack, x.getEntity());
         });
     }
 

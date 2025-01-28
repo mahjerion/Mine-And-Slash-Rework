@@ -62,6 +62,7 @@ public class ClientConfigs {
         SKILL_TREE_ZOOM_SPEED = b.defineInRange("SKILL_TREE_ZOOM_SPEED", 0.15D, 0.000001D, 1D);
 
         REMOVE_EMPTY_TOOLTIP_LINES_IF_MORE_THAN_X_LINES = b.defineInRange("REMOVE_EMPTY_TOOLTIP_LINES_IF_MORE_THAN_X_LINES", 45, 0, 1000);
+        SHOW_DECIMALS_ON_NUMBER_SMALLER_THAN = b.defineInRange("SHOW_DECIMALS_ON_NUMBER_SMALLER_THAN", 15, 0, 1000000);
 
 
         b.comment("Overlays").push("overlays");
@@ -113,6 +114,7 @@ public class ClientConfigs {
     public ForgeConfigSpec.DoubleValue DONT_CULL_PARTICLES_UNDER;
 
     public ForgeConfigSpec.IntValue REMOVE_EMPTY_TOOLTIP_LINES_IF_MORE_THAN_X_LINES;
+    public ForgeConfigSpec.IntValue SHOW_DECIMALS_ON_NUMBER_SMALLER_THAN;
 
 
     public OverlayConfig getOverlayConfig(OverlayType type) {

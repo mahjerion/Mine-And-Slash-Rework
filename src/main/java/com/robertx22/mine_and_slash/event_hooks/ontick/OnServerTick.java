@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.event_hooks.ontick;
 
+import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
@@ -107,7 +108,7 @@ public class OnServerTick {
                                 // var info = TextUTIL.mergeList(map.map.getTooltipOnServer(player));
 
                                 var event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.empty());
-                                player.sendSystemMessage(Chats.TP_TO_DUNGEON_MAPNAME.locName(ExileDB.Dungeons().get(map.dungeonid).locName()
+                                player.sendSystemMessage(Chats.TP_TO_DUNGEON_MAPNAME.locName(ExileDB.Dungeons().get(map.dungeonid).getTranslation(TranslationType.NAME).getTranslatedName()
                                                 .withStyle(ChatFormatting.DARK_PURPLE))
                                         .withStyle(ChatFormatting.LIGHT_PURPLE).withStyle(Style.EMPTY.withHoverEvent(event)));
                             }

@@ -23,7 +23,7 @@ public abstract class BeItemTypeRequirement extends ItemRequirement {
 
     @Override
     public TranslationBuilder createTranslationBuilder() {
-        return new TranslationBuilder(SlashRef.MODID).desc(ExileTranslation.registry(SlashRef.MODID, this, locname));
+        return new TranslationBuilder(SlashRef.MODID).desc(ExileTranslation.registry(this, locname));
     }
 
 }

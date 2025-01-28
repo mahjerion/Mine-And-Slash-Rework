@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.Utilities;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 public class ExileEffectInstanceData {
@@ -24,6 +25,27 @@ public class ExileEffectInstanceData {
         return ticks_left < 1 || stacks < 1;
     }
 
+
+    public String getDurationString() {
+        int ticks = ticks_left;
+        int sec = ticks / 20;
+        String text = (int) sec + "s";
+
+        if (sec > 60) {
+            int min = sec / 60;
+            text = (int) min + "m";
+        } else {
+            DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
+
+            if (sec < 10) {
+                text = (int) sec + "s";
+            } else {
+                text = DECIMAL_FORMAT.format(sec / (float) 60) + "m";
+            }
+
+        }
+        return text;
+    }
 
     public Spell getSpell() {
         return ExileDB.Spells().get(spell_id);

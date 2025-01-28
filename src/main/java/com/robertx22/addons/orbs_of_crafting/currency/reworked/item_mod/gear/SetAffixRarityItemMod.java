@@ -56,7 +56,7 @@ public class SetAffixRarityItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Upgrades %1$s to %2$s Rarity"));
+                .desc(ExileTranslation.registry(this, "Upgrades %1$s to %2$s Rarity"));
     }
 
 }

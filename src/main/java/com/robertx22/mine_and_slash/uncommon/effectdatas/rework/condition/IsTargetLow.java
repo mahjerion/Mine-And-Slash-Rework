@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.HealthUtils;
 import net.minecraft.world.entity.LivingEntity;
 
 public class IsTargetLow extends StatCondition {
@@ -30,11 +31,13 @@ public class IsTargetLow extends StatCondition {
 
         LivingEntity en = event.getSide(side);
         var endata = Load.Unit(en);
+
+
         float ms = endata.getResources().getMagicShield();
         float msmax = endata.getUnit().magicShieldData().getValue();
 
-        float hp = en.getHealth();
-        float maxhp = en.getMaxHealth();
+        float hp = HealthUtils.getCurrentHealth(en);
+        float maxhp = HealthUtils.getMaxHealth(en);
 
         if (check_combined_hp_and_ms) {
             float current = ms + hp;

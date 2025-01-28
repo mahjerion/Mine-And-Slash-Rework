@@ -61,7 +61,7 @@ public class CorruptGearItemMod extends GearModification {
             t += " and adds a Random amount of Corruption Affixes";
         }
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, t));
+                .desc(ExileTranslation.registry(this, t));
     }
 
 

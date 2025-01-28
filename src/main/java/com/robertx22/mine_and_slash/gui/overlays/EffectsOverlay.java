@@ -5,15 +5,13 @@ import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.config.forge.overlay.OverlayType;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.saveclasses.PointData;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 
-import java.text.DecimalFormat;
 import java.util.Map;
 
 public class EffectsOverlay {
@@ -30,48 +28,32 @@ public class EffectsOverlay {
         int size = 16;
         int spacing = 18;
 
-        Minecraft mc = Minecraft.getInstance();
+        int bgX = 18;
+        int bgY = 24;
+
+        // Minecraft mc = Minecraft.getInstance();
 
         for (Map.Entry<String, ExileEffectInstanceData> en : Load.Unit(p).getStatusEffectsData().exileMap.entrySet()) {
             if (!en.getValue().shouldRemove()) {
                 var eff = ExileDB.ExileEffects().get(en.getKey());
 
-                gui.blit(eff.getTexture(), x, y, size, size, 0, 0, size, size, size, size);
+                gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+                gui.blit(eff.getTexture(), x + 1, y + 1, size, size, 0, 0, size, size, size, size);
 
-                gui.drawString(mc.font, en.getValue().stacks + "", (int) x, (int) y, ChatFormatting.WHITE.getColor(), true);
+                gui.blit(SlashRef.guiId("effect/effect_overlay"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+                // gui.drawString(mc.font, en.getValue().stacks + "", (int) x + 13, (int) y + 2, ChatFormatting.WHITE.getColor(), true);
 
-                int ticks = en.getValue().ticks_left;
-                int sec = ticks / 20;
-                String text = (int) sec + "s";
-
-                if (sec > 60) {
-                    int min = sec / 60;
-                    text = (int) min + "m";
-                } else {
-
-                    DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
-
-                    if (sec < 10) {
-                        text = (int) sec + "s";
-                    } else {
-                        text = DECIMAL_FORMAT.format(sec / (float) 60) + "m";
-                    }
-
-                }
+                GuiUtils.renderScaledText(gui, (int) x + 15, (int) y + 5, 0.6F, en.getValue().stacks + "", ChatFormatting.WHITE);
 
 
-                PointData textOff = new PointData(9, -12);
-                if (!horizontal) {
-                    //  textOff = new PointData(11, -12);
-                }
-                // todo check
+                String text = en.getValue().getDurationString();
 
-                GuiUtils.renderScaledText(gui, (int) x + textOff.x, (int) y - textOff.y, 0.8F, text, ChatFormatting.YELLOW);
+                GuiUtils.renderScaledText(gui, (int) x + 10, (int) y + 21, 0.6F, text, ChatFormatting.YELLOW);
 
                 if (horizontal) {
-                    x += spacing;
+                    x += bgX;
                 } else {
-                    y += spacing;
+                    y += bgY;
                 }
             }
         }

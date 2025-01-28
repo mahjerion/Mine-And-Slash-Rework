@@ -8,11 +8,14 @@ import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.ExileStacklessData;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
@@ -37,6 +40,22 @@ public class AutoItem implements JsonExileRegistry<AutoItem>, IAutoGson<AutoItem
         b.custom_item_generation = gen;
 
         b.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+    }
+
+    public static void tryInsertTo(ItemStack stack, Player p) {
+        if (!StackSaving.GEARS.has(stack)) {
+            if (!stack.hasTag() || (stack.hasTag() && !stack.getTag().getBoolean("free_souled"))) {
+                var auto = AutoItem.getRandom(stack.getItem());
+                if (auto != null) {
+                    stack.getOrCreateTag().putBoolean("free_souled", true);
+
+                    var data = auto.create(p);
+                    var ex = ExileStack.of(stack);
+                    data.apply(ex);
+                    stack.setTag(ex.getStack().getTag()); // todo this needs rework after 1.21
+                }
+            }
+        }
     }
 
     public ExileStacklessData create(Player p) {

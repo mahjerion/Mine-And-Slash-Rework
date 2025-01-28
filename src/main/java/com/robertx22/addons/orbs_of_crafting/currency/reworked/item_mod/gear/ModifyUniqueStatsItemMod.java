@@ -56,7 +56,7 @@ public class ModifyUniqueStatsItemMod extends GearModification {
         term += " %1$s Percent to Unique Stats";
 
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, term));
+                .desc(ExileTranslation.registry(this, term));
     }
 
     

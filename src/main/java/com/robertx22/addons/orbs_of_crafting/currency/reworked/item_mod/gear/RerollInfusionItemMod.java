@@ -46,7 +46,7 @@ public class RerollInfusionItemMod extends GearModification {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Re-rolls Infusion Affix"));
+                .desc(ExileTranslation.registry(this, "Re-rolls Infusion Affix"));
     }
 
     @Override

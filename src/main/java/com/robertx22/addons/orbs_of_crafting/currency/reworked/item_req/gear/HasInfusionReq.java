@@ -30,7 +30,7 @@ public class HasInfusionReq extends GearRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(SlashRef.MODID, this, "Must have Infusion")
+                .desc(ExileTranslation.registry(this, "Must have Infusion")
                 );
     }
 

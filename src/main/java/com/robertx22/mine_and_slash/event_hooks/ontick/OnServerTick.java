@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.profession.StationPacket;
 import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
@@ -126,8 +127,11 @@ public class OnServerTick {
                     }
                 } else {
                     // todo this shouldnt be done like this
-                    if (player.gameMode.getGameModeForPlayer() == GameType.ADVENTURE) {
-                        player.setGameMode(GameType.SURVIVAL);
+
+                    if (ServerContainer.get().FORCE_SURVIVAL_MODE_OUTSIDE_MAP.get()) {
+                        if (player.gameMode.getGameModeForPlayer() == GameType.ADVENTURE) {
+                            player.setGameMode(GameType.SURVIVAL);
+                        }
                     }
                 }
                 if (!unitdata.getCooldowns().isOnCooldown("stop_map_gen")) {

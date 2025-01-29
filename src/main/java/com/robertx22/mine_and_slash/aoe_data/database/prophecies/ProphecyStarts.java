@@ -7,7 +7,7 @@ import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 public class ProphecyStarts implements ExileRegistryInit {
     @Override
     public void registerAll() {
-        new ProphecyUniqueGearProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        //new ProphecyUniqueGearProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new GearProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new RuneProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new JewelProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);

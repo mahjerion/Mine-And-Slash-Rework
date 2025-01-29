@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.stat_compat;
 
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -102,8 +103,14 @@ public class StatCompat implements JsonExileRegistry<StatCompat>, IAutoGson<Stat
             if (ExileDB.Stats().get(mns_stat_id) instanceof AttributeStat) {
                 return null;
             }
+            var at = getAttribute();
 
-            int val = (int) (en.getAttributeValue(getAttribute()) * conversion);
+            if (at == null) {
+                ExileLog.get().warn(this.attribute_id + " is a null attribute in Stat Compat");
+                return null;
+            }
+
+            int val = (int) (en.getAttributeValue(at) * conversion);
             int value = MathHelper.clamp(val, minimum_cap, maximum_cap);
 
             if (value != 0) {

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.prophecy.starts;
 
+import com.robertx22.mine_and_slash.database.data.league.LeagueMechanics;
 import com.robertx22.mine_and_slash.database.data.prophecy.ProphecyModifierType;
 import com.robertx22.mine_and_slash.database.data.prophecy.ProphecyStart;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -9,8 +10,7 @@ import com.robertx22.mine_and_slash.loot.blueprints.ItemBlueprint;
 
 public class GearProphecy extends ProphecyStart {
 
-
-    public String league = "";
+    public String league = LeagueMechanics.PROPHECY.GUID();
 
     @Override
     public ItemBlueprint create(int lvl, int tier) {

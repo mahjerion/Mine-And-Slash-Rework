@@ -33,16 +33,25 @@ public class ArmorEffect extends InCodeStatEffect<DamageEvent> {
     public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
         float pene = effect.getPenetration();
 
-
         IUsableStat armor = (IUsableStat) stat;
 
-        float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), (int) (data.getValue() - pene), effect.sourceData.getLevel());
+        int afterPene = (int) (data.getValue() - pene);
 
-        EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
-
-        float defense = EffectiveArmor * 100F;
-
-        effect.getLayer(StatLayers.Defensive.PHYS_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
+        if (afterPene == 0) {
+            return effect;
+        }
+        if (afterPene > 0) {
+            float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), afterPene, effect.sourceData.getLevel());
+            EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
+            float defense = EffectiveArmor * 100F;
+            effect.getLayer(StatLayers.Defensive.PHYS_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
+        } else {
+            // so it can go in negative too if player has high armor pen
+            float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), Math.abs(afterPene), effect.sourceData.getLevel());
+            EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
+            float defense = EffectiveArmor * -100F;
+            effect.getLayer(StatLayers.Defensive.PHYS_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
+        }
 
         return effect;
     }

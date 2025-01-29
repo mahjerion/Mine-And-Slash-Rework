@@ -28,7 +28,7 @@ public class SpellTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.Spell;
+    public String getTagType() {
+        return TagType.Spell.id;
     }
 }

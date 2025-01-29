@@ -27,7 +27,7 @@ public class ElementTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.Element;
+    public String getTagType() {
+        return TagType.Element.id;
     }
 }

@@ -65,6 +65,8 @@ public class OnLogin {
 
             data.onLogin(player);
 
+            Load.player(player).config.onLoginFillDefaults();
+
             if (!JsonExileRegistry.NOT_LOADED_JSONS_MAP.isEmpty()) {
                 int count = 0;
                 String hovertext = "";

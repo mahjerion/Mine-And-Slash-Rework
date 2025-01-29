@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.maps.room_adders;
 
+import com.robertx22.mine_and_slash.maps.dungeon_generation.RoomType;
 import com.robertx22.mine_and_slash.maps.dungeon_reg.Dungeon;
-import com.robertx22.mine_and_slash.maps.generator.RoomType;
 
 public abstract class BaseRoomAdder {
 

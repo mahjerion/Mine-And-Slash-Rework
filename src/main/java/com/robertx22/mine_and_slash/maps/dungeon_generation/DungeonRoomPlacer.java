@@ -1,10 +1,7 @@
-package com.robertx22.mine_and_slash.maps.feature;
+package com.robertx22.mine_and_slash.maps.dungeon_generation;
 
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.mine_and_slash.maps.MapData;
-import com.robertx22.mine_and_slash.maps.generator.BuiltRoom;
-import com.robertx22.mine_and_slash.maps.generator.DungeonBuilder;
-import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -14,10 +11,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 
-public class DungeonFeature {
+public class DungeonRoomPlacer {
 
     public static boolean place(MapData mapData, LevelAccessor level, RandomSource rand, BlockPos pos) {
         return generateStructure(mapData, level, new ChunkPos(pos), rand);
@@ -64,48 +60,24 @@ public class DungeonFeature {
 
     private static boolean generateStructure(MapData mapData, LevelAccessor world, ChunkPos cpos, RandomSource random) {
 
-
         DungeonBuilder builder = new DungeonBuilder(0, cpos);
         builder.build();
 
         if (!builder.builtDungeon.hasRoomForChunk(cpos)) {
             return false;
         }
-
-        var bpos = cpos.getMiddleBlockPosition(50);
-
-        ChunkPos start = MapData.getStartChunk(bpos, MapData.DUNGEON_LENGTH);
-
-        // if its the start of the dungeon, we init some stuff
-        if (cpos.equals(start)) {
-            // todo
-        }
-
         BuiltRoom room = builder.builtDungeon.getRoomForChunk(cpos);
-
-
         if (room == null) {
             return false;
         }
-
         if (!room.room.isBarrier) {
             // we make sure only valid rooms are added to the total
             mapData.leagues.totalGenDungeonChunks++;
         }
 
-
         BlockPos position = cpos.getBlockAt(0, 50, 0);
 
         generatePiece(world, position, random, room.data.rotation, room.getStructure());
-
-        if (!room.room.isBarrier) {
-
-            var chunk = world.getChunk(position);
-            if (chunk instanceof LevelChunk lc) {
-                Load.chunkData(lc).roomCreated = true;
-            }
-
-        }
 
         return true;
 

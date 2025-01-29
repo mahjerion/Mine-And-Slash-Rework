@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.maps.processors.league;
 
-import com.robertx22.mine_and_slash.maps.generator.ChunkProcessData;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.ChunkProcessData;
 import com.robertx22.mine_and_slash.maps.processors.DataProcessor;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashBlocks;
 import net.minecraft.core.BlockPos;

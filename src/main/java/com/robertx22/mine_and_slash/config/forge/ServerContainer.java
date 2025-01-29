@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.config.forge;
 
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
+import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,8 @@ public class ServerContainer {
         spec = specPair.getRight();
         CONTAINER = specPair.getLeft();
     }
+
+    public HashMap<PlayerConfigData.Config, ForgeConfigSpec.BooleanValue> defaultFeatureConfigs = new HashMap<>();
 
     ServerContainer(ForgeConfigSpec.Builder b) {
         b.comment("General Configs")
@@ -152,7 +155,17 @@ public class ServerContainer {
                     // String str = (String) x;
                     return true;
                 });
+
+        b.comment("These are just default values for the Mine and slash Hub > features").push("Default Feature Configs");
+
+        for (PlayerConfigData.Config value : PlayerConfigData.Config.values()) {
+            defaultFeatureConfigs.put(value, b.define(value.id, value.enabledByDefault));
+        }
+
         b.pop();
+
+        b.pop();
+
     }
 
     private static HashMap<Item, GearSlot> cachedCompatMap = new HashMap<>();

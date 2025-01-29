@@ -51,14 +51,13 @@ public class ChunkCap implements ICap {
         this.chunk = chunk;
     }
 
-    public boolean roomCreated = false;
 
     List<CompoundTag> savedMobs = new ArrayList<>();
 
     public void tryLoadMobs(Level world) {
         if (!savedMobs.isEmpty()) {
             try {
-                
+
                 var saved = savedMobs.stream().toList();
                 savedMobs.clear();
                 mobIds.clear();

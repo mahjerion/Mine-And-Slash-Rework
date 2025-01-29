@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.maps;
 
-import com.robertx22.mine_and_slash.maps.dungeon_reg.Dungeon;
-import com.robertx22.mine_and_slash.maps.generator.RoomType;
-import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.registry.IWeighted;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.RoomType;
+import com.robertx22.mine_and_slash.maps.dungeon_reg.Dungeon;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.resources.ResourceLocation;
 
 public class DungeonRoom implements IWeighted {

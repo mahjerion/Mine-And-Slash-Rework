@@ -1,4 +1,4 @@
-package com.robertx22.mine_and_slash.maps.generator;
+package com.robertx22.mine_and_slash.maps.dungeon_generation;
 
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.IWeighted;

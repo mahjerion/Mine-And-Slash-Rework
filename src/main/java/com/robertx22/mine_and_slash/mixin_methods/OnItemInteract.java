@@ -267,13 +267,25 @@ public class OnItemInteract {
 
         });
         ForgeEvents.registerForgeEvent(PlayerEvent.ItemCraftedEvent.class, x -> {
-            ItemStack stack = x.getCrafting();
-            AutoItem.tryInsertTo(stack, x.getEntity());
+            try {
+                if (!x.getEntity().level().isClientSide) {
+                    ItemStack stack = x.getCrafting();
+                    AutoItem.tryInsertTo(stack, x.getEntity());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         ForgeEvents.registerForgeEvent(EntityItemPickupEvent.class, x -> {
-            ItemStack stack = x.getItem().getItem();
-            AutoItem.tryInsertTo(stack, x.getEntity());
+            try {
+                if (!x.getEntity().level().isClientSide) {
+                    ItemStack stack = x.getItem().getItem();
+                    AutoItem.tryInsertTo(stack, x.getEntity());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

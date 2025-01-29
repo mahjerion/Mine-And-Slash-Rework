@@ -1,4 +1,4 @@
-package com.robertx22.mine_and_slash.maps.generator;
+package com.robertx22.mine_and_slash.maps.dungeon_generation;
 
 
 public class UnbuiltRoom {

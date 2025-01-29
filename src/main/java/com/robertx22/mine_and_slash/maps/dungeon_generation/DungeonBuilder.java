@@ -1,4 +1,4 @@
-package com.robertx22.mine_and_slash.maps.generator;
+package com.robertx22.mine_and_slash.maps.dungeon_generation;
 
 
 import com.robertx22.library_of_exile.utils.RandomUtils;
@@ -44,7 +44,6 @@ public class DungeonBuilder {
     public BuiltDungeon builtDungeon;
     public final Random rand;
     public int size;
-    public boolean isTesting = false;
     public int maxBossRooms = 1;
 
 

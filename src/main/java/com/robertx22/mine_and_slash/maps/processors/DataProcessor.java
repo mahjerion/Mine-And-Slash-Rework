@@ -1,11 +1,11 @@
 package com.robertx22.mine_and_slash.maps.processors;
 
 
+import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.maps.MapData;
-import com.robertx22.mine_and_slash.maps.generator.ChunkProcessData;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.ChunkProcessData;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.library_of_exile.utils.RandomUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.ChunkPos;

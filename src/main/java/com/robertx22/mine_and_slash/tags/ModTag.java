@@ -1,9 +1,9 @@
 package com.robertx22.mine_and_slash.tags;
 
+import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
-import com.robertx22.library_of_exile.registry.IGUID;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public abstract class ModTag implements IAutoLocName, IGUID {
 
     public abstract ModTag fromString(String s);
 
-    public abstract TagType getTagType();
+    public abstract String getTagType();
 
     @Override
     public AutoLocGroup locNameGroup() {
@@ -34,7 +34,7 @@ public abstract class ModTag implements IAutoLocName, IGUID {
 
     @Override
     public String locNameLangFileGUID() {
-        return SlashRef.MODID + ".tag." + getTagType().id + "." + GUID();
+        return SlashRef.MODID + ".tag." + getTagType() + "." + GUID();
     }
 
     @Override

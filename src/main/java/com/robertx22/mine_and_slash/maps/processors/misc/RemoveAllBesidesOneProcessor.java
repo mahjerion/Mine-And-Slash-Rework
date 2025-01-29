@@ -2,7 +2,7 @@ package com.robertx22.mine_and_slash.maps.processors.misc;
 
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.utils.RandomUtils;
-import com.robertx22.mine_and_slash.maps.generator.ChunkProcessData;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.ChunkProcessData;
 import com.robertx22.mine_and_slash.maps.processors.DataProcessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;

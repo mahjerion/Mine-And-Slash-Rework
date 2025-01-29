@@ -29,7 +29,7 @@ public class EffectTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.Effect;
+    public String getTagType() {
+        return TagType.Effect.id;
     }
 }

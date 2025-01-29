@@ -28,7 +28,7 @@ public class MapAffixTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.MapAffix;
+    public String getTagType() {
+        return TagType.MapAffix.id;
     }
 }

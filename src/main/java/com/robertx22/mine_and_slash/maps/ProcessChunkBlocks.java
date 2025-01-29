@@ -6,10 +6,10 @@ import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.league.LeagueMechanic;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.maps.feature.DungeonFeature;
-import com.robertx22.mine_and_slash.maps.generator.BuiltRoom;
-import com.robertx22.mine_and_slash.maps.generator.ChunkProcessData;
-import com.robertx22.mine_and_slash.maps.generator.DungeonBuilder;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.BuiltRoom;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.ChunkProcessData;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.DungeonBuilder;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.DungeonRoomPlacer;
 import com.robertx22.mine_and_slash.maps.processors.DataProcessor;
 import com.robertx22.mine_and_slash.maps.processors.DataProcessors;
 import com.robertx22.mine_and_slash.maps.processors.league.LeagueSpawnPos;
@@ -124,7 +124,7 @@ public class ProcessChunkBlocks {
                         if (!chunkdata.generatedTerrain) {
                             chunkdata.generatedTerrain = true;
 
-                            DungeonFeature.place(opt.get(), level, level.getRandom(), cpos.getBlockAt(0, 0, 0));
+                            DungeonRoomPlacer.place(opt.get(), level, level.getRandom(), cpos.getBlockAt(0, 0, 0));
 
                             //BuiltRoom room = builder.builtDungeon.getRoomForChunk(cpos);
 

@@ -28,7 +28,7 @@ public class DungeonTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.Dungeon;
+    public String getTagType() {
+        return TagType.Dungeon.id;
     }
 }

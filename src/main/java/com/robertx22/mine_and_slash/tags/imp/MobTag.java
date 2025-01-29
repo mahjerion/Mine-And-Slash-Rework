@@ -28,7 +28,7 @@ public class MobTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.Mob;
+    public String getTagType() {
+        return TagType.Mob.id;
     }
 }

@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.maps.room_adders;
 
-import com.robertx22.mine_and_slash.maps.generator.RoomType;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.RoomType;
 
 public class MiscGroupAdders extends BaseRoomAdder {
 
@@ -10,7 +10,7 @@ public class MiscGroupAdders extends BaseRoomAdder {
 
     @Override
     public void addAllRooms() {
-      
+
 
         add("simple_prismarine", RoomType.FOUR_WAY);
         add("prismarine", RoomType.ENTRANCE);

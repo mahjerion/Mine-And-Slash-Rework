@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.maps.room_adders;
 
-import com.robertx22.mine_and_slash.maps.generator.RoomType;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.RoomType;
 
 public class IceTempleRoomAdder extends BaseRoomAdder {
 

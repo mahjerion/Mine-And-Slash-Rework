@@ -10,7 +10,7 @@ import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.maps.DungeonRoom;
-import com.robertx22.mine_and_slash.maps.generator.RoomType;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.RoomType;
 import com.robertx22.mine_and_slash.maps.room_adders.BaseRoomAdder;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.TagList;
@@ -34,7 +34,6 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
 
     public boolean can_be_main = true;
 
-
     public TagList<DungeonTag> tags = new TagList<DungeonTag>(Arrays.asList(DungeonTags.DEFAULT));
 
     public List<String> entrances = new ArrayList<>();
@@ -53,9 +52,7 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
     }
 
     public List<Dungeon> getPossibleOtherTilesets() {
-
         var list = other_tileset.stream().map(x -> ExileDB.Dungeons().get(x)).collect(Collectors.toList());
-
         return list;
     }
 
@@ -173,6 +170,9 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
             return this;
         }
 
+        // todo need to make my own tag system.. or any kind of extra data system really
+        // it should be 1 datapack, extra data datapack, and it should be able to load and map them
+        // tho in this case maybe not neede, maybe just rework this into specific mob lists.?
         public Builder tags(DungeonTag... tags) {
             this.dungeon.tags.addAll(Arrays.asList(tags));
             return this;
@@ -183,11 +183,14 @@ public class Dungeon implements IAutoGson<Dungeon>, JsonExileRegistry<Dungeon>, 
             return this;
         }
 
+        public Dungeon getDungeon() {
+            return dungeon;
+        }
+
         public Dungeon build() {
             dungeon.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
             return dungeon;
         }
-
 
     }
 }

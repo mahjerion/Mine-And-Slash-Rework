@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.vanilla_mc.commands.report;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.robertx22.mine_and_slash.maps.generator.BuiltRoom;
-import com.robertx22.mine_and_slash.maps.generator.DungeonBuilder;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.BuiltRoom;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.DungeonBuilder;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;

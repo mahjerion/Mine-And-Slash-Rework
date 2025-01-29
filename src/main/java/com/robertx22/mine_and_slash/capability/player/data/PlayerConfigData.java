@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
 import com.robertx22.library_of_exile.utils.SoundUtils;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
@@ -49,6 +50,7 @@ public class PlayerConfigData {
             this.isDebug = isdebug;
             this.enabledByDefault = enabledByDefault;
         }
+
     }
 
 
@@ -57,10 +59,15 @@ public class PlayerConfigData {
     public HashMap<String, Boolean> configs = new HashMap<>();
 
     public boolean isConfigEnabled(Config id) {
-        if (!configs.containsKey(id.id)) {
-            configs.put(id.id, id.enabledByDefault);
+        return configs.getOrDefault(id.id, false);
+    }
+
+    public void onLoginFillDefaults() {
+        for (Config value : Config.values()) {
+            if (!configs.containsKey(value.id)) {
+                configs.put(value.id, ServerContainer.get().defaultFeatureConfigs.get(value).get());
+            }
         }
-        return configs.getOrDefault(id.id, id.enabledByDefault);
     }
 
 

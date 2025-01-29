@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.maps.processors.mob;
 
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.maps.generator.ChunkProcessData;
+import com.robertx22.mine_and_slash.maps.dungeon_generation.ChunkProcessData;
 import com.robertx22.mine_and_slash.maps.processors.DataProcessor;
 import com.robertx22.mine_and_slash.maps.processors.helpers.MobBuilder;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;

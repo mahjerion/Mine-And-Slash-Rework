@@ -20,7 +20,7 @@ public class SlotTag extends NormalModTag {
     public static List<SlotTag> getAll() {
         return ModTag.MAP.get(TagType.GearSlot).stream().map(x -> (SlotTag) x).collect(Collectors.toList());
     }
-    
+
     public SlotTag(String id) {
         super(id);
     }
@@ -31,7 +31,7 @@ public class SlotTag extends NormalModTag {
     }
 
     @Override
-    public TagType getTagType() {
-        return TagType.GearSlot;
+    public String getTagType() {
+        return TagType.GearSlot.id;
     }
 }

@@ -8,31 +8,11 @@ import java.util.UUID;
 
 public class TeamData {
 
-    private String team_id = "";
+    public String team_id = "";
 
-    private String invitedToTeam = "";
+    public String invitedToTeam = "";
 
-    private boolean isLeader = false;
-
-    public void receiveInvitation(String teamID){
-        this.invitedToTeam = teamID;
-    }
-
-    public String getTeam(){
-        return team_id;
-    }
-
-    public boolean isLeader(){
-        return isLeader;
-    }
-
-    public void promoteSelf(){
-        this.isLeader = true;
-    }
-
-    public boolean isInvitedBy(Player player){
-        return Load.player(player).team.invitedToTeam.equals(this.team_id);
-    }
+    public boolean isLeader = false;
 
     public void joinTeamOf(Player other) {
         this.team_id = Load.player(other).team.team_id;
@@ -40,7 +20,6 @@ public class TeamData {
 
     public void leaveTeam() {
         this.team_id = "";
-        this.isLeader = false;
     }
 
     public boolean isOnTeam() {

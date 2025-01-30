@@ -18,6 +18,7 @@ public class StatLayerData {
     private float number = 0;
 
     public Conversion conversion = null;
+    public Conversion damageTakenAs = null;
     public AdditionalConversion additionalConversion = null;
 
     public static class Conversion {
@@ -78,6 +79,13 @@ public class StatLayerData {
             conversion = new Conversion();
         }
         this.conversion.add(to, (float) perc);
+    }
+
+    public void damageTakenAs(Elements to, int perc) {
+        if (damageTakenAs == null) {
+            damageTakenAs = new Conversion();
+        }
+        this.damageTakenAs.add(to, (float) perc);
     }
 
     public StatLayer getLayer() {

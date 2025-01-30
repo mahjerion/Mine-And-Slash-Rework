@@ -5,6 +5,7 @@ crit_damage
 damage_conversion
 damage_reduction
 damage_suppression
+damage_taken_as
 dot_dmg_multi
 double_damage
 ele_as_extra_flat

@@ -3,3 +3,4 @@ Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rewo
 v.6.1.9
 
 - try fix runewords sometimes failing to craft
+- added physical damage taken as elemental stat (bit experimental but shouldTM work)

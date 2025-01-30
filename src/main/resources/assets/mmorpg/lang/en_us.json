@@ -1533,6 +1533,13 @@
 	"mmorpg.stat.offensive_eff_dur_u_cast": "Offensive Effect Duration",
 	"mmorpg.stat.on_death_ignite_explosion": "\u00A77\u00A7a[VAL1]%\u00A77 Chance to cause an Ignited Explosion on Death.",
 	"mmorpg.stat.out_of_combat_regen": "Out of Combat Regen",
+	"mmorpg.stat.phys_taken_as_all": "Physical damage taken as  Damage",
+	"mmorpg.stat.phys_taken_as_chaos": "Physical damage taken as Chaos Damage",
+	"mmorpg.stat.phys_taken_as_elemental": "Physical damage taken as Elemental Damage",
+	"mmorpg.stat.phys_taken_as_fire": "Physical damage taken as Fire Damage",
+	"mmorpg.stat.phys_taken_as_lightning": "Physical damage taken as Lightning Damage",
+	"mmorpg.stat.phys_taken_as_physical": "Physical damage taken as Physical Damage",
+	"mmorpg.stat.phys_taken_as_water": "Physical damage taken as Cold Damage",
 	"mmorpg.stat.phys_to_all": "Physical to  Damage",
 	"mmorpg.stat.phys_to_chaos": "Physical to Chaos Damage",
 	"mmorpg.stat.phys_to_elemental": "Physical to Elemental Damage",
@@ -1852,21 +1859,6 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
-	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
-	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
-	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
-	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
-	"mmorpg.stat_priority.first": "FIRST",
-	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
-
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
@@ -1883,6 +1875,21 @@
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
+	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
+	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
+	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
+	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
+	"mmorpg.stat_priority.first": "FIRST",
+	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",
 
 	"mmorpg.stat_layer.additive_damage": "Additive Damage",
@@ -1890,6 +1897,7 @@
 	"mmorpg.stat_layer.damage_conversion": "%1$s to %2$s Conversion",
 	"mmorpg.stat_layer.damage_reduction": "Damage Reduction",
 	"mmorpg.stat_layer.damage_suppression": "Damage Suppression",
+	"mmorpg.stat_layer.damage_taken_as": "%1$s Taken as %2$s",
 	"mmorpg.stat_layer.dot_dmg_multi": "DOT Damage Multi",
 	"mmorpg.stat_layer.double_damage": "Double Damage",
 	"mmorpg.stat_layer.ele_as_extra_flat": "Plus %1$s as Extra %2$s",
@@ -2568,7 +2576,6 @@
 	"mmorpg.prophecy_start.aura_gem": "Aura Gem Prophecy",
 	"mmorpg.prophecy_start.gear": "Gear Prophecy",
 	"mmorpg.prophecy_start.jewel": "Jewel Prophecy",
-	"mmorpg.prophecy_start.prophecy_unique": "Prophecy League Unique",
 	"mmorpg.prophecy_start.rune": "Rune Prophecy",
 	"mmorpg.prophecy_start.support_gem": "Support Gem Prophecy",
 
@@ -2852,6 +2859,18 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -2864,18 +2883,6 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
-
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3238,6 +3245,7 @@
 	"mmorpg.stat_desc.not_affected_by_cast_speed_spell_dmg": "Increases damage of spells with this tag. Totem Damage increases dmg of totems, etc.",
 	"mmorpg.stat_desc.on_death_ignite_explosion": "This has a short cooldown. You can see the whole spell stats in the Ingame Library",
 	"mmorpg.stat_desc.out_of_combat_regen": "Increases your out of combat regeneration",
+	"mmorpg.stat_desc.phys_taken_as": "Percent of physical damage will instead by taken as x element.",
 	"mmorpg.stat_desc.physical_cast_time": "Reduces cast time of spells with this tag",
 	"mmorpg.stat_desc.physical_cdr": "Reduces spell cooldown of spells with the tag.",
 	"mmorpg.stat_desc.physical_dmg_when_target_low_hp": "Low hp is 30% or less.",

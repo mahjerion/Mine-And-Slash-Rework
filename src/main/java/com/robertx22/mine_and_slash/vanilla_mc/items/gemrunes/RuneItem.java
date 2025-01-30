@@ -118,7 +118,7 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
 
 
                                 if (gear.getRarity().can_have_runewords) {
-                                    var list = ExileDB.RuneWords().getFilterWrapped(x -> x.canApplyOnItem(ctx.stack) && x.hasMatchingRunesToCreate(gear)).list;
+                                    var list = ExileDB.RuneWords().getFilterWrapped(x -> x.canApplyOnItem(gear) && x.hasMatchingRunesToCreate(gear)).list;
                                     if (!list.isEmpty()) {
                                         var biggest = list.stream().max(Comparator.comparingInt(x -> x.runes.size())).get();
 

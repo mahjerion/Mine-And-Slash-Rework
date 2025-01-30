@@ -89,6 +89,44 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
 
             }
         },
+        DAMAGE_TAKEN_AS() {
+            @Override
+            public void apply(EffectEvent event, StatLayerData layer, String number) {
+
+
+                if (event instanceof DamageEvent effect) {
+
+                    if (!layer.damageTakenAs.normalized) {
+                        layer.damageTakenAs.normalizeNumbersToCapTo100();
+                    }
+                    float original = effect.data.getNumber(EventData.NUMBER).number;
+
+                    for (Map.Entry<Elements, Float> en : layer.damageTakenAs.totals.entrySet()) {
+                        var ele = en.getKey();
+                        float conv = en.getValue();
+
+                        if (conv > 100) {
+                            conv = 100;
+                        }
+
+                        if (conv > effect.unconvertedDamageTakenAsPercent) {
+                            conv = effect.unconvertedDamageTakenAsPercent;
+                        }
+                        if (conv <= 0) {
+                            return;
+                        }
+                        effect.unconvertedDamageTakenAsPercent -= conv;
+                        float dmg = original * conv / 100F;
+                        dmg = MathHelper.clamp(dmg, 0, original);
+                        if (dmg > 0) {
+                            effect.addBonusEleDmg(ele, dmg, layer.side);
+                            event.data.getNumber(EventData.NUMBER).number -= dmg;
+                        }
+                    }
+                }
+
+            }
+        },
         X_AS_BONUS_Y_ELEMENT_DAMAGE() {
             @Override
             public void apply(EffectEvent event, StatLayerData layer, String number) {
@@ -141,6 +179,20 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
             MutableComponent convtext = Component.literal("");
 
             for (Map.Entry<Elements, Float> en : data.conversion.totals.entrySet()) {
+                var ele = en.getKey();
+                Float perc = en.getValue();
+                locname = locName(event.data.getElement().getIconNameDmg(), ele.getIconNameDmg());
+                number = Component.literal(perc + "%");
+
+                MutableComponent t = Component.empty().append(sourcetarget).append(locname.append(": ").append(number));
+                convtext.append(t.append("\n"));
+            }
+            return convtext;
+        }
+        if (this.action == LayerAction.DAMAGE_TAKEN_AS) {
+            MutableComponent convtext = Component.literal("");
+
+            for (Map.Entry<Elements, Float> en : data.damageTakenAs.totals.entrySet()) {
                 var ele = en.getKey();
                 Float perc = en.getValue();
                 locname = locName(event.data.getElement().getIconNameDmg(), ele.getIconNameDmg());

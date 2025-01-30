@@ -80,6 +80,7 @@ public class DamageEvent extends EffectEvent {
     private HashMap<Elements, Integer> bonusElementDamageMap = new HashMap();
 
     public float unconvertedDamagePercent = 100;
+    public float unconvertedDamageTakenAsPercent = 100;
 
     protected DamageEvent(AttackInformation attackInfo, LivingEntity source, LivingEntity target, float dmg) {
         super(dmg, source, target);

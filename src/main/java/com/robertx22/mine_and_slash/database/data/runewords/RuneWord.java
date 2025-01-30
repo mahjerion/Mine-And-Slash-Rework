@@ -84,7 +84,6 @@ public class RuneWord implements IAutoGson<RuneWord>, JsonExileRegistry<RuneWord
     }
 
     public boolean canApplyOnItem(ItemStack stack) {
-
         if (slots.stream().anyMatch(e -> {
             return GearSlot.isItemOfThisSlot(ExileDB.GearSlots().get(e), stack);
         })) {
@@ -92,6 +91,10 @@ public class RuneWord implements IAutoGson<RuneWord>, JsonExileRegistry<RuneWord
         }
 
         return false;
+    }
+
+    public boolean canApplyOnItem(GearItemData gear) {
+        return slots.stream().anyMatch(x -> gear.GetBaseGearType().gear_slot.equals(x));
     }
 
 

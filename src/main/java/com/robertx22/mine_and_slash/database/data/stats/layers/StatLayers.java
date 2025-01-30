@@ -24,6 +24,7 @@ public class StatLayers {
     }
 
     public static class Defensive {
+        public static StatLayer DAMAGE_TAKEN_AS = new StatLayer("damage_taken_as", "%1$s Taken as %2$s", StatLayer.LayerAction.DAMAGE_TAKEN_AS, 99, 0, 100);
 
         // todo does this work its still confusing and probably buggy!!!
 

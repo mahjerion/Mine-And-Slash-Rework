@@ -538,6 +538,13 @@ not_affected_by_cast_speed_spell_dmg_taken
 offensive_eff_dur_u_cast
 on_death_ignite_explosion
 out_of_combat_regen
+phys_taken_as_all
+phys_taken_as_chaos
+phys_taken_as_elemental
+phys_taken_as_fire
+phys_taken_as_lightning
+phys_taken_as_physical
+phys_taken_as_water
 phys_to_all
 phys_to_chaos
 phys_to_elemental

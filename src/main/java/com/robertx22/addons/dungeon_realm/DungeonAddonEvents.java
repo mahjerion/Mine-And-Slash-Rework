@@ -157,7 +157,7 @@ public class DungeonAddonEvents {
     }
 
     static boolean meetsResists(Player p, MapItemData data) {
-        if (!data.getStatReq().meetsReq(Load.Unit(p).getLevel(), Load.Unit(p))) {
+        if (!data.getStatReq().meetsReq(Load.Unit(p).getLevel(), Load.Unit(p)) && !p.isCreative()) {
             ExplainedResultUtil.sendErrorMessage(p, Chats.MAP_DEVICE_USE_ERROR, Chats.RESISTS_TOO_LOW_FOR_MAP);
 
             List<Component> reqDifference = data.getStatReq().getReqDifference(data.lvl, Load.Unit(p));

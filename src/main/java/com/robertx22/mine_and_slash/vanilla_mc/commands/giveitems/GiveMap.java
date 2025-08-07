@@ -7,12 +7,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.MapBlueprint;
+import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.GearRaritySuggestions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
 
@@ -48,16 +50,20 @@ public class GiveMap {
             }
         }
         for (int i = 0; i < amount; i++) {
-            MapBlueprint blueprint = new MapBlueprint(LootInfo.ofLevel(lvl));
-            blueprint.level.set(lvl);
+            MapBlueprint blueprint = new MapBlueprint(LootInfo.ofLevel(1));
+            ItemStack mapStack = blueprint.createStack();
+
+            MapBlueprint b = new MapBlueprint(LootInfo.ofLevel(lvl));
+            b.level.set(lvl);
 
             if (ExileDB.GearRarities()
                     .isRegistered(rarity)) {
-                blueprint.rarity.set(ExileDB.GearRarities()
+                b.rarity.set(ExileDB.GearRarities()
                         .get(rarity));
             }
 
-            PlayerUtils.giveItem(blueprint.createStack(), player);
+            StackSaving.MAP.saveTo(mapStack, b.createData());
+            PlayerUtils.giveItem(mapStack, player);
         }
 
         return 0;

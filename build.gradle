@@ -14,7 +14,6 @@ mixin {
     add(sourceSets.main, "${mod_id}.refmap.json")
 
     config("${mod_id}.mixins.json")
-    config("${mod_id}.forge.mixins.json")
 }
 
 base {
@@ -117,6 +116,17 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -130,9 +140,19 @@ dependencies {
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
 
-    modImplementation("maven.modrinth:the-harvest:1.1.1")
-    modImplementation("maven.modrinth:dungeon-realm:1.1.3")
+    modImplementation("maven.modrinth:the-harvest:${project.the_harvest_version}")
+    //idk why the 1.1.3 version on modrinth is broken, it spend me like a whole afternoon to figure it out
+    modImplementation("curse.maven:dungeon-realm-1200770:6814707")
+    //modImplementation("maven.modrinth:dungeon-realm:${project.dungeon_realm_version}")
 
+    //this is directly from the include build!
+    //can't find this when you build your project? please read this: https://www.freecodecamp.org/news/how-to-use-git-submodules/#:~:text=How%20to%20Clone%20a%20Repository%20with%20a%20Git%20Submodule
+    //I've already add mahj's repo as submodule, you just need to init it!
+    //and also, you'll need to add your own fork as remote(except mahj), because you can just push the commit to mahj's repo!
+    //you need to push to your fork first, and then open a PR!
+    //everytime you change the version of lib, you need to change the version of this too!
+    modImplementation("com.robertx22:Library-of-Exile-Rework:${project.exile_library_version}")
+    //modImplementation("maven.modrinth:library-of-exile:${project.exile_library_version}")
 }
 
 
@@ -141,7 +161,7 @@ jar {
 
     finalizedBy('reobfJar')
     manifest.attributes([
-            "MixinConfigs": "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+            "MixinConfigs": "${mod_id}.mixins.json"
     ])
 
 
@@ -158,7 +178,7 @@ jar {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -170,6 +190,11 @@ processResources {
             "mod_issues_link" : mod_issues_link,
             "mod_website_link": mod_website_link,
             "mod_display_name": mod_display_name,
+            "mod_author": mod_author,
+            "forge_version":forge_version,
+            "exile_library_version":exile_library_version,
+            "dungeon_realm_version":dungeon_realm_version,
+            "the_harvest_version":the_harvest_version,
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
             'mod_name'                     : mod_archive_name,
@@ -216,6 +241,7 @@ publishMods {
     displayName = "${mod_archive_name}-${minecraft_version}-v${mod_version}"
 
     curseforge {
+        //this will not block the build process even you don't have the file
         accessToken = file("key.properties").exists() ? file("key.properties").text : ""
         projectId = "${curse_id}"
         minecraftVersions.add("${minecraft_version}")

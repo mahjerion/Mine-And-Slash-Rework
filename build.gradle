@@ -1,45 +1,83 @@
-// --- COMMON BUILD SCRIPT START ---
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.sinytra.org/' } // Wiki
-        maven { url = 'https://maven.parchmentmc.org' } // Mappings
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '+'
-    }
-}
-
 plugins {
-    id 'java'
-    id 'idea'
-    id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "${publish_plugin_version}"
-    id "org.moddedmc.wiki.toolkit" version "${wiki_toolkit_version}"
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge' version "2.0.107"
+    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'org.spongepowered.mixin'
+//archivesBaseName = "${mod_archive_name}-${minecraft_version}"
+version = project.mod_version
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
 
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/common.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/exile_lib_dep.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/ide_runs.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/meta.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/publishing.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/mixin.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/dungeon_dep.gradle'
-apply from: 'https://raw.githubusercontent.com/RobertSkalko/ModResources/refs/heads/main/1.20.1/mns_other_deps.gradle'
+mixin {
+    add(sourceSets.main, "${mod_id}.refmap.json")
+
+    config("${mod_id}.mixins.json")
+    config("${mod_id}.forge.mixins.json")
+}
+
+base {
+    archivesName = "${mod_display_name}-${minecraft_version}"
+}
+
+legacyForge {
+    version = "${minecraft_version}-${forge_version}"
+
+    //validateAccessTransformers = true
+
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        client {
+            client()
+            setDevLogin(false)
+        }
+        client2 {
+            client()
+            programArguments.addAll('--username', 'Dev2')
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
 
 
-// --- COMMON BUILD SCRIPT END ---
+    }
 
+    runs.configureEach {
+        def capitalizedName = name.capitalize()
 
-// --- MOD SPECIFIC ---
+        project.tasks.named("run${capitalizedName}", JavaExec) {
+            def toolchain = project.extensions.getByType(JavaToolchainService)
+            javaLauncher.set(
+                    toolchain.launcherFor {
+                        it.languageVersion.set(JavaLanguageVersion.of(17))
+                        //this will force your jvm as JBR
+                        //why? cuz JBR allow you to do more operation when hot swap, even add method!
+                        it.vendor.set(JvmVendorSpec.JETBRAINS)
+                    }
+            )
+        }
+
+        jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
 
 repositories {
 
@@ -53,25 +91,143 @@ repositories {
             includeGroup "mezz.jei"
         }
     }
-}
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Sponge'
+                url = 'https://repo.spongepowered.org/repository/maven-public'
+            }
+        }
+        filter { includeGroupAndSubgroups('org.spongepowered') }
+    }
+    exclusiveContent {
+        forRepositories(
+                maven {
+                    name = 'ParchmentMC'
+                    url = 'https://maven.parchmentmc.org/'
+                },
+                maven {
+                    name = "NeoForge"
+                    url = 'https://maven.neoforged.net/releases'
+                }
+        )
+        filter { includeGroup('org.parchmentmc.data') }
+    }
 
-minecraft {
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 dependencies {
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    modImplementation("top.theillusivec4.curios:curios-forge:${curios_version}")
 
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${project.jei_version}") //API for compile
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${project.jei_version}") //API for compile
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${project.jei_version}") //Full for runtime
+    modCompileOnly("mezz.jei:jei-1.20.1-common-api:${project.jei_version}") //API for compile
+    modCompileOnly("mezz.jei:jei-1.20.1-forge-api:${project.jei_version}") //API for compile
+    modRuntimeOnly("mezz.jei:jei-1.20.1-forge:${project.jei_version}") //Full for runtime
 
-    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
+    modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
+
+    modImplementation("maven.modrinth:the-harvest:1.1.1")
+    modImplementation("maven.modrinth:dungeon-realm:1.1.3")
 
 }
 
+
+
+jar {
+
+    finalizedBy('reobfJar')
+    manifest.attributes([
+            "MixinConfigs": "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+    ])
+
+
+    manifest {
+        attributes([
+                'Specification-Title'   : mod_archive_name,
+                'Specification-Vendor'  : mod_author,
+                'Specification-Version' : project.jar.archiveVersion,
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.jar.archiveVersion,
+                'Implementation-Vendor' : mod_author,
+                'Built-On-Minecraft'    : minecraft_version
+        ])
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    int pack_format = getPackFormat()
+    var expandProps = [
+            "mod_version"     : mod_version,
+            "mod_id"          : mod_id,
+            "mod_issues_link" : mod_issues_link,
+            "mod_website_link": mod_website_link,
+            "mod_display_name": mod_display_name,
+            'group'                        : project.group, //Else we target the task's group.
+            'minecraft_version'            : minecraft_version,
+            'mod_name'                     : mod_archive_name,
+            'description'                  : project.description,
+            "pack_format"               : pack_format
+    ]
+
+    var jsonExpandProps = expandProps.collectEntries {
+        key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
+    }
+
+    filesMatching(['META-INF/mods.toml']) {
+        expand expandProps
+    }
+
+    filesMatching(['pack.mcmeta', '*.mixins.json']) {
+        expand jsonExpandProps
+    }
+
+    inputs.properties(expandProps)
+}
+
+int getPackFormat() {
+    switch (minecraft_version) {
+        case "1.18.2": return 8
+        case "1.19.2": return 9
+        case "1.19.3": return 12
+        case "1.19.4": return 13
+        case "1.20.1": return 15
+        case "1.20.2": return 18
+        case "1.20.3": return 22
+        case "1.20.4": return 22
+        default: return 6
+    }
+}
+
+
 publishMods {
+
+    file = jar.archiveFile
+    changelog = file("CHANGELOG.txt").text
+    type = "${release_type}".startsWith("release") ? STABLE : ("${release_type}".startsWith("beta") ? BETA : ALPHA)
+    modLoaders.add("forge")
+    displayName = "${mod_archive_name}-${minecraft_version}-v${mod_version}"
+
+    curseforge {
+        accessToken = file("key.properties").exists() ? file("key.properties").text : ""
+        projectId = "${curse_id}"
+        minecraftVersions.add("${minecraft_version}")
+        minecraftVersions.add("1.20")
+    }
+
+    modrinth {
+        accessToken = file("modrinth_key.properties").exists() ? file("modrinth_key.properties").text : ""
+        projectId = "${modrinth_id}"
+        minecraftVersions.add("${minecraft_version}")
+        minecraftVersions.add("1.20")
+    }
 
     curseforge {
         requires { slug = "library-of-exile" }
@@ -88,7 +244,7 @@ publishMods {
         requires { slug = "the-harvest" }
     }
 }
-
+/*
 wiki {
     docs {
         mutils {
@@ -96,5 +252,5 @@ wiki {
         }
     }
 }
+*/
 
-// --- MOD SPECIFIC ---

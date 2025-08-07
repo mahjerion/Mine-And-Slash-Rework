@@ -57,6 +57,20 @@ public class PartBuilder {
         return c;
     }
 
+    public static ComponentPart restoreEnergyInRadius(ValueCalculation calc, Double radius) {
+        ComponentPart c = new ComponentPart();
+        c.acts.add(SpellAction.RESTORE_ENERGY.create(calc));
+        c.targets.add(BaseTargetSelector.AOE.create(radius, EntityFinder.SelectionType.RADIUS, AllyOrEnemy.allies));
+        return c;
+    }
+
+    public static ComponentPart restoreEnergyToCaster(ValueCalculation calc) {
+        ComponentPart c = new ComponentPart();
+        c.acts.add(SpellAction.RESTORE_ENERGY.create(calc));
+        c.targets.add(BaseTargetSelector.CASTER.create());
+        return c;
+    }
+
     public static ComponentPart aoeSelectEnemies(Double radius, Double chance) {
         ComponentPart c = new ComponentPart();
         c.acts.add(SpellAction.AGGRO.create(SpellCalcs.CHAOS_TOTEM, AggroAction.Type.AGGRO)); // todo

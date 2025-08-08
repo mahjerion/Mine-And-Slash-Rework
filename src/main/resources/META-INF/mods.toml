@@ -9,15 +9,13 @@ displayName = "${mod_display_name}"
 displayURL = "${mod_website_link}"
 logoFile = "icon.png"
 credits = ""
-authors = "mcrobertx22"
-description = '''
-Turns Minecraft into a hack and slash RPG!
-'''
+authors = "${mod_author}"
+description = '''${description}'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.mmorpg]]
 modId = "forge"
 mandatory = true
-versionRange = "[36,)"
+versionRange = "[${forge_version},)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.mmorpg]]

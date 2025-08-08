@@ -129,7 +129,7 @@ public class SpellChangeStats {
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
-                x.max = 80;
+                x.max = 75;
             })
             .build();
     public static DataPackStatAccessor<EmptyAccessor> COOLDOWN_TICKS = DatapackStatBuilder

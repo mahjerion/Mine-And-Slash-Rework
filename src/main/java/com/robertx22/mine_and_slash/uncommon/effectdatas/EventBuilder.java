@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -17,7 +18,7 @@ public class EventBuilder<T extends EffectEvent> {
 
     protected T event;
 
-    public static EventBuilder<ExilePotionEvent> ofEffect(CalculatedSpellData calc, LivingEntity caster, LivingEntity target, int lvl, ExileEffect effect, GiveOrTake2 giveOrTake, int ticks, boolean infinite) {
+    public static EventBuilder<ExilePotionEvent> ofEffect(@NotNull CalculatedSpellData calc, LivingEntity caster, LivingEntity target, int lvl, ExileEffect effect, GiveOrTake2 giveOrTake, int ticks, boolean infinite) {
         ExilePotionEvent event = new ExilePotionEvent(calc, lvl, effect, giveOrTake, caster, target, ticks, infinite);
         EventBuilder<ExilePotionEvent> b = new EventBuilder();
         b.event = event;

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class ExileEffectInstanceData {
 
-    public CalculatedSpellData calcSpell = new CalculatedSpellData(null);
+    public CalculatedSpellData calcSpell = CalculatedSpellData.NO_SPELL_RELATED;
 
     public boolean self_cast = false;
     public boolean is_infinite = false;
@@ -24,9 +24,12 @@ public class ExileEffectInstanceData {
 
     public boolean isSpellNoLongerAllocated(LivingEntity en) {
         if (self_cast) {
-            Spell spell = getSpell();
-            if (spell != null && spell.getLevelOf(en) < 1) {
-                return true;
+            //calcSpell.equals(CalculatedSpellData.NO_SPELL_RELATED) indicate this effect is not related to a spell
+            if (calcSpell.equals(CalculatedSpellData.NO_SPELL_RELATED)) {
+                return false;
+            } else {
+                Spell spell = getSpell();
+                return spell != null && spell.getLevelOf(en) < 1;
             }
         }
         return false;

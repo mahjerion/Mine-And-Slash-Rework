@@ -11,6 +11,10 @@ import net.minecraft.world.level.Level;
 import java.util.UUID;
 
 public class CalculatedSpellData {
+    //indicated the user of this (basically effect) isn't related to a spell
+    //a temporary fix for the issue that effects provided by DatapackStat will be wiped when use isSpellNoLongerAllocated().
+    //it's recommend to directly refer to this object instead of creating a new CalculatedSpellData(null), it might fail at equal() check!
+    public static final CalculatedSpellData NO_SPELL_RELATED = new CalculatedSpellData(null);
 
     public EventData data = new EventData();
 

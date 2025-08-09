@@ -9,12 +9,14 @@ import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.SummonedData;
 import com.robertx22.mine_and_slash.capability.player.data.*;
+import com.robertx22.mine_and_slash.capability.player.data.JewelData;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
 import com.robertx22.mine_and_slash.capability.player.helper.JewelInvHelper;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.characters.CharStorageData;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.event_hooks.my_events.CachedPlayerStats;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -122,10 +124,10 @@ public class PlayerData implements ICap {
     public RestedExpData rested_xp = new RestedExpData();
     public PlayerPointsData points = new PlayerPointsData();
     public MiscSyncData miscInfo = new MiscSyncData();
+    public JewelData jewelData;
 
     private MyInventory skillGemInv = new MyInventory(GemInventoryHelper.TOTAL_SLOTS);
     private MyInventory auraInv = new MyInventory(GemInventoryHelper.TOTAL_AURAS);
-    private MyInventory jewelsInv = new MyInventory(9);
 
     public CharStorageData characters = new CharStorageData();
 
@@ -141,13 +143,14 @@ public class PlayerData implements ICap {
     public PlayerData(Player player) {
         this.player = player;
         this.cachedStats = new CachedPlayerStats(player);
+        this.jewelData = new JewelData(player);
     }
 
 
     public CachedPlayerStats cachedStats;
 
-    public JewelInvHelper getJewels() {
-        return new JewelInvHelper(jewelsInv);
+    public JewelData getJewels() {
+        return jewelData;
     }
 
     @Override
@@ -170,11 +173,13 @@ public class PlayerData implements ICap {
         LoadSave.Save(points, nbt, POINTS);
         LoadSave.Save(miscInfo, nbt, MISC_INFO);
         LoadSave.Save(summonedData, nbt, SUMMONED);
+
         // LoadSave.Save(ctxStats, nbt, "ctx");
 
         nbt.put(GEMS, skillGemInv.createTag());
         nbt.put(AURAS, auraInv.createTag());
-        nbt.put(JEWELS, jewelsInv.createTag());
+        //nbt.put(JEWELS, jewelsInv.createTag());
+        nbt.put(JEWELS, jewelData.jewelInventory.createTag());
 
         nbt.putInt(BONUS_TALENTS, bonusTalents);
         nbt.putInt(OMENS_FILLED, omensFilled);
@@ -200,11 +205,17 @@ public class PlayerData implements ICap {
         this.characters = loadOrBlank(CharStorageData.class, new CharStorageData(), nbt, CHARACTERS, new CharStorageData());
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
+        //generate a container with mutable size
         // this.ctxStats = loadOrBlank(SavedStatCtxList.class, new SavedStatCtxList(), nbt, "ctx", new SavedStatCtxList());
+
+        //todo this code sucks, we need Codec
+        this.jewelData = new JewelData(this.player);
+        this.jewelData.jewelInventory.fromTag(nbt.getList(JEWELS, 10));
+
 
         skillGemInv.fromTag(nbt.getList(GEMS, 10)); // todo
         auraInv.fromTag(nbt.getList(AURAS, 10)); // todo
-        jewelsInv.fromTag(nbt.getList(JEWELS, 10)); // todo
+        //jewelsInv.fromTag(nbt.getList(JEWELS, 10));
 
 
         this.bonusTalents = nbt.getInt(BONUS_TALENTS);
@@ -311,10 +322,10 @@ public class PlayerData implements ICap {
         }
         return blank;
     }
-
+    public static final String ID = "rpg_player_data";
     @Override
     public String getCapIdForSyncing() {
-        return "rpg_player_data";
+        return ID;
     }
 
 }

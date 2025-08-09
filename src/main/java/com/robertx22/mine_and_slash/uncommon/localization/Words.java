@@ -365,7 +365,7 @@ public enum Words implements IAutoLocName {
     REDUCE_PERCENT_STAT("Lower "),
     EMPTY_BOX("Box"),
     LEVEL_UP_TYPE_PLAYER("Player"),
-    JEWEL_SOCKET_NOT_AVAILABLE("Unlock on talent tree");
+    JEWEL_SOCKET_NOT_AVAILABLE("Unlock on talent tree"), NO_JEWEL_SLOT("No Jewel Slot");
 
 
     private String localization = "";

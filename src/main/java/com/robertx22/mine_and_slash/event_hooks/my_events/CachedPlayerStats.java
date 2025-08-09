@@ -98,7 +98,7 @@ public class CachedPlayerStats {
         statContexts.addAll(playerData.buff.getStatAndContext(p));
 
         statContexts.addAll(playerData.getSkillGemInventory().getAuraStats(p));
-        statContexts.addAll(playerData.getJewels().getStatAndContext(p));
+        statContexts.addAll(playerData.jewelData.getStatAndContext(p));
         statContexts.addAll(playerData.statPoints.getStatAndContext(p));
 
         statContexts.addAll(PlayerStatUtils.addNewbieElementalResists(Load.Unit(p)));

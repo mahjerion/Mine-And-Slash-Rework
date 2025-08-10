@@ -42,12 +42,8 @@ public class OpenJewelsPacket extends MyPacket<OpenJewelsPacket> {
 
     @Override
     public void onReceived(ExilePacketContext ctx) {
-        var jewels = Load.player(ctx.getPlayer()).getJewels();
         Player p = ctx.getPlayer();
-        p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> {
-            MyInventory jewelInventory = jewels.jewelInventory;
-            return new JewelsMenu(SlashContainers.JEWEL.get(), i, playerInventory, jewelInventory, playerEntity);
-        }, Component.literal("")));
+        p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> new JewelsMenu(SlashContainers.JEWEL.get(), i, playerInventory, playerEntity), Component.literal("")));
 
     }
 

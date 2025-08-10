@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.event_hooks.my_events;
 
 import com.robertx22.mine_and_slash.capability.DirtySync;
+import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
@@ -49,7 +50,9 @@ public class CachedPlayerStats {
     // I guess these could be all stats that don't change often, fine to set these to recalc everything
     public DirtySync ALLOCATED = new DirtySync("misc_player", x -> {
         recalcAllocated();
-        Load.Unit(p).equipmentCache.STAT_CALC.setDirty();
+        EntityData unit = Load.Unit(p);
+        unit.equipmentCache.STAT_CALC.setDirty();
+        unit.getResources().capAll(p);
     }) {
         @Override
         public void setDirty() {

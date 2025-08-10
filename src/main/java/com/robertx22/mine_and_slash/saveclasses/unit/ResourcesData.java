@@ -156,6 +156,17 @@ public class ResourcesData {
 
     }
 
+    public void capAll(LivingEntity en){
+        mana = Mth.clamp(mana, 0, Load.Unit(en)
+                .getMaximumResource(ResourceType.mana));
+        energy = Mth.clamp(energy, 0, Load.Unit(en)
+                .getMaximumResource(ResourceType.energy));
+        magic_shield = Mth.clamp(magic_shield, 0, Load.Unit(en)
+                .getMaximumResource(ResourceType.magic_shield));
+        blood = Mth.clamp(blood, 0, Load.Unit(en)
+                .getMaximumResource(ResourceType.blood));
+    }
+
     private void sync(LivingEntity en) {
         if (en instanceof ServerPlayer) {
             Load.Unit(en).sync.setDirty();

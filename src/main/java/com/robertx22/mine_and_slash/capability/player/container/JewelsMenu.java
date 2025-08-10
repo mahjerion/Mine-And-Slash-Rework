@@ -1,105 +1,141 @@
 package com.robertx22.mine_and_slash.capability.player.container;
 
 import com.google.common.collect.ImmutableList;
-import com.robertx22.mine_and_slash.capability.player.data.JewelData;
-import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashContainers;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
-import com.robertx22.mine_and_slash.vanilla_mc.items.JewelItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerSynchronizer;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class JewelsMenu extends AbstractContainerMenu {
     //176, 166 from AbstractContainerScreen, imageWidth and imageHeight
-    public static final Vector2i center = new Vector2i(176 / 2, ((int) (166 * 1.7f / 5)));
+    public static final Vector2i center = new Vector2i(180 / 2, ((int) (170 * 1.7f / 5)));
     private Container jewelContainer;
     private Player player;
     private List<Vector2i> positions = new ArrayList<>();
+    private ContainerSynchronizer synchronizer;
 
     public JewelsMenu(int pContainerId, Inventory pContainer) {
-        this(SlashContainers.JEWEL.get(), pContainerId, pContainer, new MyInventory(JewelData.getJewelSocketsMaxStat(ClientOnly.getPlayer())), ClientOnly.getPlayer());
+        this(SlashContainers.JEWEL.get(), pContainerId, pContainer, ClientOnly.getPlayer());
+    }
+
+    public JewelsMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory pPlayerInventory, Player player) {
+        super(pMenuType, pContainerId);
+        this.player = player;
+        this.jewelContainer = Load.player(player).jewelData.jewelInventory;
+
+        int i1;
+        int j1;
+
+
+        this.positions = placeJewelSlot(40);
+
+        for (i1 = 0; i1 < 3; ++i1) {
+            for (j1 = 0; j1 < 9; ++j1) {
+                this.addSlot(new Slot(pPlayerInventory, j1 + (i1 + 1) * 9, 8 + j1 * 18, 122 + i1 * 18));
+            }
+        }
+
+        for (i1 = 0; i1 < 9; ++i1) {
+            this.addSlot(new Slot(pPlayerInventory, i1, 8 + i1 * 18, 180));
+        }
+
+
     }
 
     public List<Vector2i> getPositions() {
         return positions;
     }
 
-    public JewelsMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory pPlayerInventory, Container container, Player player) {
-        super(pMenuType, pContainerId);
-        this.player = player;
-        this.jewelContainer = container;
-
-        int i1;
-        int j1;
-
-        //weird code
-        List<Vector2i> vector2is = placeJewelSlot(40);
-        if (FMLEnvironment.dist == Dist.CLIENT){
-            this.positions = vector2is;
-        }
-
-        for(i1 = 0; i1 < 3; ++i1) {
-            for(j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(pPlayerInventory, j1 + (i1 + 1) * 9, 8 + j1 * 18, 122 + i1 * 18));
-            }
-        }
-
-        for(i1 = 0; i1 < 9; ++i1) {
-            this.addSlot(new Slot(pPlayerInventory, i1, 8 + i1 * 18, 180));
-        }
-    }
-
-    private List<Vector2i> placeJewelSlot(int radius){
+    private List<Vector2i> placeJewelSlot(int radius) {
         ImmutableList.Builder<Vector2i> builder = ImmutableList.builder();
         int containerSize = jewelContainer.getContainerSize();
 
 
         if (containerSize == 1) {
-            addSlot(new Slot(jewelContainer, 0, center.x - 9, center.y - 9){
-                @Override
-                public boolean mayPlace(ItemStack pStack) {
-                    return Load.player(player).jewelData.isWearable(pStack, player);
-                }
-            });
-            return builder.add(new Vector2i(center.x - 9, center.y - 9)).build();
+            builder.add(addJewelSlot(0, center.x, center.y));
+            return builder.build();
         }
 
-        for (int i = 0; i < containerSize; i++) {
-            double angle = 2 * Math.PI * i / containerSize;
-            int x = (int) Math.round(center.x + radius * Math.cos(angle)) - 9; // 9 = slot width / 2
-            int y = (int) Math.round(center.y + radius * Math.sin(angle)) - 9; // 9 = slot height / 2
-            addSlot(new Slot(jewelContainer, i, x, y){
-                @Override
-                public boolean mayPlace(ItemStack pStack) {
-                    return Load.player(player).jewelData.isWearable(pStack, player);
-                }
-            });
-            builder.add(new Vector2i(x, y));
+
+        double centerAngle = -Math.PI / 2;
+        boolean hasMiddle = (containerSize % 2 == 1);
+        int index = 0;
+
+
+        if (hasMiddle) {
+            builder.add(addJewelSlot(index++,
+                    center.x + (int) Math.round(radius * Math.cos(centerAngle)),
+                    center.y + (int) Math.round(radius * Math.sin(centerAngle))
+            ));
         }
+
+        double single = 2 * Math.PI / containerSize;
+
+        for (int i = 0; i < containerSize - (hasMiddle ? 1 : 0); i++) {
+            builder.add(addJewelSlot(index++,
+                    center.x + (int) Math.round(radius * Math.cos(centerAngle + (i + 1) * single)),
+                    center.y + (int) Math.round(radius * Math.sin(centerAngle + (i + 1) * single))
+            ));
+        }
+
+
         return builder.build();
     }
 
-
+    private Vector2i addJewelSlot(int index, int x, int y) {
+        int slotX = x - 9;
+        int slotY = y - 9;
+        addSlot(new Slot(jewelContainer, index, slotX, slotY) {
+            @Override
+            public boolean mayPlace(ItemStack pStack) {
+                boolean b = Load.player(player).jewelData.isWearable(pStack, player);
+                return b;
+            }
+        });
+        return new Vector2i(slotX, slotY);
+    }
+    
 
     @Override
     public ItemStack quickMoveStack(Player player, int i) {
-        return ItemStack.EMPTY;
-    }
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(i);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
+            if (!Load.player(player).jewelData.isWearable(itemstack1, player)) {
+                return ItemStack.EMPTY;
+            }
+            itemstack = itemstack1.copy();
+            int i1 = positions.size() - 1;
+            if (i > i1) {
+                if (!this.moveItemStackTo(itemstack1, 0, i1 + 1, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.moveItemStackTo(itemstack1, i1 + 1, i1 + 3 * 9, false)) {
+                return ItemStack.EMPTY;
+            }
 
+            if (itemstack1.isEmpty()) {
+                slot.setByPlayer(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+        }
+
+        return itemstack;
+    }
 
 
     @Override

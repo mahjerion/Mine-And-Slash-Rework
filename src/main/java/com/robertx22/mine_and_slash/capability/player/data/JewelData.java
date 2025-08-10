@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.capability.player.data;
 
-import com.mojang.serialization.Codec;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
@@ -10,6 +9,7 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,22 +37,7 @@ public class JewelData implements IStatCtx {
         } else {
             this.player = player;
         }
-        this.jewelInventory = new MyInventory(size) {
-            @Override
-            public boolean canAddItem(ItemStack pStack) {
-                return isWearable(pStack, player) && super.canAddItem(pStack);
-            }
-
-            @Override
-            public boolean canPlaceItem(int pIndex, ItemStack pStack) {
-                return isWearable(pStack, player);
-            }
-
-            @Override
-            public int getMaxStackSize() {
-                return 1;
-            }
-        };
+        this.jewelInventory = new MyInventory(size);
 
         this.jewelInventory.addListener(container -> {
             List<String> uniques = new ArrayList<>();
@@ -69,11 +54,15 @@ public class JewelData implements IStatCtx {
                 }
             }
             this.wearingUniqueJewel = uniques;
-
-            //I can't add this cuz the player is null but why????
-            //Load.Unit(this.player).equipmentCache.STAT_CALC.setDirty();
-
+            updatePlayerData(player);
         });
+    }
+
+    public static boolean updatePlayerData(Player player){
+        if (player instanceof ServerPlayer){
+            Load.player(player).cachedStats.ALLOCATED.setDirty();
+        }
+        return false;
     }
 
     public void recalc(Player player) {

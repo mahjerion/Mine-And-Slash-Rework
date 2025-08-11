@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -39,6 +40,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.text.DecimalFormat;
@@ -244,8 +246,6 @@ public class HealthBarRenderer {
         final float halfSize = Math.max(NeatConfig.instance.plateSize(), nameLen / 2.0F + 10.0F);
 
         poseStack.pushPose();
-        //System.out.println(living.getBbHeight());
-        //System.out.println(NeatConfig.instance.heightAbove());
         poseStack.translate(0, living.getBbHeight() + NeatConfig.instance.heightAbove(), 0);
         poseStack.mulPose(cameraOrientation);
 
@@ -266,28 +266,67 @@ public class HealthBarRenderer {
         }
 
         // Health Bar
+        int currentHealthPlusMagicShield = HealthUtils.getCurrentHealthPlusMagicShield(living);
+        int currentHealth = HealthUtils.getCurrentHealth(living);
+        int maxHealthPlusMagicShield = HealthUtils.getMaxHealthPlusMagicShield(living);
+        float healthBarPercent = HealthUtils.getHealthBarPercent(living);
+        float healthHalfSize = halfSize * healthBarPercent;
+        int magicShieldColor = FastColor.ARGB32.color(190, 66, 241, 224);
+
+        float healthPart = currentHealth * 1f / maxHealthPlusMagicShield;
+
         {
             int argb = getColor(living, NeatConfig.instance.colorByType(), boss);
             int r = (argb >> 16) & 0xFF;
             int g = (argb >> 8) & 0xFF;
             int b = argb & 0xFF;
-            // There are scenarios in vanilla where the current health
-            // can temporarily exceed the max health.
-            float maxHealth = Math.max(living.getHealth(), living.getMaxHealth());
-            float healthHalfSize = halfSize * (living.getHealth() / maxHealth);
+
+
 
             VertexConsumer builder = buffers.getBuffer(renderType);
-            builder.vertex(poseStack.last().pose(), -halfSize, 0, 0.001F).color(r, g, b, 127).uv(0.0F, 0.75F).endVertex();
-            builder.vertex(poseStack.last().pose(), -halfSize, barHeight, 0.001F).color(r, g, b, 127).uv(0.0F, 1.0F).endVertex();
-            builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, barHeight, 0.001F).color(r, g, b, 127).uv(1.0F, 1.0F).endVertex();
-            builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, 0, 0.001F).color(r, g, b, 127).uv(1.0F, 0.75F).endVertex();
+            Matrix4f poseInHere = poseStack.last().pose();
+            float healthLayerZ = 0.001f;
+            float backgroundLayerZ = 0.002f;
+            float shadowLayerZ = 0.0005f;
+
+            //health
+            builder.vertex(poseInHere, -halfSize, 0, healthLayerZ).color(r, g, b, 127).uv(0.0F, 0.75F).endVertex();
+            builder.vertex(poseInHere, -halfSize, barHeight, healthLayerZ).color(r, g, b, 127).uv(0.0F, 1.0F).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, 0.001F).color(r, g, b, 127).uv(1.0F, 1.0F).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(r, g, b, 127).uv(1.0F, 0.75F).endVertex();
+
+            //magic shield
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(magicShieldColor).uv(0.0F, 0.75F).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, healthLayerZ).color(magicShieldColor).uv(0.0F, 1.0F).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, barHeight, healthLayerZ).color(magicShieldColor).uv(1.0F, 1.0F).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, 0, healthLayerZ).color(magicShieldColor).uv(1.0F, 0.75F).endVertex();
+
+            //shadow
+            VertexConsumer fillBuffer = buffers.getBuffer(NeatRenderType.getShadowType());
+            fillBuffer.vertex(poseInHere, -halfSize, 0, shadowLayerZ)
+                    .color(0f, 0f, 0f, 0f)
+                    .endVertex();
+
+            fillBuffer.vertex(poseInHere, -halfSize, barHeight, shadowLayerZ)
+                    .color(0f, 0f, 0f, 0.39f)
+                    .endVertex();
+
+            fillBuffer.vertex(poseInHere, -halfSize + 2 * healthHalfSize, barHeight, shadowLayerZ)
+                    .color(0f, 0f, 0f, 0.39f)
+                    .endVertex();
+
+            fillBuffer.vertex(poseInHere, -halfSize + 2 * healthHalfSize, 0, shadowLayerZ)
+                    .color(0f, 0f, 0f, 0f)
+                    .endVertex();
+
+
 
             // Blank part of the bar
             if (healthHalfSize < halfSize) {
-                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, 0, 0.001F).color(0, 0, 0, 127).uv(0.0F, 0.5F).endVertex();
-                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, barHeight, 0.001F).color(0, 0, 0, 127).uv(0.0F, 0.75F).endVertex();
-                builder.vertex(poseStack.last().pose(), halfSize, barHeight, 0.001F).color(0, 0, 0, 127).uv(1.0F, 0.75F).endVertex();
-                builder.vertex(poseStack.last().pose(), halfSize, 0, 0.001F).color(0, 0, 0, 127).uv(1.0F, 0.5F).endVertex();
+                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.5F).endVertex();
+                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.75F).endVertex();
+                builder.vertex(poseStack.last().pose(), halfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.75F).endVertex();
+                builder.vertex(poseStack.last().pose(), halfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.5F).endVertex();
             }
         }
 
@@ -315,15 +354,15 @@ public class HealthBarRenderer {
                 int h = NeatConfig.instance.hpTextHeight();
 
                 if (NeatConfig.instance.showCurrentHP()) {
-                    String hpStr = MMORPG.formatBigNumber(HealthUtils.getCurrentHealthPlusMagicShield(living));
+                    String hpStr = MMORPG.formatBigNumber(currentHealthPlusMagicShield);
                     mc.font.drawInBatch(hpStr, 2, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.showMaxHP()) {
-                    String maxHpStr = ChatFormatting.BOLD + MMORPG.formatBigNumber(HealthUtils.getMaxHealthPlusMagicShield(living));
+                    String maxHpStr = ChatFormatting.BOLD + MMORPG.formatBigNumber(maxHealthPlusMagicShield);
                     mc.font.drawInBatch(maxHpStr, (int) (halfSize / healthValueTextScale * 2) - mc.font.width(maxHpStr) - 2, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.showPercentage()) {
-                    String percStr = (int) (100 * HealthUtils.getCurrentHealthPlusMagicShield(living) / HealthUtils.getMaxHealthPlusMagicShield(living)) + "%";
+                    String percStr = (int) (100 * healthBarPercent) + "%";
                     mc.font.drawInBatch(percStr, (int) (halfSize / healthValueTextScale) - mc.font.width(percStr) / 2.0F, h, white, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, black, light);
                 }
                 if (NeatConfig.instance.enableDebugInfo() && mc.options.renderDebug) {

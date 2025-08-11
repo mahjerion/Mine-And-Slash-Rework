@@ -57,6 +57,7 @@ public class HealthBarRenderer {
             TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", "bosses"));
     private static final TagKey<EntityType<?>> FABRIC_BOSS_TAG =
             TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("c", "bosses"));
+    private static final int magicShieldColor = FastColor.ARGB32.color(190, 66, 241, 224);
 
     private static Entity getEntityLookedAt(Entity e) {
         Entity foundEntity = null;
@@ -271,7 +272,7 @@ public class HealthBarRenderer {
         int maxHealthPlusMagicShield = HealthUtils.getMaxHealthPlusMagicShield(living);
         float healthBarPercent = HealthUtils.getHealthBarPercent(living);
         float healthHalfSize = halfSize * healthBarPercent;
-        int magicShieldColor = FastColor.ARGB32.color(190, 66, 241, 224);
+
 
         float healthPart = currentHealth * 1f / maxHealthPlusMagicShield;
 

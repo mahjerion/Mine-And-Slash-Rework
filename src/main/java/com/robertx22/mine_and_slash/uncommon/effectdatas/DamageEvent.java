@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.effectdatas;
 
+import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.a_libraries.dmg_number_particle.particle.InteractionNotifier;
@@ -673,6 +674,7 @@ public class DamageEvent extends EffectEvent {
             target.setHealth(hp);
             // todo this might create bugs but its probably better that damage actually works..
             if (target.getHealth() <= 0) {
+                ExileEvents.DAMAGE_AFTER_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
                 target.die(target.damageSources().mobAttack(this.source));
             }
             if (attackInfo != null) {

@@ -16,6 +16,7 @@ public class SummonedPetData {
     public int ticks = 0;
     public int aggro_radius = 10;
     public boolean counts_towards_max_summons;
+    public int ticks_left_to_check_owner = 0;
 
     public void setup(Spell spell, int ticks, int aggro_radius, boolean counts_towards_max_summons) {
         this.spell = spell.GUID();
@@ -35,15 +36,29 @@ public class SummonedPetData {
 
     public void tick(LivingEntity en) {
         if (!en.level().isClientSide) {
-            if (ticks == SummonPetAction.INFINITE_DURATION) {
-                return;
-            }
+            var registeredWithOwner = registeredWithOwner(en);
 
-            if (ticks-- < 1) {
+            if (
+                ticks != SummonPetAction.INFINITE_DURATION && ticks-- < 1
+                || !registeredWithOwner
+            ) {
                 SoundUtils.playSound(en, SoundEvents.GENERIC_DEATH);
                 discard(en);
             }
         }
+    }
+
+    private boolean registeredWithOwner(LivingEntity en) {
+        if (ticks_left_to_check_owner-- > 0) {
+            return true;
+        }
+        ticks_left_to_check_owner = 100;
+
+        if (!(en instanceof SummonEntity summonEntity) || summonEntity.getOwner() == null || !(summonEntity.getOwner() instanceof Player player)) {
+            return false;
+        }
+
+        return Load.player(player).getSummonedData().isOwnBySpell(spell, en.getUUID());
     }
 
     public void discard(LivingEntity en) {
@@ -61,6 +76,6 @@ public class SummonedPetData {
             return;
         }
 
-        Load.player(player).addSummonedType(spell, -1);
+        Load.player(player).removeSummon(spell, summonEntity.getUUID());
     }
 }

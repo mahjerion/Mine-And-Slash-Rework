@@ -31,6 +31,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.conditions.E
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
+import com.robertx22.mine_and_slash.events.MineAndSlashEventsInit;
 import com.robertx22.mine_and_slash.gui.SocketTooltip;
 import com.robertx22.mine_and_slash.maps.MapEvents;
 import com.robertx22.mine_and_slash.mixin_ducks.tooltip.ItemTooltipsRegister;
@@ -233,7 +234,7 @@ public class MMORPG {
 
         watch.print("Mine and slash mod initialization ");
 
-
+        MineAndSlashEventsInit.initEvents();
     }
 
 

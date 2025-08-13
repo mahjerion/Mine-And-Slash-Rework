@@ -116,6 +116,10 @@ public class HealthUtils {
         return (int) (max * multi);
     }
 
+    public static int getCurrentMagicShield(LivingEntity entity) {
+        return (int) Load.Unit(entity).getResources().getMagicShield();
+    }
+
     public static int getCurrentHealthPlusMagicShield(LivingEntity entity) {
         return (int) (getCurrentHealth(entity) + Load.Unit(entity).getResources().getMagicShield());
     }
@@ -126,6 +130,11 @@ public class HealthUtils {
             return 1;
         }
         return num;
+    }
+
+
+    public static float getHealthBarPercent(LivingEntity entity){
+        return Math.min( 1.0f, getCurrentHealthPlusMagicShield(entity) * 1.0f / getMaxHealthPlusMagicShield(entity));
     }
 
 }

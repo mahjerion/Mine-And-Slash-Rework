@@ -18,6 +18,7 @@ import net.minecraft.world.item.Items;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class JewelInvHelper implements IStatCtx {
 
 

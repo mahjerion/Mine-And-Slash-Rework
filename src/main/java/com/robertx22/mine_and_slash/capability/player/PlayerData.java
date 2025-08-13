@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 
 public class PlayerData implements ICap {
@@ -288,14 +288,21 @@ public class PlayerData implements ICap {
         return summonedData;
     }
 
-    public void addSummonedType(String spellId, int amount) {
-        this.summonedData.addSummonedType(spellId, amount);
+    public void setSummons(String spell, List<UUID> summons) {
+        summonedData.setSummons(spell, summons);
         this.playerDataSync.setDirty();
     }
 
-    public void setSummonedData(Map<String, Integer> summonedTypes) {
-        summonedData.setSummonedType(summonedTypes);
-        this.playerDataSync.setDirty();
+    public void removeSummon(String spell, UUID uuid) {
+        if (summonedData.removeSummon(spell, uuid)) {
+            this.playerDataSync.setDirty();
+        }
+    }
+
+    public void removeSummonType(String spell) {
+        if (summonedData.removeSummonType(spell)) {
+            this.playerDataSync.setDirty();
+        }
     }
 
     public static <OBJ> OBJ loadOrBlank(Class theclass, OBJ newobj, CompoundTag nbt, String loc, OBJ blank) {
@@ -316,5 +323,4 @@ public class PlayerData implements ICap {
     public String getCapIdForSyncing() {
         return "rpg_player_data";
     }
-
 }

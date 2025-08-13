@@ -1,20 +1,48 @@
 package com.robertx22.mine_and_slash.capability.entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class SummonedData {
-    private Map<String, Integer> summonedTypes = new HashMap<>();
+    private Map<String, List<UUID>> summonedTypes = new HashMap<>();
 
-    public void addSummonedType(String type, int amount) {
-        summonedTypes.put(type, summonedTypes.getOrDefault(type, 0) + amount);
+    public int getSummonedAmount(String spell) {
+        if (!summonedTypes.containsKey(spell)) {
+            return 0;
+        }
+
+        return summonedTypes.get(spell).size();
     }
 
-    public int getSummonedAmount(String type) {
-        return summonedTypes.getOrDefault(type, 0);
+    public void setSummons(String spell, List<UUID> summons) {
+        summonedTypes.put(spell, summons);
     }
 
-    public void setSummonedType(Map<String, Integer> summonedTypes) {
-        this.summonedTypes = summonedTypes;
+    public boolean isOwnBySpell(String spell, UUID uuid) {
+        if (!summonedTypes.containsKey(spell)) {
+            return false;
+        }
+
+        return summonedTypes.get(spell).contains(uuid);
+    }
+
+    public boolean removeSummon(String spell, UUID uuid) {
+        if (!summonedTypes.containsKey(spell)) {
+            return false;
+        }
+
+        summonedTypes.get(spell).remove(uuid);
+        return true;
+    }
+
+    public boolean removeSummonType(String spell) {
+        if (!summonedTypes.containsKey(spell)) {
+            return false;
+        }
+
+        summonedTypes.remove(spell);
+        return true;
     }
 }

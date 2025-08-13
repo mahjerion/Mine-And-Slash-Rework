@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPoin
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.events.MineAndSlashEvents;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
@@ -38,8 +39,13 @@ public class SpellSchoolsData implements IStatCtx {
         return list;
     }
 
-    public void removeUnlearnedPerks() {
-        this.allocated_lvls.entrySet().removeIf(x -> x.getValue() < 1);
+    public void removeUnlearnedPerks(Player player) {
+        for (var entry : this.allocated_lvls.entrySet()) {
+            if (entry.getValue() < 1) {
+                MineAndSlashEvents.PERK_UNLEARNED_AND_REMOVED.callEvents(new MineAndSlashEvents.OnPerkUnlearnedAndRemoved(player, entry.getKey()));
+                this.allocated_lvls.remove(entry.getKey());
+            }
+        }
     }
 
     public List<Perk> getAllPerks() {
@@ -52,7 +58,7 @@ public class SpellSchoolsData implements IStatCtx {
         return all;
     }
 
-    public void reset(PointType type) {
+    public void reset(PointType type, Player player) {
 
         var schools = school();
 
@@ -66,6 +72,7 @@ public class SpellSchoolsData implements IStatCtx {
         for (Perk perk : getAllPerks()) {
 
             if (type == PointType.SPELL && perk.isSpell()) {
+                MineAndSlashEvents.PERK_UNLEARNED_AND_REMOVED.callEvents(new MineAndSlashEvents.OnPerkUnlearnedAndRemoved(player, perk.GUID()));
                 this.allocated_lvls.remove(perk.GUID());
             }
             if (type == PointType.PASSIVE && perk.isPassive()) {
@@ -73,7 +80,7 @@ public class SpellSchoolsData implements IStatCtx {
             }
         }
 
-        removeUnlearnedPerks();
+        removeUnlearnedPerks(player);
 
     }
 
@@ -154,17 +161,17 @@ public class SpellSchoolsData implements IStatCtx {
         allocated_lvls.put(perk.GUID(), current + 1);
     }
 
-    public void unlearn(Player p, Perk perk, SpellSchool school) {
+    public void unlearn(Player player, Perk perk, SpellSchool school) {
         if (!this.school().contains(school.GUID())) {
             this.school().add(school.GUID());
         }
         int current = allocated_lvls.getOrDefault(perk.GUID(), 0);
         if (current > 0) {
-            perk.getPointType().getGeneralType().reduceResetPoints(p, 1);
+            perk.getPointType().getGeneralType().reduceResetPoints(player, 1);
             allocated_lvls.put(perk.GUID(), current - 1);
         }
 
-        removeUnlearnedPerks();
+        removeUnlearnedPerks(player);
     }
 
 

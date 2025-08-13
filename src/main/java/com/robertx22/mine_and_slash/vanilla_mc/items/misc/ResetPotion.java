@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.vanilla_mc.items.misc;
 
 import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
+import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.uncommon.IShapedRecipe;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -60,14 +61,18 @@ public class ResetPotion extends AutoItem implements IShapedRecipe {
 
             if (player instanceof Player) {
                 Player p = (Player) player;
+                PlayerData data = Load.player(p);
                 if (reset == ResetType.FULL_RESET) {
                     this.pointsType.fullReset(p);
+                    Load.player(p).spellCastingData.resetSpells();
+                    data.getSkillGemInventory().removeSupportGemsIfTooMany(p);
                 } else {
                     this.pointsType.addResetPoints(p, 10);
                 }
+                Load.player(p).cachedStats.ALLOCATED.setDirtyAndSync(p);
 
-                Load.player(p).playerDataSync.setDirty();
-                Load.Unit(p).sync.setDirty();
+                data.playerDataSync.setDirtyAndSync(p);
+                Load.Unit(p).sync.setDirtyAndSync(p);
 
                 p.addItem(new ItemStack(Items.GLASS_BOTTLE));
             }

@@ -674,6 +674,7 @@ public class DamageEvent extends EffectEvent {
             target.setHealth(hp);
             // todo this might create bugs but its probably better that damage actually works..
             if (target.getHealth() <= 0) {
+                ExileEvents.DAMAGE_BEFORE_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
                 ExileEvents.DAMAGE_AFTER_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
                 target.die(target.damageSources().mobAttack(this.source));
             }

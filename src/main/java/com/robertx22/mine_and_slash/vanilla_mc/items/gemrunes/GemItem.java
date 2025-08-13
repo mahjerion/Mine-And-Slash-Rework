@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.E
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.itemstack.CustomItemData;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -143,8 +144,9 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
                                     gear.sockets.getSocketed().add(socket);
 
                                     ctx.player.displayClientMessage(Chats.GEM_SOCKETED.locName(), false);
-
                                 });
+
+                                ex.get(StackKeys.CUSTOM).edit(custom -> custom.data.set(CustomItemData.KEYS.SALVAGING_DISABLED, true));
                                 ctx.stack = ex.getStack();
                             }
 

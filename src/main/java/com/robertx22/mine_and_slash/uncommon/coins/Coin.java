@@ -22,12 +22,12 @@ public class Coin implements IGUID {
         public ExplainedResult isCoinValid(Player p, ItemStack stack) {
             var map = Load.mapAt(p.level(), p.blockPosition());
             if (map == null) {
-                return ExplainedResult.failure(Component.literal("Not Inside a Map - Can't Check"));
+                return ExplainedResult.failure(Component.literal("Need to be in a Map to check."));
             }
             var range = LeveledItem.getTier(stack);
 
             if (!range.levelRange.isLevelInRange(map.map.getLevel())) {
-                return ExplainedResult.failure(Component.literal("Coin not usable in this map - Wrong Level"));
+                return ExplainedResult.failure(Component.literal("Coin not usable in this map - wrong level range."));
             }
             return ExplainedResult.success(Component.literal("Usable Coin"));
         }

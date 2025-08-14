@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
+import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
@@ -53,7 +54,8 @@ public class AilmentChance extends Stat {
         event.Activate();
         event.sendDamageMessage(event.calculateAllBonusElementalDamage());
 
-        Load.Unit(target).ailments.onAilmentCausingDamage(source, target, ailment, event.data.getNumber());
+        Unit unit = Load.getSpellUnit(source, spell);
+        Load.Unit(target).ailments.onAilmentCausingDamage(source, target, ailment, event.data.getNumber(), unit);
     }
 
     private class Effect extends BaseDamageEffect {

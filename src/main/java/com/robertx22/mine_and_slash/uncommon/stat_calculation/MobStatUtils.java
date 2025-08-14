@@ -42,7 +42,7 @@ public class MobStatUtils {
 
         if (caster instanceof Player player) {
             var spell = Load.Unit(en).summonedPetData.getSourceSpell();
-            var data = Load.player(player).getSpellUnitStats(player, spell);
+            var data = Load.player(player).getSpellUnitStats(spell);
 
             for (Map.Entry<String, StatData> e : data.getStats().stats.entrySet()) {
                 if (e.getValue().GetStat() instanceof SummonStat sstat) {

@@ -47,7 +47,7 @@ public class SpellCastContext {
 
         if (caster instanceof Player p) {
             try {
-                this.unit = Load.player(p).getSpellUnitStats(p, spell);
+                this.unit = Load.player(p).getSpellUnitStats(spell);
             } catch (Exception e) {
                 this.unit = this.data.getUnit();
             }

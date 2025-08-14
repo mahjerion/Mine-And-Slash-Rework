@@ -34,15 +34,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpellCastingData {
 
+    public static final int SPELL_KEY_NOT_EXIST = -1;
     public HashMap<Integer, String> hotbar = new HashMap<>();
 
 
@@ -69,7 +65,7 @@ public class SpellCastingData {
                 return en.getKey();
             }
         }
-        return -1;
+        return SPELL_KEY_NOT_EXIST;
     }
 
     public List<HotbarSpellData> getAllHotbarSpellsInfo() {

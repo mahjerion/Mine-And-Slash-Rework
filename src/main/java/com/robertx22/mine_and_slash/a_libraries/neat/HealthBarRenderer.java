@@ -212,7 +212,7 @@ public class HealthBarRenderer {
                     .map(x -> Pair.of(EffectIcon.of(ExileDB.ExileEffects().get(x.getKey()).getTexture(), x.getValue().stacks), x.getValue().ticks_left))
                     .sorted((x, y) -> -Integer.compare(x.getValue(), y.getValue()))
                     .map(Pair::getLeft)
-                    .filter(x -> x.location() == null)
+                    .filter(x -> x.location() != null)
                     .collect(Collectors.toCollection(ArrayList::new));
         }
         return Collections.EMPTY_LIST;

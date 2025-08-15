@@ -284,7 +284,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                     x.targets.forEach(a -> {
                         // adds radius for damage spells
                         if (x.acts.stream().anyMatch(e -> e.type.equals(SpellAction.DEAL_DAMAGE.GUID())) && a.has(MapField.RADIUS)) {
-                            String rad = MMORPG.formatNumber(a.getOrDefault(MapField.RADIUS, 0D).floatValue());
+                            String rad = TOOLTIP_NUMBER_FORMAT.format(a.getOrDefault(MapField.RADIUS, 0D));
                             radiuses.add(rad);
                         }
                     });
@@ -428,10 +428,10 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         }
     }
 
-    private static final DecimalFormat TOOLTIP_TIME_FORMAT = new DecimalFormat("0.00");
+    private static final DecimalFormat TOOLTIP_NUMBER_FORMAT = new DecimalFormat("0.##");
 
     private static String tooltipFormatTicksAsSeconds(int ticks) {
-        return TOOLTIP_TIME_FORMAT.format(ticks / 20F);
+        return TOOLTIP_NUMBER_FORMAT.format(ticks / 20F);
     }
 
     public int getLevelOf(LivingEntity en) {

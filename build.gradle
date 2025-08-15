@@ -260,6 +260,7 @@ publishMods {
         requires { slug = "playeranimator" }
         requires { slug = "dungeon-realm" }
         requires { slug = "the-harvest" }
+        requires { slug = "ancient-obelisks" }
     }
     modrinth {
         requires { slug = "library-of-exile" }
@@ -267,6 +268,7 @@ publishMods {
         requires { slug = "playeranimator" }
         requires { slug = "dungeon-realm" }
         requires { slug = "the-harvest" }
+        requires { slug = "ancient-obelisks" }
     }
 }
 /*

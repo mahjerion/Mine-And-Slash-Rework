@@ -158,16 +158,13 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
     public final void onCastingTick(SpellCastContext ctx) {
         int timesToCast = (int) ctx.spell.getConfig().times_to_cast;
-        if (timesToCast > 1) {
-            int castTimeTicks = (int) getCastTimeTicks(ctx);
-            // if i didnt do this then cast time reduction would reduce amount of spell hits.
-            int castEveryXTicks = castTimeTicks / timesToCast;
-            if (timesToCast > 1) {
-                if (castEveryXTicks < 1) {
-                    castEveryXTicks = 1;
-                }
-            }
-            if (ctx.ticksInUse > 0 && ctx.ticksInUse % castEveryXTicks == 0) {
+        if (timesToCast > 1 && ctx.ticksInUse > 0) {
+            // check how many times we should've cast by now to see if it increased
+            int castTimeTicks = getCastTimeTicks(ctx);
+            int castCountLastTick = (ctx.ticksInUse - 1) * timesToCast / castTimeTicks;
+            int castCountThisTick = ctx.ticksInUse * timesToCast / castTimeTicks;
+
+            if (castCountThisTick != castCountLastTick) {
                 this.cast(ctx);
             }
         } else if (timesToCast < 1) {

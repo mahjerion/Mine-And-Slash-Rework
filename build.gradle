@@ -140,10 +140,8 @@ dependencies {
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
 
-    modImplementation("maven.modrinth:the-harvest:${project.the_harvest_version}")
     //idk why the 1.1.3 version on modrinth is broken, it spend me like a whole afternoon to figure it out
     modImplementation("curse.maven:dungeon-realm-${project.dungeon_realm_project}:${project.dungeon_realm_file}")
-    modImplementation("curse.maven:ancient-realm-${project.ancient_obelisks_project}:${project.ancient_obelisks_file}")
     //modImplementation("maven.modrinth:dungeon-realm:${project.dungeon_realm_version}")
 
     //this is directly from the include build!

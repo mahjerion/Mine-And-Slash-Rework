@@ -42,3 +42,5 @@ plugins {
 }
 
 includeBuild "Library-of-Exile-Rework"
+includeBuild "the_harvest"
+includeBuild "ancient_obelisks"

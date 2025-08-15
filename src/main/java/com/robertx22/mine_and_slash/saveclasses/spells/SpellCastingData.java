@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellPredicates;
 import com.robertx22.mine_and_slash.database.data.stats.types.LearnSpellStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.MaxAllSpellLevels;
 import com.robertx22.mine_and_slash.database.data.stats.types.MaxSpellLevel;
@@ -426,8 +427,7 @@ public class SpellCastingData {
     public void setToCast(SpellCastContext ctx) {
 
         this.calcSpell = ctx.calcData;
-
-        this.castTickLeft = ctx.spell.getCastInfo(ctx).castTime();
+        this.castTickLeft = ctx.spell.getCastTimeTicks(ctx);
         this.spellTotalCastTicks = this.castTickLeft;
         this.castTicksDone = 0;
         this.casting = true;

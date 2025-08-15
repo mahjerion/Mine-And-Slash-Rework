@@ -9,14 +9,11 @@ import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.SummonedData;
 import com.robertx22.mine_and_slash.capability.player.data.*;
-import com.robertx22.mine_and_slash.capability.player.data.JewelData;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
-import com.robertx22.mine_and_slash.capability.player.helper.JewelInvHelper;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.characters.CharStorageData;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
-import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
 import com.robertx22.mine_and_slash.event_hooks.my_events.CachedPlayerStats;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -26,7 +23,6 @@ import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_calc.StatCalculation;
-import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -260,20 +256,25 @@ public class PlayerData implements ICap {
         return null;
     }
 
-    public Unit getSpellUnitStats(Player p, Spell spell) {
-
+    public Unit getSpellUnitStats(Spell spell) {
         if (!spellUnits.containsKey(spell.GUID())) {
             int key = keyOf(spell);
             if (spell.config.usesSupportGemsFromAnotherSpell()) {
                 key = keyOf(spell.config.getSpellUsedForSuppGems());
             }
+
             var unit = calcSpellUnit(spell, key);
             spellUnits.put(spell.GUID(), unit);
         }
-        if (!spellUnits.containsKey(spell.GUID())) {
-            return Load.Unit(p).getUnit();
-        }
         return spellUnits.get(spell.GUID());
+    }
+
+    public boolean canHaveSpellUnit(Spell spell) {
+        int key = keyOf(spell);
+        if (spell.config.usesSupportGemsFromAnotherSpell()) {
+            key = keyOf(spell.config.getSpellUsedForSuppGems());
+        }
+        return key != SpellCastingData.SPELL_KEY_NOT_EXIST;
     }
 
     public void setSpellUnitsDirty() {

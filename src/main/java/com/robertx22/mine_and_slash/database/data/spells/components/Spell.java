@@ -185,16 +185,16 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final int getCooldownTicks(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number;
+        return (int) Math.ceil(ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number);
     }
 
     public final int getChargeCooldownTicks(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number;
+        return (int) Math.ceil(ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number);
     }
 
     public final int getCastTimeTicks(SpellCastContext ctx) {
         // if it casts 5 times a cast, it should take at least 5 ticks to cast it
-        return MathHelper.clamp((int) ctx.event.data.getNumber(EventData.CAST_TICKS).number, config.times_to_cast, 10000);
+        return MathHelper.clamp((int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_TICKS).number), config.times_to_cast, 10000);
     }
 
     @Override

@@ -185,20 +185,22 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
     int pack_format = getPackFormat()
     var expandProps = [
-            "mod_version"          : mod_version,
-            "mod_id"               : mod_id,
-            "mod_issues_link"      : mod_issues_link,
-            "mod_website_link"     : mod_website_link,
-            "mod_display_name"     : mod_display_name,
-            "mod_author"           : mod_author,
-            "forge_version"        : forge_version,
-            "exile_library_version": exile_library_version,
-            "the_harvest_version"  : the_harvest_version,
-            'group'                : project.group, //Else we target the task's group.
-            'minecraft_version'    : minecraft_version,
-            'mod_name'             : mod_archive_name,
-            'description'          : project.description,
-            "pack_format"          : pack_format
+            "mod_version"             : mod_version,
+            "mod_id"                  : mod_id,
+            "mod_issues_link"         : mod_issues_link,
+            "mod_website_link"        : mod_website_link,
+            "mod_display_name"        : mod_display_name,
+            "mod_author"              : mod_author,
+            "forge_version"           : forge_version,
+            "exile_library_version"   : exile_library_version,
+            "dungeon_realm_version"   : dungeon_realm_version,
+            "ancient_obelisks_version": ancient_obelisks_version,
+            "the_harvest_version"     : the_harvest_version,
+            'group'                   : project.group, //Else we target the task's group.
+            'minecraft_version'       : minecraft_version,
+            'mod_name'                : mod_archive_name,
+            'description'             : project.description,
+            "pack_format"             : pack_format
     ]
 
     var jsonExpandProps = expandProps.collectEntries {

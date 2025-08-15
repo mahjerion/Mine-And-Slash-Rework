@@ -43,4 +43,9 @@ plugins {
 
 includeBuild "Library-of-Exile-Rework"
 includeBuild "the_harvest"
-includeBuild "ancient_obelisks"
+includeBuild("ancient_obelisks") {
+    dependencySubstitution {
+        // map the hyphenated module to the included build
+        substitute(module("com.robertx22:ancient-obelisks")).using(project(":"))
+    }
+}

@@ -151,6 +151,8 @@ dependencies {
     //you need to push to your fork first, and then open a PR!
     //everytime you change the version of lib, you need to change the version of this too!
     modImplementation("com.robertx22:Library-of-Exile-Rework:${project.exile_library_version}")
+    modImplementation("com.robertx22:ancient-obelisks:${project.ancient_obelisks_version}")
+    modImplementation("com.robertx22:the_harvest:${project.the_harvest_version}")
     //modImplementation("maven.modrinth:library-of-exile:${project.exile_library_version}")
 }
 

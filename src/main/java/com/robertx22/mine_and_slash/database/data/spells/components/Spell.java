@@ -282,7 +282,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                     x.targets.forEach(a -> {
                         // adds radius for damage spells
                         if (x.acts.stream().anyMatch(e -> e.type.equals(SpellAction.DEAL_DAMAGE.GUID())) && a.has(MapField.RADIUS)) {
-                            String rad = TOOLTIP_NUMBER_FORMAT.format(a.getOrDefault(MapField.RADIUS, 0D));
+                            String rad = TOOLTIP_NUMBER_FORMAT.format(a.getOrDefault(MapField.RADIUS, 0D).doubleValue());
                             radiuses.add(rad);
                         }
                     });

@@ -374,6 +374,9 @@ public class SpellCastingData {
 
         if (isCasting()) {
             try {
+                castTickLeft--;
+                castTicksDone++;
+
                 Spell spell = this.calcSpell.getSpell();
 
                 SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
@@ -387,10 +390,7 @@ public class SpellCastingData {
 
                 lastSpell = spell;
 
-                castTickLeft--;
-                castTicksDone++;
-
-                if (castTickLeft < 0) {
+                if (castTickLeft <= 0) {
 
                     for (Map.Entry<String, ExileEffectInstanceData> en : ctx.data.statusEffects.exileMap.entrySet()) {
                         ExileEffect eff = ExileDB.ExileEffects().get(en.getKey());

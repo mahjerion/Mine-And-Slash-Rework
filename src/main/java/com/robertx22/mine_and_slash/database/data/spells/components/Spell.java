@@ -264,17 +264,17 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         }
         if (config.usesCharges()) {
             list.add(Words.MAX_CHARGES.locName(config.charges).withStyle(ChatFormatting.YELLOW));
-            list.add(Words.CHARGE_REGEN.locName(config.charge_regen / 20).withStyle(ChatFormatting.YELLOW));
+            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(config.charge_regen)).withStyle(ChatFormatting.YELLOW));
         } else {
-            list.add(Words.COOLDOWN.locName(getCooldownTicks(ctx) / 20).withStyle(ChatFormatting.YELLOW));
+            list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(getCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
         }
 
         int casttime = getCastTimeTicks(ctx);
 
-        if (casttime == 0) {
+        if (casttime <= 1) {
             list.add(Words.INSTANT_CAST.locName().withStyle(ChatFormatting.GREEN));
         } else {
-            list.add(Words.CAST_TIME.locName(casttime / 20).withStyle(ChatFormatting.GREEN));
+            list.add(Words.CAST_TIME.locName(tooltipFormatTicksAsSeconds(casttime)).withStyle(ChatFormatting.GREEN));
         }
 
         Set<String> radiuses = new LinkedHashSet<>();
@@ -311,7 +311,6 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         // --- FIX: Use a map to keep only the effect with the greatest duration ---
         LinkedHashMap<ExileEffect, String> effectsWithDurations = new LinkedHashMap<>();
-        DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         if (ExileDB.ExileEffects().isRegistered(effect_tip)) {
             effectsWithDurations.put(
@@ -327,7 +326,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                         x.acts.forEach(a -> {
                             if (a.has(MapField.EXILE_POTION_ID)) {
                                 ExileEffect eff = a.getExileEffect();
-                                String dur = StringUtils.remove(decimalFormat.format(a.getOrDefault(MapField.POTION_DURATION, 0D) / 20), ".0");
+                                String dur = tooltipFormatTicksAsSeconds((int) (double) a.getOrDefault(MapField.POTION_DURATION, 0D));
                                 // If already present, keep the greater duration
                                 if (effectsWithDurations.containsKey(eff)) {
                                     String existingDur = effectsWithDurations.get(eff);
@@ -427,6 +426,12 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         } catch (Exception e) {
             return 0f;
         }
+    }
+
+    private static final DecimalFormat TOOLTIP_TIME_FORMAT = new DecimalFormat("0.00");
+
+    private static String tooltipFormatTicksAsSeconds(int ticks) {
+        return TOOLTIP_TIME_FORMAT.format(ticks / 20F);
     }
 
     public int getLevelOf(LivingEntity en) {

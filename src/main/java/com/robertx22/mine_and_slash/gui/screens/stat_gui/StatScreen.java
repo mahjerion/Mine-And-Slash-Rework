@@ -81,13 +81,16 @@ public class StatScreen extends BaseScreen implements INamedScreen {
 
         int x = this.guiLeft + 30;
         int y = this.guiTop + 16;
+        int yNavigation = y;
+        int xNavigation = this.guiLeft + this.sizeX;
 
 
         int spaceleft = 143;
+        int yNavigationDownOffset = spaceleft;
 
         var data = Load.Unit(ClientOnly.getPlayer());
 
-
+        int addedAmount = 0;
         for (int i = currentElement; i < currentElement + 15; i++) {
             if (i >= this.stats.size()) {
                 continue;
@@ -102,6 +105,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
                             this.publicAddButton(new StatPanelButton(this, stat, x, y));
                             y += ysize;
                             spaceleft -= ysize;
+                            addedAmount++;
                         }
                     }
                 }
@@ -111,6 +115,13 @@ public class StatScreen extends BaseScreen implements INamedScreen {
         }
 
 
+        if (currentElement > 0) {
+            this.publicAddButton(new StatDirectionNavigationButton(this, xNavigation, yNavigation, 1, false));
+        }
+
+        if (currentElement + addedAmount < searched.size()) {
+            this.publicAddButton(new StatDirectionNavigationButton(this, xNavigation, yNavigation + yNavigationDownOffset - StatDirectionNavigationButton.ySize, 1, true));
+        }
     }
 
     @Override
@@ -220,5 +231,9 @@ public class StatScreen extends BaseScreen implements INamedScreen {
     @Override
     public Words screenName() {
         return Words.Stats;
+    }
+
+    public void moveCurrentElementBy(int amount) {
+        this.setCurrentElement(MathHelper.clamp(currentElement + amount, 0, searched.size()));
     }
 }

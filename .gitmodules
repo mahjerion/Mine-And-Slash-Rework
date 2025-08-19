@@ -1,9 +1,9 @@
-[submodule "Library-of-Exile-Rework"]
-	path = Library-of-Exile-Rework
-	url = https://github.com/mahjerion/Library-of-Exile-Rework.git
 [submodule "the_harvest"]
 	path = the_harvest
 	url = https://github.com/mahjerion/the_harvest.git
 [submodule "ancient_obelisks"]
 	path = ancient_obelisks
 	url = https://github.com/mahjerion/ancient_obelisks
+[submodule "Library-of-Exile-Rework"]
+	path = Library-of-Exile-Rework
+	url = https://github.com/mahjerion/Library-of-Exile-Rework

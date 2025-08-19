@@ -7,6 +7,3 @@
 [submodule "ancient_obelisks"]
 	path = ancient_obelisks
 	url = https://github.com/mahjerion/ancient_obelisks.git
-[submodule "ancient_obelisk"]
-	path = ancient_obelisk
-	url = https://github.com/mahjerion/ancient_obelisks

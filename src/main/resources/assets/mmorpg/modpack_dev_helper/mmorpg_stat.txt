@@ -49,6 +49,7 @@ arrow_spell_dmg_taken
 attack_damage
 aura_effect
 axe_damage
+battlemage_user
 beast_cast_time
 beast_cdr
 beast_spell_dmg
@@ -519,6 +520,9 @@ missile_cast_time
 missile_cdr
 missile_spell_dmg
 missile_spell_dmg_taken
+missing_hp_health_regen_per_2
+missing_magic_shield_dmg_received_per_10
+missing_mana_dmg_per_10
 more_dmg_per_frenzy
 more_dmg_per_power
 more_food_stats

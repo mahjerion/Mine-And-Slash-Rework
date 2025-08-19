@@ -14,5 +14,7 @@ map_reward
 map_teleporter
 mob
 mob_horde
+obelisk_reward
+obelisk_spawner
 teleport_back_block
 uber_boss_altar

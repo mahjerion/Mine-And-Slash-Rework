@@ -20,6 +20,11 @@ base {
     archivesName = "${mod_display_name}-${minecraft_version}"
 }
 
+sourceSets.main.resources{
+    srcDir 'src/generated/resources'
+    exclude '.cache/**'
+}
+
 legacyForge {
     version = "${minecraft_version}-${forge_version}"
 
@@ -68,7 +73,7 @@ legacyForge {
             )
         }
 
-        jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+        // jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
     }
 
     mods {

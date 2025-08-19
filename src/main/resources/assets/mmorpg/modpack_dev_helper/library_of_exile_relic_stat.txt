@@ -10,6 +10,7 @@ bonus_jewel
 bonus_loot_chest
 bonus_map
 bonus_map_from_boss_chance
+bonus_obelisk_chance
 bonus_omen
 bonus_prophecy_coin
 bonus_rune
@@ -19,5 +20,10 @@ double_harvest_chance
 empty
 extra_map_boss_chance
 harvest_content
+mob_spawn_chance
 mobs_spawned
+obelisk_content
 pack_size
+total_wave_mobs
+triple_chest_chance
+triple_obelisk_chance

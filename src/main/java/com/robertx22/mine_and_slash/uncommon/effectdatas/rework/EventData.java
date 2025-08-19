@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 public class EventData {
     public static String AILMENT = "ailment";
+    public static String AILMENT_PROCCED = "ailment_procced";
 
     public static String NUMBER = "number";
     public static String BEFORE_CONVERSION_NUMBER = "before_conversion_number";

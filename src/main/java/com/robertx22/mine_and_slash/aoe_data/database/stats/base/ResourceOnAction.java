@@ -22,6 +22,10 @@ public class ResourceOnAction extends AutoHashClass {
         return new ResourceOnAction(type, EventData.IS_DODGED, "Dodge");
     }
 
+    public static ResourceOnAction onProcAilment(ResourceType type) {
+        return new ResourceOnAction(type, EventData.AILMENT_PROCCED, "Ailment Proc");
+    }
+
     private ResourceOnAction(ResourceType resource, String actiontype, String actionname) {
         this.resource = resource;
         this.actionName = actionname;
@@ -39,6 +43,7 @@ public class ResourceOnAction extends AutoHashClass {
         for (ResourceType type : ResourceType.values()) {
             list.add(onBlock(type));
             list.add(onDodge(type));
+            list.add(onProcAilment(type));
 
         }
         return list;

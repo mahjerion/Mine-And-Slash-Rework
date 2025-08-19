@@ -66,6 +66,7 @@ block_chance
 block_per_endurance_charge
 blood
 blood_leech_cap
+blood_on_ailment_procced
 blood_on_is_blocked
 blood_on_is_dodged
 blood_on_kill
@@ -206,6 +207,7 @@ endurance_charge_on_crit
 endurance_charge_on_hit
 energy
 energy_leech_cap
+energy_on_ailment_procced
 energy_on_hit_hit
 energy_on_is_blocked
 energy_on_is_dodged
@@ -280,6 +282,7 @@ heal_spell_dmg
 heal_spell_dmg_taken
 health
 health_leech_cap
+health_on_ailment_procced
 health_on_hit_hit
 health_on_is_blocked
 health_on_is_dodged
@@ -459,6 +462,7 @@ magic_shield
 magic_shield_aura_cost
 magic_shield_heal
 magic_shield_leech_cap
+magic_shield_on_ailment_procced
 magic_shield_on_hit_hit
 magic_shield_on_is_blocked
 magic_shield_on_is_dodged
@@ -474,6 +478,7 @@ magic_spell_dmg_taken
 mana
 mana_cost
 mana_leech_cap
+mana_on_ailment_procced
 mana_on_hit_hit
 mana_on_is_blocked
 mana_on_is_dodged

@@ -1025,6 +1025,7 @@
 	"mmorpg.stat.block_per_endurance_charge": "Block Chance per Endurance Charge",
 	"mmorpg.stat.blood": "Blood",
 	"mmorpg.stat.blood_leech_cap": "Blood Leech Cap",
+	"mmorpg.stat.blood_on_ailment_procced": "\u00A77Leech \u00A7a[VAL1]\u00A77 Blood on Ailment Proc",
 	"mmorpg.stat.blood_on_is_blocked": "\u00A77Leech \u00A7a[VAL1]\u00A77 Blood on Block",
 	"mmorpg.stat.blood_on_is_dodged": "\u00A77Leech \u00A7a[VAL1]\u00A77 Blood on Dodge",
 	"mmorpg.stat.blood_on_kill": "Leech Blood on Kill",
@@ -1165,6 +1166,7 @@
 	"mmorpg.stat.endurance_charge_on_hit": "\u00A77\u00A7a[VAL1]%\u00A77 Chance to get Endurance Charge On Hit",
 	"mmorpg.stat.energy": "Energy",
 	"mmorpg.stat.energy_leech_cap": "Energy Leech Cap",
+	"mmorpg.stat.energy_on_ailment_procced": "\u00A77Leech \u00A7a[VAL1]\u00A77 Energy on Ailment Proc",
 	"mmorpg.stat.energy_on_hit_hit": "Leech Energy on Hit",
 	"mmorpg.stat.energy_on_is_blocked": "\u00A77Leech \u00A7a[VAL1]\u00A77 Energy on Block",
 	"mmorpg.stat.energy_on_is_dodged": "\u00A77Leech \u00A7a[VAL1]\u00A77 Energy on Dodge",
@@ -1239,6 +1241,7 @@
 	"mmorpg.stat.heal_spell_dmg_taken": "Heal Damage Taken",
 	"mmorpg.stat.health": "Health",
 	"mmorpg.stat.health_leech_cap": "Health Leech Cap",
+	"mmorpg.stat.health_on_ailment_procced": "\u00A77Leech \u00A7a[VAL1]\u00A77 Health on Ailment Proc",
 	"mmorpg.stat.health_on_hit_hit": "Leech Health on Hit",
 	"mmorpg.stat.health_on_is_blocked": "\u00A77Leech \u00A7a[VAL1]\u00A77 Health on Block",
 	"mmorpg.stat.health_on_is_dodged": "\u00A77Leech \u00A7a[VAL1]\u00A77 Health on Dodge",
@@ -1418,6 +1421,7 @@
 	"mmorpg.stat.magic_shield_aura_cost": "\u00A77Magic Shield Augment Cost",
 	"mmorpg.stat.magic_shield_heal": "Magic Shield Healing",
 	"mmorpg.stat.magic_shield_leech_cap": "Magic Shield Leech Cap",
+	"mmorpg.stat.magic_shield_on_ailment_procced": "\u00A77Leech \u00A7a[VAL1]\u00A77 Magic Shield on Ailment Proc",
 	"mmorpg.stat.magic_shield_on_hit_hit": "Leech Magic Shield on Hit",
 	"mmorpg.stat.magic_shield_on_is_blocked": "\u00A77Leech \u00A7a[VAL1]\u00A77 Magic Shield on Block",
 	"mmorpg.stat.magic_shield_on_is_dodged": "\u00A77Leech \u00A7a[VAL1]\u00A77 Magic Shield on Dodge",
@@ -1433,6 +1437,7 @@
 	"mmorpg.stat.mana": "Mana",
 	"mmorpg.stat.mana_cost": "Mana Cost",
 	"mmorpg.stat.mana_leech_cap": "Mana Leech Cap",
+	"mmorpg.stat.mana_on_ailment_procced": "\u00A77Leech \u00A7a[VAL1]\u00A77 Mana on Ailment Proc",
 	"mmorpg.stat.mana_on_hit_hit": "Leech Mana on Hit",
 	"mmorpg.stat.mana_on_is_blocked": "\u00A77Leech \u00A7a[VAL1]\u00A77 Mana on Block",
 	"mmorpg.stat.mana_on_is_dodged": "\u00A77Leech \u00A7a[VAL1]\u00A77 Mana on Dodge",
@@ -1731,48 +1736,6 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gear_type.trident": "Trident",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-	"mmorpg.gearslot.trident": "Trident",
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1828,6 +1791,48 @@
 	"mmorpg.unique_gear.witch_brew.name": "Witch's Brew",
 
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gear_type.trident": "Trident",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+	"mmorpg.gearslot.trident": "Trident",
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
@@ -2844,18 +2849,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -2868,6 +2861,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",

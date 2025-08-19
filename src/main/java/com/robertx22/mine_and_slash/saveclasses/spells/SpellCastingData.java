@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellPredicates;
 import com.robertx22.mine_and_slash.database.data.stats.types.LearnSpellStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.MaxAllSpellLevels;
 import com.robertx22.mine_and_slash.database.data.stats.types.MaxSpellLevel;
@@ -369,6 +370,9 @@ public class SpellCastingData {
 
         if (isCasting()) {
             try {
+                castTickLeft--;
+                castTicksDone++;
+
                 Spell spell = this.calcSpell.getSpell();
 
                 SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
@@ -382,10 +386,7 @@ public class SpellCastingData {
 
                 lastSpell = spell;
 
-                castTickLeft--;
-                castTicksDone++;
-
-                if (castTickLeft < 0) {
+                if (castTickLeft <= 0) {
 
                     for (Map.Entry<String, ExileEffectInstanceData> en : ctx.data.statusEffects.exileMap.entrySet()) {
                         ExileEffect eff = ExileDB.ExileEffects().get(en.getKey());
@@ -422,8 +423,7 @@ public class SpellCastingData {
     public void setToCast(SpellCastContext ctx) {
 
         this.calcSpell = ctx.calcData;
-
-        this.castTickLeft = ctx.spell.getCastInfo(ctx).castTime();
+        this.castTickLeft = ctx.spell.getCastTimeTicks(ctx);
         this.spellTotalCastTicks = this.castTickLeft;
         this.castTicksDone = 0;
         this.casting = true;

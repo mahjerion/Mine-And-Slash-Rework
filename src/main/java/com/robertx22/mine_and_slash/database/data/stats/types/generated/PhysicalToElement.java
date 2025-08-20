@@ -37,7 +37,6 @@ public class PhysicalToElement extends ElementalStat {
         this.statEffect = new Effect();
 
         this.min = 0;
-        this.max = 100;
     }
 
     @Override

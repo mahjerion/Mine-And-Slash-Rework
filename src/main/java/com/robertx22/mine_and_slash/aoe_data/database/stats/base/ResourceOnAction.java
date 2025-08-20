@@ -43,7 +43,7 @@ public class ResourceOnAction extends AutoHashClass {
         for (ResourceType type : ResourceType.values()) {
             list.add(onBlock(type));
             list.add(onDodge(type));
-            list.add(onProcAilment(type));
+            //list.add(onProcAilment(type)); need to set priority
 
         }
         return list;

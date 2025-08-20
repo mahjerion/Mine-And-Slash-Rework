@@ -92,7 +92,9 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
     // todo make this a tag instead of using a negative tag maybe?
     public boolean usesWeaponForDamage() {
-        return !config.tags.contains(SpellTags.magic);
+        //changed to always be true instead of deleting condition for readability. should be true because staff damage is useless otherwise
+        return true;
+        //return !config.tags.contains(SpellTags.magic);
     }
 
     public int max_lvl = 16; // first lvl unlocks spell, then every 3 lvls unlocks a supp gem slot?

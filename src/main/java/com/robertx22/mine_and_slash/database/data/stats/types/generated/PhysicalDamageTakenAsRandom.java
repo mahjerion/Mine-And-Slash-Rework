@@ -23,7 +23,6 @@ public class PhysicalDamageTakenAsRandom extends Stat {
         this.scaling = StatScaling.NONE;
         this.statEffect = new Effect();
         this.min = 0;
-        this.max = 100;
     }
 
     public static PhysicalDamageTakenAsRandom getInstance() {

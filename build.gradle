@@ -17,7 +17,7 @@ mixin {
 }
 
 base {
-    archivesName = "${mod_display_name}-${minecraft_version}"
+    archivesName = "${mod_archive_name}-${minecraft_version}"
 }
 
 sourceSets.main.resources{

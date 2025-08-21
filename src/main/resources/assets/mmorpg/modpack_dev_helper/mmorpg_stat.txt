@@ -554,6 +554,7 @@ phys_taken_as_elemental
 phys_taken_as_fire
 phys_taken_as_lightning
 phys_taken_as_physical
+phys_taken_as_random
 phys_taken_as_water
 phys_to_all
 phys_to_chaos
@@ -561,6 +562,7 @@ phys_to_elemental
 phys_to_fire
 phys_to_lightning
 phys_to_physical
+phys_to_random
 phys_to_water
 physical_ailment_aura_cost
 physical_any_wep_damage

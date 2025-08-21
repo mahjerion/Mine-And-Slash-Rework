@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 
+import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
@@ -7,7 +8,6 @@ import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
-import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -48,8 +48,7 @@ public class SummonProjectileAction extends SpellAction {
 
         builder.silent = silent;
 
-        builder.shootSpeed = data.get(MapField.PROJECTILE_SPEED)
-                .floatValue();
+        builder.shootSpeed = data.get(MapField.PROJECTILE_SPEED).floatValue();
 
         builder.shootSpeed *= ctx.calculatedSpellData.data.getNumber(EventData.PROJECTILE_SPEED_MULTI, 1).number;
 
@@ -70,6 +69,8 @@ public class SummonProjectileAction extends SpellAction {
         builder.randomSpreadDegrees = data.getOrDefault(MapField.PROJECTILE_SPREAD_RANDOMNESS, 0D).floatValue();
 
         builder.randomSpreadDegrees *= ctx.calculatedSpellData.data.getNumber(EventData.PROJECTILE_SPREAD_RANDOMNESS, 1).number;
+
+        builder.lifespanTicks = data.get(MapField.LIFESPAN_TICKS).intValue();
 
         builder.cast();
     }

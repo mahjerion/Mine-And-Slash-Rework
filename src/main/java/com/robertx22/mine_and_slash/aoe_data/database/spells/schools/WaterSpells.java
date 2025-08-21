@@ -104,6 +104,7 @@ public class WaterSpells implements ExileRegistryInit {
                 .onTick("cloud", ParticleBuilder.of(ParticleTypes.ITEM_SNOWBALL, 3f).shape(ParticleShape.CIRCLE_2D).amount(40).randomY(0.5F).height(6).build())
 
                 .onTick("cloud", DamageBuilder.radius(Elements.Cold, 3, SpellCalcs.BLIZZARD).build().noKnock().tick(20D))
+                .onTick("cloud", PartBuilder.addExileEffectToEnemiesInAoe(ModEffects.BLIZZARD_REDUCE_HEAL_STRENGTH.resourcePath, 3D, 20D))
 
                 .build();
 

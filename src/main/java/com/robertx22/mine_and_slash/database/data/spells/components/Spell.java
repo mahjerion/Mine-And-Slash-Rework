@@ -181,7 +181,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         */
         attached.onCast(SpellCtx.onCast(caster, ctx.calcData));
     }
-
+    
     public final int getCooldownTicks(SpellCastContext ctx) {
         return (int) Math.ceil(ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number);
     }

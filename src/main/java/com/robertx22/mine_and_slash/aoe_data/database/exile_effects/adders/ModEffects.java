@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders;
 
+import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.ExileEffectBuilder;
@@ -36,8 +37,10 @@ import net.minecraft.sounds.SoundEvents;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 
@@ -97,6 +100,56 @@ public class ModEffects implements ExileRegistryInit {
     }
 
     public static int ESSENCE_OF_FROST_MAX_STACKS = 5;
+
+    // ---------- Helper ----------
+    private static EffectCtx state(String id, String name, Elements elem) {
+        // EffectCtx constructor already adds itself to ModEffects.ALL in this file's pattern
+        return new EffectCtx(id, name, elem, EffectType.beneficial);
+    }
+
+    // Pretty names for resources (UI text)
+    private static final Map<ResourceType, String> RES_NAME = Map.of(
+        ResourceType.health, "Health",
+        ResourceType.mana, "Mana",
+        ResourceType.energy, "Energy",
+        ResourceType.magic_shield, "Magic Shield",
+        ResourceType.blood, "Blood"
+    );
+
+    // Suggested elements per resource (only used for coloring/category)
+    private static final Map<ResourceType, Elements> RES_ELEM = Map.of(
+        ResourceType.health, Elements.Physical,
+        ResourceType.mana, Elements.Cold,
+        ResourceType.energy, Elements.Nature,
+        ResourceType.magic_shield, Elements.Shadow,
+        ResourceType.blood, Elements.Fire
+    );
+
+    // ---------- Generic flags ----------
+    public static final EffectCtx LEECHING_STATE = state(
+        "leeching_state", "Leeching (State)", Elements.Physical
+    );
+    public static final EffectCtx REGEN_STATE = state(
+        "regen_state", "Regenerating (State)", Elements.Physical
+    );
+
+    // ---------- Per-resource flags (generated) ----------
+    public static final EnumMap<ResourceType, EffectCtx> LEECHING_STATE_BY_RES = new EnumMap<>(ResourceType.class);
+    public static final EnumMap<ResourceType, EffectCtx> REGEN_STATE_BY_RES   = new EnumMap<>(ResourceType.class);
+
+    static {
+        for (var rt : RES_NAME.keySet()) {
+            var elem = RES_ELEM.get(rt);
+            var nice = RES_NAME.get(rt);
+
+            LEECHING_STATE_BY_RES.put(
+                rt, state("leeching_" + rt.id + "_state", "Leeching " + nice, elem)
+            );
+            REGEN_STATE_BY_RES.put(
+                rt, state("regen_" + rt.id + "_state", "Regenerating " + nice, elem)
+            );
+        }
+    }
 
     public static void init() {
 
@@ -383,6 +436,24 @@ public class ModEffects implements ExileRegistryInit {
                                 .tick(20D))
                         .buildForEffect())
                 .build();
+
+        // (NEW) Leeching & Healing
+        ExileEffectBuilder.of(LEECHING_STATE)
+                .maxStacks(1)
+                .build();
+
+        ExileEffectBuilder.of(REGEN_STATE)
+                .maxStacks(1)
+                .build();
+
+        // Register per-resource flags
+        for (EffectCtx ctx : LEECHING_STATE_BY_RES.values()) {
+            ExileEffectBuilder.of(ctx).maxStacks(1).build();
+        }
+        
+        for (EffectCtx ctx : REGEN_STATE_BY_RES.values()) {
+            ExileEffectBuilder.of(ctx).maxStacks(1).build();
+        }
 
 
     }

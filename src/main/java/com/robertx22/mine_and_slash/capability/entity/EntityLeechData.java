@@ -24,35 +24,71 @@ public class EntityLeechData {
     // todo implement expiration after 5s
     public void onSecondUseLeeches(EntityData data) {
 
-
-        // don't allow to accumulate more than x depending on total resource
-        // currently lets try with capping it to 5 seconds of regen.
+        // 1) Clamp stored leech per resource to 5s of cap
         for (Map.Entry<ResourceType, Float> en : map.entrySet()) {
-            float leechMaxPerSec = 5F * data.getUnit().getCalculatedStat(ResourceStats.LEECH_CAP.get(en.getKey())).getValue() / 100F;
-            float max = data.getMaximumResource(en.getKey()) * leechMaxPerSec;
-            float fi = MathHelper.clamp(en.getValue(), 0, max);
-            map.put(en.getKey(), fi);
+            float capPctPerSec = 5F * data.getUnit()
+                .getCalculatedStat(ResourceStats.LEECH_CAP.get(en.getKey()))
+                .getValue() / 100F;
+
+            float maxPerSecond = data.getResources().getMax(data.entity, en.getKey()) * capPctPerSec;
+            float clamped = MathHelper.clamp(en.getValue(), 0, maxPerSecond);
+            map.put(en.getKey(), clamped);
         }
 
+        // 2) Apply per-resource leech once (and debug)
+        boolean anyLeechThisSecond = false;
+
         for (Map.Entry<ResourceType, Float> entry : map.entrySet()) {
-            float leechMaxPerSec = data.getUnit().getCalculatedStat(ResourceStats.LEECH_CAP.get(entry.getKey())).getValue() / 100F;
+            ResourceType rtype = entry.getKey();
 
-            float num = entry.getValue();
+            float capPctPerSec = data.getUnit()
+                .getCalculatedStat(ResourceStats.LEECH_CAP.get(rtype))
+                .getValue() / 100F;
 
-            if (num > 1) {
-                float maxres = data.getResources().getMax(data.entity, entry.getKey());
+            float reservoir = entry.getValue(); // stored leech for this resource
+            if (reservoir > 1f) { // tiny cutoff stays
+                float maxRes = data.getResources().getMax(data.entity, rtype);
+                float perSecondCap = capPctPerSec * maxRes;
 
-                float max = leechMaxPerSec * maxres;
+                // Intended drain this second (bounded by per-second cap and reservoir)
+                float take = Math.min(reservoir, perSecondCap);
 
-                if (num > max) {
-                    num = max;
+                // --- talent/ascendancy override (wire this when ready) ---
+                // boolean allowFullLeech = data.getUnit()
+                //     .getCalculatedStat(Stats.LEECH_AT_FULL_HEALTH).getValue() > 0;
+                // If you don't have the stat yet, keep false for now:
+                 boolean allowFullLeech = false;
+
+                // Apply and get what actually landed
+                float applied = data.getResources().restoreAndReturnApplied(
+                    data.entity,
+                    rtype,
+                    take,
+                    com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType.leech
+                );
+
+                // If HEALTH is full and nothing applied, kill health leech unless allowed
+                if (rtype == ResourceType.health && applied <= 0f && !allowFullLeech) {
+                    map.put(rtype, 0f);
+                    continue;
                 }
 
-                addLeech(entry.getKey(), -num);
-                data.getResources().restore(data.entity, entry.getKey(), num);
+                // Some leech occurred on this resource this second
+                anyLeechThisSecond = true;
+
+                // Debug only when something actually healed (keeps chat clean)
+                if (applied > 0f && data.entity instanceof net.minecraft.server.level.ServerPlayer sp) {
+                    com.robertx22.mine_and_slash.event_hooks.my_events.LeechDebug.tick(sp, rtype, applied);
+                }
+
+                // **Critical**: drain by 'take' (not by 'applied') to preserve ≤5s duration
+                addLeech(rtype, -take);
             }
         }
 
-
+        // STOP: no leech at all this second → remove the test buff and end lifecycle debug
+        if (!anyLeechThisSecond && data.entity instanceof net.minecraft.server.level.ServerPlayer sp) {
+            com.robertx22.mine_and_slash.event_hooks.my_events.LeechDebug.maybeStop(sp);
+        }
     }
 }

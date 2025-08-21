@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
 import com.robertx22.mine_and_slash.database.data.spells.components.SpellConfiguration;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
+import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;

@@ -54,7 +54,12 @@ public class RestoreResourceEvent extends EffectEvent {
             }
         }
 
-        this.targetData.getResources().restore(target, data.getResourceType(), num);
+           // Guard against no-op / negative input after scaling
+        if (num <= 0) {
+            return;
+        }
+
+        this.targetData.getResources().restore(target, data.getResourceType(), num,data.getRestoreType());
 
         if (this.data.getResourceType() == ResourceType.health) {
             if (data.getRestoreType() == RestoreType.heal) {

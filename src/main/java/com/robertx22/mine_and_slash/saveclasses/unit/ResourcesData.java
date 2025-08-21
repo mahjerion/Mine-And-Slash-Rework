@@ -114,9 +114,75 @@ public class ResourcesData {
         modify(en, Use.SPEND, type, amount);
     }
 
+    // (START NEW) Overload with RestoreType — callers who know the type should use this
+    public void restore(LivingEntity en, ResourceType type, float amount,
+                    com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType rtype) {
+                        if (amount <= 0) return;
+
+                        float applied = applyRestoreAndReturnApplied(en, type, amount); // NEW
+                        if (applied <= 0) return; // nothing actually restored (e.g., full health)
+
+                        // Fire the unified event with the true applied amount
+                        com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceRestore.trigger(en, type, applied, rtype);
+                    }
+
+    // Overload without RestoreType
     public void restore(LivingEntity en, ResourceType type, float amount) {
-        modify(en, Use.RESTORE, type, amount);
+        // Default to regen when no context is provided
+        restore(en, type, amount,
+        com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType.regen);
     }
+
+    // Returns the LEECH actual amount that was applied (0 if capped)
+    public float restoreAndReturnApplied(LivingEntity en, ResourceType type, float amount,
+                                        com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType rtype) {
+        if (amount <= 0) return 0f;
+        float applied = applyRestoreAndReturnApplied(en, type, amount);
+        if (applied > 0f) {
+            com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceRestore.trigger(en, type, applied, rtype);
+        }
+        return applied;
+    }
+
+    // Returns the REGEN actual amount that was applied (0 if capped)
+    private float applyRestoreAndReturnApplied(LivingEntity en, ResourceType type, float amount) {
+        float applied = 0f;
+
+        if (type == ResourceType.health) {
+            // Compute how much can actually be healed
+            float before = en.getHealth();
+            float max = en.getMaxHealth();
+            applied = Math.max(0f, Math.min(amount, max - before));
+            if (applied > 0f) {
+                HealthUtils.heal(en, applied);
+            }
+        } else if (type == ResourceType.mana) {
+            float before = mana;
+            float after = getModifiedValue(en, type, Use.RESTORE, amount); // this produces the new clamped value
+            applied = Math.max(0f, after - before);
+            mana = after;
+        } else if (type == ResourceType.blood) {
+            float before = blood;
+            float after = getModifiedValue(en, type, Use.RESTORE, amount);
+            applied = Math.max(0f, after - before);
+            blood = after;
+        } else if (type == ResourceType.energy) {
+            float before = energy;
+            float after = getModifiedValue(en, type, Use.RESTORE, amount);
+            applied = Math.max(0f, after - before);
+            energy = after;
+        } else if (type == ResourceType.magic_shield) {
+            float before = magic_shield;
+            float after = getModifiedValue(en, type, Use.RESTORE, amount);
+            applied = Math.max(0f, after - before);
+            magic_shield = after;
+        }
+
+        cap(en, type);
+        sync(en);
+        return applied;
+    } // (END NEW) applyRestoreAndReturnApplied
+
 
     public void modify(LivingEntity en, Use use, ResourceType type, float amount) {
         if (amount == 0) {
@@ -131,10 +197,11 @@ public class ResourcesData {
         } else if (type == ResourceType.magic_shield) {
             magic_shield = getModifiedValue(en, type, use, amount);
         } else if (type == ResourceType.health) {
-            if (use == Use.RESTORE) {
+                if (use == Use.RESTORE) {
                 HealthUtils.heal(en, amount);
             }
         }
+
         cap(en, type);
         sync(en);
     }

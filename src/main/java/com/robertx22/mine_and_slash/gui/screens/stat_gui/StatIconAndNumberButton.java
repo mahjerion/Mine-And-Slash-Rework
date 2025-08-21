@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,8 @@ public class StatIconAndNumberButton extends ImageButton {
     public static int xSize = 19;
     public static int ySize = 19;
 
-
-    StatData stat;
-
+    private StatData stat;
+    private LivingEntity target;
 
     public StatIconAndNumberButton(StatScreen screen, StatData stat, int xPos, int yPos) {
         super(xPos, yPos, xSize, ySize, 0, 0, 0, SlashRef.guiId("stat_gui/stat_icon"), xSize, ySize, (button) -> {
@@ -32,6 +32,7 @@ public class StatIconAndNumberButton extends ImageButton {
         });
 
         this.stat = stat;
+        this.target = screen.getTarget();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class StatIconAndNumberButton extends ImageButton {
 
         if (this.isHoveredOrFocused()) {
             List<Component> tooltip = new ArrayList<>();
-            var text = stat.GetStat().locName().append(": " + CharacterStatsButtons.getStatString(stat.GetStat(), Load.Unit(ClientOnly.getPlayer())));
+            var text = stat.GetStat().locName().append(": " + CharacterStatsButtons.getStatString(stat.GetStat(), Load.Unit(target)));
             tooltip.add(text);
 
             tooltip.addAll(stat.GetStat().getCutDescTooltip());

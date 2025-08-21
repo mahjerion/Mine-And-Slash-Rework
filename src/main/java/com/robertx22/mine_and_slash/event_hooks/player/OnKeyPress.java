@@ -1,17 +1,29 @@
 package com.robertx22.mine_and_slash.event_hooks.player;
 
+import java.util.List;
 import java.util.Stack;
 
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
+import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.SpellKeybind;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ChatUtils;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.LookUtils;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenEntityStatsRequestPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.QuickUsePotionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.UnsummonPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellServerToCastSpellPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.settings.KeyModifier;
 
 public class OnKeyPress {
@@ -54,7 +66,38 @@ public class OnKeyPress {
             cooldown = 5;
         } else if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
             Packets.sendToServer(new QuickUsePotionPacket());
+        } else if (KeybindsRegister.SHOW_ENTITY_STATS.isDown()) {
+            if (showEntityStats(mc)) {
+                cooldown = 10;
+            }
         }
+    }
+
+    private static boolean showEntityStats(Minecraft mc) {
+        LivingEntity pickedEntity = pickEntity(mc);
+        if (pickedEntity == null) {
+            return false;
+        }
+        if (pickedEntity instanceof Player) {
+            // we already have stats for other players
+            mc.setScreen(new StatScreen(pickedEntity));
+        } else {
+            // mob stats need to be requested from the server
+            Packets.sendToServer(new OpenEntityStatsRequestPacket(pickedEntity));
+        }
+        return true;
+    }
+
+    private static LivingEntity pickEntity(Minecraft mc) {
+        Entity cameraEntity = mc.getCameraEntity();
+        if (cameraEntity == null) {
+            return null;
+        }
+        List<LivingEntity> results = LookUtils.getLivingEntityLookedAt(cameraEntity, 100.0, true);
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
     }
 
     private static boolean checkToAddSpellKeyPress(SpellKeybind key) {

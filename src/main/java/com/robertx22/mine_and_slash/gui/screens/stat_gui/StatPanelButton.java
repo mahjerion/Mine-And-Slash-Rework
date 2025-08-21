@@ -33,7 +33,7 @@ public class StatPanelButton extends ImageButton {
             screen.setInfo(stat);
         });
 
-        var data = Load.Unit(ClientOnly.getPlayer());
+        var data = Load.Unit(screen.getTarget());
 
 
         if (stat.GetStat().gui_group.isValid()) {

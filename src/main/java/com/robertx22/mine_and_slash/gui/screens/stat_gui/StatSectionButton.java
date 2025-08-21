@@ -21,7 +21,7 @@ public class StatSectionButton extends ImageButton {
 
     public StatSectionButton(StatScreen screen, StatGuiGroupSection sec, int xPos, int yPos) {
         super(xPos, yPos, xSize, ySize, 0, 0, 0, sec.getIcon(), xSize, ySize, (button) -> {
-            screen.showStats(sec.getStats(ClientOnly.getPlayer()), true);
+            screen.showStats(sec.getStats(screen.getTarget()), true);
         });
 
         this.sec = sec;

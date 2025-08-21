@@ -23,6 +23,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,16 +35,18 @@ public class StatInfoButton extends ImageButton implements IStatInfoButton {
     public static int ySize = 20;
 
 
-    StatData stat;
+    private StatData stat;
+    private StatInfoType type;
+    private LivingEntity target;
 
-    StatInfoType type;
-
-    public StatInfoButton(StatInfoType type, StatData stat, int xPos, int yPos) {
+    public StatInfoButton(StatScreen screen, StatInfoType type, StatData stat, int xPos, int yPos) {
         super(xPos, yPos, xSize, ySize, 0, 0, 0, SlashRef.guiId("stat_gui/info_button"), xSize, ySize, (button) -> {
 
         });
+
         this.type = type;
         this.stat = stat;
+        this.target = screen.getTarget();
     }
 
     @Override
@@ -69,7 +72,7 @@ public class StatInfoButton extends ImageButton implements IStatInfoButton {
         if (type.hasIcon) {
             RenderUtils.render16Icon(gui, this.type.getIcon(), getX() + iconX - 3, getY() + iconY - 3);
         }
-        var text = type.getRenderText(stat, Load.Unit(ClientOnly.getPlayer()));
+        var text = type.getRenderText(stat, Load.Unit(target));
 
         if (text != null) {
             GuiUtils.renderScaledText(gui, getX() + numX, getY() + numY, 0.8F, text.getString(), ChatFormatting.YELLOW);

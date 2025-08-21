@@ -30,6 +30,7 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -57,18 +58,18 @@ public enum StatGuiGroupSection implements IAutoLocName {
 
     public String id;
     public String name;
-    private Function<Player, List<Stat>> sup;
+    private Function<LivingEntity, List<Stat>> sup;
 
-    StatGuiGroupSection(String id, String name, Function<Player, List<Stat>> sup) {
+    StatGuiGroupSection(String id, String name, Function<LivingEntity, List<Stat>> sup) {
         this.id = id;
         this.name = name;
         this.sup = sup;
     }
 
-    public List<Stat> getStats(Player p) {
+    public List<Stat> getStats(LivingEntity p) {
         if (this == OTHER) {
             List<Stat> list = new ArrayList<>();
-            for (StatData stat : Load.Unit(ClientOnly.getPlayer()).getUnit().getStats().stats.values()) {
+            for (StatData stat : Load.Unit(p).getUnit().getStats().stats.values()) {
                 if (stat.GetStat().show_in_gui) {
                     list.add(stat.GetStat());
                 }

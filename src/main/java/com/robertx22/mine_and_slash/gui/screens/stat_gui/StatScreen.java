@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.gui.screens.stat_gui;
 
+import com.robertx22.mine_and_slash.a_libraries.neat.HealthBarRenderer;
+import com.robertx22.mine_and_slash.a_libraries.neat.NeatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
@@ -15,9 +17,13 @@ import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,6 +48,25 @@ public class StatScreen extends BaseScreen implements INamedScreen {
     @Override
     public void render(GuiGraphics gui, int x, int y, float ticks) {
         gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+        if (target != ClientOnly.getPlayer()) {
+            // Show entity being viewed
+            int paperDollX = this.guiLeft - 88;
+            int paperDollY = this.guiTop + sizeY / 2 + 30;
+            float mouseOffsetX = (float) (paperDollX - x);
+            float mouseOffsetY = (float) (paperDollY - 50 - y);
+
+            boolean neatDraw = NeatConfig.draw;
+            NeatConfig.draw = false; // don't draw health bar
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, paperDollX, paperDollY, 30, mouseOffsetX, mouseOffsetY, target);
+            NeatConfig.draw = neatDraw;
+
+            Component nameText = HealthBarRenderer.getNameString(target, target, mc);
+            int nameTextX = paperDollX - mc.font.width(nameText) / 2;
+            int nameTextY = paperDollY + 5;
+            gui.drawString(mc.font, nameText, nameTextX, nameTextY, ChatFormatting.WHITE.getColor());
+        }
+
         gui.blit(BG, mc.getWindow().getGuiScaledWidth() / 2 - sizeX / 2, mc.getWindow().getGuiScaledHeight() / 2 - sizeY / 2, 0, 0, sizeX, sizeY);
         super.render(gui, x, y, ticks);
 

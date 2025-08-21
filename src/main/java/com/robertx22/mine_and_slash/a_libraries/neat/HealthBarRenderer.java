@@ -400,7 +400,7 @@ public class HealthBarRenderer {
         poseStack.popPose();
     }
 
-    private static @NotNull MutableComponent getNameString(Entity entity, LivingEntity living, Minecraft mc) {
+    public static @NotNull MutableComponent getNameString(Entity entity, LivingEntity living, Minecraft mc) {
         int lvl = Load.Unit(living).getLevel();
         int playerlvl = Load.Unit(mc.player).getLevel();
         int diffabove = lvl - playerlvl;

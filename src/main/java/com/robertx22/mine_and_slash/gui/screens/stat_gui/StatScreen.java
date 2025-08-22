@@ -249,7 +249,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
         });
 
 
-        showStats(StatGuiGroupSection.CORE.getStats(mc.player), true);
+        showStats(StatGuiGroupSection.CORE.getStats(target), true);
 
     }
 

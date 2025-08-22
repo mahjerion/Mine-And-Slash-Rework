@@ -4,7 +4,8 @@ public enum CurioSlots {
 
     NECKLACE(RefCurio.NECKLACE),
     OMEN(RefCurio.OMEN),
-    RING(RefCurio.RING);
+    RING(RefCurio.RING),
+    MASTER_BAG(RefCurio.MASTER_BAG);
 
     public String name;
 

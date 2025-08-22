@@ -128,11 +128,6 @@ public class Backpacks {
 
     public void openBackpack(BackpackType type, Player p, int rows) {
         if (!p.level().isClientSide) {
-
-            if (!p.getMainHandItem().is(SlashItems.MASTER_BAG.get())) {
-                return;
-            }
-
             BackpackInventory inv = getInv(type);
             //inv.throwOutBlockedSlotItems(rows * 9);
             p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> {

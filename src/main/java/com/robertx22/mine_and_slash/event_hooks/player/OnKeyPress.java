@@ -1,7 +1,5 @@
 package com.robertx22.mine_and_slash.event_hooks.player;
 
-import java.util.Stack;
-
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
@@ -10,9 +8,12 @@ import com.robertx22.mine_and_slash.mmorpg.registers.client.SpellKeybind;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ChatUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.QuickUsePotionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.UnsummonPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenCurioBackpackPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellServerToCastSpellPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.settings.KeyModifier;
+
+import java.util.Stack;
 
 public class OnKeyPress {
 
@@ -43,17 +44,26 @@ public class OnKeyPress {
             return;
         }
 
+         if (KeybindsRegister.HUB_SCREEN_KEY.isDown()) {
+            mc.setScreen(new MainHubScreen());
+            cooldown = 10;
+        } else if (KeybindsRegister.OPEN_MASTER_BACKPACK.isDown()) {
+            Packets.sendToServer(new OpenCurioBackpackPacket());
+            cooldown = 10;
+        }
+
+        if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
+            Packets.sendToServer(new QuickUsePotionPacket());
+        }
+
+        if (KeybindsRegister.HOTBAR_SWAP.isDown()) {
+            SpellKeybind.IS_ON_SECONd_HOTBAR = !SpellKeybind.IS_ON_SECONd_HOTBAR;
+            cooldown = 5;
+        }
+
         if (KeybindsRegister.UNSUMMON.isDown()) {
             Packets.sendToServer(new UnsummonPacket());
             cooldown = 3;
-        } else if (KeybindsRegister.HUB_SCREEN_KEY.isDown()) {
-            mc.setScreen(new MainHubScreen());
-            cooldown = 10;
-        } else if (KeybindsRegister.HOTBAR_SWAP.isDown()) {
-            SpellKeybind.IS_ON_SECONd_HOTBAR = !SpellKeybind.IS_ON_SECONd_HOTBAR;
-            cooldown = 5;
-        } else if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
-            Packets.sendToServer(new QuickUsePotionPacket());
         }
     }
 

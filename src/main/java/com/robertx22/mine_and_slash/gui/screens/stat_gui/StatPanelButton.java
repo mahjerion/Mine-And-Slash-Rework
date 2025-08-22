@@ -5,7 +5,6 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.library_of_exile.utils.RenderUtils;
 import com.robertx22.library_of_exile.utils.TextUTIL;
 import net.minecraft.ChatFormatting;

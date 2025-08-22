@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.gui.screens.stat_gui;
 
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.library_of_exile.utils.TextUTIL;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

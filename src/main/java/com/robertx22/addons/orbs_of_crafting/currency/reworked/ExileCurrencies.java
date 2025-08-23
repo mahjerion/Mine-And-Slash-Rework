@@ -163,7 +163,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
-            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_PREFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_SUFFIXES)
             .potentialCost(30)
             .weight(CodeCurrency.Weights.UBER)
             .build(this);

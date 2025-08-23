@@ -73,6 +73,10 @@ public abstract class GearCurrency extends CodeCurrency {
             return ExplainedResult.failure(Chats.CORRUPT_CANT_BE_MODIFIED.locName());
         }
 
+        if (ex.isMirrored() && this.spendsGearPotential()) {
+            return ExplainedResult.failure(Chats.MIRRORED_CANT_BE_MODIFIED.locName());
+        }
+
         if (!ex.get(StackKeys.POTENTIAL).has() || ex.get(StackKeys.POTENTIAL).get().potential < 1) {
             if (this.spendsGearPotential()) {
                 return ExplainedResult.failure(Chats.GEAR_NO_POTENTIAL.locName());

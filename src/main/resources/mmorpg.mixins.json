@@ -22,6 +22,7 @@
   "client": [
     "AccessorRenderType",
     "ItemGlintMixin",
+    "ItemMirrorMixin",
     "ItemStackMixin",
     "MixinServerWorldInfo",
     "MouseHandlerMixin",

@@ -4,91 +4,99 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Holds pending leech “reservoirs” per resource and applies them once per second.
+ *
+ * Design notes:
+ * - Clamp each reservoir to “≤ 5 seconds worth of per-second cap”.
+ * - Drain by the intended ‘take’ (min(reservoir, perSecondCap)), not by what was actually applied,
+ *   so duration semantics remain consistent even if the target is capped/full.
+ * - Prune tiny leftovers to keep the map small.
+ */
 public class EntityLeechData {
 
+    private static final float EPS = 0.1f; // tiny cutoff to treat as zero
+    private final EnumMap<ResourceType, Float> store = new EnumMap<>(ResourceType.class);
 
-    private HashMap<ResourceType, Float> map = new HashMap<>();
-
-    public void addLeech(ResourceType type, float num) {
-        if (!map.containsKey(type)) {
-            map.put(type, 0f);
+    /** Adds (or subtracts) pending leech for a resource. */
+    public void addLeech(ResourceType type, float amount) {
+        store.merge(type, amount, Float::sum);
+        // prune tiny / negative leftovers
+        if (store.getOrDefault(type, 0f) <= EPS) {
+            store.remove(type);
         }
-        float fi = num + map.get(type);
-
-        map.put(type, fi);
     }
 
-    // todo implement expiration after 5s
+    /**
+     * Called once per second. Applies up to the per-second cap for each resource,
+     * then drains the reservoir by the amount we *intended* to take.
+     */
     public void onSecondUseLeeches(EntityData data) {
 
-        // 1) Clamp stored leech per resource to 5s of cap
-        for (Map.Entry<ResourceType, Float> en : map.entrySet()) {
-            float capPctPerSec = 5F * data.getUnit()
-                .getCalculatedStat(ResourceStats.LEECH_CAP.get(en.getKey()))
-                .getValue() / 100F;
+        // 1) Clamp stored leech per resource to ≤ 5s of cap (prevents unbounded queues)
+        for (Map.Entry<ResourceType, Float> en : store.entrySet()) {
+            ResourceType rt = en.getKey();
+            float capPctPerSec = data.getUnit()
+                    .getCalculatedStat(ResourceStats.LEECH_CAP.get(rt))
+                    .getValue() / 100F;
 
-            float maxPerSecond = data.getResources().getMax(data.entity, en.getKey()) * capPctPerSec;
-            float clamped = MathHelper.clamp(en.getValue(), 0, maxPerSecond);
-            map.put(en.getKey(), clamped);
+            float maxRes   = data.getResources().getMax(data.entity, rt);
+            float fiveSecs = 5F * capPctPerSec * maxRes;   // “5 seconds worth” reservoir cap
+            float clamped  = MathHelper.clamp(en.getValue(), 0, fiveSecs);
+            en.setValue(clamped);
         }
 
-        // 2) Apply per-resource leech once (and debug)
-        boolean anyLeechThisSecond = false;
-
-        for (Map.Entry<ResourceType, Float> entry : map.entrySet()) {
-            ResourceType rtype = entry.getKey();
+        // 2) Apply per-resource leech once
+        for (Map.Entry<ResourceType, Float> entry : store.entrySet()) {
+            ResourceType rt   = entry.getKey();
+            float reservoir   = entry.getValue();
+            if (reservoir <= EPS) continue;
 
             float capPctPerSec = data.getUnit()
-                .getCalculatedStat(ResourceStats.LEECH_CAP.get(rtype))
-                .getValue() / 100F;
+                    .getCalculatedStat(ResourceStats.LEECH_CAP.get(rt))
+                    .getValue() / 100F;
 
-            float reservoir = entry.getValue(); // stored leech for this resource
-            if (reservoir > 1f) { // tiny cutoff stays
-                float maxRes = data.getResources().getMax(data.entity, rtype);
-                float perSecondCap = capPctPerSec * maxRes;
+            float maxRes       = data.getResources().getMax(data.entity, rt);
+            float perSecondCap = capPctPerSec * maxRes;
 
-                // Intended drain this second (bounded by per-second cap and reservoir)
-                float take = Math.min(reservoir, perSecondCap);
+            // Intended drain this second (bounded by per-second cap and reservoir)
+            float take = Math.min(reservoir, perSecondCap);
+            if (take <= EPS) continue;
 
-                // --- talent/ascendancy override (wire this when ready) ---
-                // boolean allowFullLeech = data.getUnit()
-                //     .getCalculatedStat(Stats.LEECH_AT_FULL_HEALTH).getValue() > 0;
-                // If you don't have the stat yet, keep false for now:
-                 boolean allowFullLeech = false;
+            // Hook: a future stat could allow full-health leeching
+            final boolean allowFullLeech = data.getUnit()
+                .getCalculatedStat(ResourceStats.LEECH_AT_FULL_HEALTH.get()).getValue() > 0;
 
-                // Apply and get what actually landed
-                float applied = data.getResources().restoreAndReturnApplied(
-                    data.entity,
-                    rtype,
-                    take,
+            // Apply and get what actually landed
+            float applied = data.getResources().restoreAndReturnApplied(
+                    data.entity, rt, take,
                     com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType.leech
-                );
+            );
 
-                // If HEALTH is full and nothing applied, kill health leech unless allowed
-                if (rtype == ResourceType.health && applied <= 0f && !allowFullLeech) {
-                    map.put(rtype, 0f);
-                    continue;
+            // Full-resource policy:
+            // - Non-health: never persist at full → discard.
+            // - Health: persist only if 'leech_at_full_health' is enabled.
+            // If nothing landed (resource is full), enforce full-resource policy.
+            if (applied <= EPS) { // use EPS to avoid float noise
+                boolean keepReservoir =
+                    (rt == ResourceType.health) && allowFullLeech; // only health with talent
+
+                if (!keepReservoir) {
+                    entry.setValue(0f); // discard reservoir
                 }
-
-                // Some leech occurred on this resource this second
-                anyLeechThisSecond = true;
-
-                // Debug only when something actually healed (keeps chat clean)
-                if (applied > 0f && data.entity instanceof net.minecraft.server.level.ServerPlayer sp) {
-                    com.robertx22.mine_and_slash.event_hooks.my_events.LeechDebug.tick(sp, rtype, applied);
-                }
-
-                // **Critical**: drain by 'take' (not by 'applied') to preserve ≤5s duration
-                addLeech(rtype, -take);
+                continue; // skip draining by 'take'
             }
+
+
+            // Normal path: drain by intended 'take' to preserve ≤5s duration
+            entry.setValue(reservoir - take);
         }
 
-        // STOP: no leech at all this second → remove the test buff and end lifecycle debug
-        if (!anyLeechThisSecond && data.entity instanceof net.minecraft.server.level.ServerPlayer sp) {
-            com.robertx22.mine_and_slash.event_hooks.my_events.LeechDebug.maybeStop(sp);
-        }
+        // 3) Prune empty entries to keep the map small
+        store.entrySet().removeIf(e -> e.getValue() <= EPS);
     }
 }
+

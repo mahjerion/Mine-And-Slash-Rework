@@ -34,7 +34,7 @@ import com.robertx22.mine_and_slash.tags.all.EffectTags;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
-import com.robertx22.mine_and_slash.aoe_data.database.stats.custom.ConditionalStats;
+
 
 
 
@@ -64,8 +64,7 @@ public class AscendancyPerks {
             x.createPerk(0, "Dark Power",
                     new OptScaleExactStat(5, DatapackStats.AOE_PER_POWER_CHARGE, ModType.FLAT),
                     new OptScaleExactStat(5, DatapackStats.DMG_PER_POWER_CHARGE, ModType.FLAT),
-                    new OptScaleExactStat(1, new MaximumChargesStat(ModEffects.POWER_CHARGE), ModType.FLAT),
-                    new OptScaleExactStat(200,ConditionalStats.whileLeeching("as_while_leeching","Crit Chance",OffenseStats.CRIT_CHANCE.get()),ModType.FLAT)
+                    new OptScaleExactStat(1, new MaximumChargesStat(ModEffects.POWER_CHARGE), ModType.FLAT)
                     
             );
             x.createPerk(1, "Accumulating Power",
@@ -78,8 +77,7 @@ public class AscendancyPerks {
             );
             x.createPerk(3, "Dark Infusion",
                     new OptScaleExactStat(3, RegeneratePercentStat.MAGIC_SHIELD, ModType.FLAT),
-                    new OptScaleExactStat(25, MagicShieldRegen.getInstance(), ModType.PERCENT),
-                    new OptScaleExactStat(200,ConditionalStats.whileLeeching("as_while_leeching_mana","Attack Damage (While Leeching)",OffenseStats.ATTACK_DAMAGE.get()),ModType.FLAT)
+                    new OptScaleExactStat(25, MagicShieldRegen.getInstance(), ModType.PERCENT)
             );
 
             x.createPerk(4, "Profane Explosion",
@@ -89,13 +87,11 @@ public class AscendancyPerks {
 
             x.createPerk(5, "Curse Specialist",
                     new OptScaleExactStat(25, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.curse), ModType.MORE),
-                    new OptScaleExactStat(50, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.curse), ModType.FLAT),
-                    new OptScaleExactStat(200, ConditionalStats.whileRegen("crit_while_regen", "Crit Chance (While Regenerating)", OffenseStats.CRIT_CHANCE.get()), ModType.FLAT)
+                    new OptScaleExactStat(50, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.curse), ModType.FLAT)
             );
             x.createPerk(6, "Chaotic Disposition",
                     new OptScaleExactStat(25, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Shadow), ModType.MORE),
-                    new OptScaleExactStat(50, new ElementalResist(Elements.Shadow), ModType.FLAT),
-                    new OptScaleExactStat(200, ConditionalStats.whileRegen("crit_while_regen_mana", "Crit Chance (While Regenerating Mana)", OffenseStats.CRIT_CHANCE.get(), ResourceType.mana), ModType.FLAT)
+                    new OptScaleExactStat(50, new ElementalResist(Elements.Shadow), ModType.FLAT)
             );
         });
 

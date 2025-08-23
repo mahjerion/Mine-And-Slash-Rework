@@ -35,17 +35,14 @@ public class RerollAffixItemMod extends GearModification {
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
-            var opt = data.finder_data.finder().getAffix(gear.affixes.getPrefixesAndSuffixes(), data.finder_data);
-
-            if (opt.isPresent()) {
-                AffixData affixData = opt.get();
-                affixData.RerollFully(gear);
+            data.finder_data.finder().getAffixes(gear.affixes.getPrefixesAndSuffixes(), data.finder_data).forEach(affix -> {
+                affix.RerollFully(gear);
 
                 if (ExileDB.GearRarities().isRegistered(data.result_rar)) {
-                    affixData.rar = data.result_rar;
-                    affixData.RerollNumbers();
+                    affix.rar = data.result_rar;
+                    affix.RerollNumbers();
                 }
-            }
+            });
         });
 
     }

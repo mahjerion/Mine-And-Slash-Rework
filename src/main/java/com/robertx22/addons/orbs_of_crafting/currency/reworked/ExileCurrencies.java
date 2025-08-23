@@ -138,6 +138,36 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_AFFIXES = ExileCurrency.Builder.of("affix_reroll_all", "Orb of Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_AFFIXES)
+            .potentialCost(20)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_PREFIXES = ExileCurrency.Builder.of("prefix_reroll_all", "Orb of Sinistral Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.LEGENDARY_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_PREFIXES)
+            .potentialCost(30)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_SUFFIXES = ExileCurrency.Builder.of("suffix_reroll_all", "Orb of Dextral Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.LEGENDARY_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_PREFIXES)
+            .potentialCost(30)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX_TO_MYTHIC = ExileCurrency.Builder.of("affix_random_mythic_reroll", "Orb of Divine Benevolence", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.MYTHIC_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)

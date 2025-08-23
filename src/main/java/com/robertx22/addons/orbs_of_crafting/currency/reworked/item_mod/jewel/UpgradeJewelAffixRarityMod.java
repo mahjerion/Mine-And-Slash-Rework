@@ -25,7 +25,7 @@ public class UpgradeJewelAffixRarityMod extends JewelModification {
     @Override
     public void modifyJewel(ExileStack stack) {
         stack.get(StackKeys.JEWEL).edit(x -> {
-            data.finder().getAffix(x.affixes, data).ifPresent(affix -> {
+            data.finder().getAffixes(x.affixes, data).forEach(affix -> {
                 affix.upgradeRarity();
             });
         });

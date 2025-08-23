@@ -71,6 +71,9 @@ public enum Words implements IAutoLocName {
     AFFIX("Affix"),
     SPECIFIC_RARITY_AFFIX("%1$s Affix"),
     LOWEST_RARITY_AFFIX("Lowest Rarity Affix"),
+    ALL_AFFIXES("All Affixes"),
+    ALL_PREFIXES("All Prefixes"),
+    ALL_SUFFIXES("All Suffixes"),
 
     PRIMARY_TIER_MAT("Primary Tier/Level Material"),
     PRIMARY_RARITY_MAT("Primary Rarity Material"),

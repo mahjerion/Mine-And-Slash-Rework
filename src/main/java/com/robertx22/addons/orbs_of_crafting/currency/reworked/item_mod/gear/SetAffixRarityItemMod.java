@@ -28,7 +28,7 @@ public class SetAffixRarityItemMod extends GearModification {
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
-            data.finder_data.finder().getAffix(gear.affixes.getPrefixesAndSuffixes(), data.finder_data).ifPresent(affix -> {
+            data.finder_data.finder().getAffixes(gear.affixes.getPrefixesAndSuffixes(), data.finder_data).forEach(affix -> {
                 affix.rar = data.rar;
                 affix.RerollNumbers();
             });

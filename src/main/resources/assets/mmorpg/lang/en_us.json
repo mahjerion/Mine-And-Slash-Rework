@@ -3577,6 +3577,8 @@
 	"library_of_exile.item_requirement.has_affix_uncommon": "Must have %1$s Affix",
 	"library_of_exile.item_requirement.has_affix_unique": "Must have %1$s Affix",
 	"library_of_exile.item_requirement.has_affixes": "Must have affixes",
+	"library_of_exile.item_requirement.has_prefixes": "Must have prefixes",
+	"library_of_exile.item_requirement.has_suffixes": "Must have suffixes",
 	"library_of_exile.item_requirement.has_corrupt_affixes": "Must have Corruption affixes",
 	"library_of_exile.item_requirement.has_implicit": "Must have implicit",
 	"library_of_exile.item_requirement.has_infusion": "Must have Infusion",

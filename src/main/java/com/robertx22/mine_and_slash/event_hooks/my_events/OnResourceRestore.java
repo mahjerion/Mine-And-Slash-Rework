@@ -34,7 +34,7 @@ public class OnResourceRestore {
 
     // ===== Debug controls =====
     /** Global toggle for chat debug. Safe to leave false in prod. */
-    public static boolean DEBUG_ENABLED = true;
+    public static boolean DEBUG_ENABLED = false;
     /** Ignore tiny restores in debug spam. */
     public static float MIN_DEBUG_AMOUNT = 1.0f;
     /** Which restore kinds print debug (default: leech only). */

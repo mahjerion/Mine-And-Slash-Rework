@@ -19,7 +19,7 @@ public final class OnResourceLost {
     public enum LossSource { SpendOrDrain, Damage, Other }
 
     /** Toggle SpendThresholdManager debug logs per player. */
-    public static boolean DEBUG_ENABLED = true;
+    public static boolean DEBUG_ENABLED = false;
 
     /** Call this whenever a resource actually goes down. */
     public static void trigger(LivingEntity entity, ResourceType type, float loss, LossSource source) {

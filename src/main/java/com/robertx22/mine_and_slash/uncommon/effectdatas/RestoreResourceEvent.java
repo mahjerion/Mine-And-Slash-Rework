@@ -54,7 +54,7 @@ public class RestoreResourceEvent extends EffectEvent {
             }
         }
 
-           // Guard against no-op / negative input after scaling
+        // Guard against no-op / negative input after scaling
         if (num <= 0) {
             return;
         }

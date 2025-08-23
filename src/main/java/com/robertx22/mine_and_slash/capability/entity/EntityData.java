@@ -27,6 +27,7 @@ import com.robertx22.mine_and_slash.event_hooks.my_events.CachedEntityStats;
 import com.robertx22.mine_and_slash.event_hooks.ontick.UnequipGear;
 import com.robertx22.mine_and_slash.event_hooks.player.OnLogin;
 import com.robertx22.mine_and_slash.loot.LootModifiersList;
+import com.robertx22.mine_and_slash.mechanics.thresholds.SpendThresholdRuntime;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.CustomExactStatsData;
@@ -958,6 +959,14 @@ public class EntityData implements ICap, INeededForClient {
         }
 
     }
+
+    // Tracks LOSS of resources (spend, drains, damage, etc.)
+    private final ResourceTracker resourceTracker = new ResourceTracker();
+    public ResourceTracker getResourceTracker() { return resourceTracker; }
+
+    public final SpendThresholdRuntime spendRuntime = new SpendThresholdRuntime();
+    public SpendThresholdRuntime getSpendRuntime() { return spendRuntime; }
+
 
 
     public boolean alreadyHit(Entity spellEntity, LivingEntity target) {

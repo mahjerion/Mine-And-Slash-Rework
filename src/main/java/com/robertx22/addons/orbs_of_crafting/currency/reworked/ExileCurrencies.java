@@ -298,6 +298,16 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.RARE)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> UPGRADE_GEAR_RARITY = ExileCurrency.Builder.of("gear_rarity_upgrade", "Orb of Ascension", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.MYTHIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_HIGHER_RARITY)
+            .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_GEAR_RARITY)
+            .potentialCost(35)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> UPGRADE_MAP_RARITY = ExileCurrency.Builder.of("map_rarity_upgrade", "Orb of Map Rarity", ItemReqs.INSTANCE.IS_MAP)
             .rarity(IRarity.EPIC_ID)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_MAP_RARITY)

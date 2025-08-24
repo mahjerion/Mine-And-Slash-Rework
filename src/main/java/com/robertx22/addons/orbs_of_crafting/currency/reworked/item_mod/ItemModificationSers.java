@@ -12,6 +12,7 @@ public class ItemModificationSers {
     public static String UPGRADE_JEWEL_AFFIX_RARITY = "upgrade_jewel_affix_rarity";
     public static String SET_AFFIX_RARITY = "set_affix_rarity";
     public static String DOWNGRADE_AFFIX_RARITY = "downgrade_affix_rarity";
+    public static String UPGRADE_GEAR_RARITY = "upgrade_gear_rarity";
     public static String CORRUPT_GEAR = "corrupt_gear";
     public static String MIRROR = "mirror";
 

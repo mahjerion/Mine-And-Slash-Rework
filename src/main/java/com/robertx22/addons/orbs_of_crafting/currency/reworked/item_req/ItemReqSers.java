@@ -16,6 +16,7 @@ public class ItemReqSers {
     public static String CAN_ADD_SOCKETS = "can_add_sockets";
     public static String IS_UNDER_QUALITY = "is_under_quality";
     public static String MAP_HAS_HIGHER_RAR = "map_has_higher_rar";
+    public static String HAS_HIGHER_RAR = "has_higher_rar";
     public static String HAS_RARITY_AFFIX = "has_affix_of_rar";
     public static String NOT_CRAFTED_GEAR = "not_crafted_gear";
     public static String JEWEL_HAS_AFFIXES = "jewel_has_affixes";

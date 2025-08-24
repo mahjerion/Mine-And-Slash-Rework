@@ -103,13 +103,13 @@ public class UpgradeRarityItemMod extends GearModification {
             }
 
             // Pop out runes/gems and remove sockets if needed
-            for (int index = gear.sockets.getSocketedGemsCount(); index >= newRarity.sockets.max; index--) {
+            for (int index = gear.sockets.getSocketedGemsCount() - 1; index >= newRarity.sockets.max; index--) {
                 SocketData socket = gear.sockets.getSocketed().get(index);
                 r.extraItemsCreated.add(socket.getOriginalItemStack());
                 gear.sockets.getSocketed().remove(index);
             }
 
-            for (int index = gear.sockets.getTotalSockets(); index >= newRarity.sockets.max; index--) {
+            for (int index = gear.sockets.getTotalSockets() - 1; index >= newRarity.sockets.max; index--) {
                 gear.sockets.removeSocket();
             }
         });

@@ -1,10 +1,12 @@
 package com.robertx22.mine_and_slash.aoe_data.database.stats;
 
+import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEffects;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatConditions;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_effects.StatEffects;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.DatapackStatBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EmptyAccessor;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.database.data.stats.Stat.StatGroup;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.test.DataPackStatAccessor;
@@ -16,6 +18,7 @@ import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.SpendResourceEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.HasExileEffectCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -578,6 +581,25 @@ public class OffenseStats {
                 x.is_perc = true;
             })
             .build();
+
+
+        // While Leeching (any) → contributes to existing Crit Damage bucket
+        public static final DataPackStatAccessor<EmptyAccessor> WHILE_LEECHING_MS_MORE_DAMAGE = DatapackStatBuilder
+                .ofSingle("while_leeching_ms_more_damage", Elements.Physical)
+                .worksWithEvent(DamageEvent.ID)
+                .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
+                .setSide(EffectSides.Source)
+                .addCondition(new HasExileEffectCondition(ModEffects.LEECHING_STATE_BY_RES.get(ResourceType.magic_shield)))
+                .addCondition(StatConditions.IS_NOT_DOT)
+                .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
+                .setLocName(x -> "More Damage while Leeching Magic Shield")
+                .setLocDesc(x -> Stat.VAL1 + "% More Damage While Leeching Magic Shield.")
+                .modifyAfterDone(x -> {
+                x.is_perc = true;   // percent bonus
+                })
+                .build();
+
+
 
 
     public static void init() {

@@ -3,7 +3,7 @@ package com.robertx22.mine_and_slash.database.data.gear_slots;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
-import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
+import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.aoe_data.database.gear_slots.GearSlots;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
@@ -164,11 +164,11 @@ public class GearSlot implements JsonExileRegistry<GearSlot>, IAutoGson<GearSlot
                 } else if (id.equals(GearSlots.NECKLACE)) {
                     bool = CuriosApi.getCuriosHelper()
                             .getCurioTags(item)
-                            .contains(RefCurio.NECKLACE);
+                            .contains(RefCurios.NECKLACE);
                 } else if (id.equals(GearSlots.RING)) {
                     bool = CuriosApi.getCuriosHelper()
                             .getCurioTags(item)
-                            .contains(RefCurio.RING);
+                            .contains(RefCurios.RING);
                 }
             }
 

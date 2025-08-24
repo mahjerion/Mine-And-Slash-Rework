@@ -2,6 +2,8 @@ package com.robertx22.mine_and_slash.capability.player.data;
 
 import com.robertx22.addons.orbs_of_crafting.currency.IItemAsCurrency;
 import com.robertx22.library_of_exile.utils.SoundUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.CuriosSlots;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
 import com.robertx22.mine_and_slash.capability.player.helper.BackpackInventory;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -99,7 +101,7 @@ public class Backpacks {
 
     public boolean tryAutoPickup(Player p, ItemStack stack, boolean shouldPlaySound) {
 
-        if (p.getInventory().countItem(SlashItems.MASTER_BAG.get()) < 1) {
+        if (p.getInventory().countItem(SlashItems.MASTER_BAG.get()) < 1 && !hasCuriosBackpack(p)) {
             return false;
         }
         boolean result = false;
@@ -119,6 +121,11 @@ public class Backpacks {
 
         return result;
 
+    }
+
+    private boolean hasCuriosBackpack(Player p) {
+        var backpackItem = MyCuriosUtils.get(CuriosSlots.MASTER_BAG.name, p, 0);
+        return !backpackItem.isEmpty();
     }
 
     public boolean tryAutoPickup(Player p, ItemStack stack){

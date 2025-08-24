@@ -8,7 +8,7 @@ import com.robertx22.mine_and_slash.mmorpg.registers.client.SpellKeybind;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ChatUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.QuickUsePotionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.UnsummonPacket;
-import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenCurioBackpackPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenCuriosBackpackPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellServerToCastSpellPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -48,7 +48,7 @@ public class OnKeyPress {
             mc.setScreen(new MainHubScreen());
             cooldown = 10;
         } else if (KeybindsRegister.OPEN_MASTER_BACKPACK.isDown()) {
-            Packets.sendToServer(new OpenCurioBackpackPacket());
+            Packets.sendToServer(new OpenCuriosBackpackPacket());
             cooldown = 10;
         }
 

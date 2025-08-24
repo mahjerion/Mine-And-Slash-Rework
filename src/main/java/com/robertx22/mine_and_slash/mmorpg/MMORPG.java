@@ -15,7 +15,7 @@ import com.robertx22.library_of_exile.registry.register_info.SeriazableRegistrat
 import com.robertx22.library_of_exile.registry.util.ExileRegistryUtil;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.a_libraries.curios.CurioEvents;
-import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
+import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.a_libraries.neat.NeatForgeConfig;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatConditions;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_effects.StatEffects;
@@ -241,9 +241,9 @@ public class MMORPG {
     public void interMod(InterModEnqueueEvent event) {
 
 
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.RING).size(2).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.NECKLACE).size(1).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.OMEN).size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurios.RING).size(2).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurios.NECKLACE).size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurios.OMEN).size(1).build());
 
         ModLoadingContext.get()
                 .registerConfig(ModConfig.Type.SERVER, CompatConfig.spec, NeatForgeConfig.defaultConfigName(ModConfig.Type.SERVER, "mine_and_slash_compatibility"));

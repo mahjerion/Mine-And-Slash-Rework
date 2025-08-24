@@ -4,8 +4,8 @@ import com.robertx22.library_of_exile.components.ICap;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.packets.SyncPlayerCapToClient;
 import com.robertx22.library_of_exile.utils.LoadSave;
-import com.robertx22.mine_and_slash.a_libraries.curios.MyCurioUtils;
-import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.SummonedData;
 import com.robertx22.mine_and_slash.capability.player.data.*;
@@ -233,7 +233,7 @@ public class PlayerData implements ICap {
     public void recalcOmensFilled() {
         try {
             omensFilled = 0;
-            ItemStack stack = MyCurioUtils.get(RefCurio.OMEN, player, 0);
+            ItemStack stack = MyCuriosUtils.get(RefCurios.OMEN, player, 0);
             if (StackSaving.OMEN.has(stack)) {
                 var omen = StackSaving.OMEN.loadFrom(stack);
                 this.omensFilled = omen.calcPiecesEquipped(player);
@@ -245,7 +245,7 @@ public class PlayerData implements ICap {
 
     public OmenData getOmen() {
         try {
-            ItemStack stack = MyCurioUtils.get(RefCurio.OMEN, player, 0);
+            ItemStack stack = MyCuriosUtils.get(RefCurios.OMEN, player, 0);
             if (StackSaving.OMEN.has(stack)) {
                 var omen = StackSaving.OMEN.loadFrom(stack);
                 return omen;

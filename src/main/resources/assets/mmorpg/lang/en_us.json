@@ -3526,7 +3526,7 @@
 	"library_of_exile.item_modification.increment_uses_sure_jewel_up": "Increments Uses",
 	"library_of_exile.item_modification.jewel_corrupt": "Corrupts the Jewel",
 	"library_of_exile.item_modification.map_rarity_upgrade": "Upgrades Map Rarity",
-	"library_of_exile.item_modification.gear_rarity_upgrade": "Upgrades Item Rarity, increases Affix Numbers, and adds an Affix",
+	"library_of_exile.item_modification.gear_rarity_upgrade": "Upgrades Item Rarity, increasing Numbers and adding an Affix",
 	"library_of_exile.item_modification.reduce_5_perc_unique_stats": "Reduces %1$s Percent to Unique Stats",
 	"library_of_exile.item_modification.reroll_infusion": "Re-rolls Infusion Affix",
 	"library_of_exile.item_modification.reroll_lowest_affix": "Rerolls %1$s into a new %2$s",

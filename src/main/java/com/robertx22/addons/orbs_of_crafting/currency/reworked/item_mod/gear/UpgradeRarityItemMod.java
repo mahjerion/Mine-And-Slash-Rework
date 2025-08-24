@@ -10,6 +10,8 @@ import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -22,11 +24,15 @@ public class UpgradeRarityItemMod extends GearModification {
         return Math.min(to.min + (x - from.min) * (to.max - to.min + 1) / (from.max - from.min), to.max);
     }
 
+    protected GearRarity getNewRarity(GearItemData gear) {
+        return gear.getRarity().getHigherRarity();
+    }
+
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
             GearRarity oldRarity = gear.getRarity();
-            GearRarity newRarity = oldRarity.getHigherRarity();
+            GearRarity newRarity = getNewRarity(gear);
             gear.rar = newRarity.GUID();
 
             // Rescale affix values to upgraded roll range
@@ -53,6 +59,17 @@ public class UpgradeRarityItemMod extends GearModification {
             // Add new affix
             for (int affixesToAdd = newRarity.getAffixAmount() - gear.affixes.getNumberOfAffixes(); affixesToAdd > 0; affixesToAdd--) {
                 gear.affixes.addOneRandomAffix(gear);
+            }
+
+            // Pop out runes/gems and remove sockets if needed
+            for (int index = gear.sockets.getSocketedGemsCount(); index >= newRarity.sockets.max; index--) {
+                SocketData socket = gear.sockets.getSocketed().get(index);
+                r.extraItemsCreated.add(socket.getOriginalItemStack());
+                gear.sockets.getSocketed().remove(index);
+            }
+
+            for (int index = gear.sockets.getTotalSockets(); index >= newRarity.sockets.max; index--) {
+                gear.sockets.removeSocket();
             }
         });
     }

@@ -38,7 +38,7 @@ public class HasHigherRarityReq extends GearRequirement {
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(this, "Rarity cannot be increased further")
+                .desc(ExileTranslation.registry(this, "Must be below maximum Rarity")
                 );
     }
 

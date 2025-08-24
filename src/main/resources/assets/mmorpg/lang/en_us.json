@@ -3609,7 +3609,7 @@
 	"library_of_exile.item_requirement.jewel_has_affixes": "Jewel Has Affixes",
 	"library_of_exile.item_requirement.lvl_not_max": "Level must be below %1$s",
 	"library_of_exile.item_requirement.map_has_higher_rar": "Map Rarity Must be lower than Mythic",
-	"library_of_exile.item_requirement.has_higher_rar": "Rarity cannot be increased further",
+	"library_of_exile.item_requirement.has_higher_rar": "Must be below maximum Rarity",
 	"library_of_exile.item_requirement.map_is_mythic": "Map Rarity Must be %1$s",
 	"library_of_exile.item_requirement.max_uses_level_up": "Maximum %1$s uses",
 	"library_of_exile.item_requirement.max_uses_random_mythic_affix": "Maximum %1$s uses",

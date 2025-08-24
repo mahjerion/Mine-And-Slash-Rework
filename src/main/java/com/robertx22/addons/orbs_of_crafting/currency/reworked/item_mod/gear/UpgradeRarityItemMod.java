@@ -7,32 +7,73 @@ import com.robertx22.library_of_exile.localization.TranslationBuilder;
 import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;
 
 public class UpgradeRarityItemMod extends GearModification {
-    public UpgradeRarityItemMod(String id) {
+    public static enum UpgradeType {
+        UPGRADE(Words.UPGRADE_RARITY, Words.AN_AFFIX) {
+            @Override
+            public GearRarity getNewRarity(GearItemData gear) {
+                return gear.getRarity().getHigherRarity();
+            }
+        },
+
+        RANDOMIZE(Words.RANDOMIZE_RARITY, Words.AFFIXES) {
+            @Override
+            public GearRarity getNewRarity(GearItemData gear) {
+                GearRarity oldRarity = gear.getRarity();
+                return ExileDB.GearRarities().getFilterWrapped(x -> {
+                    if (x == oldRarity) {
+                        return false;
+                    }
+                    if (gear.lvl < x.min_lvl) {
+                        return false;
+                    }
+                    if (x.type != GearRarityType.NORMAL) {
+                        return false;
+                    }
+                    return true;
+                }).random();
+            }
+        };
+
+        public Words action;
+        public Words affixPlural;
+
+        UpgradeType(Words action, Words affixPlural) {
+            this.action = action;
+            this.affixPlural = affixPlural;
+        }
+
+        public abstract GearRarity getNewRarity(GearItemData gear);
+    }
+
+    public UpgradeType type;
+
+    public UpgradeRarityItemMod(String id, UpgradeType type) {
         super(ItemModificationSers.UPGRADE_GEAR_RARITY, id);
+        this.type = type;
     }
 
     private static int uniformRescaleInt(int x, MinMax from, MinMax to) {
         return Math.min(to.min + (x - from.min) * (to.max - to.min + 1) / (from.max - from.min), to.max);
     }
 
-    protected GearRarity getNewRarity(GearItemData gear) {
-        return gear.getRarity().getHigherRarity();
-    }
-
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
             GearRarity oldRarity = gear.getRarity();
-            GearRarity newRarity = getNewRarity(gear);
+            GearRarity newRarity = type.getNewRarity(gear);
             gear.rar = newRarity.GUID();
 
             // Rescale affix values to upgraded roll range
@@ -47,7 +88,7 @@ public class UpgradeRarityItemMod extends GearModification {
                     affix.p = Math.max(affix.p, newRange.max);
                 }
 
-                if (affix.p > affix.getRarity().stat_percents.max) {
+                while (affix.p > affix.getRarity().stat_percents.max) {
                     // New affix value requires rarity upgrade
                     affix.rar = affix.getRarity().getHigherRarity().GUID();
                 }
@@ -87,13 +128,13 @@ public class UpgradeRarityItemMod extends GearModification {
 
     @Override
     public MutableComponent getDescWithParams() {
-        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName();
+        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName(type.action.locName(), type.affixPlural.locName());
     }
 
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(this, "Upgrades Item Rarity, increasing Numbers and adding an Affix"));
+                .desc(ExileTranslation.registry(this, "%1$s, increasing Numbers and adding %2$s"));
     }
 
 }

@@ -233,6 +233,10 @@ public enum Words implements IAutoLocName {
     DestroysItem("DESTROYS the Item"),
     UpgradesUniqueStats("Adds 10% to unique stats"),
 
+    UPGRADE_RARITY("Upgrades Item Rarity"),
+    RANDOMIZE_RARITY("Upgrades Item to a Random Rarity"),
+    AN_AFFIX("an Affix"),
+
     Soul("Soul"),
     GEAR_SOUL("Gear Soul"),
     GEAR_SOUL_DESC("Souls are one way of adding Mine and Slash stats to Gear."),

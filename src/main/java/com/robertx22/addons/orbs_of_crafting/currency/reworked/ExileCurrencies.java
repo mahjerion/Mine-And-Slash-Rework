@@ -308,6 +308,16 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.UBER)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> RANDOMIZE_GEAR_RARITY = ExileCurrency.Builder.of("gear_rarity_random", "Orb of Colors", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.UNCOMMON)
+            .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
+            .addAlwaysUseModification(ItemMods.INSTANCE.RANDOMIZE_GEAR_RARITY)
+            .potentialCost(1)
+            .weight(CodeCurrency.Weights.COMMON)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> UPGRADE_MAP_RARITY = ExileCurrency.Builder.of("map_rarity_upgrade", "Orb of Map Rarity", ItemReqs.INSTANCE.IS_MAP)
             .rarity(IRarity.EPIC_ID)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_MAP_RARITY)

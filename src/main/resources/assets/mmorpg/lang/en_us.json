@@ -131,7 +131,6 @@
 
 "curios.identifier.salvage_bag": "Salvage Bag",
 "curios.identifier.omen": "Omen",
-"curios.identifier.master_bag": "Master Backpack",
 "mmorpg.chest_type.aura": "Aura",
 "mmorpg.chest_type.currency": "Currency",
 "mmorpg.chest_type.gear": "Gear",
@@ -167,7 +166,7 @@
 "mmorpg.key.unsummon": "Dismiss Summons",
 "mmorpg.key.hotbar_swap": "Switch Spell Hot Bar",
 "mmorpg.key.quick_drink_potion": "Quick Consume Potion",
-"mmorpg.key.open_master_backpack": "Open Master Backpack",
+"mmorpg.key.show_entity_stats": "Show Entity's Stats",
 "mmorpg.key.spell_1": "Spell 1",
 "mmorpg.key.spell_2": "Spell 2",
 "mmorpg.key.spell_3": "Spell 3",

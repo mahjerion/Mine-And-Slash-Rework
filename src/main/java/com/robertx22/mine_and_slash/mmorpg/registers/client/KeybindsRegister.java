@@ -21,6 +21,8 @@ public class KeybindsRegister {
 
     public static KeyMapping QUICK_DRINK_POTION = new KeyMapping(prefix + "quick_drink_potion", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_P, CATEGORY);
 
+    public static KeyMapping SHOW_ENTITY_STATS = new KeyMapping(prefix + "show_entity_stats", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_EQUAL, CATEGORY);
+
     public static KeyMapping OPEN_MASTER_BACKPACK = new KeyMapping(prefix + "open_master_backpack", GLFW.GLFW_KEY_B, CATEGORY);
 
     public static SpellKeybind SPELL_HOTBAR_1 = new SpellKeybind(1, GLFW.GLFW_KEY_R, null, true);
@@ -42,6 +44,7 @@ public class KeybindsRegister {
         x.register(UNSUMMON);
         x.register(HOTBAR_SWAP);
         x.register(QUICK_DRINK_POTION);
+        x.register(SHOW_ENTITY_STATS);
         x.register(OPEN_MASTER_BACKPACK);
         for (SpellKeybind k : SpellKeybind.ALL) {
             x.register(k.key);

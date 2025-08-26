@@ -45,6 +45,7 @@ public class C2SPacketRegister {
 
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new BackPackLootMenuPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new QuickUsePotionPacket(), i++);
+        Packets.registerClientToServerPacket(MMORPG.NETWORK, new OpenEntityStatsRequestPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new OpenCuriosBackpackPacket(), i++);
 
 

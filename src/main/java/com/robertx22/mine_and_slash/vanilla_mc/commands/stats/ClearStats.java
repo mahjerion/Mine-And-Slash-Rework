@@ -27,7 +27,7 @@ public class ClearStats {
                                                         .suggests(new GiveStat.ModOrExact())
                                                         .executes(ctx -> {
 
-                                                            return run(EntityArgument.getPlayer(ctx, "target"), StringArgumentType
+                                                            return run(EntityArgument.getEntity(ctx, "target"), StringArgumentType
                                                                     .getString(ctx, "scaling"));
 
                                                         }))))));

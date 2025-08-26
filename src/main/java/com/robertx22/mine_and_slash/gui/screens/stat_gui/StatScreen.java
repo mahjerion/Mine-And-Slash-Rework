@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.gui.screens.stat_gui;
 
+import com.robertx22.mine_and_slash.a_libraries.neat.HealthBarRenderer;
+import com.robertx22.mine_and_slash.a_libraries.neat.NeatConfig;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
@@ -16,11 +18,15 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,22 +37,42 @@ import java.util.stream.Collectors;
 public class StatScreen extends BaseScreen implements INamedScreen {
     static ResourceLocation BG = SlashRef.guiId("stat_gui/background");
 
-    public StatScreen() {
+    private LivingEntity target;
+
+    public StatScreen(LivingEntity target) {
         super(199, 222);
+        this.target = target;
     }
 
 
     @Override
     public void render(GuiGraphics gui, int x, int y, float ticks) {
         gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+        if (target != ClientOnly.getPlayer()) {
+            // Show entity being viewed
+            int paperDollX = this.guiLeft - 88;
+            int paperDollY = this.guiTop + sizeY / 2 + 30;
+            float mouseOffsetX = (float) (paperDollX - x);
+            float mouseOffsetY = (float) (paperDollY - 50 - y);
+
+            boolean neatDraw = NeatConfig.draw;
+            NeatConfig.draw = false; // don't draw health bar
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, paperDollX, paperDollY, 30, mouseOffsetX, mouseOffsetY, target);
+            NeatConfig.draw = neatDraw;
+
+            Component nameText = HealthBarRenderer.getNameString(target, target, mc);
+            int nameTextX = paperDollX - mc.font.width(nameText) / 2;
+            int nameTextY = paperDollY + 5;
+            gui.drawString(mc.font, nameText, nameTextX, nameTextY, ChatFormatting.WHITE.getColor());
+        }
+
         gui.blit(BG, mc.getWindow().getGuiScaledWidth() / 2 - sizeX / 2, mc.getWindow().getGuiScaledHeight() / 2 - sizeY / 2, 0, 0, sizeX, sizeY);
         super.render(gui, x, y, ticks);
-
 
         SEARCH.setX(this.guiLeft - (SEARCH_WIDTH / 2) + sizeX / 2);
         SEARCH.setY(this.guiTop - SEARCH_HEIGHT - 5);
         SEARCH.render(gui, 0, 0, 0);
-
     }
 
     private static int SEARCH_WIDTH = 100;
@@ -88,7 +114,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
         int spaceleft = 143;
         int yNavigationDownOffset = spaceleft;
 
-        var data = Load.Unit(ClientOnly.getPlayer());
+        var data = Load.Unit(target);
 
         int addedAmount = 0;
         for (int i = currentElement; i < currentElement + 15; i++) {
@@ -152,7 +178,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
 
         for (StatInfoButton.StatInfoType type : StatInfoButton.StatInfoType.values()) {
             if (type.shouldShow(stat)) {
-                this.publicAddButton(new StatInfoButton(type, stat, x, y));
+                this.publicAddButton(new StatInfoButton(this, type, stat, x, y));
                 x += StatInfoButton.xSize + 12;
             }
         }
@@ -182,7 +208,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
 
         if (true) {
 
-            var stats = Load.Unit(ClientOnly.getPlayer()).getUnit().getStats().stats.values().stream().filter(x -> x.GetStat().show_in_gui).map(x -> x.GetStat()).collect(Collectors.toList());
+            var stats = Load.Unit(target).getUnit().getStats().stats.values().stream().filter(x -> x.GetStat().show_in_gui).map(x -> x.GetStat()).collect(Collectors.toList());
 
             var ungrouped = stats.stream().filter(x -> !x.gui_group.isValid()).collect(Collectors.toList());
             List<Stat> grouped = new ArrayList<>();
@@ -202,6 +228,10 @@ public class StatScreen extends BaseScreen implements INamedScreen {
         return Arrays.asList(new ElementalResist(Elements.Physical), DodgeRating.getInstance(), Armor.getInstance(), Health.getInstance(), Mana.getInstance());
     }
 
+    public LivingEntity getTarget() {
+        return target;
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -219,7 +249,7 @@ public class StatScreen extends BaseScreen implements INamedScreen {
         });
 
 
-        showStats(StatGuiGroupSection.CORE.getStats(mc.player), true);
+        showStats(StatGuiGroupSection.CORE.getStats(target), true);
 
     }
 

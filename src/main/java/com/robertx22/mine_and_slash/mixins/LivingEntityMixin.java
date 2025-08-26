@@ -1,9 +1,11 @@
 package com.robertx22.mine_and_slash.mixins;
 
+import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.DmgSourceUtils;
 import com.robertx22.mine_and_slash.mixin_ducks.LivingEntityAccesor;
 import com.robertx22.mine_and_slash.mixin_methods.CanEntityHavePotionMixin;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.HealthUtils;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
@@ -13,10 +15,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
@@ -44,16 +48,57 @@ public abstract class LivingEntityMixin implements LivingEntityAccesor {
     @Invoker("getVoicePitch")
     public abstract float myGetHurtPitch();
 
+    @Unique
+    private boolean mmorpg$amountAdjustedAtHealMethod = false;
+
     @ModifyVariable(method = "heal(F)V", at = @At(value = "HEAD"), argsOnly = true, ordinal = 0)
-    public float reduceHealPerLevel(float amount, float arg) {
+    public float adjustHealAmount(float amount, float arg) {
         LivingEntity en = (LivingEntity) (Object) this;
 
         if (en instanceof Player) {
             return HealthUtils.realToVanilla(en, amount);
         }
 
-        return amount;
+        mmorpg$amountAdjustedAtHealMethod = true;
+        var multiplier = getHealStrengthMultiplier(en);
+        return amount * (1 + multiplier / 100f);
     }
+
+    @Inject(method = "heal(F)V", at = @At(value = "TAIL"))
+    public void afterHeal(float healAmount, CallbackInfo ci) {
+        mmorpg$amountAdjustedAtHealMethod = false;
+    }
+
+    @ModifyVariable(method = "setHealth(F)V", at = @At(value = "HEAD"), argsOnly = true, ordinal = 0)
+    public float adjustPositiveSetHealthAmount(float value) {
+        if (mmorpg$amountAdjustedAtHealMethod) {
+            return value;
+        }
+
+        LivingEntity en = (LivingEntity) (Object) this;
+
+        if (en instanceof Player) {
+            return value;
+        }
+
+        var oldHealth = en.getHealth();
+        var healthToGain = value - oldHealth;
+        if (healthToGain <= 0) {
+            return value;
+        }
+
+        var multiplier = getHealStrengthMultiplier(en);
+        return oldHealth + healthToGain * (1 + multiplier / 100f);
+    }
+
+    private static float getHealStrengthMultiplier(LivingEntity en) {
+        var multiplier = Load.Unit(en).getUnit().getCalculatedStat(ResourceStats.HEAL_STRENGTH.get()).getValue();
+        if (multiplier < -100) {
+            multiplier = -100; // cap at -100% heal strength
+        }
+        return multiplier;
+    }
+
 
     // ENSURE MY SPECIAL DAMAGE ISNT LOWERED BY ARMOR, ENCHANTS ETC
     @Inject(method = "getDamageAfterMagicAbsorb", at = @At(value = "HEAD"), cancellable = true)

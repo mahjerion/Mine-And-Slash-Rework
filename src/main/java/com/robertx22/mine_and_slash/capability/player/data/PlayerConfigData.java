@@ -7,7 +7,6 @@ import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
-import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
@@ -31,6 +30,7 @@ public class PlayerConfigData {
         PROFESSION_MESSAGES("profession_exp_messages", false, Words.TITLE_FEATURE_PROF_EXP, Words.PROFESSION_MESSAGES, false),
         AUTO_PVE("auto_pve", false, Words.TITLE_FEATURE_AUTO_TEAM, Words.AUTOMATIC_PVE, false),
         AGGRESSIVE_SUMMONS("aggressive_summons", true, Words.TITLE_FEATURE_AGGRO_SUMMONS, Words.AGGRESIVE_SUMMONS, false),
+        ENABLE_EXP_GAIN("enable_exp_gain", true, Words.TITLE_FEATURE_ENABLE_EXP_GAIN, Words.ENABLE_EXP_GAIN, false),
         STAT_ORDER_TEST("stat_order_test", false, Words.TITLE_FEATURE_STAT_ORDER_DEBUG, Words.STAT_ORDER_TEST, true),
         DAMAGE_CONFLICT_MSG("damage_conflict_check", false, Words.TITLE_FEATURE_DMG_CONFLICT_DEBUG, Words.DMG_CONFLICT_CHECK, true),
         //EVERYONE_IS_ALLY("everyone_is_ally", false, Words.TITLE_FEATURE_EVERYONE_ALLY, Words.EVERYONE_IS_ALLY, false),

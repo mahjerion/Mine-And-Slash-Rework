@@ -14,12 +14,15 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.LookUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenEntityStatsRequestPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.QuickUsePotionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.UnsummonPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenCuriosBackpackPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellServerToCastSpellPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.settings.KeyModifier;
+
+import java.util.Stack;
 
 public class OnKeyPress {
 
@@ -50,21 +53,30 @@ public class OnKeyPress {
             return;
         }
 
+         if (KeybindsRegister.HUB_SCREEN_KEY.isDown()) {
+            mc.setScreen(new MainHubScreen());
+            cooldown = 10;
+        } else if (KeybindsRegister.OPEN_MASTER_BACKPACK.isDown()) {
+            Packets.sendToServer(new OpenCuriosBackpackPacket());
+            cooldown = 10;
+        } else if (KeybindsRegister.SHOW_ENTITY_STATS.isDown()) {
+             if (showEntityStats(mc)) {
+                 cooldown = 10;
+             }
+         }
+
+        if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
+            Packets.sendToServer(new QuickUsePotionPacket());
+        }
+
+        if (KeybindsRegister.HOTBAR_SWAP.isDown()) {
+            SpellKeybind.IS_ON_SECONd_HOTBAR = !SpellKeybind.IS_ON_SECONd_HOTBAR;
+            cooldown = 5;
+        }
+
         if (KeybindsRegister.UNSUMMON.isDown()) {
             Packets.sendToServer(new UnsummonPacket());
             cooldown = 3;
-        } else if (KeybindsRegister.HUB_SCREEN_KEY.isDown()) {
-            mc.setScreen(new MainHubScreen());
-            cooldown = 10;
-        } else if (KeybindsRegister.HOTBAR_SWAP.isDown()) {
-            SpellKeybind.IS_ON_SECONd_HOTBAR = !SpellKeybind.IS_ON_SECONd_HOTBAR;
-            cooldown = 5;
-        } else if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
-            Packets.sendToServer(new QuickUsePotionPacket());
-        } else if (KeybindsRegister.SHOW_ENTITY_STATS.isDown()) {
-            if (showEntityStats(mc)) {
-                cooldown = 10;
-            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.event_hooks.ontick;
 
-import com.robertx22.mine_and_slash.a_libraries.curios.MyCurioUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -69,7 +69,7 @@ public class UnequipGear {
             }
         }
 
-        for (ICurioStacksHandler handler : MyCurioUtils.getHandlers(player)) {
+        for (ICurioStacksHandler handler : MyCuriosUtils.getHandlers(player)) {
 
             for (int i = 0; i < handler
                     .getSlots(); i++) {

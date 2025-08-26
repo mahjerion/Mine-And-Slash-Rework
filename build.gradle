@@ -73,7 +73,8 @@ legacyForge {
             )
         }
 
-        // jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+        // Enable Enhanced Class Redefinition (JBR)
+        jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
     }
 
     mods {

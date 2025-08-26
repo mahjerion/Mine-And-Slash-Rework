@@ -4,11 +4,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.robertx22.library_of_exile.command_wrapper.CommandSuggestions;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
-import com.robertx22.library_of_exile.command_wrapper.CommandSuggestions;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.StatSuggestions;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.StatTypeSuggestions;
 import net.minecraft.commands.CommandSourceStack;
@@ -52,7 +52,7 @@ public class GiveStat {
                                                                                         .then(argument("Silent", BoolArgumentType.bool())
                                                                                                 .executes(ctx -> {
                                                                                                     return run(EntityArgument
-                                                                                                            .getPlayer(ctx, "target"), StringArgumentType
+                                                                                                            .getEntity(ctx, "target"), StringArgumentType
                                                                                                             .getString(ctx, "scaling"), StringArgumentType
                                                                                                             .getString(ctx, "statGUID"), StringArgumentType
                                                                                                             .getString(ctx, "statType"), StringArgumentType

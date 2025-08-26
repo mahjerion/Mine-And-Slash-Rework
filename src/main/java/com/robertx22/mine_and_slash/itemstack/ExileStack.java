@@ -45,6 +45,10 @@ public class ExileStack {
         return get(StackKeys.CUSTOM).has() && get(StackKeys.CUSTOM).getOrCreate().isCorrupted();
     }
 
+    public boolean isMirrored() {
+        return get(StackKeys.CUSTOM).has() && get(StackKeys.CUSTOM).getOrCreate().isMirrored();
+    }
+
     public void setStack(ItemStack stack) {
         this.stack = stack;
         stackWasChanged = true;

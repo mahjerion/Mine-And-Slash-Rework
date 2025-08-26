@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.event_hooks.damage_hooks;
 
-import com.robertx22.mine_and_slash.a_libraries.curios.MyCurioUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.AttackInformation;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.util.DmgSourceUtils;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
@@ -29,7 +29,7 @@ public class LivingHurtUtils {
 
             Player player = (Player) en;
 
-            List<ItemStack> curios = MyCurioUtils.getAllSlots(player);
+            List<ItemStack> curios = MyCuriosUtils.getAllSlots(player);
 
             curios.forEach(x -> x.hurtAndBreak(getItemDamage(dmg), player, (entity) -> {
                 entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);

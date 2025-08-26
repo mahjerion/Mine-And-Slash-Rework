@@ -14,6 +14,7 @@ public class CustomItemData {
 
         public DataKey.BooleanKey CORRUPT = of(new DataKey.BooleanKey("cr"));
         public DataKey.BooleanKey CRAFTED = of(new DataKey.BooleanKey("crafted"));
+        public DataKey.BooleanKey MIRRORED = of(new DataKey.BooleanKey("mr"));
         public DataKey.BooleanKey SALVAGING_DISABLED = of(new DataKey.BooleanKey("sl"));
         // public DataKey.BooleanKey USED_SHARPENING_STONE = of(new DataKey.BooleanKey("us"));
 
@@ -27,8 +28,11 @@ public class CustomItemData {
 
     public GenericDataHolder data = new GenericDataHolder();
 
-
     public boolean isCorrupted() {
         return data.get(KEYS.CORRUPT);
+    }
+
+    public boolean isMirrored() {
+        return data.get(KEYS.MIRRORED);
     }
 }

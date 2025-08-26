@@ -30,7 +30,7 @@ public class ListStats {
                                                 .then(argument("scaling", StringArgumentType.string())
                                                         .suggests(new GiveStat.ModOrExact())
                                                         .executes(ctx -> {
-                                                            return run(EntityArgument.getPlayer(ctx, "target"), StringArgumentType
+                                                            return run(EntityArgument.getEntity(ctx, "target"), StringArgumentType
                                                                     .getString(ctx, "scaling"));
 
                                                         }))))));

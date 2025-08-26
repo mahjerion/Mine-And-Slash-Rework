@@ -88,6 +88,8 @@ public class ModEffects implements ExileRegistryInit {
     public static EffectCtx FROST_LICH = new EffectCtx("frost_lich", "Frost Lich", Elements.Cold, EffectType.beneficial);
     public static EffectCtx ESSENCE_OF_FROST = new EffectCtx("essence_of_frost", "Essence of Frost", Elements.Cold, EffectType.beneficial);
 
+    public static EffectCtx BLIZZARD_REDUCE_HEAL_STRENGTH = new EffectCtx("blizzard_reduce_heal_strength", "Blizzard Debuff", Elements.Cold, EffectType.negative);
+
     public static List<EffectCtx> getCurses() {
 
         return Arrays.asList(
@@ -436,8 +438,8 @@ public class ModEffects implements ExileRegistryInit {
                                 .tick(20D))
                         .buildForEffect())
                 .build();
-
-        // (NEW) Leeching & Healing
+      
+      // (NEW) Leeching & Healing
         ExileEffectBuilder.of(LEECHING_STATE)
                 .maxStacks(1)
                 .build();
@@ -454,6 +456,12 @@ public class ModEffects implements ExileRegistryInit {
         for (EffectCtx ctx : REGEN_STATE_BY_RES.values()) {
             ExileEffectBuilder.of(ctx).maxStacks(1).build();
         }
+
+        ExileEffectBuilder.of(BLIZZARD_REDUCE_HEAL_STRENGTH)
+                .maxStacks(1)
+                .addTags(EffectTags.negative)
+                .stat(-30, -50, ResourceStats.HEAL_STRENGTH.get(), ModType.FLAT)
+                .build();
 
 
     }

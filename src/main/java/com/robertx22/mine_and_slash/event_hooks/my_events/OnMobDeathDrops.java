@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.dimension.MapDimensions;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.BonusExp;
@@ -158,10 +159,15 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
             exp /= list.size();
 
             for (Player player : list) {
+                var canReceiveExp = Load.player(player).config.isConfigEnabled(PlayerConfigData.Config.ENABLE_EXP_GAIN);
+                if (!canReceiveExp) {
+                    continue;
+                }
+
                 int splitExp = (int) (exp * LootUtils.getLevelDistancePunishmentMulti(mobData.getLevel(), Load.Unit(player).getLevel()));
 
                 if (splitExp > 0) {
-                    Load.Unit(player).GiveExp(player, (int) splitExp, mods);
+                    Load.Unit(player).GiveExp(player, splitExp, mods);
                 }
             }
 

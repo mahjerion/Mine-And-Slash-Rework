@@ -16,7 +16,23 @@ public class CommonTooltips {
     public static AdditionalBlock potentialCorruptionAndQuality(ExileStack exStack, boolean doQuality) {
 
         List<MutableComponent> list = new ArrayList<>();
-        list.add(exStack.isCorrupted() ? Component.literal("").append(Itemtips.POTENTIAL.locName(exStack.get(StackKeys.POTENTIAL).getOrCreate().potential).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH)).append(Component.literal(" ")).append(Words.Corrupted.locName().withStyle(ChatFormatting.RED)) : Itemtips.POTENTIAL.locName(exStack.get(StackKeys.POTENTIAL).getOrCreate().potential).withStyle(ChatFormatting.GOLD));
+
+        MutableComponent potential = Itemtips.POTENTIAL.locName(exStack.get(StackKeys.POTENTIAL).getOrCreate().potential);
+
+        if (exStack.isCorrupted() || exStack.isMirrored()) {
+            potential = Component.literal("").append(potential.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH));
+
+            if (exStack.isCorrupted()) {
+                potential.append(Component.literal(" ")).append(Words.Corrupted.locName().withStyle(ChatFormatting.RED));
+            }
+            if (exStack.isMirrored()) {
+                potential.append(Component.literal(" ")).append(Words.Mirrored.locName().withStyle(ChatFormatting.WHITE));
+            }
+        } else {
+            potential.withStyle(ChatFormatting.GOLD);
+        }
+
+        list.add(potential);
 
         if (doQuality) {
             list.add(Itemtips.QUALITY.locName(exStack.get(StackKeys.CUSTOM).getOrCreate().data.get(CustomItemData.KEYS.QUALITY)).withStyle(ChatFormatting.GOLD));

@@ -235,6 +235,7 @@ public enum Words implements IAutoLocName {
     GEAR_SOUL_DESC("Souls are one way of adding Mine and Slash stats to Gear."),
     DungeonKey("Dungeon Key"),
     Corrupted("Corrupted"),
+    Mirrored("Mirrored"),
     CorruptsItemHarvest("Turns the Item Corrupted (no benefits)"),
     Classes("Classes"),
     AscClasses("Ascendancy"),

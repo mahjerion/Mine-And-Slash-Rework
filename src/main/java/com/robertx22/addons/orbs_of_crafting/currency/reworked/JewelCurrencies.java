@@ -18,6 +18,7 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
 
     public ExileKey<ExileCurrency, IdKey> JEWEL_CORRUPT = ExileCurrency.Builder.of("jewel_corrupt", "Orb of Mesmerizing Chaos", ItemReqs.INSTANCE.IS_JEWEL)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.UNIQUE_ID)
             .addModification(ItemMods.INSTANCE.JEWEL_CORRUPTION, 50)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 50)
@@ -27,6 +28,7 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
 
     public ExileKey<ExileCurrency, IdKey> JEWEL_UPGRADE_AFFIX = ExileCurrency.Builder.of("jewel_upgrade_affix", "Orb of Glimmering Light", ItemReqs.INSTANCE.IS_JEWEL)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.EPIC_ID)
             .addModification(ItemMods.INSTANCE.UPGRADE_JEWEL_AFFIX_RARITY, 85)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 15)
@@ -36,6 +38,7 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
 
     public ExileKey<ExileCurrency, IdKey> JEWEL_UPGRADE_AFFIX_SURE = ExileCurrency.Builder.of("jewel_sure_upgrade", "Orb of Mystery", ItemReqs.INSTANCE.IS_JEWEL)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.MYTHIC_ID)
             .addModification(ItemMods.INSTANCE.UPGRADE_JEWEL_AFFIX_RARITY, 90)
             .addModification(Modifications.INSTANCE.DO_NOTHING, 10)

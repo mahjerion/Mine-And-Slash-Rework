@@ -68,6 +68,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                 return ExileCurrency.Builder.of(id, info.tier.word + " Sharpening Stone", ItemReqs.INSTANCE.IS_GEAR)
                         .rarity(info.tier.rar)
                         .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+                        .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
                         .addAlwaysUseModification(ItemMods.INSTANCE.SHARPEN_STONE_QUALITY.get(info))
                         .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_SHARPENING_STONE_USES.toKey()))
                         .potentialCost(0)
@@ -78,6 +79,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> CORRUPT_GEAR = ExileCurrency.Builder.of("chaos_orb", "Orb of Chaos", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.UNIQUE_ID)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR, 75)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
@@ -85,8 +87,17 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(1000)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> MIRROR = ExileCurrency.Builder.of("mirror", "Orb of Reflection", ItemReqs.INSTANCE.IS_GEAR, ItemReqs.INSTANCE.IS_JEWEL)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.MYTHIC_ID)
+            .addAlwaysUseModification(ItemMods.INSTANCE.MIRROR)
+            .potentialCost(0)
+            .weight(CodeCurrency.Weights.MIRROR)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> LEVEL_GEAR = ExileCurrency.Builder.of("level_up_orb", "Orb of Infinity", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.UNCOMMON)
             .addRequirement(ItemReqs.INSTANCE.LEVEL_NOT_MAX)
             .addModification(ItemMods.INSTANCE.ADD_GEAR_LEVEL, 1)
@@ -97,6 +108,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> ADD_SOCKET = ExileCurrency.Builder.of("socket_adder", "Orb of Digging", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.CAN_ADD_SOCKETS)
             .rarity(IRarity.RARE_ID)
             .addModification(ItemMods.INSTANCE.ADD_SOCKET, 50)
@@ -107,6 +119,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> UNIQUE_STAT_REROLL = ExileCurrency.Builder.of("unique_reroll", "Orb of Imperfection", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.map.get(new RarityKeyInfo(IRarity.UNIQUE_ID)))
             .addModification(ItemMods.INSTANCE.ADD_5_PERCENT_UNIQUE_STATS, 60)
@@ -117,6 +130,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_common_reroll", "Orb of New Beginnings", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_RANDOM_AFFIX)
@@ -127,6 +141,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX_TO_MYTHIC = ExileCurrency.Builder.of("affix_random_mythic_reroll", "Orb of Divine Benevolence", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.MYTHIC_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
             .addRequirement(ItemReqs.INSTANCE.NOT_CRAFTED)
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.MYTHIC_ID)))
@@ -138,6 +153,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> UPGRADE_OR_DOWNGRADE_RANDOM_AFFIX = ExileCurrency.Builder.of("affix_tier_up_down", "Orb of Imbalance", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
             .addModification(ItemMods.INSTANCE.UPGRADE_RANDOM_AFFIX, 60)
@@ -148,6 +164,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> UPGRADE_QUALITY = ExileCurrency.Builder.of("orb_of_quality", "Orb of Quality", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.UNDER_20_QUALITY)
             .rarity(IRarity.UNCOMMON)
             .addAlwaysUseModification(ItemMods.INSTANCE.ADD_GEAR_QUALITY)
@@ -157,6 +174,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> REROLL_INFUSION = ExileCurrency.Builder.of("enchant_reroll", "Orb of Second Guessing", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_INFUSION)
             .rarity(IRarity.UNCOMMON)
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_INFUSION)
@@ -167,6 +185,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 /*
     public ExileKey<ExileCurrency, IdKey> MAP_RARITY_UPGRADE = ExileCurrency.Builder.of("map_rarity_upgrade", "Map Rarity Upgrade Orb", WorksOnBlock.ItemType.MAP)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.MAP_HAS_HIGHER_RARITY)
             .rarity(IRarity.EPIC_ID)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_MAP_RARITY)
@@ -180,6 +199,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKey<ExileCurrency, IdKey> UPGRADE_COMMON_AFFIX = ExileCurrency.Builder.of("upgrade_common_affix", "Orb of Fledgling's Reprieve", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIX_OF_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_SPECIFIC_AFFIX_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
             .potentialCost(3)
@@ -189,6 +209,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKey<ExileCurrency, IdKey> REROLL_AFFIX_NUMBERS = ExileCurrency.Builder.of("affix_number_reroll", "Orb of Ciphers", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.RARE_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_AFFIX_NUMBERS)
             .potentialCost(5)
@@ -198,6 +219,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKey<ExileCurrency, IdKey> REROLL_IMPLICIT_NUMBERS = ExileCurrency.Builder.of("implicit_number_reroll", "Orb of Genesis", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_IMPLICIT)
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_IMPLICIT_NUMBERS)
             .potentialCost(10)
@@ -207,6 +229,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public ExileKey<ExileCurrency, IdKey> UPGRADE_CORRUPTION_AFFIX = ExileCurrency.Builder.of("up_corrupt_affix", "Orb of Foolish Risk",
                     ItemReqs.INSTANCE.IS_GEAR, ItemReqs.INSTANCE.IS_JEWEL)
             .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.HAS_CORRUPTION_AFFIXES)
             .addModification(ItemMods.INSTANCE.UPGRADE_CORRUPTION_AFFIX_RARITY, 90)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 10)
@@ -235,6 +258,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
     public ExileKey<ExileCurrency, IdKey> EASY_ONE_TIME_UPGRADE = ExileCurrency.Builder.of("orb_of_relief", "Orb of Relief", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .rarity(IRarity.EPIC_ID)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
             .addRequirement(ItemReqs.INSTANCE.HAS_AFFIX_OF_RARITY_OR_LOWER.get(new RarityKeyInfo(IRarity.EPIC_ID)))

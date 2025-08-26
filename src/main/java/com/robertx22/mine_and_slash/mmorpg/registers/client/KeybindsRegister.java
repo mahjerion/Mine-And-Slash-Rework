@@ -23,7 +23,14 @@ public class KeybindsRegister {
 
     public static KeyMapping SHOW_ENTITY_STATS = new KeyMapping(prefix + "show_entity_stats", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_EQUAL, CATEGORY);
 
-    public static KeyMapping OPEN_MASTER_BACKPACK = new KeyMapping(prefix + "open_master_backpack", GLFW.GLFW_KEY_B, CATEGORY);
+    public static KeyMapping OPEN_MASTER_BACKPACK = new KeyMapping(
+            prefix + "open_master_backpack",
+            KeyConflictContext.IN_GAME,
+            KeyModifier.CONTROL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY
+    );
 
     public static SpellKeybind SPELL_HOTBAR_1 = new SpellKeybind(1, GLFW.GLFW_KEY_R, null, true);
     public static SpellKeybind SPELL_HOTBAR_2 = new SpellKeybind(2, GLFW.GLFW_KEY_V, null, true);

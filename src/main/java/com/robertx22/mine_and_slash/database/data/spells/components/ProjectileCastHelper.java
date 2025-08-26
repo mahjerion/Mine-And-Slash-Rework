@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.spells.components;
 
+import com.robertx22.library_of_exile.utils.geometry.MyPosition;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.AoeSelector;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
@@ -7,8 +8,6 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellUtil
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
-import com.robertx22.library_of_exile.utils.geometry.MyPosition;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -16,8 +15,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class ProjectileCastHelper {
@@ -30,6 +29,7 @@ public class ProjectileCastHelper {
     public int projectilesAmount = 1;
     public float randomSpreadDegrees = 0f;
     public boolean gravity = true;
+    public int lifespanTicks = -1;
     EntityType projectile;
     CalculatedSpellData data;
     MapHolder holder;
@@ -70,12 +70,34 @@ public class ProjectileCastHelper {
 
         Level world = caster.level();
 
+        LivingEntity target = null;
+        Vec3 baseDirection = null;
+
+        // Find target once if targeting is enabled
+        if (targetEnemy) {
+            double radius = calculateRadius();
+            double radiusSqr = radius * radius;
+            EntityFinder.Setup<LivingEntity> finder = EntityFinder.start(caster, LivingEntity.class, pos.add(0, 0, 0))
+                    .finder(EntityFinder.SelectionType.RADIUS)
+                    .searchFor(AllyOrEnemy.enemies)
+                    .predicate(e -> e.distanceToSqr(ctx.getPos()) <= radiusSqr && AoeSelector.canHit(ctx.getPos(), e))
+                    .radius(radius);
+
+            target = finder.getClosest();
+
+            if (target == null) {
+                return;
+            }
+
+            baseDirection = positionToVelocity(new MyPosition(pos), new MyPosition(target.getEyePosition()));
+        }
+
         for (int i = 0; i < projectilesAmount; i++) {
             float addYaw = 0;
             Vec3 posAdd = new Vec3(0, 0, 0);
 
             if (projectilesAmount > 1) {
-                float offset = i - (float)(projectilesAmount - 1) / 2;
+                float offset = i - (float) (projectilesAmount - 1) / 2;
 
                 if (this.castType == CastType.SPREAD_OUT_IN_RADIUS) {
                     // total cone is apart * (projectilesAmount - 1) / projectilesAmount
@@ -94,27 +116,20 @@ public class ProjectileCastHelper {
                 randomPitchOffset = (float) ((Math.random() * 2 - 1) * randomSpreadDegrees);
             }
 
-            // copied from multishot crossbow code
-            Vec3 vec31 = this.caster.getUpVector(1.0F);
-
-            // Convert pitch and yaw (including offsets) to radians
-            float totalPitch = pitch + randomPitchOffset;
-            float totalYaw = yaw + addYaw + randomYawOffset;
-
-            float pitchRad = (float) Math.toRadians(totalPitch);
-            float yawRad = (float) Math.toRadians(totalYaw);
-
-            // Calculate direction vector from pitch and yaw
-            float x = -Mth.sin(yawRad) * Mth.cos(pitchRad);
-            float y = -Mth.sin(pitchRad);
-            float z = Mth.cos(yawRad) * Mth.cos(pitchRad);
-
-            Vector3f finalVel = new Vector3f(x, y, z);
-
-            //posAdd = new MyPosition(finalVel);
-
             AbstractArrow en = (AbstractArrow) projectile.create(world);
-            SpellUtils.shootProjectile(pos.add(posAdd), en, ctx.getPositionEntity(), shootSpeed, pitch + randomPitchOffset, yaw + addYaw + randomYawOffset);
+            float projectilePitch = pitch + randomPitchOffset;
+            float projectileYaw = yaw + addYaw + randomYawOffset;
+
+            Vector3f finalVel;
+            if (target == null) {
+                finalVel = calculateVelocity(pitch, yaw, randomPitchOffset, addYaw, randomYawOffset);
+            } else {
+                finalVel = calculateVelocityWithBase(baseDirection, randomPitchOffset, addYaw, randomYawOffset);
+                projectilePitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG + randomPitchOffset;
+                projectileYaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG + addYaw + randomYawOffset;
+            }
+
+            SpellUtils.shootProjectile(pos.add(posAdd), en, ctx.getPositionEntity(), shootSpeed, projectilePitch, projectileYaw);
             SpellUtils.initSpellEntity(en, caster, data, holder);
 
             en.shoot(finalVel.x, finalVel.y, finalVel.z, shootSpeed, 1);
@@ -124,38 +139,41 @@ public class ProjectileCastHelper {
             }
 
             en.setSilent(silent);
-
-            if (targetEnemy) {
-
-                BlockPos pos = en.blockPosition();
-
-                EntityFinder.Setup<LivingEntity> finder = EntityFinder.start(caster, LivingEntity.class, pos)
-                        .finder(EntityFinder.SelectionType.RADIUS)
-                        .searchFor(AllyOrEnemy.enemies)
-                        .predicate(e -> AoeSelector.canHit(ctx.getPos(), e))
-                        .radius(15);
-
-
-                LivingEntity target = finder.getClosest();
-
-                if (target != null) {
-                    Vec3 vel = positionToVelocity(new MyPosition(en.position()), new MyPosition(target.getEyePosition()));
-                    vel = vel.multiply(shootSpeed, shootSpeed, shootSpeed);
-                    //en.setDeltaMovement(vel);
-
-
-                    en.shoot(vel.x, vel.y, vel.z, 1, 0);
-
-                    caster.level().addFreshEntity(en);
-                    break;
-                }
-
-
-            } else {
-                caster.level().addFreshEntity(en);
-            }
+            caster.level().addFreshEntity(en);
         }
 
+    }
+
+    private double calculateRadius() {
+        if (lifespanTicks == -1) {
+            return 15;
+        }
+        return lifespanTicks * shootSpeed;
+    }
+
+    private @NotNull Vector3f calculateVelocity(float pitch, float yaw, float randomPitchOffset, float addYaw, float randomYawOffset) {
+        Vector3f finalVel;
+        // Use original caster direction
+        float totalPitch = pitch + randomPitchOffset;
+        float totalYaw = yaw + addYaw + randomYawOffset;
+
+        float pitchRad = Math.toRadians(totalPitch);
+        float yawRad = Math.toRadians(totalYaw);
+
+        // Calculate direction vector from pitch and yaw
+        float x = -Mth.sin(yawRad) * Mth.cos(pitchRad);
+        float y = -Mth.sin(pitchRad);
+        float z = Mth.cos(yawRad) * Mth.cos(pitchRad);
+
+        finalVel = new Vector3f(x, y, z);
+        return finalVel;
+    }
+
+    private @NotNull Vector3f calculateVelocityWithBase(Vec3 baseDirection, float randomPitchOffset, float addYaw, float randomYawOffset) {
+        // Calculate target-based direction with spread
+        float targetYaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG;
+        float targetPitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG;
+        return calculateVelocity(targetPitch, targetYaw, randomPitchOffset, addYaw, randomYawOffset);
     }
 
     public static Vec3 positionToVelocity(MyPosition current, MyPosition destination) {

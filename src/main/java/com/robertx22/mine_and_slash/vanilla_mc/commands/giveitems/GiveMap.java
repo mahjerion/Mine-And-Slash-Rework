@@ -63,7 +63,6 @@ public class GiveMap {
             }
 
             StackSaving.MAP.saveTo(mapStack, b.createData());
-
             PlayerUtils.giveItem(mapStack, player);
         }
 

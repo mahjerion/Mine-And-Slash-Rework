@@ -70,7 +70,7 @@ public class GiveMap {
 
             if (!type.equals("random")) {
                 DungeonItemMapData map = DungeonItemNbt.DUNGEON_MAP.loadFrom(mapStack);
-                map.forced_dungeon_id = type;
+                //map.forced_dungeon_id = type;
                 DungeonItemNbt.DUNGEON_MAP.saveTo(mapStack, map);
             }
 

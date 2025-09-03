@@ -10,21 +10,23 @@ import java.util.*;
 
 public class SpendThresholdDef {
     public String key;
-    public String resource = "energy";
+    public String resource = "";
     public boolean enabled = true;
     public int priority = 0;
+    @SerializedName("show_ui")
+    public boolean showUi = false;
 
     public static class Threshold {
-        public String mode = "X_PER_LEVEL";
+        public String mode = "FLAT";
         public float value = 0f;
         @SerializedName("multiply_by_level") public boolean multiplyByLevel = false;
-        @SerializedName("pct_of") public String pctOf; // optional
+        @SerializedName("percent_of") public String percentOf; // optional
     }
     public Threshold threshold = new Threshold();
 
     public static class Locks {
         public List<String> effects = new ArrayList<>();
-        @SerializedName("lock_while_cooldown") public boolean lockWhileCooldown = true;
+        @SerializedName("lock_while_cooldown") public boolean lockWhileCooldown = false;
         @SerializedName("drop_progress_while_locked") public boolean dropProgressWhileLocked = true;
         @SerializedName("reset_progress_on_proc") public boolean resetProgressOnProc = true;
     }
@@ -33,63 +35,119 @@ public class SpendThresholdDef {
     @SerializedName("cooldown_seconds")
     public int cooldownSeconds = 0;
 
+    @SerializedName("require_stat")
+    public String requireStatId = "";
+
     public static class ProcAction {
         public String action; // "apply_effect"
-        @SerializedName("effect_id") public String effectId;
-        @SerializedName("duration_ticks") public int durationTicks = 200;
+        @SerializedName("exile_potion_id") public String effectId;
+        @SerializedName("duration_seconds") public int durationSeconds = 0;
         public int stacks = 1;
+        @SerializedName("on_expire") public java.util.Map<String, Integer> onExpire = java.util.Collections.emptyMap();
     }
     @SerializedName("on_proc")
     public List<ProcAction> onProc = new ArrayList<>();
 
     public SpendThresholdSpec toSpec() {
-        ResourceType res = ResourceType.valueOf(resource.toLowerCase(java.util.Locale.ROOT));
-        DataDrivenSpendThresholdSpec.ThresholdMode mode =
-                DataDrivenSpendThresholdSpec.ThresholdMode.valueOf(threshold.mode.toUpperCase(Locale.ROOT));
+        ResourceType res = parseResource(resource, ResourceType.energy);
 
-        ResourceType pctOf = null;
-        if ("PCT_OF_MAX".equalsIgnoreCase(threshold.mode) && threshold.pctOf != null && !threshold.pctOf.isEmpty()) {
-            pctOf = ResourceType.valueOf(threshold.pctOf.toLowerCase(Locale.ROOT));
+        // Modes supported: FLAT (optionally with multiply_by_level) or PERCENT_OF_MAX
+        String rawMode = (threshold.mode == null ? "FLAT" : threshold.mode.trim()).toUpperCase(Locale.ROOT);
+        boolean mult = threshold.multiplyByLevel;
+        DataDrivenSpendThresholdSpec.ThresholdMode mode =
+                "PERCENT_OF_MAX".equals(rawMode)
+                        ? DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX
+                        : DataDrivenSpendThresholdSpec.ThresholdMode.FLAT; // default + treats legacy values as FLAT
+
+        ResourceType percentOf = null;
+        if (mode == DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX
+                && threshold.percentOf != null && !threshold.percentOf.isEmpty()) {
+            percentOf = parseResource(threshold.percentOf, res); // default to this spec’s resource if bad input
         }
 
-        Set<String> lockEff = new HashSet<>(locks.effects);
+        Set<String> lockEff = (locks != null && locks.effects != null)
+                ? new HashSet<>(locks.effects) : Collections.emptySet();
 
         return new DataDrivenSpendThresholdSpec(
                 key,
                 res,
                 mode,
                 threshold.value,
-                threshold.multiplyByLevel,
-                pctOf,
+                mult,
+                percentOf,
                 lockEff,
                 SpendThresholdSpec.secondsToTicks(cooldownSeconds),
-                locks.lockWhileCooldown,
-                locks.dropProgressWhileLocked,
-                locks.resetProgressOnProc
+                locks != null && locks.lockWhileCooldown,
+                locks != null && locks.dropProgressWhileLocked,
+                locks != null && locks.resetProgressOnProc,
+                showUi
         ) {
             @Override
             public void onProc(ServerPlayer sp, int procs) {
                 if (onProc == null || onProc.isEmpty()) return;
 
-                var unit = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(sp);
+                var unit  = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(sp);
                 var store = unit.getStatusEffectsData();
 
                 for (ProcAction a : onProc) {
-                    if (!"apply_effect".equalsIgnoreCase(a.action) || a.effectId == null) continue;
+                    if (!"exile_effect".equalsIgnoreCase(a.action) || a.effectId == null) continue;
+                    var effect = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(a.effectId);
+                    if (effect == null) continue;
 
-                    var fx = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(a.effectId);
-                    if (fx == null) continue;
-
-                    var inst = store.getOrCreate(fx);
+                    var inst = store.getOrCreate(effect);
                     int stacks = Math.max(1, a.stacks);
-                    if (fx.max_stacks > 0) stacks = Math.min(stacks, fx.max_stacks);
-                    inst.stacks = Math.max(inst.stacks, stacks);
-                    inst.ticks_left = Math.max(inst.ticks_left, Math.max(1, a.durationTicks));
+                    if (effect.max_stacks > 0) stacks = Math.min(stacks, effect.max_stacks);
+                    inst.stacks     = Math.max(inst.stacks, stacks);
+                    int durTicks = SpendThresholdSpec.secondsToTicks(a.durationSeconds);
+                    inst.ticks_left = Math.max(inst.ticks_left, Math.max(1, durTicks));
 
-                    fx.onApply(sp);
+                    inst.self_cast = true;
+                    inst.caster_uuid = sp.getUUID().toString();
+
+                    // Attach on-expire duration overrides (convert seconds -> ticks)
+                    if (a.onExpire != null && !a.onExpire.isEmpty()) {
+                        if (inst.onExpireEffectDurationTicks == null) {
+                            inst.onExpireEffectDurationTicks = new java.util.HashMap<>();
+                        }
+                        for (var e : a.onExpire.entrySet()) {
+                            int ticks = SpendThresholdSpec.secondsToTicks(Math.max(0, e.getValue()));
+                            if (ticks > 0) {
+                                inst.onExpireEffectDurationTicks.put(e.getKey(), ticks);
+                            }
+                        }
+                    }
+
+                    effect.onApply(sp);
                     unit.sync.setDirty();
                 }
             }
+
+            @Override
+            public boolean isLockedFor(com.robertx22.mine_and_slash.capability.entity.EntityData unit) {
+                if (super.isEffectLocked(unit)) return true;
+                if (requireStatId != null && !requireStatId.isEmpty()) {
+                    var st = com.robertx22.mine_and_slash.database.registry.ExileDB.Stats().get(requireStatId);
+                    if (st != null) {
+                        return unit.getUnit().getCalculatedStat(st).getValue() <= 0;
+                    }
+                }
+                return false;
+            }
         }.withPriority(priority);
+    }
+
+    // --- helpers ---
+    private static ResourceType parseResource(String s, ResourceType fallback) {
+        if (s == null) return fallback;
+        for (ResourceType rt : ResourceType.values()) {
+            if (rt.name().equalsIgnoreCase(s)) return rt;
+            try {
+                // if your enum exposes an id/string, handle it here:
+                var idField = rt.getClass().getField("id");
+                Object idVal = idField.get(rt);
+                if (idVal instanceof String && ((String) idVal).equalsIgnoreCase(s)) return rt;
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+        }
+        return fallback;
     }
 }

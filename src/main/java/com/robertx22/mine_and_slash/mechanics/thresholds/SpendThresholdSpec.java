@@ -71,9 +71,6 @@ public abstract class SpendThresholdSpec {
     public boolean showUi()                     { return showUi; }
 
     // fluent config (for code-defined specs)
-    public SpendThresholdSpec withCooldownSeconds(int seconds) {
-        return withCooldownTicks(secondsToTicks(seconds));
-    }
     public SpendThresholdSpec withCooldownTicks(int ticks) {
         return newWrapper(this.lockWhileEffectIds, Math.max(0, ticks), this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc);
     }
@@ -143,9 +140,4 @@ public abstract class SpendThresholdSpec {
     /** Called when one or more thresholds are consumed. */
     public abstract void onProc(ServerPlayer sp, int procs);
 
-    // time helpers
-    public static int secondsToTicks(int seconds) {
-        return (seconds <= 0) ? 0 : seconds * 20;
-    }
-    public static float ticksToSeconds(int ticks) { return ticks / 20f; }
 }

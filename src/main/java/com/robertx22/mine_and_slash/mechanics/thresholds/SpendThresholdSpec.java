@@ -7,8 +7,8 @@ import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+
 
 public abstract class SpendThresholdSpec {
     private final ResourceType resource;
@@ -70,37 +70,12 @@ public abstract class SpendThresholdSpec {
     public int priority()                       { return priority; }
     public boolean showUi()                     { return showUi; }
 
-    // fluent config (for code-defined specs)
-    public SpendThresholdSpec withCooldownTicks(int ticks) {
-        return newWrapper(this.lockWhileEffectIds, Math.max(0, ticks), this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc);
-    }
-    public SpendThresholdSpec lockWhile(String... effectIds) {
-        Set<String> s = new HashSet<>(this.lockWhileEffectIds);
-        if (effectIds != null) Collections.addAll(s, effectIds);
-        return newWrapper(s, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc);
-    }
-    public SpendThresholdSpec lockWhileCooldown(boolean on) {
-        return newWrapper(this.lockWhileEffectIds, this.cooldownTicks, on, this.dropProgressWhileLocked, this.resetProgressOnProc);
-    }
-    public SpendThresholdSpec dropProgressLocked(boolean on) {
-        return newWrapper(this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, on, this.resetProgressOnProc);
-    }
-    public SpendThresholdSpec resetOnProc(boolean on) {
-        return newWrapper(this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, on);
-    }
+    
     public SpendThresholdSpec withPriority(int p) {
         this.priority = p;
         return this;
     }
 
-    private SpendThresholdSpec newWrapper(Set<String> lockIds, int cooldown, boolean lockCD, boolean dropLocked, boolean resetOnProc) {
-        // create a shallow “copy” retaining dynamic behavior (onProc/thresholdFor come from subclass)
-        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, lockIds, cooldown, lockCD, dropLocked, resetOnProc, this.showUi) {
-            @Override public float thresholdFor(EntityData unit) { return SpendThresholdSpec.this.thresholdFor(unit); }
-            @Override public void onProc(ServerPlayer sp, int procs) { SpendThresholdSpec.this.onProc(sp, procs); }
-            @Override public boolean isLockedFor(EntityData unit) { return SpendThresholdSpec.this.isLockedFor(unit); }
-        }.withPriority(this.priority);
-    }
 
     public SpendThresholdSpec withShowUi(boolean on) {
         return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc, on) {

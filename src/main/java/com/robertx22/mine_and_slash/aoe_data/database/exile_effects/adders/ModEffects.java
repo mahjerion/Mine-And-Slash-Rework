@@ -71,6 +71,8 @@ public class ModEffects implements ExileRegistryInit {
     public static EffectCtx BLIND = new EffectCtx("blind", "Blind", Elements.Shadow, EffectType.negative);
     public static EffectCtx STUN = new EffectCtx("stun", "Stun", Elements.Physical, EffectType.negative);
     public static EffectCtx GALE_FORCE = new EffectCtx("gale_force", "Gale Force", Elements.Physical, EffectType.beneficial);
+    public static EffectCtx WRATH_OF_THE_JUGGERNAUT = new EffectCtx("wrath_of_the_juggernaut", "Wrath of the Juggernaut", Elements.Physical, EffectType.beneficial);
+    public static EffectCtx BURNOUT = new EffectCtx("burnout", "Burnout", Elements.Physical, EffectType.negative);
 
     // these could be used for map affixes
     public static EffectCtx SLOW = new EffectCtx("slow", "Lethargy", Elements.Physical, EffectType.negative);
@@ -105,8 +107,7 @@ public class ModEffects implements ExileRegistryInit {
 
     // ---------- Helper ----------
     private static EffectCtx state(String id, String name, Elements elem) {
-        // EffectCtx constructor already adds itself to ModEffects.ALL in this file's pattern
-        return new EffectCtx(id, name, elem, EffectType.beneficial);
+        return new EffectCtx(id, name, (elem != null ? elem : Elements.Physical), EffectType.beneficial);
     }
 
     // Pretty names for resources (UI text)
@@ -119,13 +120,6 @@ public class ModEffects implements ExileRegistryInit {
     );
 
     // Suggested elements per resource (only used for coloring/category)
-    private static final Map<ResourceType, Elements> RES_ELEM = Map.of(
-        ResourceType.health, Elements.Physical,
-        ResourceType.mana, Elements.Cold,
-        ResourceType.energy, Elements.Nature,
-        ResourceType.magic_shield, Elements.Shadow,
-        ResourceType.blood, Elements.Fire
-    );
 
     // ---------- Generic flags ----------
     public static final EffectCtx LEECHING_STATE = state(
@@ -141,14 +135,13 @@ public class ModEffects implements ExileRegistryInit {
 
     static {
         for (var rt : RES_NAME.keySet()) {
-            var elem = RES_ELEM.get(rt);
             var nice = RES_NAME.get(rt);
 
             LEECHING_STATE_BY_RES.put(
-                rt, state("leeching_" + rt.id + "_state", "Leeching " + nice, elem)
+                rt, state("leeching_" + rt.id + "_state", "Leeching " + nice, null)
             );
             REGEN_STATE_BY_RES.put(
-                rt, state("regen_" + rt.id + "_state", "Regenerating " + nice, elem)
+                rt, state("regen_" + rt.id + "_state", "Regenerating " + nice, null)
             );
         }
     }
@@ -410,6 +403,22 @@ public class ModEffects implements ExileRegistryInit {
                 .stat(10, 10, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.song), ModType.MORE)
                 .maxStacks(3)
                 .addTags(EffectTags.song, EffectTags.offensive)
+                .build();
+
+        ExileEffectBuilder.of(WRATH_OF_THE_JUGGERNAUT)
+                .vanillaStat(VanillaStatData.create(ATTACK_SPEED, 0.30F, ModType.MORE, UUID.fromString("0c7a6e2c-5e5c-4f2f-9e3b-2a8e3c1a1f30")))
+                .vanillaStat(VanillaStatData.create(KNOCKBACK_RESISTANCE, 1.0F, ModType.FLAT, UUID.fromString("a9d9c9f2-9f0f-4521-9c3e-9f7a1c2b5e11")))
+                .stat(10, 10, DefenseStats.DAMAGE_REDUCTION.get(), ModType.FLAT)
+                .stat(100, 100, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.weapon_skill), ModType.FLAT)
+                .spell(SpellBuilder.forEffect()
+                        .buildForEffect())
+                .addTags(EffectTags.offensive)
+                .maxStacks(1)
+                .build();
+
+        ExileEffectBuilder.of(BURNOUT)
+                .maxStacks(1)
+                .addTags(EffectTags.negative)
                 .build();
 
 

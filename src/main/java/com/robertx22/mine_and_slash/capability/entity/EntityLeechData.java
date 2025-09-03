@@ -39,12 +39,12 @@ public class EntityLeechData {
         // 1) Clamp stored leech per resource to ≤ 5s of cap (prevents unbounded queues)
         for (Map.Entry<ResourceType, Float> en : store.entrySet()) {
             ResourceType rt = en.getKey();
-            float capPctPerSec = data.getUnit()
+            float capPercentPerSec = data.getUnit()
                     .getCalculatedStat(ResourceStats.LEECH_CAP.get(rt))
                     .getValue() / 100F;
 
             float maxRes   = data.getResources().getMax(data.entity, rt);
-            float fiveSecs = 5F * capPctPerSec * maxRes;   // “5 seconds worth” reservoir cap
+            float fiveSecs = 5F * capPercentPerSec * maxRes;   // “5 seconds worth” reservoir cap
             float clamped  = MathHelper.clamp(en.getValue(), 0, fiveSecs);
             en.setValue(clamped);
         }
@@ -55,12 +55,12 @@ public class EntityLeechData {
             float reservoir   = entry.getValue();
             if (reservoir <= EPS) continue;
 
-            float capPctPerSec = data.getUnit()
+            float capPercentPerSec = data.getUnit()
                     .getCalculatedStat(ResourceStats.LEECH_CAP.get(rt))
                     .getValue() / 100F;
 
             float maxRes       = data.getResources().getMax(data.entity, rt);
-            float perSecondCap = capPctPerSec * maxRes;
+            float perSecondCap = capPercentPerSec * maxRes;
 
             // Intended drain this second (bounded by per-second cap and reservoir)
             float take = Math.min(reservoir, perSecondCap);

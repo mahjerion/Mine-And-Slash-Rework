@@ -964,7 +964,7 @@ public class EntityData implements ICap, INeededForClient {
     private final ResourceTracker resourceTracker = new ResourceTracker();
     public ResourceTracker getResourceTracker() { return resourceTracker; }
 
-    public final SpendThresholdRuntime spendRuntime = new SpendThresholdRuntime();
+    private final SpendThresholdRuntime spendRuntime = new SpendThresholdRuntime();
     public SpendThresholdRuntime getSpendRuntime() { return spendRuntime; }
 
 

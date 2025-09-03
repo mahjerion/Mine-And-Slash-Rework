@@ -30,16 +30,6 @@ public final class OnResourceLost {
         long now = sp.level().getGameTime(); // ticks
         SpendThresholdManager.processSpend(sp, unit, type, loss, now);
     }
-
-    /** Wire health damage into the unified loss path. */
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    public static void onLivingDamage(net.minecraftforge.event.entity.living.LivingDamageEvent evt) {
-        if (!(evt.getEntity() instanceof ServerPlayer sp)) return;
-        float applied = evt.getAmount();
-        if (applied > 0f) {
-            trigger(sp, ResourceType.health, applied, LossSource.Damage);
-        }
-    }
 }
 
 

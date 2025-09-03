@@ -30,7 +30,7 @@ public class OnResourceRestore {
 
     // ===== Gameplay tuning =====
     /** State lifetime in ticks; should exceed your leech cadence + jitter. */
-    private static final int STATE_TICKS = 60; // ~3.0s @20tps
+    private static final int STATE_TICKS = 20;
 
     // ===== Debug controls =====
     /** Global toggle for chat debug. Safe to leave false in prod. */

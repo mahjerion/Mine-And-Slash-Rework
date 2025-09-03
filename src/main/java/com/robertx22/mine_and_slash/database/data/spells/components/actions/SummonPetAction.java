@@ -49,9 +49,9 @@ public class SummonPetAction extends SpellAction {
 
             en.tame((Player) ctx.caster);
 
-            var pos = ctx.caster.blockPosition(); // todo
+            var pos = ctx.caster.position(); // todo
 
-            en.setPos(pos.getX(), pos.getY(), pos.getZ());
+            en.setPos(pos.x(), pos.y(), pos.z());
 
             int duration = getDuration(ctx, data);
 

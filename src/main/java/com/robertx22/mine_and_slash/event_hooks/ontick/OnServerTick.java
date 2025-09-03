@@ -18,6 +18,7 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.MapCompletePacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.ThresholdUiPacket;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -126,6 +127,43 @@ public class OnServerTick {
                     unitdata.getResources().onTickBlock(player, tickrate);
 
                     playerData.spellCastingData.charges.onTicks(player, 5);
+                }
+
+                // Every second, apply passive decay to inactive threshold progress
+                if (age % 20 == 0) {
+                    long now = player.level().getGameTime();
+                    var unit = Load.Unit(player);
+                    if (unit != null) {
+                        // Iterate only active keys per resource
+                        for (var rt : com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.values()) {
+                            for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
+                                var spec = unit.getSpendRuntime().getSpec(key);
+                                if (!spec.showUi()) continue;
+                                long lastAct = unit.getSpendRuntime().getLastActivity(key);
+                                if (lastAct <= 0) continue;
+                                long since = now - lastAct;
+                                if (since < 300) continue; // < 15s
+
+                                long lastDecay = unit.getSpendRuntime().getLastDecay(key);
+                                if (lastDecay == now) continue; // already decayed this second
+                                unit.getSpendRuntime().markDecay(key, now);
+
+                                // Decay rate: 15% of this threshold's breakpoint per second
+                                float thr = spec.thresholdFor(unit);
+                                if (thr <= 0f) continue;
+                                float decayPerSecond = thr * 0.15f;
+                                float newVal = unit.getResourceTracker().decayKeyProgress(key, rt, decayPerSecond);
+                                int cint = (int) newVal;
+                                if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
+                                    com.robertx22.library_of_exile.main.Packets.sendToClient(player,
+                                        new ThresholdUiPacket(key, rt.id, newVal > 0f, newVal));
+                                }
+                                if (newVal <= 0f) {
+                                    unit.getSpendRuntime().removeActive(rt, key);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (player.containerMenu instanceof CraftingStationMenu men) {

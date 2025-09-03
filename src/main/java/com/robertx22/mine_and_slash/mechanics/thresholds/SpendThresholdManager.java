@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mechanics.thresholds;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.ThresholdUiPacket;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -44,7 +45,10 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) {
-                    sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[SPEND:" + spec.key() + "] locked by cooldown"));
+                    long rem = unit.getSpendRuntime().cooldownRemainingTicks(key, now);
+                    sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                        "[SPEND:" + spec.key() + "] locked by cooldown (" + rem + "t ~ " + fmtSec((float) rem) + "s)"
+                    ));
                 }
                 continue;
             }
@@ -57,7 +61,10 @@ public final class SpendThresholdManager {
                 if (debug) {
                     sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[SPEND:" + spec.key() + "] locked"));
                 }
-                // UI updates omitted (packet not included in this commit)
+                // hide UI while locked
+                if (spec.showUi()) {
+                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
+                }
                 continue;
             }
 
@@ -66,7 +73,10 @@ public final class SpendThresholdManager {
             if (threshold <= 0f) continue;
 
             int procs = tracker.addAndConsumeForKey(key, type, loss, threshold);
-            // activity tracking omitted for compatibility
+            if (loss > 0f && procs == 0) {
+                unit.getSpendRuntime().markActivity(key, now);
+                unit.getSpendRuntime().markActive(type, key, spec);
+            }
             if (procs > 0) {
                 spec.onProc(sp, procs);
                 spec.startCooldown(unit, now);
@@ -74,13 +84,26 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");
-                // UI/active tracking omitted
+                // hide UI on proc
+                if (spec.showUi()) {
+                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
+                }
+                unit.getSpendRuntime().removeActive(type, key);
             } else {
                 float cur = tracker.getKeyProgress(key, type);
                 if (debug) {
                     dbg(sp, "[SPEND:" + spec.key() + "] +" + fmt(loss) + " " + type.id + " (cur=" + fmt(cur) + " / " + fmt(threshold) + ")");
                 }
-                // UI/active tracking omitted
+                if (spec.showUi()) {
+                    int cint = (int) cur;
+                    if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
+                        boolean show = cur > 0f;
+                        com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, cur));
+                    }
+                }
+                if (cur <= 0f) {
+                    unit.getSpendRuntime().removeActive(type, key);
+                }
             }
         }
     }
@@ -91,4 +114,5 @@ public final class SpendThresholdManager {
         sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(msg));
     }
     private static String fmt(float v) { return String.format(java.util.Locale.US, "%.1f", v); }
+    private static String fmtSec(float s) { return String.format(java.util.Locale.US, "%.1f", s); }
 }

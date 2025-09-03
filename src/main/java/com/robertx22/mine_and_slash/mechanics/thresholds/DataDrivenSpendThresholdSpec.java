@@ -9,12 +9,13 @@ import java.util.Set;
 
 public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
 
-    public enum ThresholdMode { X_PER_LEVEL, FLAT, PCT_OF_MAX }
+    public enum ThresholdMode { FLAT, PERCENT_OF_MAX }
 
     private final ThresholdMode mode;
     private final float value;
     private final boolean multiplyByLevel;
-    @Nullable private final ResourceType pctMaxOf;
+    @Nullable private final ResourceType percentMaxOf;
+    private final boolean showUi;
 
     public DataDrivenSpendThresholdSpec(
             String key,
@@ -22,40 +23,54 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
             ThresholdMode mode,
             float value,
             boolean multiplyByLevel,
-            @Nullable ResourceType pctMaxOf,
+            @Nullable ResourceType percentMaxOf,
+            Set<String> lockWhileEffectIds,
+            int cooldownTicks,
+            boolean lockWhileCooldown,
+            boolean dropProgressWhileLocked,
+            boolean resetProgressOnProc,
+            boolean showUi
+    ) {
+        super(resource, 0f, key,
+              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, showUi);
+        this.mode = mode;
+        this.value = value;
+        this.multiplyByLevel = multiplyByLevel;
+        this.percentMaxOf = percentMaxOf;
+        this.showUi = showUi;
+    }
+
+    // Backward-compatible ctor (defaults showUi=false)
+    public DataDrivenSpendThresholdSpec(
+            String key,
+            ResourceType resource,
+            ThresholdMode mode,
+            float value,
+            boolean multiplyByLevel,
+            @Nullable ResourceType percentMaxOf,
             Set<String> lockWhileEffectIds,
             int cooldownTicks,
             boolean lockWhileCooldown,
             boolean dropProgressWhileLocked,
             boolean resetProgressOnProc
     ) {
-        super(resource, /*perLevelFactor (unused)*/ 0f, key,
-              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc);
-        this.mode = mode;
-        this.value = value;
-        this.multiplyByLevel = multiplyByLevel;
-        this.pctMaxOf = pctMaxOf;
+        this(key, resource, mode, value, multiplyByLevel, percentMaxOf, lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, false);
     }
 
     @Override
     public float thresholdFor(EntityData unit) {
         float base;
         switch (mode) {
-            case X_PER_LEVEL:
-                base = value * Math.max(1, unit.getLevel());
-                break;
-            case FLAT:
-                base = value * (multiplyByLevel ? Math.max(1, unit.getLevel()) : 1f);
-                break;
-            case PCT_OF_MAX:
-                ResourceType rt = (pctMaxOf != null) ? pctMaxOf : resource();
-                float max = unit.getResources().getMax(unit.getEntity(), rt);
+            case PERCENT_OF_MAX -> {
+                // default to this spec's resource if percentOf is null
+                ResourceType tgt = (percentMaxOf != null) ? percentMaxOf : resource();
+                float max = unit.getResources().getMax(unit.getEntity(), tgt);
                 base = (value / 100f) * max;
-                if (multiplyByLevel) base *= Math.max(1, unit.getLevel());
-                break;
-            default:
-                base = 0f;
+            }
+            case FLAT -> base = value;
+            default -> base = value;
         }
+        if (multiplyByLevel) base *= Math.max(1, unit.getLevel());
         return Math.max(0f, base);
     }
 
@@ -63,4 +78,8 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
     public void onProc(ServerPlayer sp, int procs) {
         // No default action here; datapack loader wires actions.
     }
+
+    public boolean showUi() { return showUi; }
+
+    // Perk lock is handled by callers (anonymous subclass) when needed.
 }

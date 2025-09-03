@@ -6,7 +6,6 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,14 +21,10 @@ public abstract class SpendThresholdSpec {
     private final boolean lockWhileCooldown;         // treat cooldown as a lock
     private final boolean dropProgressWhileLocked;
     private final boolean resetProgressOnProc;
+    private final boolean showUi; // whether to render progress HUD for this spec
 
     // registry ordering (lower runs first)
     private int priority = 0;
-
-    // Legacy/simple ctor
-    public SpendThresholdSpec(ResourceType resource, float perLevelFactor, String key) {
-        this(resource, perLevelFactor, key, Collections.emptySet(), 0, false, true, true);
-    }
 
     // Full ctor used by data-driven impl
     public SpendThresholdSpec(ResourceType resource,
@@ -39,7 +34,8 @@ public abstract class SpendThresholdSpec {
                               int cooldownTicks,
                               boolean lockWhileCooldown,
                               boolean dropProgressWhileLocked,
-                              boolean resetProgressOnProc) {
+                              boolean resetProgressOnProc,
+                              boolean showUi) {
         this.resource = resource;
         this.perLevelFactor = perLevelFactor;
         this.key = key;
@@ -48,6 +44,19 @@ public abstract class SpendThresholdSpec {
         this.lockWhileCooldown = lockWhileCooldown;
         this.dropProgressWhileLocked = dropProgressWhileLocked;
         this.resetProgressOnProc = resetProgressOnProc;
+        this.showUi = showUi;
+    }
+
+    // Backward-compatible ctor (defaults showUi=false)
+    public SpendThresholdSpec(ResourceType resource,
+                              float perLevelFactor,
+                              String key,
+                              Set<String> lockWhileEffectIds,
+                              int cooldownTicks,
+                              boolean lockWhileCooldown,
+                              boolean dropProgressWhileLocked,
+                              boolean resetProgressOnProc) {
+        this(resource, perLevelFactor, key, lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, false);
     }
 
     // ===== accessors =====
@@ -59,6 +68,7 @@ public abstract class SpendThresholdSpec {
     public boolean resetOnProc()                { return resetProgressOnProc; }
     public int cooldownTicks()                  { return cooldownTicks; }
     public int priority()                       { return priority; }
+    public boolean showUi()                     { return showUi; }
 
     // fluent config (for code-defined specs)
     public SpendThresholdSpec withCooldownSeconds(int seconds) {
@@ -88,9 +98,18 @@ public abstract class SpendThresholdSpec {
 
     private SpendThresholdSpec newWrapper(Set<String> lockIds, int cooldown, boolean lockCD, boolean dropLocked, boolean resetOnProc) {
         // create a shallow “copy” retaining dynamic behavior (onProc/thresholdFor come from subclass)
-        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, lockIds, cooldown, lockCD, dropLocked, resetOnProc) {
+        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, lockIds, cooldown, lockCD, dropLocked, resetOnProc, this.showUi) {
             @Override public float thresholdFor(EntityData unit) { return SpendThresholdSpec.this.thresholdFor(unit); }
             @Override public void onProc(ServerPlayer sp, int procs) { SpendThresholdSpec.this.onProc(sp, procs); }
+            @Override public boolean isLockedFor(EntityData unit) { return SpendThresholdSpec.this.isLockedFor(unit); }
+        }.withPriority(this.priority);
+    }
+
+    public SpendThresholdSpec withShowUi(boolean on) {
+        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc, on) {
+            @Override public float thresholdFor(EntityData unit) { return SpendThresholdSpec.this.thresholdFor(unit); }
+            @Override public void onProc(ServerPlayer sp, int procs) { SpendThresholdSpec.this.onProc(sp, procs); }
+            @Override public boolean isLockedFor(EntityData unit) { return SpendThresholdSpec.this.isLockedFor(unit); }
         }.withPriority(this.priority);
     }
 
@@ -104,10 +123,14 @@ public abstract class SpendThresholdSpec {
         if (lockWhileEffectIds.isEmpty()) return false;
         var store = unit.getStatusEffectsData();
         for (String id : lockWhileEffectIds) {
-            ExileEffect fx = ExileDB.ExileEffects().get(id);
-            if (fx != null && store.has(fx)) return true;
+            ExileEffect effect = ExileDB.ExileEffects().get(id);
+            if (effect != null && store.has(effect)) return true;
         }
         return false;
+    }
+
+    public boolean isLockedFor(EntityData unit) {
+        return isEffectLocked(unit);
     }
 
     /** Start cooldown (no-op if cooldownTicks == 0). */
@@ -122,7 +145,7 @@ public abstract class SpendThresholdSpec {
 
     // time helpers
     public static int secondsToTicks(int seconds) {
-        return (seconds <= 0) ? 0 : Math.max(1, seconds * 20);
+        return (seconds <= 0) ? 0 : seconds * 20;
     }
     public static float ticksToSeconds(int ticks) { return ticks / 20f; }
 }

@@ -107,7 +107,10 @@ public class ModEffects implements ExileRegistryInit {
 
     // ---------- Helper ----------
     private static EffectCtx state(String id, String name, Elements elem) {
-        return new EffectCtx(id, name, (elem != null ? elem : Elements.Physical), EffectType.beneficial);
+        return new EffectCtx(id, name, elem, EffectType.beneficial);
+    }
+    private static EffectCtx statePhysical(String id, String name) {
+        return state(id, name, Elements.Physical);
     }
 
     // Pretty names for resources (UI text)
@@ -138,10 +141,10 @@ public class ModEffects implements ExileRegistryInit {
             var nice = RES_NAME.get(rt);
 
             LEECHING_STATE_BY_RES.put(
-                rt, state("leeching_" + rt.id + "_state", "Leeching " + nice, null)
+                rt, statePhysical("leeching_" + rt.id + "_state", "Leeching " + nice)
             );
             REGEN_STATE_BY_RES.put(
-                rt, state("regen_" + rt.id + "_state", "Regenerating " + nice, null)
+                rt, statePhysical("regen_" + rt.id + "_state", "Regenerating " + nice)
             );
         }
     }

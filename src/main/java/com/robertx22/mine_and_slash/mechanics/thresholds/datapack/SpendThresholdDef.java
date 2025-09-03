@@ -5,6 +5,9 @@ import com.robertx22.mine_and_slash.mechanics.thresholds.DataDrivenSpendThreshol
 import com.robertx22.mine_and_slash.mechanics.thresholds.SpendThresholdSpec;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
+import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.event_hooks.my_events.EffectUtils;
 
 import java.util.*;
 
@@ -32,8 +35,8 @@ public class SpendThresholdDef {
     }
     public Locks locks = new Locks();
 
-    @SerializedName("cooldown_seconds")
-    public int cooldownSeconds = 0;
+    @SerializedName("cooldown_ticks")
+    public int cooldownTicks = 0;
 
     @SerializedName("require_stat")
     public String requireStatId = "";
@@ -41,7 +44,7 @@ public class SpendThresholdDef {
     public static class ProcAction {
         public String action; // "apply_effect"
         @SerializedName("exile_potion_id") public String effectId;
-        @SerializedName("duration_seconds") public int durationSeconds = 0;
+        @SerializedName("duration_ticks") public int durationTicks = 0;
         public int stacks = 1;
         @SerializedName("on_expire") public java.util.Map<String, Integer> onExpire = java.util.Collections.emptyMap();
     }
@@ -76,7 +79,7 @@ public class SpendThresholdDef {
                 mult,
                 percentOf,
                 lockEff,
-                SpendThresholdSpec.secondsToTicks(cooldownSeconds),
+                cooldownTicks,
                 locks != null && locks.lockWhileCooldown,
                 locks != null && locks.dropProgressWhileLocked,
                 locks != null && locks.resetProgressOnProc,
@@ -91,42 +94,34 @@ public class SpendThresholdDef {
 
                 for (ProcAction a : onProc) {
                     if (!"exile_effect".equalsIgnoreCase(a.action) || a.effectId == null) continue;
-                    var effect = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(a.effectId);
+                    var effect = ExileDB.ExileEffects().get(a.effectId);
                     if (effect == null) continue;
 
-                    var inst = store.getOrCreate(effect);
+                    int durTicks = Math.max(1, a.durationTicks);
                     int stacks = Math.max(1, a.stacks);
-                    if (effect.max_stacks > 0) stacks = Math.min(stacks, effect.max_stacks);
-                    inst.stacks     = Math.max(inst.stacks, stacks);
-                    int durTicks = SpendThresholdSpec.secondsToTicks(a.durationSeconds);
-                    inst.ticks_left = Math.max(inst.ticks_left, Math.max(1, durTicks));
+                    var inst = EffectUtils.applyEffect(sp, effect, durTicks, stacks);
 
-                    inst.self_cast = true;
-                    inst.caster_uuid = sp.getUUID().toString();
-
-                    // Attach on-expire duration overrides (convert seconds -> ticks)
-                    if (a.onExpire != null && !a.onExpire.isEmpty()) {
+                    // Attach on-expire duration overrides (ticks directly)
+                    /*if (a.onExpire != null && !a.onExpire.isEmpty()) {
                         if (inst.onExpireEffectDurationTicks == null) {
                             inst.onExpireEffectDurationTicks = new java.util.HashMap<>();
                         }
                         for (var e : a.onExpire.entrySet()) {
-                            int ticks = SpendThresholdSpec.secondsToTicks(Math.max(0, e.getValue()));
+                            int ticks = Math.max(0, e.getValue());
                             if (ticks > 0) {
                                 inst.onExpireEffectDurationTicks.put(e.getKey(), ticks);
                             }
                         }
-                    }
+                    }*/ // TODO: Add back in when onExpire is implemented
 
-                    effect.onApply(sp);
-                    unit.sync.setDirty();
                 }
             }
 
             @Override
-            public boolean isLockedFor(com.robertx22.mine_and_slash.capability.entity.EntityData unit) {
+            public boolean isLockedFor(EntityData unit) {
                 if (super.isEffectLocked(unit)) return true;
                 if (requireStatId != null && !requireStatId.isEmpty()) {
-                    var st = com.robertx22.mine_and_slash.database.registry.ExileDB.Stats().get(requireStatId);
+                    var st = ExileDB.Stats().get(requireStatId);
                     if (st != null) {
                         return unit.getUnit().getCalculatedStat(st).getValue() <= 0;
                     }

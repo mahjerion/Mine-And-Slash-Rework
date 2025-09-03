@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.event_hooks.my_events;
 
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
+import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,10 +32,17 @@ public final class EffectUtils {
      * @param ctx           effect context (ids defined in ModEffects)
      * @param durationTicks desired remaining lifetime (ticks); merged via MAX
      * @param stacks        desired stacks; clamped to effect.max_stacks and merged via MAX
+     * @return ExileEffectInstanceData for the applied effect, or null if resolve failed.
      */
-    public static void applyState(ServerPlayer sp, EffectCtx ctx, int durationTicks, int stacks) {
+    public static ExileEffectInstanceData applyState(ServerPlayer sp, EffectCtx ctx, int durationTicks, int stacks) {
         final ExileEffect effect = resolveEffect(ctx);
-        if (effect == null) return;
+        if (effect == null) return null;
+
+        return applyEffect(sp, effect, durationTicks, stacks);
+    }
+
+    public static ExileEffectInstanceData applyEffect(ServerPlayer sp, ExileEffect effect, int durationTicks, int stacks) {
+        if (effect == null) return null;
 
         var unit  = Load.Unit(sp);
         var store = unit.getStatusEffectsData();
@@ -49,6 +57,7 @@ public final class EffectUtils {
         // Keep vanilla stats / one-of-a-kind cleanup in sync
         effect.onApply(sp);
         unit.sync.setDirty(); // network/state sync
+        return inst;
     }
 
     /** Try both resourcePath (preferred) and id; some data uses either. */

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.Collections;
 import java.util.Set;
 
+
 public abstract class SpendThresholdSpec {
     private final ResourceType resource;
     private final float perLevelFactor;  // used by default thresholdFor()

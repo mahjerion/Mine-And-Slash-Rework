@@ -59,6 +59,10 @@ public class ExileEffectAction extends SpellAction {
             targets.forEach(t -> {
 
                 if (RandomUtils.roll(chance)) {
+                    // If ON_EXPIRE, ComponentPart handles direct application to avoid same-tick races
+                    if (ctx.activation == com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation.ON_EXPIRE) {
+                        return; // no-op here; handled upstream
+                    }
                     ExilePotionEvent potionEvent = EventBuilder.ofEffect(ctx.calculatedSpellData, ctx.caster, t, Load.Unit(ctx.caster)
                                     .getLevel(), potion, action.getOther(), duration, infinite)
                             .setSpell(ctx.calculatedSpellData.getSpell())
@@ -68,7 +72,12 @@ public class ExileEffectAction extends SpellAction {
                     potionEvent.spellid = ctx.calculatedSpellData.getSpell()
                             .GUID();
 
-                    potionEvent.Activate();
+                    // Normal path for non-ON_EXPIRE contexts
+                    try {
+                        potionEvent.Activate();
+                    } catch (Exception ex) {
+                        throw ex;
+                    }
                 }
 
             });

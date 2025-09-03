@@ -92,6 +92,10 @@ public class ExilePotionEvent extends EffectEvent {
         }
 
         Load.Unit(target).equipmentCache.STATUS.setDirty();
+
+        if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && target instanceof net.minecraft.server.level.ServerPlayer sp) {
+            com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_reapplied_" + effect.GUID(), "[EFFECT][EXPIRE] Reapplied " + effect.GUID() + " ticks_left=" + extraData.ticks_left + " stacks=" + extraData.stacks + " [id=" + System.identityHashCode(extraData) + "]", 400);
+        }
     }
 
 

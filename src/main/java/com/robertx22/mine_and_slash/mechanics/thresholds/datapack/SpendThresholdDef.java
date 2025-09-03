@@ -57,13 +57,17 @@ public class SpendThresholdDef {
         // Modes supported: FLAT (optionally with multiply_by_level) or PERCENT_OF_MAX
         String rawMode = (threshold.mode == null ? "FLAT" : threshold.mode.trim()).toUpperCase(Locale.ROOT);
         boolean mult = threshold.multiplyByLevel;
-        DataDrivenSpendThresholdSpec.ThresholdMode mode =
-                "PERCENT_OF_MAX".equals(rawMode)
-                        ? DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX
-                        : DataDrivenSpendThresholdSpec.ThresholdMode.FLAT; // default + treats legacy values as FLAT
+        DataDrivenSpendThresholdSpec.ThresholdMode mode;
+        if ("PERCENT_OF_MAX".equals(rawMode)) {
+            mode = DataDrivenSpendThresholdSpec.ThresholdMode.PCT_OF_MAX;
+        } else if ("X_PER_LEVEL".equals(rawMode)) {
+            mode = DataDrivenSpendThresholdSpec.ThresholdMode.X_PER_LEVEL;
+        } else {
+            mode = DataDrivenSpendThresholdSpec.ThresholdMode.FLAT; // default + treats legacy values as FLAT
+        }
 
         ResourceType percentOf = null;
-        if (mode == DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX
+        if (mode == DataDrivenSpendThresholdSpec.ThresholdMode.PCT_OF_MAX
                 && threshold.percentOf != null && !threshold.percentOf.isEmpty()) {
             percentOf = parseResource(threshold.percentOf, res); // default to this spec’s resource if bad input
         }
@@ -82,8 +86,7 @@ public class SpendThresholdDef {
                 cooldownTicks,
                 locks != null && locks.lockWhileCooldown,
                 locks != null && locks.dropProgressWhileLocked,
-                locks != null && locks.resetProgressOnProc,
-                showUi
+                locks != null && locks.resetProgressOnProc
         ) {
             @Override
             public void onProc(ServerPlayer sp, int procs) {
@@ -102,7 +105,7 @@ public class SpendThresholdDef {
                     var inst = EffectUtils.applyEffect(sp, effect, durTicks, stacks);
 
                     // Attach on-expire duration overrides (ticks directly)
-                    /*if (a.onExpire != null && !a.onExpire.isEmpty()) {
+                    if (a.onExpire != null && !a.onExpire.isEmpty()) {
                         if (inst.onExpireEffectDurationTicks == null) {
                             inst.onExpireEffectDurationTicks = new java.util.HashMap<>();
                         }
@@ -112,7 +115,7 @@ public class SpendThresholdDef {
                                 inst.onExpireEffectDurationTicks.put(e.getKey(), ticks);
                             }
                         }
-                    }*/ // TODO: Add back in when onExpire is implemented
+                    }
 
                 }
             }
@@ -128,7 +131,7 @@ public class SpendThresholdDef {
                 }
                 return false;
             }
-        }.withPriority(priority);
+        }.withPriority(priority).withShowUi(showUi);
     }
 
     // --- helpers ---

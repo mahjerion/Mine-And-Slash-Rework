@@ -25,6 +25,7 @@ import com.robertx22.mine_and_slash.vanilla_mc.commands.stats.ClearStats;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.stats.GiveStat;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.stats.ListStats;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.stats.RemoveStat;
+import com.robertx22.mine_and_slash.vanilla_mc.new_commands.DebugCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.BuilderToolCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.DevCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.EntityCommands;
@@ -40,6 +41,7 @@ public class CommandRegister {
         EntityCommands.init(dispatcher);
         PlayerCommands.init(dispatcher);
         DevCommands.init(dispatcher);
+        DebugCommands.init(dispatcher);
         BuilderToolCommands.reg(dispatcher);
 
         GiveExactUnique.register(dispatcher);

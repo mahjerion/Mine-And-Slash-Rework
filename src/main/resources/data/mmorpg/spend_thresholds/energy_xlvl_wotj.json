@@ -9,11 +9,11 @@
       "value": 10,
       "multiply_by_level": true
     },
-    "cooldown_seconds": 20,
+    "cooldown_ticks": 0,
     "require_stat": "unlock_wotj",
     "locks": {
       "effects": ["wrath_of_the_juggernaut", "burnout"],
-      "lock_while_cooldown": true,
+      "lock_while_cooldown": false,
       "drop_progress_while_locked": true,
       "reset_progress_on_proc": true
     },
@@ -21,10 +21,10 @@
       {
         "action": "exile_effect",
         "exile_potion_id": "wrath_of_the_juggernaut",
-        "duration_seconds": 10,
+        "duration_ticks": 200,
         "stacks": 1,
         "on_expire": {
-          "burnout": 10
+          "burnout": 200
         }
       }
     ]

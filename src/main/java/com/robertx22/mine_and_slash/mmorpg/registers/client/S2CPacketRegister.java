@@ -33,6 +33,7 @@ public class S2CPacketRegister {
         Packets.registerServerToClient(MMORPG.NETWORK, new MapCompletePacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new OpenEntityStatsReplyPacket(), i++);
 
+        Packets.registerServerToClient(MMORPG.NETWORK, new ThresholdUiPacket(), i++);
 
     }
 }

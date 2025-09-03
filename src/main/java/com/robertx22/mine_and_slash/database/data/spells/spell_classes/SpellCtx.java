@@ -29,6 +29,11 @@ public class SpellCtx {
     public CalculatedSpellData calculatedSpellData;
 
 
+    public String expiringEffectId = null;
+    public java.util.Map<String, Integer> onExpireEffectDurationTicks = java.util.Collections.emptyMap();
+    public java.util.Set<String> onExpireApplied = new java.util.HashSet<>();
+
+
     public SpellCtx setSourceEntity(Entity en) {
         this.sourceEntity = en;
         return this;
@@ -103,7 +108,12 @@ public class SpellCtx {
         Objects.requireNonNull(sourceEntity);
         Objects.requireNonNull(data);
         LivingEntity target = sourceEntity instanceof LivingEntity ? (LivingEntity) sourceEntity : null;
-        return new SpellCtx(EntityActivation.ON_EXPIRE, sourceEntity, caster, target, data);
+        SpellCtx ctx = new SpellCtx(EntityActivation.ON_EXPIRE, sourceEntity, caster, target, data);
+        if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE
+                && caster instanceof net.minecraft.server.level.ServerPlayer sp) {
+            sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[EFFECT][EXPIRE] Ctx built; caster=" + caster.getName().getString() + ", target=" + (target == null ? "null" : target.getName().getString())));
+        }
+        return ctx;
     }
 
     public static SpellCtx onTick(LivingEntity caster, Entity sourceEntity, CalculatedSpellData data) {

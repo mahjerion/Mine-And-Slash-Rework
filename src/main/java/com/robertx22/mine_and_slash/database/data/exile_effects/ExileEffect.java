@@ -27,6 +27,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -252,16 +253,61 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
 
             if (data != null) {
                 LivingEntity caster = data.getCaster(target.level());
-                if (caster != null && spell != null) {
+
+                if (caster == null) {
+                    caster = target;
+                }
+                // --- Debug: show expire intent
+                if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE) {
+                    if (target instanceof ServerPlayer sp) {
+                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] onRemove(" + GUID() + ") stacks=" + data.stacks + ", ticks_left=" + data.ticks_left + ", infinite=" + data.is_infinite, 200);
+                    }
+                    if (caster instanceof ServerPlayer spc && caster != target) {
+                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spc, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] Trigger from " + GUID() + " on target " + target.getName().getString(), 200);
+                    }
+                }
+                if (spell != null && caster != null) {
                     SpellCtx ctx = SpellCtx.onExpire(caster, target, data.calcSpell);
+                    // Attach expiring effect id and any per-effect duration overrides carried on the instance
+                    ctx.expiringEffectId = this.GUID();
+                    ctx.onExpireEffectDurationTicks = (data.onExpireEffectDurationTicks == null)
+                            ? java.util.Collections.emptyMap()
+                            : java.util.Collections.unmodifiableMap(data.onExpireEffectDurationTicks);
                     spell.tryActivate(Spell.DEFAULT_EN_NAME, ctx); // source is default name at all times
+                    if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && target instanceof ServerPlayer sp2) {
+                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp2, "expire_dispatched_" + GUID(), "[EFFECT][EXPIRE] Dispatched attached spell for " + GUID(), 400);
+                    }
+
+                    // Apply any leftover datapack-declared on-expire effects that weren't applied by actions (server only)
+                    if (!target.level().isClientSide && data.onExpireEffectDurationTicks != null && !data.onExpireEffectDurationTicks.isEmpty()) {
+                        for (var entry : data.onExpireEffectDurationTicks.entrySet()) {
+                            String effId = entry.getKey();
+                            int durTicks = Math.max(1, entry.getValue());
+                            if (ctx.onExpireApplied != null && ctx.onExpireApplied.contains(effId)) {
+                                continue;
+                            }
+                            var extraEff = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(effId);
+                            if (extraEff != null) {
+                                var unitT = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(target);
+                                var storeT = unitT.getStatusEffectsData();
+                                var instT = storeT.getOrCreate(extraEff);
+                                instT.stacks = Math.max(instT.stacks, 1);
+                                instT.ticks_left = Math.max(instT.ticks_left, durTicks);
+                                instT.is_infinite = false;
+                                instT.caster_uuid = caster.getStringUUID();
+                                try { extraEff.onApply(target); } catch (Exception ignored) {}
+                                unitT.equipmentCache.STATUS.setDirty();
+                                unitT.sync.setDirty();
+                                if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && target instanceof ServerPlayer spx) {
+                                    com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spx, "expire_extra_" + effId, "[EFFECT][EXPIRE] Extra-applied " + effId + " tl=" + instT.ticks_left, 400);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            EntityData unitdata = Load.Unit(target);
-            unitdata.getStatusEffectsData()
-                    .get(this).stacks = 0;
-            unitdata.equipmentCache.STATUS.setDirty();
+            Load.Unit(target).equipmentCache.STATUS.setDirty();
 
 
         } catch (Exception e) {

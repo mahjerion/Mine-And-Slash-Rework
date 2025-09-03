@@ -85,7 +85,7 @@ public class ResourceTracker {
     private final java.util.EnumMap<ResourceType, java.util.Map<String, Float>> keyProgress =
         new java.util.EnumMap<>(ResourceType.class);
 
-        public void clearKey(ResourceType rt, String key) {
+    public void clearKey(ResourceType rt, String key) {
             if (key == null || key.isEmpty()) return;
             var byKey = keyProgress.get(rt);
             if (byKey == null) return;
@@ -117,6 +117,32 @@ public class ResourceTracker {
     public float getKeyProgress(String key, ResourceType rt) {
         var byKey = keyProgress.get(rt);
         return byKey == null ? 0f : byKey.getOrDefault(key, 0f);
+    }
+
+    /**
+     * Set the exact cursor value for a specific key/resource.
+     * If value <= EPS the key entry is removed.
+     */
+    public void setKeyProgress(String key, ResourceType rt, float value) {
+        if (key == null || key.isEmpty()) return;
+        var byKey = keyProgress.computeIfAbsent(rt, __ -> new java.util.HashMap<>());
+        float val = Math.max(0f, value);
+        if (val <= EPS) byKey.remove(key); else byKey.put(key, val);
+        if (byKey.isEmpty()) keyProgress.remove(rt);
+    }
+
+    /**
+     * Decrease the cursor by a fixed amount, clamped at zero. Returns the new value.
+     */
+    public float decayKeyProgress(String key, ResourceType rt, float amount) {
+        if (key == null || key.isEmpty() || amount <= 0f) return getKeyProgress(key, rt);
+        var byKey = keyProgress.get(rt);
+        if (byKey == null) return 0f;
+        float cur = byKey.getOrDefault(key, 0f);
+        float next = Math.max(0f, cur - amount);
+        if (next <= EPS) byKey.remove(key); else byKey.put(key, next);
+        if (byKey.isEmpty()) keyProgress.remove(rt);
+        return next;
     }
 
     /** Optional utility if you want to wipe a resource’s accumulator. */

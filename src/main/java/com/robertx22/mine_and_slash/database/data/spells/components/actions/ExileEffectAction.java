@@ -74,7 +74,6 @@ public class ExileEffectAction extends SpellAction {
                     potionEvent.spellid = ctx.calculatedSpellData.getSpell()
                             .GUID();
 
-                    // Normal path for non-ON_EXPIRE contexts
                     try {
                         potionEvent.Activate();
                     } catch (Exception ex) {

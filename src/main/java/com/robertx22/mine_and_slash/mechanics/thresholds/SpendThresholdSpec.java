@@ -12,21 +12,19 @@ import java.util.Set;
 
 public abstract class SpendThresholdSpec {
     private final ResourceType resource;
-    private final float perLevelFactor;  // used by default thresholdFor()
+    private final float perLevelFactor;
     private final String key;
 
     // gating/cooldown controls
     private final Set<String> lockWhileEffectIds;
     private final int cooldownTicks;
-    private final boolean lockWhileCooldown;         // treat cooldown as a lock
+    private final boolean lockWhileCooldown;         // Used to lock the threshold while the cooldown is active. **RECOMMENDED FOR DEBUGGING ONLY**
     private final boolean dropProgressWhileLocked;
     private final boolean resetProgressOnProc;
-    private final boolean showUi; // whether to render progress HUD for this spec
+    private final boolean showUi;
 
-    // registry ordering (lower runs first)
     private int priority = 0;
 
-    // Full ctor used by data-driven impl
     public SpendThresholdSpec(ResourceType resource,
                               float perLevelFactor,
                               String key,
@@ -45,18 +43,6 @@ public abstract class SpendThresholdSpec {
         this.dropProgressWhileLocked = dropProgressWhileLocked;
         this.resetProgressOnProc = resetProgressOnProc;
         this.showUi = showUi;
-    }
-
-    // Backward-compatible ctor (defaults showUi=false)
-    public SpendThresholdSpec(ResourceType resource,
-                              float perLevelFactor,
-                              String key,
-                              Set<String> lockWhileEffectIds,
-                              int cooldownTicks,
-                              boolean lockWhileCooldown,
-                              boolean dropProgressWhileLocked,
-                              boolean resetProgressOnProc) {
-        this(resource, perLevelFactor, key, lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, false);
     }
 
     // ===== accessors =====
@@ -85,12 +71,10 @@ public abstract class SpendThresholdSpec {
         }.withPriority(this.priority);
     }
 
-    /** Default threshold = perLevelFactor × LVL. Subclasses may override. */
     public float thresholdFor(EntityData unit) {
         return Math.max(0f, perLevelFactor * Math.max(1, unit.getLevel()));
     }
 
-    /** True if any gating effect is active. */
     public boolean isEffectLocked(EntityData unit) {
         if (lockWhileEffectIds.isEmpty()) return false;
         var store = unit.getStatusEffectsData();
@@ -105,14 +89,12 @@ public abstract class SpendThresholdSpec {
         return isEffectLocked(unit);
     }
 
-    /** Start cooldown (no-op if cooldownTicks == 0). */
     public void startCooldown(EntityData unit, long now) {
         if (cooldownTicks > 0) {
             unit.getSpendRuntime().startCooldown(keyFor(unit), now, cooldownTicks);
         }
     }
 
-    /** Called when one or more thresholds are consumed. */
     public abstract void onProc(ServerPlayer sp, int procs);
 
 }

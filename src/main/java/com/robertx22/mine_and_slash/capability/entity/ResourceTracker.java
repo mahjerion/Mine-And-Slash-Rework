@@ -2,7 +2,7 @@ package com.robertx22.mine_and_slash.capability.entity;
 
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 
-/**
+/*
  * Accumulates resource LOSS per type (spend, drains, damage, etc).
  * Call addLoss(...) whenever a resource actually decreases.
  * Use consumeThresholds(...) / addAndConsumeForKey(...) to fire effects and keep remainder.
@@ -10,21 +10,17 @@ import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 public class ResourceTracker {
     private static final float EPS = 1e-4f;
 
-    // Global per-resource accumulators (used for simple thresholds or debug)
     private final java.util.EnumMap<ResourceType, Float> lost = new java.util.EnumMap<>(ResourceType.class);
 
-    /** Record an actual decrease in a resource. */
     public void addLoss(ResourceType rt, float amount) {
         if (amount <= 0f) return;
         lost.merge(rt, amount, Float::sum);
     }
 
-    /** Current accumulated loss for a resource. */
     public float getLoss(ResourceType rt) {
         return lost.getOrDefault(rt, 0f);
     }
 
-    /** Consume thresholds for a single resource; keep remainder. */
     public int consumeThresholds(ResourceType type, float threshold) {
         if (threshold <= 0f) return 0;
         float have = lost.getOrDefault(type, 0f);
@@ -38,16 +34,11 @@ public class ResourceTracker {
         return procs;
     }
 
-    /**
-     * Consume as many full thresholds as available across a set of resources (combined bucket).
-     * Drain is deterministic: the iteration order of the set decides which resource is consumed first.
-     * <p><b>Note:</b> Pass an {@link java.util.EnumSet} to guarantee stable drain order.</p>
-     */
     public int consumeThresholdsAcross(java.util.Set<ResourceType> types, float threshold) {
         if (threshold <= 0f || types == null || types.isEmpty()) return 0;
 
         int procs = 0;
-        // Loop while the combined total can pay for at least one threshold
+
         while (total(types) + EPS >= threshold) {
             float need = threshold;
 
@@ -62,26 +53,23 @@ public class ResourceTracker {
                     else lost.put(rt, remaining);
                     need -= take;
                 }
-                if (need <= EPS) break; // satisfied this proc
+                if (need <= EPS) break;
             }
             procs++;
         }
 
-        // Prune tiny leftovers just in case
         for (ResourceType rt : types) {
             if (lost.getOrDefault(rt, 0f) <= EPS) lost.remove(rt);
         }
         return procs;
     }
 
-    /** Sum of accumulated losses for the given set. */
     private float total(java.util.Set<ResourceType> types) {
         float sum = 0f;
         for (ResourceType rt : types) sum += lost.getOrDefault(rt, 0f);
         return sum;
     }
 
-    // Per-key cursors so multiple specs on the same resource don't interfere
     private final java.util.EnumMap<ResourceType, java.util.Map<String, Float>> keyProgress =
         new java.util.EnumMap<>(ResourceType.class);
 
@@ -95,7 +83,6 @@ public class ResourceTracker {
             }
         }
 
-    /** Add loss to a specific key’s cursor for this resource and consume thresholds. */
     public int addAndConsumeForKey(String key, ResourceType rt, float add, float threshold) {
         if (key == null || key.isEmpty() || add <= 0f || threshold <= 0f) return 0;
 
@@ -113,16 +100,11 @@ public class ResourceTracker {
         return procs;
     }
 
-    /** Read current cursor for debug/UI. */
     public float getKeyProgress(String key, ResourceType rt) {
         var byKey = keyProgress.get(rt);
         return byKey == null ? 0f : byKey.getOrDefault(key, 0f);
     }
 
-    /**
-     * Set the exact cursor value for a specific key/resource.
-     * If value <= EPS the key entry is removed.
-     */
     public void setKeyProgress(String key, ResourceType rt, float value) {
         if (key == null || key.isEmpty()) return;
         var byKey = keyProgress.computeIfAbsent(rt, __ -> new java.util.HashMap<>());
@@ -131,9 +113,6 @@ public class ResourceTracker {
         if (byKey.isEmpty()) keyProgress.remove(rt);
     }
 
-    /**
-     * Decrease the cursor by a fixed amount, clamped at zero. Returns the new value.
-     */
     public float decayKeyProgress(String key, ResourceType rt, float amount) {
         if (key == null || key.isEmpty() || amount <= 0f) return getKeyProgress(key, rt);
         var byKey = keyProgress.get(rt);
@@ -145,12 +124,10 @@ public class ResourceTracker {
         return next;
     }
 
-    /** Optional utility if you want to wipe a resource’s accumulator. */
     public void clear(ResourceType rt) {
         lost.remove(rt);
     }
 
-    /** Optional: wipe all. */
     public void clearAll() {
         lost.clear();
     }

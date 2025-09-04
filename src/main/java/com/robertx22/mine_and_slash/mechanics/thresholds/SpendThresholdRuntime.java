@@ -8,21 +8,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class SpendThresholdRuntime {
-    // gameTime (ticks) when each key’s cooldown ends
+
     private final Map<String, Long> cooldownUntil = new HashMap<>();
 
-    // last activity tick for each threshold key (progress added)
     private final Map<String, Long> lastActivityTick = new HashMap<>();
 
-    // last decay tick applied for each key (so we decay at most once per second)
     private final Map<String, Long> lastDecayTick = new HashMap<>();
 
-    // last integer progress sent to client (to throttle network updates)
     private final Map<String, Integer> lastProgressIntSent = new HashMap<>();
 
-    // Index of active threshold keys by resource (only keys with progress > 0 or recently updated)
     private final java.util.EnumMap<ResourceType, Set<String>> activeByResource = new java.util.EnumMap<>(ResourceType.class);
-    // Quick lookup of spec by key (used for decay threshold value)
     private final Map<String, SpendThresholdSpec> specByKey = new HashMap<>();
 
     public void startCooldown(String key, long now, int cooldownTicks) {
@@ -35,7 +30,6 @@ public class SpendThresholdRuntime {
         return until != null && now < until;
     }
 
-    /** Remaining ticks until ready (0 if no cooldown / already ready). */
     public int cooldownRemainingTicks(String key, long now) {
         Long until = cooldownUntil.get(key);
         if (until == null) return 0;

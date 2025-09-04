@@ -17,7 +17,6 @@ public class DebugCommands {
 
     public static void init(CommandDispatcher<CommandSourceStack> dispatcher) {
 
-        // New unified debug toggle:
         // /mine_and_slash debug <spend_threshold|resource_restore|onexpire> <true|false|toggle|on|off>
         CommandBuilder.of(CommandRefs.ID, dispatcher, x -> {
             StringWrapper SUBJECT = new StringWrapper("subject", () -> List.of("spend_threshold", "resource_restore", "onexpire"));
@@ -31,7 +30,6 @@ public class DebugCommands {
                 String subject = SUBJECT.get(e);
                 String state = STATE.get(e);
 
-                // Validate inputs (in addition to tab suggestions)
                 String subjLower = subject == null ? "" : subject.toLowerCase(java.util.Locale.ROOT);
                 String stateLower = state == null ? "" : state.toLowerCase(java.util.Locale.ROOT);
                 boolean subjOk = subjLower.equals("spend_threshold") || subjLower.equals("resource_restore") || subjLower.equals("onexpire");

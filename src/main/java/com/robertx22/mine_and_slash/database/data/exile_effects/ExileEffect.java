@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.value_calc.LeveledValue;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.mmorpg.DebugHud;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
@@ -258,27 +259,25 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                     caster = target;
                 }
                 // --- Debug: show expire intent
-                if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE) {
+                if (DebugHud.ON_EXPIRE) {
                     if (target instanceof ServerPlayer sp) {
-                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] onRemove(" + GUID() + ") stacks=" + data.stacks + ", ticks_left=" + data.ticks_left + ", infinite=" + data.is_infinite, 200);
+                        DebugHud.send(sp, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] onRemove(" + GUID() + ") stacks=" + data.stacks + ", ticks_left=" + data.ticks_left + ", infinite=" + data.is_infinite, 200);
                     }
                     if (caster instanceof ServerPlayer spc && caster != target) {
-                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spc, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] Trigger from " + GUID() + " on target " + target.getName().getString(), 200);
+                        DebugHud.send(spc, "expire_onremove_" + GUID(), "[EFFECT][EXPIRE] Trigger from " + GUID() + " on target " + target.getName().getString(), 200);
                     }
                 }
                 if (spell != null && caster != null) {
                     SpellCtx ctx = SpellCtx.onExpire(caster, target, data.calcSpell);
-                    // Attach expiring effect id and any per-effect duration overrides carried on the instance
                     ctx.expiringEffectId = this.GUID();
                     ctx.onExpireEffectDurationTicks = (data.onExpireEffectDurationTicks == null)
                             ? java.util.Collections.emptyMap()
                             : java.util.Collections.unmodifiableMap(data.onExpireEffectDurationTicks);
                     spell.tryActivate(Spell.DEFAULT_EN_NAME, ctx); // source is default name at all times
-                    if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && target instanceof ServerPlayer sp2) {
-                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp2, "expire_dispatched_" + GUID(), "[EFFECT][EXPIRE] Dispatched attached spell for " + GUID(), 400);
+                    if (DebugHud.ON_EXPIRE && target instanceof ServerPlayer sp2) {
+                        DebugHud.send(sp2, "expire_dispatched_" + GUID(), "[EFFECT][EXPIRE] Dispatched attached spell for " + GUID(), 400);
                     }
 
-                    // Apply any leftover datapack-declared on-expire effects that weren't applied by actions (server only)
                     if (!target.level().isClientSide && data.onExpireEffectDurationTicks != null && !data.onExpireEffectDurationTicks.isEmpty()) {
                         for (var entry : data.onExpireEffectDurationTicks.entrySet()) {
                             String effId = entry.getKey();
@@ -286,7 +285,7 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                             if (ctx.onExpireApplied != null && ctx.onExpireApplied.contains(effId)) {
                                 continue;
                             }
-                            var extraEff = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(effId);
+                            var extraEff = ExileDB.ExileEffects().get(effId);
                             if (extraEff != null) {
                                 var unitT = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(target);
                                 var storeT = unitT.getStatusEffectsData();
@@ -298,8 +297,8 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                                 try { extraEff.onApply(target); } catch (Exception ignored) {}
                                 unitT.equipmentCache.STATUS.setDirty();
                                 unitT.sync.setDirty();
-                                if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && target instanceof ServerPlayer spx) {
-                                    com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spx, "expire_extra_" + effId, "[EFFECT][EXPIRE] Extra-applied " + effId + " tl=" + instT.ticks_left, 400);
+                                if (DebugHud.ON_EXPIRE && target instanceof ServerPlayer spx) {
+                                    DebugHud.send(spx, "expire_extra_" + effId, "[EFFECT][EXPIRE] Extra-applied " + effId + " tl=" + instT.ticks_left, 400);
                                 }
                             }
                         }

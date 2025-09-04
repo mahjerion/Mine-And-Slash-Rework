@@ -4,6 +4,8 @@ import com.robertx22.mine_and_slash.database.data.spells.components.actions.Spel
 import com.robertx22.mine_and_slash.database.data.spells.components.conditions.EffectCondition;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.BaseTargetSelector;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.mmorpg.DebugHud;
@@ -134,27 +136,23 @@ public class ComponentPart {
             } else {
                 action.tryActivate(list, ctx, part);
                 if (DebugHud.ON_EXPIRE
-                        && ctx.activation == com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation.ON_EXPIRE) {
+                        && ctx.activation == EntityActivation.ON_EXPIRE) {
                     if (ctx.caster instanceof ServerPlayer spc) {
-                        com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spc, "expire_action_" + part.type, "[EFFECT][EXPIRE] Action=" + part.type + " targets=" + list.size(), 400);
+                        DebugHud.send(spc, "expire_action_" + part.type, "[EFFECT][EXPIRE] Action=" + part.type + " targets=" + list.size(), 400);
                     }
                 }
 
-                // Fallback: if ON_EXPIRE exile_effects still don't appear, apply directly here
-                // Only applies to GIVE_STACKS to avoid resurrecting effects when JSON intends REMOVE_STACKS
-                if (!ctx.world.isClientSide && ctx.activation == com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation.ON_EXPIRE
+                if (!ctx.world.isClientSide && ctx.activation == EntityActivation.ON_EXPIRE
                         && part.type.equals(SpellAction.EXILE_EFFECT.GUID())) {
                     try {
-                        String actionType = part.get(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.POTION_ACTION);
-                        if (actionType == null || !actionType.equals(com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction.GiveOrTake.GIVE_STACKS.name())) {
-                            // Skip fallback for non-GIVE actions (e.g., REMOVE_STACKS)
+                        String actionType = part.get(MapField.POTION_ACTION);
+                        if (actionType == null || !actionType.equals(ExileEffectAction.GiveOrTake.GIVE_STACKS.name())) {
                             continue;
                         }
-                        String effId = part.get(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.EXILE_POTION_ID);
-                        Double durD = part.getOrDefault(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.POTION_DURATION, 0D);
-                        Double cntD = part.getOrDefault(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.COUNT, 1D);
+                        String effId = part.get(MapField.EXILE_POTION_ID);
+                        Double durD = part.getOrDefault(MapField.POTION_DURATION, 0D);
+                        Double cntD = part.getOrDefault(MapField.COUNT, 1D);
                         int duration = Math.max(1, durD.intValue());
-                        // If override present from datapack, prefer it
                         if (ctx.onExpireEffectDurationTicks != null && ctx.onExpireEffectDurationTicks.containsKey(effId)) {
                             int override = ctx.onExpireEffectDurationTicks.get(effId);
                             if (override > 0) {
@@ -162,7 +160,7 @@ public class ComponentPart {
                             }
                         }
                         int stacks = Math.max(1, cntD.intValue());
-                        var effect = com.robertx22.mine_and_slash.database.registry.ExileDB.ExileEffects().get(effId);
+                        var effect = ExileDB.ExileEffects().get(effId);
                         if (effect != null) {
                             for (LivingEntity tgt : list) {
                                 var unit = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(tgt);
@@ -176,7 +174,7 @@ public class ComponentPart {
                                 unit.equipmentCache.STATUS.setDirty();
                                 unit.sync.setDirty();
                                 if (ctx.caster instanceof ServerPlayer spc) {
-                                    com.robertx22.mine_and_slash.mmorpg.DebugHud.send(spc, "expire_fallback_direct_" + effId, "[EFFECT][EXPIRE] Direct-applied " + effId + " tl=" + inst.ticks_left + " x" + inst.stacks, 400);
+                                    DebugHud.send(spc, "expire_fallback_direct_" + effId, "[EFFECT][EXPIRE] Direct-applied " + effId + " tl=" + inst.ticks_left + " x" + inst.stacks, 400);
                                 }
                             }
                             ctx.onExpireApplied.add(effId);

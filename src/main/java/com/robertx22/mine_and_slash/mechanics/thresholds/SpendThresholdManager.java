@@ -6,12 +6,10 @@ import com.robertx22.mine_and_slash.vanilla_mc.packets.ThresholdUiPacket;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
 
-/** Registers global spend thresholds at startup. */
 public final class SpendThresholdManager {
     private SpendThresholdManager() {}
 
     public static void registerDefaults() {
-        // No-op: thresholds are defined via datapack JSON.
     }
 
     // ===== DEBUGGING =====
@@ -23,7 +21,7 @@ public final class SpendThresholdManager {
         if (loss <= 0f) return;
 
         var tracker = unit.getResourceTracker();
-        tracker.addLoss(type, loss); // general counter (optional)
+        tracker.addLoss(type, loss);
 
         var specs = SpendThresholdRegistry.resolveFor(unit, type);
         if (specs.isEmpty()) {
@@ -39,7 +37,6 @@ public final class SpendThresholdManager {
         for (SpendThresholdSpec spec : specs) {
             final String key = spec.keyFor(unit);
 
-            // Cooldown-as-lock
             if (spec.lockWhileCooldown() && unit.getSpendRuntime().isCoolingDown(key, now)) {
                 if (spec.dropProgressWhileLocked()) {
                     tracker.clearKey(type, key);
@@ -53,7 +50,6 @@ public final class SpendThresholdManager {
                 continue;
             }
 
-            // Locks (effects + optional perk requirement)
             if (spec.isLockedFor(unit)) {
                 if (spec.dropProgressWhileLocked()) {
                     tracker.clearKey(type, key);
@@ -61,7 +57,6 @@ public final class SpendThresholdManager {
                 if (debug) {
                     sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[SPEND:" + spec.key() + "] locked"));
                 }
-                // hide UI while locked
                 if (spec.showUi()) {
                     com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
                 }
@@ -84,7 +79,6 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");
-                // hide UI on proc
                 if (spec.showUi()) {
                     com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
                 }

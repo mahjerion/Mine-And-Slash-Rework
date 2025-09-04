@@ -129,12 +129,10 @@ public class OnServerTick {
                     playerData.spellCastingData.charges.onTicks(player, 5);
                 }
 
-                // Every second, apply passive decay to inactive threshold progress
                 if (age % 20 == 0) {
                     long now = player.level().getGameTime();
                     var unit = Load.Unit(player);
                     if (unit != null) {
-                        // Iterate only active keys per resource
                         for (var rt : com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.values()) {
                             for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
                                 var spec = unit.getSpendRuntime().getSpec(key);
@@ -145,13 +143,12 @@ public class OnServerTick {
                                 if (since < 300) continue; // < 15s
 
                                 long lastDecay = unit.getSpendRuntime().getLastDecay(key);
-                                if (lastDecay == now) continue; // already decayed this second
+                                if (lastDecay == now) continue;
                                 unit.getSpendRuntime().markDecay(key, now);
 
-                                // Decay rate: 15% of this threshold's breakpoint per second
                                 float thr = spec.thresholdFor(unit);
                                 if (thr <= 0f) continue;
-                                float decayPerSecond = thr * 0.15f;
+                                float decayPerSecond = thr * 0.15f; // Decay rate: 15% of Threshold per second
                                 float newVal = unit.getResourceTracker().decayKeyProgress(key, rt, decayPerSecond);
                                 int cint = (int) newVal;
                                 if (unit.getSpendRuntime().progressIntChanged(key, cint)) {

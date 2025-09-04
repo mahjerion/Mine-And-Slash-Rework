@@ -9,7 +9,7 @@
       "multiply_by_level": false,
       "percent_of": "health"
     },
-    "cooldown_seconds": 0,
+    "cooldown_ticks": 0,
     "locks": {
       "effects": [],
       "drop_progress_while_locked": true,

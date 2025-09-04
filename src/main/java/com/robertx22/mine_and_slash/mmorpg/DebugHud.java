@@ -8,10 +8,8 @@ public final class DebugHud {
 
     private DebugHud() {}
 
-    // Unified flags
     public static volatile boolean ON_EXPIRE = false;
 
-    // Simple per-player throttling to avoid spammy chat when debugging
     private static final java.util.concurrent.ConcurrentHashMap<String, Long> LAST_MSG_MS = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static void send(net.minecraft.server.level.ServerPlayer sp, String key, String msg) {

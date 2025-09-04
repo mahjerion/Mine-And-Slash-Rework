@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Client-only holder for which threshold keys should currently render, their resource ids, and progress. */
 public final class ThresholdUiClient {
     private ThresholdUiClient() {}
 

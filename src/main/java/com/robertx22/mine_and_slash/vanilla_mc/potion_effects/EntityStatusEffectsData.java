@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.mmorpg.DebugHud;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
@@ -54,21 +55,17 @@ public class EntityStatusEffectsData {
         List<String> toDeleteKeys = new ArrayList<>();
 
         if (en.tickCount % 80 == 0) {
-            // Prevent keeping e.g. auras and stances after respeccing
-            // Has to string compare spell UUIDs to look up the new spell level, so it's done infrequently
             for (Map.Entry<String, ExileEffectInstanceData> entry : exileMap.entrySet()) {
                 boolean shouldDrop = entry.getValue().shouldRemove() || entry.getValue().isSpellNoLongerAllocated(en);
                 if (shouldDrop) {
                     ExileEffect eff = ExileDB.ExileEffects().get(entry.getKey());
                     if (eff != null) {
-                        // Fire onRemove immediately for this key
                         eff.onRemove(en);
-                        // Decide deletion based on current state after onRemove
                         ExileEffectInstanceData inst = exileMap.get(entry.getKey());
                         if (inst == null || inst.shouldRemove()) {
                             toDeleteKeys.add(entry.getKey());
-                        } else if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
-                            com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_kept_" + entry.getKey(), "[EFFECT][EXPIRE] Kept " + entry.getKey() + " after onRemove (ticks_left=" + inst.ticks_left + ")", 400);
+                        } else if (DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
+                            DebugHud.send(sp, "expire_kept_" + entry.getKey(), "[EFFECT][EXPIRE] Kept " + entry.getKey() + " after onRemove (ticks_left=" + inst.ticks_left + ")", 400);
                         }
                     }
                 }
@@ -78,13 +75,12 @@ public class EntityStatusEffectsData {
                 if (entry.getValue().shouldRemove()) {
                     ExileEffect eff = ExileDB.ExileEffects().get(entry.getKey());
                     if (eff != null) {
-                        // Fire onRemove immediately for this key
                         eff.onRemove(en);
                         ExileEffectInstanceData inst = exileMap.get(entry.getKey());
                         if (inst == null || inst.shouldRemove()) {
                             toDeleteKeys.add(entry.getKey());
-                        } else if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
-                            com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_kept_" + entry.getKey(), "[EFFECT][EXPIRE] Kept " + entry.getKey() + " after onRemove (ticks_left=" + inst.ticks_left + ")", 400);
+                        } else if (DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
+                            DebugHud.send(sp, "expire_kept_" + entry.getKey(), "[EFFECT][EXPIRE] Kept " + entry.getKey() + " after onRemove (ticks_left=" + inst.ticks_left + ")", 400);
                         }
                     }
                 }
@@ -93,14 +89,13 @@ public class EntityStatusEffectsData {
 
 
 
-        // Now delete expired effects (evaluated after onRemove)
         for (String key : toDeleteKeys) {
             ExileEffectInstanceData current = exileMap.remove(key);
-            if (com.robertx22.mine_and_slash.mmorpg.DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
+            if (DebugHud.ON_EXPIRE && en instanceof net.minecraft.server.level.ServerPlayer sp) {
                 if (current != null) {
-                    com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_removed_" + key, "[EFFECT][EXPIRE] Removed " + key + " (ticks_left=" + current.ticks_left + ", stacks=" + current.stacks + ") [id=" + System.identityHashCode(current) + "]", 200);
+                    DebugHud.send(sp, "expire_removed_" + key, "[EFFECT][EXPIRE] Removed " + key + " (ticks_left=" + current.ticks_left + ", stacks=" + current.stacks + ") [id=" + System.identityHashCode(current) + "]", 200);
                 } else {
-                    com.robertx22.mine_and_slash.mmorpg.DebugHud.send(sp, "expire_removed_" + key, "[EFFECT][EXPIRE] Removed " + key + " (no current instance)", 200);
+                    DebugHud.send(sp, "expire_removed_" + key, "[EFFECT][EXPIRE] Removed " + key + " (no current instance)", 200);
                 }
             }
         }

@@ -23,7 +23,7 @@ public class SpendThresholdDef {
         public String mode = "FLAT";
         public float value = 0f;
         @SerializedName("multiply_by_level") public boolean multiplyByLevel = false;
-        @SerializedName("percent_of") public String percentOf; // optional
+        @SerializedName("percent_of") public String percentOf; 
     }
     public Threshold threshold = new Threshold();
 
@@ -54,20 +54,17 @@ public class SpendThresholdDef {
     public SpendThresholdSpec toSpec() {
         ResourceType res = parseResource(resource, ResourceType.energy);
 
-        // Modes supported: FLAT (optionally with multiply_by_level) or PERCENT_OF_MAX
         String rawMode = (threshold.mode == null ? "FLAT" : threshold.mode.trim()).toUpperCase(Locale.ROOT);
         boolean mult = threshold.multiplyByLevel;
         DataDrivenSpendThresholdSpec.ThresholdMode mode;
         if ("PERCENT_OF_MAX".equals(rawMode)) {
-            mode = DataDrivenSpendThresholdSpec.ThresholdMode.PCT_OF_MAX;
-        } else if ("X_PER_LEVEL".equals(rawMode)) {
-            mode = DataDrivenSpendThresholdSpec.ThresholdMode.X_PER_LEVEL;
+            mode = DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX;
         } else {
             mode = DataDrivenSpendThresholdSpec.ThresholdMode.FLAT; // default + treats legacy values as FLAT
         }
 
         ResourceType percentOf = null;
-        if (mode == DataDrivenSpendThresholdSpec.ThresholdMode.PCT_OF_MAX
+        if (mode == DataDrivenSpendThresholdSpec.ThresholdMode.PERCENT_OF_MAX
                 && threshold.percentOf != null && !threshold.percentOf.isEmpty()) {
             percentOf = parseResource(threshold.percentOf, res); // default to this spec’s resource if bad input
         }
@@ -86,7 +83,8 @@ public class SpendThresholdDef {
                 cooldownTicks,
                 locks != null && locks.lockWhileCooldown,
                 locks != null && locks.dropProgressWhileLocked,
-                locks != null && locks.resetProgressOnProc
+                locks != null && locks.resetProgressOnProc,
+                showUi
         ) {
             @Override
             public void onProc(ServerPlayer sp, int procs) {
@@ -104,7 +102,6 @@ public class SpendThresholdDef {
                     int stacks = Math.max(1, a.stacks);
                     var inst = EffectUtils.applyEffect(sp, effect, durTicks, stacks);
 
-                    // Attach on-expire duration overrides (ticks directly)
                     if (a.onExpire != null && !a.onExpire.isEmpty()) {
                         if (inst.onExpireEffectDurationTicks == null) {
                             inst.onExpireEffectDurationTicks = new java.util.HashMap<>();
@@ -131,7 +128,7 @@ public class SpendThresholdDef {
                 }
                 return false;
             }
-        }.withPriority(priority).withShowUi(showUi);
+        }.withPriority(priority);
     }
 
     // --- helpers ---
@@ -140,7 +137,6 @@ public class SpendThresholdDef {
         for (ResourceType rt : ResourceType.values()) {
             if (rt.name().equalsIgnoreCase(s)) return rt;
             try {
-                // if your enum exposes an id/string, handle it here:
                 var idField = rt.getClass().getField("id");
                 Object idVal = idField.get(rt);
                 if (idVal instanceof String && ((String) idVal).equalsIgnoreCase(s)) return rt;

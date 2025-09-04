@@ -58,7 +58,6 @@ public class EffectsOverlay {
             }
         }
 
-        // Render threshold UI items inline with effects (uses same bg/overlay)
         var thresholdMap = com.robertx22.mine_and_slash.mechanics.thresholds.ui.ThresholdUiClient.visibleEntries();
         if (!thresholdMap.isEmpty()) {
             for (var e : thresholdMap.entrySet()) {
@@ -67,11 +66,9 @@ public class EffectsOverlay {
                 var rt = com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.ofId(resId);
                 if (rt == null) continue;
 
-                // draw frame same as effects
                 gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
                 gui.blit(SlashRef.guiId("effect/effect_overlay"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
 
-                // show 0..threshold progress, not current resource value
                 float prog = com.robertx22.mine_and_slash.mechanics.thresholds.ui.ThresholdUiClient.getProgress(key);
                 GuiUtils.renderScaledText(gui, (int) x + 10, (int) y + 10, 0.7F, String.valueOf((int) prog), ChatFormatting.YELLOW);
 

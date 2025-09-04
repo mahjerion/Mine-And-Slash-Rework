@@ -25,15 +25,6 @@ import net.minecraft.server.level.ServerPlayer;
 public final class EffectUtils {
     private EffectUtils() {}
 
-    /**
-     * Apply/refresh a state effect on the player.
-     *
-     * @param sp            target player
-     * @param ctx           effect context (ids defined in ModEffects)
-     * @param durationTicks desired remaining lifetime (ticks); merged via MAX
-     * @param stacks        desired stacks; clamped to effect.max_stacks and merged via MAX
-     * @return ExileEffectInstanceData for the applied effect, or null if resolve failed.
-     */
     public static ExileEffectInstanceData applyState(ServerPlayer sp, EffectCtx ctx, int durationTicks, int stacks) {
         final ExileEffect effect = resolveEffect(ctx);
         if (effect == null) return null;
@@ -46,21 +37,18 @@ public final class EffectUtils {
 
         var unit  = Load.Unit(sp);
         var store = unit.getStatusEffectsData();
-        var inst  = store.getOrCreate(effect); // persist if missing
+        var inst  = store.getOrCreate(effect);
 
-        // Merge stacks/ticks: refresh semantics (never decrease on re-apply)
         final int wanted = Math.max(1, stacks);
         final int capped = (effect.max_stacks > 0) ? Math.min(wanted, effect.max_stacks) : wanted;
         inst.stacks     = Math.max(inst.stacks, capped);
         inst.ticks_left = Math.max(inst.ticks_left, durationTicks);
 
-        // Keep vanilla stats / one-of-a-kind cleanup in sync
         effect.onApply(sp);
-        unit.sync.setDirty(); // network/state sync
+        unit.sync.setDirty();
         return inst;
     }
 
-    /** Try both resourcePath (preferred) and id; some data uses either. */
     private static ExileEffect resolveEffect(EffectCtx ctx) {
         ExileEffect eff = ExileDB.ExileEffects().get(ctx.resourcePath);
         if (eff == null) eff = ExileDB.ExileEffects().get(ctx.id);

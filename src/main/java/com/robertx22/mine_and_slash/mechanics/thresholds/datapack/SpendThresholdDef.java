@@ -31,7 +31,7 @@ public class SpendThresholdDef {
         public List<String> effects = new ArrayList<>();
         @SerializedName("lock_while_cooldown") public boolean lockWhileCooldown = false;
         @SerializedName("drop_progress_while_locked") public boolean dropProgressWhileLocked = true;
-        @SerializedName("reset_progress_on_proc") public boolean resetProgressOnProc = true;
+        @SerializedName("drop_progress_on_proc") public boolean dropProgressOnProc = true;
     }
     public Locks locks = new Locks();
 
@@ -82,7 +82,7 @@ public class SpendThresholdDef {
                 cooldownTicks,
                 locks != null && locks.lockWhileCooldown,
                 locks != null && locks.dropProgressWhileLocked,
-                locks != null && locks.resetProgressOnProc,
+                locks != null && locks.dropProgressOnProc,
                 showUi
         ) {
             @Override

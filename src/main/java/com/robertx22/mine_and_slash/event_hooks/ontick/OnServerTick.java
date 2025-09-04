@@ -134,7 +134,7 @@ public class OnServerTick {
                     var unit = Load.Unit(player);
                     if (unit != null) {
                         // Iterate only active keys per resource
-                        for (var rt : com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.values()) {
+                        for (var rt : ResourceType.values()) {
                             for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
                                 var spec = unit.getSpendRuntime().getSpec(key);
                                 long lastAct = unit.getSpendRuntime().getLastActivity(key);

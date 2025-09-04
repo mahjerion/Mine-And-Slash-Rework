@@ -14,7 +14,7 @@
       "effects": ["wrath_of_the_juggernaut", "burnout"],
       "lock_while_cooldown": true,
       "drop_progress_while_locked": true,
-      "reset_progress_on_proc": true
+      "drop_progress_on_proc": true
     },
     "on_proc": [
       {

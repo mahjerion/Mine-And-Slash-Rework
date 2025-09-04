@@ -75,7 +75,7 @@ public final class SpendThresholdManager {
             if (procs > 0) {
                 spec.onProc(sp, procs);
                 spec.startCooldown(unit, now);
-                if (spec.resetOnProc()) {
+                if (spec.dropProgressOnProc()) {
                     tracker.clearKey(type, key);
                 }
                 if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");

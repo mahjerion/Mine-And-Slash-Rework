@@ -27,11 +27,11 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
             int cooldownTicks,
             boolean lockWhileCooldown,
             boolean dropProgressWhileLocked,
-            boolean resetProgressOnProc,
+            boolean dropProgressOnProc,
             boolean showUi
     ) {
         super(resource, 0f, key,
-              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc);
+              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, dropProgressOnProc);
         this.mode = mode;
         this.value = value;
         this.multiplyByLevel = multiplyByLevel;
@@ -50,9 +50,9 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
             int cooldownTicks,
             boolean lockWhileCooldown,
             boolean dropProgressWhileLocked,
-            boolean resetProgressOnProc
+            boolean dropProgressOnProc
     ) {
-        this(key, resource, mode, value, multiplyByLevel, percentMaxOf, lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, false);
+        this(key, resource, mode, value, multiplyByLevel, percentMaxOf, lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, dropProgressOnProc, false);
     }
 
     @Override

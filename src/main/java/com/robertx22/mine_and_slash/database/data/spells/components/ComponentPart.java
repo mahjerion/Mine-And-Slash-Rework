@@ -141,9 +141,15 @@ public class ComponentPart {
                 }
 
                 // Fallback: if ON_EXPIRE exile_effects still don't appear, apply directly here
+                // Only applies to GIVE_STACKS to avoid resurrecting effects when JSON intends REMOVE_STACKS
                 if (!ctx.world.isClientSide && ctx.activation == com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation.ON_EXPIRE
                         && part.type.equals(SpellAction.EXILE_EFFECT.GUID())) {
                     try {
+                        String actionType = part.get(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.POTION_ACTION);
+                        if (actionType == null || !actionType.equals(com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction.GiveOrTake.GIVE_STACKS.name())) {
+                            // Skip fallback for non-GIVE actions (e.g., REMOVE_STACKS)
+                            continue;
+                        }
                         String effId = part.get(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.EXILE_POTION_ID);
                         Double durD = part.getOrDefault(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.POTION_DURATION, 0D);
                         Double cntD = part.getOrDefault(com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField.COUNT, 1D);

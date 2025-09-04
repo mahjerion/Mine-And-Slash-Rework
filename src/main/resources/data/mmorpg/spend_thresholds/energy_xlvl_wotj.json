@@ -2,14 +2,13 @@
     "key": "ENERGY_XLVL_WOTJ",
     "resource": "energy",
     "enabled": true,
-    "show_ui": true,
     "priority": 0,
     "threshold": {
       "mode": "FLAT",
       "value": 10,
       "multiply_by_level": true
     },
-    "cooldown_seconds": 20,
+    "cooldown_ticks": 400,
     "require_stat": "unlock_wotj",
     "locks": {
       "effects": ["wrath_of_the_juggernaut", "burnout"],
@@ -21,11 +20,8 @@
       {
         "action": "exile_effect",
         "exile_potion_id": "wrath_of_the_juggernaut",
-        "duration_seconds": 10,
-        "stacks": 1,
-        "on_expire": {
-          "burnout": 10
-        }
+        "duration_ticks": 200,
+        "stacks": 1
       }
     ]
   }

@@ -6,22 +6,13 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
-/**
- * Unified entrypoint for resource LOSS (spend, drains, damage).
- * Health damage integration calls this via the LivingDamageEvent handler below.
- *
- * Debug printing is handled inside SpendThresholdManager and is toggled by
- * OnResourceLost.DEBUG_ENABLED.
- */
 public final class OnResourceLost {
     private OnResourceLost() {}
 
     public enum LossSource { SpendOrDrain, Damage, Other }
 
-    /** Toggle SpendThresholdManager debug logs per player. */
     public static boolean DEBUG_ENABLED = false;
 
-    /** Call this whenever a resource actually goes down. */
     public static void trigger(LivingEntity entity, ResourceType type, float loss, LossSource source) {
         if (loss <= 0f) return;
         if (!(entity instanceof ServerPlayer sp)) return;

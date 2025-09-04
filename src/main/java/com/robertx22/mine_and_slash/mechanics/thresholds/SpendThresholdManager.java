@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.mechanics.thresholds;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
-import com.robertx22.mine_and_slash.vanilla_mc.packets.ThresholdUiPacket;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -61,10 +60,6 @@ public final class SpendThresholdManager {
                 if (debug) {
                     sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[SPEND:" + spec.key() + "] locked"));
                 }
-                // hide UI while locked
-                if (spec.showUi()) {
-                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
-                }
                 continue;
             }
 
@@ -84,22 +79,11 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");
-                // hide UI on proc
-                if (spec.showUi()) {
-                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
-                }
                 unit.getSpendRuntime().removeActive(type, key);
             } else {
                 float cur = tracker.getKeyProgress(key, type);
                 if (debug) {
                     dbg(sp, "[SPEND:" + spec.key() + "] +" + fmt(loss) + " " + type.id + " (cur=" + fmt(cur) + " / " + fmt(threshold) + ")");
-                }
-                if (spec.showUi()) {
-                    int cint = (int) cur;
-                    if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
-                        boolean show = cur > 0f;
-                        com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, cur));
-                    }
                 }
                 if (cur <= 0f) {
                     unit.getSpendRuntime().removeActive(type, key);

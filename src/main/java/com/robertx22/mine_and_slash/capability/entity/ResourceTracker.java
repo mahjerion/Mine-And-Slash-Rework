@@ -111,20 +111,6 @@ public class ResourceTracker {
     }
 
 
-    /**
-     * Decrease the cursor by a fixed amount, clamped at zero. Returns the new value.
-     */
-    public float decayKeyProgress(String key, ResourceType rt, float amount) {
-        if (key == null || key.isEmpty() || amount <= 0f) return getKeyProgress(key, rt);
-        var byKey = keyProgress.get(rt);
-        if (byKey == null) return DEFAULT_KEY_PROGRESS;
-        float cur = byKey.getOrDefault(key, DEFAULT_KEY_PROGRESS);
-        float next = Math.max(0f, cur - amount);
-        if (next <= EPS) byKey.remove(key); else byKey.put(key, next);
-        if (byKey.isEmpty()) keyProgress.remove(rt);
-        return next;
-    }
-
     public void setKeyProgress(String key, ResourceType rt, float value) {
         if (key == null || key.isEmpty()) return;
         var byKey = keyProgress.computeIfAbsent(rt, __ -> new java.util.HashMap<>());

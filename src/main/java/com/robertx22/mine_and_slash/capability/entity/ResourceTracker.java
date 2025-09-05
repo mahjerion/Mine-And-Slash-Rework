@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
  */
 public class ResourceTracker {
     private static final float EPS = 1e-4f;
+    private static final float DEFAULT_KEY_PROGRESS = 0f;
 
     private final java.util.EnumMap<ResourceType, Float> lost = new java.util.EnumMap<>(ResourceType.class);
 
@@ -73,6 +74,10 @@ public class ResourceTracker {
     private final java.util.EnumMap<ResourceType, java.util.Map<String, Float>> keyProgress =
         new java.util.EnumMap<>(ResourceType.class);
 
+    private java.util.Map<String, Float> getKeyProgressOrCreate(ResourceType rt) {
+        return keyProgress.computeIfAbsent(rt, __ -> new java.util.HashMap<>());
+    }
+  
     public void clearKey(ResourceType rt, String key) {
             if (key == null || key.isEmpty()) return;
             var byKey = keyProgress.get(rt);
@@ -86,8 +91,8 @@ public class ResourceTracker {
     public int addAndConsumeForKey(String key, ResourceType rt, float add, float threshold) {
         if (key == null || key.isEmpty() || add <= 0f || threshold <= 0f) return 0;
 
-        var byKey = keyProgress.computeIfAbsent(rt, __ -> new java.util.HashMap<>());
-        float cur = byKey.getOrDefault(key, 0f) + add;
+        var byKey = getKeyProgressOrCreate(rt);
+        float cur = byKey.getOrDefault(key, DEFAULT_KEY_PROGRESS) + add;
 
         int procs = 0;
         while (cur + EPS >= threshold) {
@@ -102,7 +107,22 @@ public class ResourceTracker {
 
     public float getKeyProgress(String key, ResourceType rt) {
         var byKey = keyProgress.get(rt);
-        return byKey == null ? 0f : byKey.getOrDefault(key, 0f);
+        return byKey == null ? DEFAULT_KEY_PROGRESS : byKey.getOrDefault(key, DEFAULT_KEY_PROGRESS);
+    }
+
+
+    /**
+     * Decrease the cursor by a fixed amount, clamped at zero. Returns the new value.
+     */
+    public float decayKeyProgress(String key, ResourceType rt, float amount) {
+        if (key == null || key.isEmpty() || amount <= 0f) return getKeyProgress(key, rt);
+        var byKey = keyProgress.get(rt);
+        if (byKey == null) return DEFAULT_KEY_PROGRESS;
+        float cur = byKey.getOrDefault(key, DEFAULT_KEY_PROGRESS);
+        float next = Math.max(0f, cur - amount);
+        if (next <= EPS) byKey.remove(key); else byKey.put(key, next);
+        if (byKey.isEmpty()) keyProgress.remove(rt);
+        return next;
     }
 
     public void setKeyProgress(String key, ResourceType rt, float value) {

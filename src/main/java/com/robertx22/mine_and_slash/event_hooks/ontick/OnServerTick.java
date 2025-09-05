@@ -137,6 +137,7 @@ public class OnServerTick {
                             for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
                                 var spec = unit.getSpendRuntime().getSpec(key);
                                 if (!spec.showUi()) continue;
+
                                 long lastAct = unit.getSpendRuntime().getLastActivity(key);
                                 if (lastAct <= 0) continue;
                                 long since = now - lastAct;

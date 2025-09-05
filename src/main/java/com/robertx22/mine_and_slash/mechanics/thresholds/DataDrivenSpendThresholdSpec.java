@@ -15,7 +15,6 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
     private final float value;
     private final boolean multiplyByLevel;
     @Nullable private final ResourceType percentMaxOf;
-    private final boolean showUi;
 
     public DataDrivenSpendThresholdSpec(
             String key,
@@ -28,16 +27,15 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
             int cooldownTicks,
             boolean lockWhileCooldown,
             boolean dropProgressWhileLocked,
-            boolean resetProgressOnProc,
+            boolean dropProgressOnProc,
             boolean showUi
     ) {
         super(resource, 0f, key,
-              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, resetProgressOnProc, showUi);
+              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, dropProgressOnProc);
         this.mode = mode;
         this.value = value;
         this.multiplyByLevel = multiplyByLevel;
         this.percentMaxOf = percentMaxOf;
-        this.showUi = showUi;
     }
 
 
@@ -60,6 +58,5 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
     @Override
     public void onProc(ServerPlayer sp, int procs) {
     }
-
     public boolean showUi() { return showUi; }
 }

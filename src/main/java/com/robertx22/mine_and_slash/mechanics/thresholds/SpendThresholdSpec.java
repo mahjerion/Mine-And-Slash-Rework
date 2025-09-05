@@ -19,7 +19,7 @@ public abstract class SpendThresholdSpec {
     private final int cooldownTicks;
     private final boolean lockWhileCooldown;         // Used to lock the threshold while the cooldown is active. **RECOMMENDED FOR DEBUGGING ONLY**
     private final boolean dropProgressWhileLocked;
-    private final boolean resetProgressOnProc;
+    private final boolean dropProgressOnProc;
     private final boolean showUi;
 
     private int priority = 0;
@@ -31,8 +31,8 @@ public abstract class SpendThresholdSpec {
                               int cooldownTicks,
                               boolean lockWhileCooldown,
                               boolean dropProgressWhileLocked,
-                              boolean resetProgressOnProc,
-                              boolean showUi) {
+                              boolean dropProgressOnProc
+                              ) {
         this.resource = resource;
         this.perLevelFactor = perLevelFactor;
         this.key = key;
@@ -40,8 +40,7 @@ public abstract class SpendThresholdSpec {
         this.cooldownTicks = Math.max(0, cooldownTicks);
         this.lockWhileCooldown = lockWhileCooldown;
         this.dropProgressWhileLocked = dropProgressWhileLocked;
-        this.resetProgressOnProc = resetProgressOnProc;
-        this.showUi = showUi;
+        this.dropProgressOnProc = dropProgressOnProc;
     }
 
     // ===== accessors =====
@@ -50,17 +49,15 @@ public abstract class SpendThresholdSpec {
     public String keyFor(EntityData unit)       { return key; }
     public boolean lockWhileCooldown()          { return lockWhileCooldown; }
     public boolean dropProgressWhileLocked()    { return dropProgressWhileLocked; }
-    public boolean resetOnProc()                { return resetProgressOnProc; }
+    public boolean dropProgressOnProc()         { return dropProgressOnProc; }
     public int cooldownTicks()                  { return cooldownTicks; }
     public int priority()                       { return priority; }
-    public boolean showUi()                     { return showUi; }
 
     
     public SpendThresholdSpec withPriority(int p) {
         this.priority = p;
         return this;
     }
-
 
     public SpendThresholdSpec withShowUi(boolean on) {
         return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc, on) {

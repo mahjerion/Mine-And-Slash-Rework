@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.value_calc.LeveledValue;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.event_hooks.my_events.EffectUtils;
 import com.robertx22.mine_and_slash.mmorpg.DebugHud;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
@@ -279,6 +280,7 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                     }
 
                     if (!target.level().isClientSide && data.onExpireEffectDurationTicks != null && !data.onExpireEffectDurationTicks.isEmpty()) {
+                        boolean anyApplied = false;
                         for (var entry : data.onExpireEffectDurationTicks.entrySet()) {
                             String effId = entry.getKey();
                             int durTicks = Math.max(1, entry.getValue());
@@ -286,21 +288,22 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                                 continue;
                             }
                             var extraEff = ExileDB.ExileEffects().get(effId);
-                            if (extraEff != null) {
-                                var unitT = com.robertx22.mine_and_slash.uncommon.datasaving.Load.Unit(target);
-                                var storeT = unitT.getStatusEffectsData();
-                                var instT = storeT.getOrCreate(extraEff);
-                                instT.stacks = Math.max(instT.stacks, 1);
-                                instT.ticks_left = Math.max(instT.ticks_left, durTicks);
+                            if (extraEff == null) {
+                                continue;
+                            }
+                            var instT = EffectUtils.applyEffect(target, extraEff, durTicks, 1, false);
+                            if (instT != null) {
                                 instT.is_infinite = false;
                                 instT.caster_uuid = caster.getStringUUID();
-                                try { extraEff.onApply(target); } catch (Exception ignored) {}
-                                unitT.equipmentCache.STATUS.setDirty();
-                                unitT.sync.setDirty();
                                 if (DebugHud.ON_EXPIRE && target instanceof ServerPlayer spx) {
                                     DebugHud.send(spx, "expire_extra_" + effId, "[EFFECT][EXPIRE] Extra-applied " + effId + " tl=" + instT.ticks_left, 400);
                                 }
+                                anyApplied = true;
                             }
+                        }
+                        if (anyApplied) {
+                            var unitT = Load.Unit(target);
+                            unitT.sync.setDirty();
                         }
                     }
                 }

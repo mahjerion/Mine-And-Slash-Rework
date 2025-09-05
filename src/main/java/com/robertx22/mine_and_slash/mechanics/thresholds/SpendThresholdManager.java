@@ -3,8 +3,10 @@ package com.robertx22.mine_and_slash.mechanics.thresholds;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.ThresholdUiPacket;
+import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 
 public final class SpendThresholdManager {
     private SpendThresholdManager() {}
@@ -26,7 +28,7 @@ public final class SpendThresholdManager {
         var specs = SpendThresholdRegistry.resolveFor(unit, type);
         if (specs.isEmpty()) {
             if (debug) {
-                sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                sp.sendSystemMessage(Component.literal(
                     "[SPEND] +" + String.format(java.util.Locale.US, "%.1f", loss) +
                     " " + type.id + " (no specs)"
                 ));
@@ -43,7 +45,7 @@ public final class SpendThresholdManager {
                 }
                 if (debug) {
                     long rem = unit.getSpendRuntime().cooldownRemainingTicks(key, now);
-                    sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(
+                    sp.sendSystemMessage(Component.literal(
                         "[SPEND:" + spec.key() + "] locked by cooldown (" + rem + "t ~ " + fmtSec((float) rem) + "s)"
                     ));
                 }
@@ -55,10 +57,10 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) {
-                    sp.sendSystemMessage(net.minecraft.network.chat.Component.literal("[SPEND:" + spec.key() + "] locked"));
+                    sp.sendSystemMessage(Component.literal("[SPEND:" + spec.key() + "] locked"));
                 }
                 if (spec.showUi()) {
-                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
+                    Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
                 }
                 continue;
             }
@@ -80,7 +82,7 @@ public final class SpendThresholdManager {
                 }
                 if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");
                 if (spec.showUi()) {
-                    com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
+                    Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
                 }
                 unit.getSpendRuntime().removeActive(type, key);
             } else {
@@ -92,7 +94,7 @@ public final class SpendThresholdManager {
                     int cint = (int) cur;
                     if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
                         boolean show = cur > 0f;
-                        com.robertx22.library_of_exile.main.Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, cur));
+                        Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, cur));
                     }
                 }
                 if (cur <= 0f) {
@@ -105,7 +107,7 @@ public final class SpendThresholdManager {
     // --- helpers ---
     private static void dbg(ServerPlayer sp, String msg) {
         if (!OnResourceLost.DEBUG_ENABLED) return;
-        sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(msg));
+        sp.sendSystemMessage(Component.literal(msg));
     }
     private static String fmt(float v) { return String.format(java.util.Locale.US, "%.1f", v); }
     private static String fmtSec(float s) { return String.format(java.util.Locale.US, "%.1f", s); }

@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInsta
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Utility for applying short-TTL "state" effects (e.g., leeching_state) to players.
@@ -28,14 +29,22 @@ public final class EffectUtils {
     public static ExileEffectInstanceData applyState(ServerPlayer sp, EffectCtx ctx, int durationTicks, int stacks) {
         final ExileEffect effect = resolveEffect(ctx);
         if (effect == null) return null;
-
-        return applyEffect(sp, effect, durationTicks, stacks);
+        return applyEffect((LivingEntity) sp, effect, durationTicks, stacks);
     }
 
     public static ExileEffectInstanceData applyEffect(ServerPlayer sp, ExileEffect effect, int durationTicks, int stacks) {
-        if (effect == null) return null;
+        return applyEffect((LivingEntity) sp, effect, durationTicks, stacks, true);
+    }
 
-        var unit  = Load.Unit(sp);
+    public static ExileEffectInstanceData applyEffect(LivingEntity entity, ExileEffect effect, int durationTicks, int stacks) {
+        return applyEffect(entity, effect, durationTicks, stacks, true);
+    }
+
+    public static ExileEffectInstanceData applyEffect(LivingEntity entity, ExileEffect effect, int durationTicks, int stacks, boolean markDirty) {
+        if (effect == null || entity == null) return null;
+        if (durationTicks <= 0 || stacks <= 0) return null;
+
+        var unit  = Load.Unit(entity);
         var store = unit.getStatusEffectsData();
         var inst  = store.getOrCreate(effect);
 
@@ -44,8 +53,13 @@ public final class EffectUtils {
         inst.stacks     = Math.max(inst.stacks, capped);
         inst.ticks_left = Math.max(inst.ticks_left, durationTicks);
 
-        effect.onApply(sp);
-        unit.sync.setDirty();
+        try { effect.onApply(entity); } catch (Exception ignored) {}
+        if (markDirty) {
+            unit.equipmentCache.STATUS.setDirty();
+            if (entity instanceof ServerPlayer) {
+                unit.sync.setDirty();
+            }
+        }
         return inst;
     }
 

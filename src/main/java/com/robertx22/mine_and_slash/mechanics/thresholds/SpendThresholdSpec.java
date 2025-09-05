@@ -15,7 +15,6 @@ public abstract class SpendThresholdSpec {
     private final float perLevelFactor;
     private final String key;
 
-    // gating/cooldown controls
     private final Set<String> lockWhileEffectIds;
     private final int cooldownTicks;
     private final boolean lockWhileCooldown;         // Used to lock the threshold while the cooldown is active. **RECOMMENDED FOR DEBUGGING ONLY**

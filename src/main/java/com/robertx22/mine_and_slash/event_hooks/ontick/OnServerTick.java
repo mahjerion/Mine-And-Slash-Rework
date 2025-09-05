@@ -133,7 +133,7 @@ public class OnServerTick {
                     long now = player.level().getGameTime();
                     var unit = Load.Unit(player);
                     if (unit != null) {
-                        for (var rt : com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.values()) {
+                        for (var rt : ResourceType.values()) {
                             for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
                                 var spec = unit.getSpendRuntime().getSpec(key);
                                 if (!spec.showUi()) continue;
@@ -152,8 +152,7 @@ public class OnServerTick {
                                 float newVal = unit.getResourceTracker().decayKeyProgress(key, rt, decayPerSecond);
                                 int cint = (int) newVal;
                                 if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
-                                    com.robertx22.library_of_exile.main.Packets.sendToClient(player,
-                                        new ThresholdUiPacket(key, rt.id, newVal > 0f, newVal));
+                                    Packets.sendToClient(player, new ThresholdUiPacket(key, rt.id, newVal > 0f, newVal));
                                 }
                                 if (newVal <= 0f) {
                                     unit.getSpendRuntime().removeActive(rt, key);

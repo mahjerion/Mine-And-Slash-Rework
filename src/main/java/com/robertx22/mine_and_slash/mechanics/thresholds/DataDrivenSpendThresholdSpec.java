@@ -31,7 +31,7 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
             boolean showUi
     ) {
         super(resource, 0f, key,
-              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, dropProgressOnProc);
+              lockWhileEffectIds, cooldownTicks, lockWhileCooldown, dropProgressWhileLocked, dropProgressOnProc, showUi);
         this.mode = mode;
         this.value = value;
         this.multiplyByLevel = multiplyByLevel;
@@ -58,5 +58,4 @@ public class DataDrivenSpendThresholdSpec extends SpendThresholdSpec {
     @Override
     public void onProc(ServerPlayer sp, int procs) {
     }
-    public boolean showUi() { return showUi; }
 }

@@ -137,7 +137,6 @@ public class OnServerTick {
                             for (var key : unit.getSpendRuntime().getActiveKeys(rt)) {
                                 var spec = unit.getSpendRuntime().getSpec(key);
                                 if (!spec.showUi()) continue;
-
                                 long lastAct = unit.getSpendRuntime().getLastActivity(key);
                                 if (lastAct <= 0) continue;
                                 long since = now - lastAct;
@@ -151,8 +150,7 @@ public class OnServerTick {
                                 if (thr <= 0f) continue;
                                 float decayPerSecond = thr * 0.15f; // Decay rate: 15% of Threshold per second
                                 float newVal = unit.getResourceTracker().decayKeyProgress(key, rt, decayPerSecond);
-                                int cint = (int) newVal;
-                                if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
+                                if (unit.getSpendRuntime().progressScaledChanged(key, newVal, 10)) {
                                     Packets.sendToClient(player, new ThresholdUiPacket(key, rt.id, newVal > 0f, newVal));
                                 }
                                 if (newVal <= 0f) {

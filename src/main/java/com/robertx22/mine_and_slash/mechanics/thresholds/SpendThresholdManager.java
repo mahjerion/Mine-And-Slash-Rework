@@ -46,7 +46,7 @@ public final class SpendThresholdManager {
                 if (debug) {
                     long rem = unit.getSpendRuntime().cooldownRemainingTicks(key, now);
                     sp.sendSystemMessage(Component.literal(
-                        "[SPEND:" + spec.key() + "] locked by cooldown (" + rem + "t ~ " + fmtSec((float) rem) + "s)"
+                        "[SPEND:" + spec.key() + "] locked by cooldown (" + rem + "t ~ " + fmtSec((float) rem) + "s) ui=" + (spec.showUi() ? "on" : "off")
                     ));
                 }
                 continue;
@@ -57,7 +57,7 @@ public final class SpendThresholdManager {
                     tracker.clearKey(type, key);
                 }
                 if (debug) {
-                    sp.sendSystemMessage(Component.literal("[SPEND:" + spec.key() + "] locked"));
+                    sp.sendSystemMessage(Component.literal("[SPEND:" + spec.key() + "] locked ui=" + (spec.showUi() ? "on" : "off")));
                 }
                 if (spec.showUi()) {
                     Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
@@ -73,6 +73,11 @@ public final class SpendThresholdManager {
             if (loss > 0f && procs == 0) {
                 unit.getSpendRuntime().markActivity(key, now);
                 unit.getSpendRuntime().markActive(type, key, spec);
+                if (spec.showUi()) {
+                    float curInit = tracker.getKeyProgress(key, type);
+                    boolean show = curInit > 0f;
+                    Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, curInit));
+                }
             }
             if (procs > 0) {
                 spec.onProc(sp, procs);
@@ -80,19 +85,19 @@ public final class SpendThresholdManager {
                 if (spec.dropProgressOnProc()) {
                     tracker.clearKey(type, key);
                 }
-                if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ")");
+                if (debug) dbg(sp, "[SPEND:" + spec.key() + "] " + type.id + " ×" + procs + " (thr=" + fmt(threshold) + ") ui=" + (spec.showUi() ? "on" : "off"));
                 if (spec.showUi()) {
                     Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, false, 0));
+                    if (debug) dbg(sp, "[UI:" + key + "] close " + type.id);
                 }
                 unit.getSpendRuntime().removeActive(type, key);
             } else {
                 float cur = tracker.getKeyProgress(key, type);
                 if (debug) {
-                    dbg(sp, "[SPEND:" + spec.key() + "] +" + fmt(loss) + " " + type.id + " (cur=" + fmt(cur) + " / " + fmt(threshold) + ")");
+                    dbg(sp, "[SPEND:" + spec.key() + "] +" + fmt(loss) + " " + type.id + " (cur=" + fmt(cur) + " / " + fmt(threshold) + ") ui=" + (spec.showUi() ? "on" : "off"));
                 }
                 if (spec.showUi()) {
-                    int cint = (int) cur;
-                    if (unit.getSpendRuntime().progressIntChanged(key, cint)) {
+                    if (unit.getSpendRuntime().progressScaledChanged(key, cur, 10)) {
                         boolean show = cur > 0f;
                         Packets.sendToClient(sp, new ThresholdUiPacket(key, type.id, show, cur));
                     }

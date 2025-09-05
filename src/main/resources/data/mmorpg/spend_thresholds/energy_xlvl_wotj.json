@@ -1,6 +1,7 @@
 {
     "key": "ENERGY_XLVL_WOTJ",
     "resource": "energy",
+    "show_ui": true,
     "enabled": true,
     "priority": 0,
     "threshold": {

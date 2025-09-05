@@ -31,8 +31,8 @@ public abstract class SpendThresholdSpec {
                               int cooldownTicks,
                               boolean lockWhileCooldown,
                               boolean dropProgressWhileLocked,
-                              boolean dropProgressOnProc
-                              ) {
+                              boolean dropProgressOnProc,
+                              boolean showUi) {
         this.resource = resource;
         this.perLevelFactor = perLevelFactor;
         this.key = key;
@@ -41,6 +41,7 @@ public abstract class SpendThresholdSpec {
         this.lockWhileCooldown = lockWhileCooldown;
         this.dropProgressWhileLocked = dropProgressWhileLocked;
         this.dropProgressOnProc = dropProgressOnProc;
+        this.showUi = showUi;
     }
 
     // ===== accessors =====
@@ -52,6 +53,7 @@ public abstract class SpendThresholdSpec {
     public boolean dropProgressOnProc()         { return dropProgressOnProc; }
     public int cooldownTicks()                  { return cooldownTicks; }
     public int priority()                       { return priority; }
+    public boolean showUi()                     { return showUi; }
 
     
     public SpendThresholdSpec withPriority(int p) {
@@ -60,7 +62,7 @@ public abstract class SpendThresholdSpec {
     }
 
     public SpendThresholdSpec withShowUi(boolean on) {
-        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.resetProgressOnProc, on) {
+        return new SpendThresholdSpec(this.resource, this.perLevelFactor, this.key, this.lockWhileEffectIds, this.cooldownTicks, this.lockWhileCooldown, this.dropProgressWhileLocked, this.dropProgressOnProc, on) {
             @Override public float thresholdFor(EntityData unit) { return SpendThresholdSpec.this.thresholdFor(unit); }
             @Override public void onProc(ServerPlayer sp, int procs) { SpendThresholdSpec.this.onProc(sp, procs); }
             @Override public boolean isLockedFor(EntityData unit) { return SpendThresholdSpec.this.isLockedFor(unit); }

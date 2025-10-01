@@ -81,11 +81,10 @@ public class ProfessionToolData implements ITooltip {
     }
 
     public void addExp(Player p, ItemStack stack, int added) {
-
         xp += added;
 
-        int currentXPNeeded = getExpNeeded();
         if (lvl < GameBalanceConfig.get().MAX_LEVEL) {
+            int currentXPNeeded = getExpNeeded();
             while (xp >= currentXPNeeded) {
 
                 if (lvl >= GameBalanceConfig.get().MAX_LEVEL) {
@@ -104,6 +103,8 @@ public class ProfessionToolData implements ITooltip {
                     addStat();
                     p.sendSystemMessage(Chats.TOOL_ADD_STAT.locName(stack.getHoverName(), getRarity().locName()).withStyle(getRarity().textFormatting()));
                 }
+
+                currentXPNeeded = getExpNeeded();
             }
         }
     }

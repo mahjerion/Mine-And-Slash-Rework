@@ -75,6 +75,8 @@ public class StatPriority implements IAutoLocName {
         // StatPriority DAMAGE_ABSORBED_BY_MANA = damage("DAMAGE_ABSORBED_BY_MANA", 61);
         // todo this is currently not a stat effect, why?  StatPriority DAMAGE_ABSORBED_BY_MAGIC_SHIELD = damage("DAMAGE_ABSORBED_BY_MAGIC_SHIELD", 62);
         StatPriority FINAL_DAMAGE = damage("FINAL_DAMAGE", 100);
+        // added this to check for stats that require post proc checks
+        StatPriority POST_FINAL_DAMAGE_CHECKS = damage("POST_FINAL_DAMAGE_CHECKS", 101);
 
         public static void init() {
 

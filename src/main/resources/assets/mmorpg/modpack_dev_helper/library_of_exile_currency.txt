@@ -1,5 +1,8 @@
 These are all default registry entries of this type.
 This registry is modify-able through datapacks.
+add_spawn_rate
+add_tier
+add_wave
 affix_common_reroll
 affix_number_reroll
 affix_random_mythic_reroll

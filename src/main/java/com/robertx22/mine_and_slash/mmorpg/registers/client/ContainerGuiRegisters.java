@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.client;
 
 import com.robertx22.mine_and_slash.capability.player.container.BackpackScreen;
+import com.robertx22.mine_and_slash.capability.player.container.JewelScreen;
 import com.robertx22.mine_and_slash.capability.player.container.SkillGemsScreen;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.screen.*;
@@ -22,6 +23,7 @@ public class ContainerGuiRegisters {
         MenuScreens.register(SlashContainers.SKILL_GEMS.get(), SkillGemsScreen::new);
         MenuScreens.register(SlashContainers.BACKPACK.get(), BackpackScreen::new);
 
+        MenuScreens.register(SlashContainers.JEWEL.get(), JewelScreen::new);
 
     }
 

@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.database.data.spells.components.SpellConfiguration;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
 import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.summon.SummonHealth;
@@ -104,7 +105,7 @@ public class SummonSpells implements ExileRegistryInit {
                 .manualDesc("Summon a Zombie to aid you in combat.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
 
-                .summons(SlashEntities.ZOMBIE.get(), 20 * 60 * 2, 1, SummonType.UNDEAD)
+                .summons(SlashEntities.ZOMBIE.get(), SummonPetAction.INFINITE_DURATION, 1, SummonType.UNDEAD)
                 .addStat(OffenseStats.SUMMON_DAMAGE.get().mod(10, 50))
                 .addStat(new SummonHealth().mod(20, 200))
                 .levelReq(1)

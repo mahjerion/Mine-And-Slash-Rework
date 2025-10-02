@@ -59,7 +59,7 @@ public enum PlayerPointsType implements IGUID {
 
         @Override
         public void fullReset(Player p) {
-            Load.player(p).ascClass.reset(SpellSchoolsData.PointType.SPELL);
+            Load.player(p).ascClass.reset(SpellSchoolsData.PointType.SPELL, p);
         }
     },
     PASSIVES() {
@@ -85,7 +85,7 @@ public enum PlayerPointsType implements IGUID {
 
         @Override
         public void fullReset(Player p) {
-            Load.player(p).ascClass.reset(SpellSchoolsData.PointType.PASSIVE);
+            Load.player(p).ascClass.reset(SpellSchoolsData.PointType.PASSIVE, p);
         }
     },
 

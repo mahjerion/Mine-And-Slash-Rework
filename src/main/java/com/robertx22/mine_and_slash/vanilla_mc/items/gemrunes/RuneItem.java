@@ -25,6 +25,7 @@ import com.robertx22.mine_and_slash.gui.texts.textblocks.WorksOnBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.DropChanceBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.DropLevelBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
+import com.robertx22.mine_and_slash.itemstack.CustomItemData;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.loot.blueprints.bases.RunePart;
@@ -114,6 +115,7 @@ public class RuneItem extends Item implements IGUID, IAutoModel, IAutoLocName, I
 
                                 if (add) {
                                     gear.sockets.getSocketed().add(rune);
+                                    ex.get(StackKeys.CUSTOM).edit(custom -> custom.data.set(CustomItemData.KEYS.SALVAGING_DISABLED, true));
                                 }
 
 

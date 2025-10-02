@@ -5,29 +5,31 @@
   "package": "com.robertx22.mine_and_slash.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "TestMixin",
-    "PlayerAnimMixin",
     "ArrowShootMixin",
+    "AttributeMixin",
+    "DamageConflictCheckMixin",
+    "DamageSourceMixin",
+    "EntityMixin",
     "FallingBlockEntityMixin",
     "LivingEntityMixin",
     "LootTableMixin",
-    "EntityMixin",
+    "ObeliskMobTierStatsMixin",
+    "PlayerAnimMixin",
+    "RecipeTest",
     "StopMobDropWornGearInMapsMixin",
-    "DamageSourceMixin",
-    "DamageConflictCheckMixin",
-    "AttributeMixin",
-    "RecipeTest"
+    "TestMixin"
   ],
   "client": [
-    "TooltipMixin",
-    "StopOffhandRenderMixin",
-    "MixinServerWorldInfo",
-    "NeatRenderMixin",
     "AccessorRenderType",
     "ItemGlintMixin",
+    "ItemMirrorMixin",
     "ItemStackMixin",
-    "WorldRendererMixin",
-    "MouseHandlerMixin"
+    "MixinServerWorldInfo",
+    "MouseHandlerMixin",
+    "NeatRenderMixin",
+    "StopOffhandRenderMixin",
+    "TooltipMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

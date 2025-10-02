@@ -51,9 +51,9 @@ public class SlashCapabilities {
             }
         });
 
-        PlayerCapabilities.register(EntityData.INSTANCE, new EntityData(null)); // todo will forge's async screw with this?
-        PlayerCapabilities.register(PlayerData.INSTANCE, new PlayerData(null)); // todo will forge's async screw with this?
-        PlayerCapabilities.register(PlayerBackpackData.INSTANCE, new PlayerBackpackData(null)); // todo will forge's async screw with this?
+        PlayerCapabilities.register(EntityData.INSTANCE, EntityData.ID); // todo will forge's async screw with this?
+        PlayerCapabilities.register(PlayerData.INSTANCE, PlayerData.ID); // todo will forge's async screw with this?
+        PlayerCapabilities.register(PlayerBackpackData.INSTANCE, PlayerBackpackData.ID); // todo will forge's async screw with this?
 
     }
 }

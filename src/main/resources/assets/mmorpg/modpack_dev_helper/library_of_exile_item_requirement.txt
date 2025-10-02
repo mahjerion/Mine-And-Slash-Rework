@@ -21,6 +21,7 @@ has_affixes
 has_corrupt_affixes
 has_implicit
 has_infusion
+has_less_than_x_waves
 has_no_enchants
 has_socketed_gem
 has_socketed_rune
@@ -32,10 +33,12 @@ is_epic
 is_gear
 is_jewel
 is_legendary
+is_less_than_max_tier
 is_map
 is_mythic
 is_not_corrupted
 is_not_uber
+is_obelisk_map
 is_pickaxe_tag
 is_rare
 is_runeword
@@ -57,3 +60,4 @@ max_uses_relief
 max_uses_sharpening_stone
 max_uses_sure_jewel_up
 not_crafted_gear
+obelisk_spawnrate_cap

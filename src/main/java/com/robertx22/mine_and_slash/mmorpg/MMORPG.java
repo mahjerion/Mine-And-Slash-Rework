@@ -15,7 +15,7 @@ import com.robertx22.library_of_exile.registry.register_info.SeriazableRegistrat
 import com.robertx22.library_of_exile.registry.util.ExileRegistryUtil;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.a_libraries.curios.CurioEvents;
-import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
+import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.a_libraries.neat.NeatForgeConfig;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatConditions;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_effects.StatEffects;
@@ -31,6 +31,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.conditions.E
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
+import com.robertx22.mine_and_slash.events.MineAndSlashEventsInit;
 import com.robertx22.mine_and_slash.gui.SocketTooltip;
 import com.robertx22.mine_and_slash.maps.MapEvents;
 import com.robertx22.mine_and_slash.mixin_ducks.tooltip.ItemTooltipsRegister;
@@ -235,11 +236,12 @@ public class MMORPG {
 
         watch.print("Mine and slash mod initialization ");
 
-
+        MineAndSlashEventsInit.initEvents();
     }
 
 
     public void interMod(InterModEnqueueEvent event) {
+
 
 /*
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.RING).size(2).build());

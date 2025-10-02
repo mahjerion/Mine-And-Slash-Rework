@@ -49,6 +49,7 @@ arrow_spell_dmg_taken
 attack_damage
 aura_effect
 axe_damage
+battlemage_user
 beast_cast_time
 beast_cdr
 beast_spell_dmg
@@ -65,6 +66,7 @@ block_chance
 block_per_endurance_charge
 blood
 blood_leech_cap
+blood_on_ailment_procced
 blood_on_is_blocked
 blood_on_is_dodged
 blood_on_kill
@@ -205,6 +207,7 @@ endurance_charge_on_crit
 endurance_charge_on_hit
 energy
 energy_leech_cap
+energy_on_ailment_procced
 energy_on_hit_hit
 energy_on_is_blocked
 energy_on_is_dodged
@@ -279,6 +282,7 @@ heal_spell_dmg
 heal_spell_dmg_taken
 health
 health_leech_cap
+health_on_ailment_procced
 health_on_hit_hit
 health_on_is_blocked
 health_on_is_dodged
@@ -458,6 +462,7 @@ magic_shield
 magic_shield_aura_cost
 magic_shield_heal
 magic_shield_leech_cap
+magic_shield_on_ailment_procced
 magic_shield_on_hit_hit
 magic_shield_on_is_blocked
 magic_shield_on_is_dodged
@@ -473,6 +478,7 @@ magic_spell_dmg_taken
 mana
 mana_cost
 mana_leech_cap
+mana_on_ailment_procced
 mana_on_hit_hit
 mana_on_is_blocked
 mana_on_is_dodged
@@ -519,6 +525,9 @@ missile_cast_time
 missile_cdr
 missile_spell_dmg
 missile_spell_dmg_taken
+missing_hp_health_regen_per_2
+missing_magic_shield_dmg_received_per_10
+missing_mana_dmg_per_10
 more_dmg_per_frenzy
 more_dmg_per_power
 more_food_stats
@@ -545,6 +554,7 @@ phys_taken_as_elemental
 phys_taken_as_fire
 phys_taken_as_lightning
 phys_taken_as_physical
+phys_taken_as_random
 phys_taken_as_water
 phys_to_all
 phys_to_chaos
@@ -552,6 +562,7 @@ phys_to_elemental
 phys_to_fire
 phys_to_lightning
 phys_to_physical
+phys_to_random
 phys_to_water
 physical_ailment_aura_cost
 physical_any_wep_damage

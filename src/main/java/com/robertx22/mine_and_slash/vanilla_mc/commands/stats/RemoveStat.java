@@ -27,7 +27,7 @@ public class RemoveStat {
                                                         .suggests(new GiveStat.ModOrExact())
                                                         .then(argument("GUID", StringArgumentType.string())
                                                                 .executes(ctx -> {
-                                                                    return run(EntityArgument.getPlayer(ctx, "target"), StringArgumentType
+                                                                        return run(EntityArgument.getEntity(ctx, "target"), StringArgumentType
                                                                             .getString(ctx, "scaling"), StringArgumentType
                                                                             .getString(ctx, "GUID"));
                                                                 })))))));

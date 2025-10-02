@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentDur
 import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentEffectStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentResistance;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
@@ -73,8 +74,7 @@ public class EntityAilmentData {
         }
     }
 
-    public void onAilmentCausingDamage(LivingEntity caster, LivingEntity target, Ailment ailment, float dmg) {
-
+    public void onAilmentCausingDamage(LivingEntity caster, LivingEntity target, Ailment ailment, float dmg, Unit unit) {
         if (!datas.containsKey(caster.getUUID())) {
             datas.put(caster.getUUID(), new OneData());
         }
@@ -85,11 +85,11 @@ public class EntityAilmentData {
         AilmentResistance res = new AilmentResistance(ailment);
         AilmentEffectStat eff = new AilmentEffectStat(ailment);
 
-        float speed = Load.Unit(caster).getUnit().getCalculatedStat(AilmentSpeed.INSTANCE).getMultiplier();
+        float speed = unit.getCalculatedStat(AilmentSpeed.INSTANCE).getMultiplier();
 
 
         dmg = dmg * ailment.damageEffectivenessMulti; // make sure this isnt done multiple times
-        dmg *= Load.Unit(caster).getUnit().getCalculatedStat(eff).getMultiplier();
+        dmg *= unit.getCalculatedStat(eff).getMultiplier();
 
         var resist = Load.Unit(target).getUnit().getCalculatedStat(res);
         float resmulti = resist.getReverseMultiplier();
@@ -107,9 +107,8 @@ public class EntityAilmentData {
 
 
             int ticks = ailment.durationTicks;
-            var stat = Load.Unit(caster).getUnit().getCalculatedStat(AilmentSpeed.INSTANCE).getMultiplier();
-            ticks /= stat;
-            ticks *= Load.Unit(caster).getUnit().getCalculatedStat(dur).getMultiplier();
+            ticks /= speed;
+            ticks *= unit.getCalculatedStat(dur).getMultiplier();
 
             if (ticks < 21) {
                 ticks = 21;
@@ -138,7 +137,7 @@ public class EntityAilmentData {
 
             float add = dmg / forFull;
             strength = MathHelper.clamp(data.strMap.get(ailment.GUID()) + (add), 0, 1);
-            strength *= Load.Unit(caster).getUnit().getCalculatedStat(eff).getMultiplier();
+            strength *= unit.getCalculatedStat(eff).getMultiplier();
             strength *= Load.Unit(target).getUnit().getCalculatedStat(res).getMultiplier();
 
             data.strMap.put(ailment.GUID(), strength);

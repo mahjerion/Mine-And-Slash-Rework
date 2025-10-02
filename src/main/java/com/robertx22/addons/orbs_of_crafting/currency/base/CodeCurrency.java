@@ -25,7 +25,7 @@ public abstract class CodeCurrency implements IWeighted, IAutoLocName, IAutoLocD
         public static int RARE = 250;
         public static int UBER = 50;
         public static int MEGA_UBER = 10;
-
+        public static int MIRROR = 1;
     }
 
 

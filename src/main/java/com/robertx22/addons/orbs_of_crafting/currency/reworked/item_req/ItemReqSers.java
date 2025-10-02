@@ -9,6 +9,7 @@ public class ItemReqSers {
     public static String HAS_IMPLICIT = "has_implicit";
     public static String HAS_CORRUPTION_AFFIXES = "has_corrupt_affixes";
     public static String IS_NOT_CORRUPTED = "is_not_corrupted";
+    public static String IS_NOT_MIRRORED = "is_not_mirrored";
     public static String HAS_INFUSION = "has_infusion";
     public static String CAN_ADD_SOCKETS = "can_add_sockets";
     public static String IS_UNDER_QUALITY = "is_under_quality";

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mmorpg.registers.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 
 import java.util.ArrayList;
@@ -19,12 +20,25 @@ public class SpellKeybind {
     boolean firstbar;
 
     public SpellKeybind(int num, int key, KeyModifier mod, boolean firstbar) {
-        this.key = new KeyMapping(KeybindsRegister.prefix + "spell_" + num, key, KeybindsRegister.CATEGORY);
-        this.firstbar = firstbar;
         if (mod != null) {
-            // todo will this work
-            this.key.setKeyModifierAndCode(mod, InputConstants.UNKNOWN);
+            this.key = new KeyMapping(
+                    KeybindsRegister.prefix + "spell_" + num,
+                    KeyConflictContext.IN_GAME,
+                    mod,
+                    InputConstants.Type.KEYSYM,
+                    key,
+                    KeybindsRegister.CATEGORY
+            );
+        } else {
+            this.key = new KeyMapping(
+                    KeybindsRegister.prefix + "spell_" + num,
+                    KeyConflictContext.IN_GAME,
+                    InputConstants.Type.KEYSYM,
+                    key,
+                    KeybindsRegister.CATEGORY
+            );
         }
+        this.firstbar = firstbar;
         this.num = num;
 
         ALL.add(this);
@@ -47,7 +61,6 @@ public class SpellKeybind {
         }
 
  */
-
 
         return n;
     }

@@ -6,6 +6,7 @@ import com.robertx22.library_of_exile.localization.ExileTranslation;
 import com.robertx22.library_of_exile.localization.TranslationBuilder;
 import com.robertx22.library_of_exile.localization.TranslationType;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
+import com.robertx22.mine_and_slash.itemstack.CustomItemData;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -78,6 +79,10 @@ public class ExtractSocketItemMod extends GearModification {
                         }
                     }
                 }
+            }
+
+            if(gear.sockets.isEmpty()) {
+                stack.get(StackKeys.CUSTOM).edit(custom -> custom.data.set(CustomItemData.KEYS.SALVAGING_DISABLED, false));
             }
         });
     }

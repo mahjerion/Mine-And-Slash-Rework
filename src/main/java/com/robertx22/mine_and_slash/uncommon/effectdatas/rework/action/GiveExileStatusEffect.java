@@ -32,7 +32,7 @@ public class GiveExileStatusEffect extends StatEffect {
     @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
 
-        ExilePotionEvent potionEvent = EventBuilder.ofEffect(new CalculatedSpellData(null), event.getSide(statSource), event.getSide(give_to), Load.Unit(event.getSide(statSource))
+        ExilePotionEvent potionEvent = EventBuilder.ofEffect(CalculatedSpellData.NO_SPELL_RELATED, event.getSide(statSource), event.getSide(give_to), Load.Unit(event.getSide(statSource))
                         .getLevel(), ExileDB.ExileEffects()
                         .get(effect), GiveOrTake2.give, seconds * 20, false)
                 .set(x -> {

@@ -134,6 +134,7 @@ public enum Words implements IAutoLocName {
     TITLE_FEATURE_AGGRO_SUMMONS("Aggressive Summons"),
     TITLE_FEATURE_EVERYONE_ALLY("Everyone is Considered an Ally"),
     TITLE_FEATURE_DROP_MAP_CHEST_ITEMS("Drop Map Chest Contents When Looted"),
+    TITLE_FEATURE_ENABLE_EXP_GAIN("Enable Exp Gain"),
 
     CAST_FAIL_MSGS("Will print helpful messages when you fail to cast a spell\nParticularly Helpful for New Players\nPlayers below lvl 15 can't disable this option."),
     MOB_DEATH_MESSAGES("Provides a short message when you kill a mob.\n\nYou can hover over it for useful info like Loot Chance"),
@@ -146,6 +147,7 @@ public enum Words implements IAutoLocName {
     AGGRESIVE_SUMMONS("Your summons will now attack anything they guess is an enemy, and no longer need guidance from you.\n\nYou need to Re-Summon your minions for this to take effect"),
     EVERYONE_IS_ALLY("By default your spells only target your MNS team members and yourself.\n\nWith this enabled, your heals, buffs etc will target even un-teamed players!"),
     DROP_MAP_CHEST_CONTENTS_ON_GROUND("When you loot chests in maps, should they drop their contents on the ground automatically? \n\nThis is helpful if you use the Master Backpack or other loot filtering mods like Sophisticated Backpacks."),
+    ENABLE_EXP_GAIN("Allows you to gain exp.\n\nWhen playing in party, you always participate in exp splitting."),
 
     WHILE_UNDER_AURA("While Under Effect of %1$s:"),
     CURSE_OFFERS("Curse Offers:"),
@@ -233,6 +235,7 @@ public enum Words implements IAutoLocName {
     GEAR_SOUL_DESC("Souls are one way of adding Mine and Slash stats to Gear."),
     DungeonKey("Dungeon Key"),
     Corrupted("Corrupted"),
+    Mirrored("Mirrored"),
     CorruptsItemHarvest("Turns the Item Corrupted (no benefits)"),
     Classes("Classes"),
     AscClasses("Ascendancy"),
@@ -365,7 +368,7 @@ public enum Words implements IAutoLocName {
     REDUCE_PERCENT_STAT("Lower "),
     EMPTY_BOX("Box"),
     LEVEL_UP_TYPE_PLAYER("Player"),
-    JEWEL_SOCKET_NOT_AVAILABLE("Unlock on talent tree");
+    JEWEL_SOCKET_NOT_AVAILABLE("Unlock on talent tree"), NO_JEWEL_SLOT("No Jewel Slot");
 
 
     private String localization = "";

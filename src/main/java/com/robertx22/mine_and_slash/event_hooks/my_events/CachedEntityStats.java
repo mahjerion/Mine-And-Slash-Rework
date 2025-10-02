@@ -1,6 +1,6 @@
 package com.robertx22.mine_and_slash.event_hooks.my_events;
 
-import com.robertx22.mine_and_slash.a_libraries.curios.MyCurioUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.omen.OmenSet;
@@ -178,7 +178,7 @@ public class CachedEntityStats {
         }
 
         if (entity instanceof Player) {
-            MyCurioUtils.getAllSlots((Player) entity)
+            MyCuriosUtils.getAllSlots((Player) entity)
                     .forEach(x -> {
                         GearData data = new GearData(x, null, unitdata.get());
                         list.add(data);

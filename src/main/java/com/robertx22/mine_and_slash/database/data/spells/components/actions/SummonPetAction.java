@@ -26,6 +26,8 @@ public class SummonPetAction extends SpellAction {
         super(Arrays.asList());
     }
 
+    public static int INFINITE_DURATION = -1;
+
     @Override
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
 
@@ -47,12 +49,11 @@ public class SummonPetAction extends SpellAction {
 
             en.tame((Player) ctx.caster);
 
-            var pos = ctx.caster.blockPosition(); // todo
+            var pos = ctx.caster.position(); // todo
 
-            en.setPos(pos.getX(), pos.getY(), pos.getZ());
+            en.setPos(pos.x(), pos.y(), pos.z());
 
-            int duration = data.get(MapField.LIFESPAN_TICKS).intValue();
-            duration *= ctx.calculatedSpellData.data.getNumber(EventData.DURATION_MULTI, 1).number;
+            int duration = getDuration(ctx, data);
 
             float aggroRadius = ctx.calculatedSpellData.data.getNumber(EventData.AGGRO_RADIUS, 15).number;
             aggroRadius *= ctx.calculatedSpellData.data.getNumber(EventData.AGGRO_RADIUS_MULTI, 1).number;
@@ -76,9 +77,17 @@ public class SummonPetAction extends SpellAction {
         updatePlayerSummons(ctx.caster, totalSummons, ctx.calculatedSpellData.spell_id);
     }
 
+    private static int getDuration(SpellCtx ctx, MapHolder data) {
+        int duration = data.get(MapField.LIFESPAN_TICKS).intValue();
+        if (duration == INFINITE_DURATION) {
+            return duration;
+        }
+
+        return (int) (duration * ctx.calculatedSpellData.data.getNumber(EventData.DURATION_MULTI, 1).number);
+    }
+
     public static void updatePlayerSummons(LivingEntity caster, int totalSummons, String currentSummonSpell) {
         List<SummonToRemove> list = new ArrayList<>();
-        Map<String, Integer> summonedTypes = new HashMap<>();
 
         for (SummonEntity en : EntityFinder.start(caster, SummonEntity.class, caster.blockPosition()).searchFor(AllyOrEnemy.all).radius(100).build()) {
             if (en.getOwner() != caster) {
@@ -86,7 +95,6 @@ public class SummonPetAction extends SpellAction {
             }
 
             var data = Load.Unit(en).summonedPetData;
-            summonedTypes.put(data.spell, summonedTypes.getOrDefault(data.spell, 0) + 1);
 
             if (!data.counts_towards_max_summons) {
                 continue;
@@ -96,23 +104,28 @@ public class SummonPetAction extends SpellAction {
         }
 
         list.sort(Comparator.comparingInt(x -> -x.summon.tickCount)); // todo this needs to be from highest to lowest age
+
         int excess = list.size() - totalSummons;
+        int firstSummonIndex = 0;
+        for (;firstSummonIndex < excess; firstSummonIndex++) {
+            SummonToRemove summonToRemove = list.get(firstSummonIndex);
+            summonToRemove.data.discard(summonToRemove.summon);
+        }
 
-        if (excess > 0) {
-            for (int i = 0; i < excess; i++) {
-                SummonToRemove summonToRemove = list.get(i);
-                summonToRemove.data.discard(summonToRemove.summon);
-
-                String spell = summonToRemove.data.spell;
-                summonedTypes.put(spell, summonedTypes.get(spell) - 1);
+        HashMap<String, List<UUID>> summonedTypes = new HashMap<>();
+        for (;firstSummonIndex < list.size(); firstSummonIndex++) {
+            var summonToRemove = list.get(firstSummonIndex);
+            if (!summonedTypes.containsKey(summonToRemove.data.spell)) {
+                summonedTypes.put(summonToRemove.data.spell, new ArrayList<>());
             }
+            summonedTypes.get(summonToRemove.data.spell).add(summonToRemove.summon.getUUID());
         }
 
         if (!(caster instanceof Player player)) {
             return;
         }
 
-        Load.player(player).setSummonedData(summonedTypes);
+        summonedTypes.forEach((spell, summons) -> Load.player(player).setSummons(spell, summons));
     }
 
     public MapHolder create(EntityType type, int lifespan, int amount, SummonType st, boolean counts) {

@@ -88,10 +88,10 @@ public class PlayerBackpackData implements ICap {
         //  Packets.sendToClient(player, new SyncPlayerCapToClient(player, this.getCapIdForSyncing()));
     }
 
-
+    public static final String ID = "backpack_data";
     @Override
     public String getCapIdForSyncing() {
-        return "backpack_data";
+        return ID;
     }
 
 }

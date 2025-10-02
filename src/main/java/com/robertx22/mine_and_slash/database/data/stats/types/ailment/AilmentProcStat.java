@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageE
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
@@ -39,6 +40,7 @@ public class AilmentProcStat extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
+            effect.data.setBoolean(EventData.AILMENT_PROCCED, true);
             effect.targetData.ailments.shatterAccumulated(effect.source, effect.target, ailment, effect.getSpellOrNull());
             return effect;
         }

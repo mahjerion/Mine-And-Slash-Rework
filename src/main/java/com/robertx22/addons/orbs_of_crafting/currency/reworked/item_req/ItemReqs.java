@@ -4,6 +4,7 @@ import com.robertx22.addons.orbs_of_crafting.currency.base.ExileKeyUtil;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.ExtractSocketItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.HasCorruptAffixes;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotCorruptedReq;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotMirroredReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.gear.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeDungeonMapReq;
@@ -73,6 +74,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKey<ItemRequirement, KeyInfo> HAS_IMPLICIT = ExileKey.ofId(this, "has_implicit", x -> new MustHaveImplicitReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_CORRUPTION_AFFIXES = ExileKey.ofId(this, "has_corrupt_affixes", x -> new HasCorruptAffixes(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_NOT_CORRUPTED = ExileKey.ofId(this, "is_not_corrupted", x -> new IsNotCorruptedReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> IS_NOT_MIRRORED = ExileKey.ofId(this, "is_not_mirrored", x -> new IsNotMirroredReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_INFUSION = ExileKey.ofId(this, "has_infusion", x -> new HasInfusionReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> CAN_ADD_SOCKETS = ExileKey.ofId(this, "can_add_sockets", x -> new CanAddSocketsReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> UNDER_20_QUALITY = ExileKey.ofId(this, "is_under_20_quality", x -> new IsUnderQualityReq(x.GUID(), IsUnderQualityReq.UNDER_20));

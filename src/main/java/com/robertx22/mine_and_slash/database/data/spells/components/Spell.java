@@ -23,7 +23,6 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.Spe
 import com.robertx22.mine_and_slash.database.data.value_calc.MaxLevelProvider;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
-import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
@@ -54,7 +53,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -94,7 +92,9 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
     // todo make this a tag instead of using a negative tag maybe?
     public boolean usesWeaponForDamage() {
-        return !config.tags.contains(SpellTags.magic);
+        //changed to always be true instead of deleting condition for readability. should be true because staff damage is useless otherwise
+        return true;
+        //return !config.tags.contains(SpellTags.magic);
     }
 
     public int max_lvl = 16; // first lvl unlocks spell, then every 3 lvls unlocks a supp gem slot?
@@ -157,29 +157,25 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final void onCastingTick(SpellCastContext ctx) {
+        int timesToCast = (int) ctx.spell.getConfig().times_to_cast;
+        if (timesToCast > 1) {
+            // check how many times we should've cast by now to see if it increased
+            int castTimeTicks = getCastTimeTicks(ctx);
+            int castCountLastTick = (ctx.ticksInUse - 1) * timesToCast / castTimeTicks;
+            int castCountThisTick = ctx.ticksInUse * timesToCast / castTimeTicks;
 
-        int timesToCast = ctx.spell.getConfig().times_to_cast;
-        if (timesToCast > 1){
-            SpellCastInfo castInfo = getCastInfo(ctx);
-
-            // if i didnt do this then cast time reduction would reduce amount of spell hits.
-
-
-            if (ctx.ticksInUse > 0 && castInfo.castInThisTick(ctx.ticksInUse)) {
+            if (castCountThisTick != castCountLastTick) {
                 this.cast(ctx);
             }
-
         } else if (timesToCast < 1) {
             ExileLog.get().warn("Times to cast spell is: " + timesToCast + " . this seems like a bug.");
         }
-
-        ctx.castedThisTick = true;
     }
 
     public void cast(SpellCastContext ctx) {
         LivingEntity caster = ctx.caster;
-
-     /*
+        ctx.castedThisTick = true;
+        /*
         if (MMORPG.RUN_DEV_TOOLS_REMOVE_WHEN_DONE && this.config.swing_arm) {
             //    caster.swingTime = -1; // this makes sure hand swings
             //   caster.swing(InteractionHand.MAIN_HAND);
@@ -189,39 +185,16 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final int getCooldownTicks(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number;
+        return (int) Math.ceil(ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number);
     }
 
     public final int getChargeCooldownTicks(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number;
+        return (int) Math.ceil(ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number);
     }
 
-    public SpellCastInfo getCastInfo(SpellCastContext ctx) {
+    public final int getCastTimeTicks(SpellCastContext ctx) {
         // if it casts 5 times a cast, it should take at least 5 ticks to cast it
-        // since Robert don't want spell can be cast multiple times in a single tick, then we have to handle the decimal cast tick carefully
-        float clamp = MathHelper.clamp(ctx.event.data.getNumber(EventData.CAST_TICKS).number, config.times_to_cast * 1f, 10000f);
-        int timesToCast = ctx.spell.getConfig().times_to_cast;
-        float singleTimeCost = clamp / timesToCast;
-        int[] points = new int[timesToCast];
-        //means a single cast cost decimal tick
-        if (singleTimeCost % 1 != 0) {
-            for (int i = 0; i < timesToCast; i++) {
-                float v = singleTimeCost * (i + 1);
-                //means the result time is integer at some situation, like 2.5 * 4 ticks.
-                if (v % 1 == 0){
-                    points[i] = ((int) v);
-                } else {
-                    points[i] = ((int) Math.ceil(singleTimeCost * (i + 1)));
-                }
-
-            }
-        } else {
-            for (int i = 0; i < timesToCast; i++) {
-                points[i] = ((int) singleTimeCost) * (i + 1);
-            }
-
-        }
-        return new SpellCastInfo(points[points.length - 1], points);
+        return MathHelper.clamp((int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_TICKS).number), config.times_to_cast, 10000);
     }
 
     @Override
@@ -291,17 +264,17 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         }
         if (config.usesCharges()) {
             list.add(Words.MAX_CHARGES.locName(config.charges).withStyle(ChatFormatting.YELLOW));
-            list.add(Words.CHARGE_REGEN.locName(config.charge_regen / 20).withStyle(ChatFormatting.YELLOW));
+            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(config.charge_regen)).withStyle(ChatFormatting.YELLOW));
         } else {
-            list.add(Words.COOLDOWN.locName(getCooldownTicks(ctx) / 20).withStyle(ChatFormatting.YELLOW));
+            list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(getCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
         }
 
-        int casttime = getCastInfo(ctx).castTime();
+        int casttime = getCastTimeTicks(ctx);
 
-        if (casttime == 0) {
+        if (casttime <= 1) {
             list.add(Words.INSTANT_CAST.locName().withStyle(ChatFormatting.GREEN));
         } else {
-            list.add(Words.CAST_TIME.locName(Math.round(casttime / 20.0f * 100f) / 100f).withStyle(ChatFormatting.GREEN));
+            list.add(Words.CAST_TIME.locName(tooltipFormatTicksAsSeconds(casttime)).withStyle(ChatFormatting.GREEN));
         }
 
         Set<String> radiuses = new LinkedHashSet<>();
@@ -311,7 +284,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                     x.targets.forEach(a -> {
                         // adds radius for damage spells
                         if (x.acts.stream().anyMatch(e -> e.type.equals(SpellAction.DEAL_DAMAGE.GUID())) && a.has(MapField.RADIUS)) {
-                            String rad = MMORPG.formatNumber(a.getOrDefault(MapField.RADIUS, 0D).floatValue());
+                            String rad = TOOLTIP_NUMBER_FORMAT.format(a.getOrDefault(MapField.RADIUS, 0D).doubleValue());
                             radiuses.add(rad);
                         }
                     });
@@ -338,7 +311,6 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         // --- FIX: Use a map to keep only the effect with the greatest duration ---
         LinkedHashMap<ExileEffect, String> effectsWithDurations = new LinkedHashMap<>();
-        DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         if (ExileDB.ExileEffects().isRegistered(effect_tip)) {
             effectsWithDurations.put(
@@ -354,7 +326,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                         x.acts.forEach(a -> {
                             if (a.has(MapField.EXILE_POTION_ID)) {
                                 ExileEffect eff = a.getExileEffect();
-                                String dur = StringUtils.remove(decimalFormat.format(a.getOrDefault(MapField.POTION_DURATION, 0D) / 20), ".0");
+                                String dur = tooltipFormatTicksAsSeconds((int) (double) a.getOrDefault(MapField.POTION_DURATION, 0D));
                                 // If already present, keep the greater duration
                                 if (effectsWithDurations.containsKey(eff)) {
                                     String existingDur = effectsWithDurations.get(eff);
@@ -454,6 +426,12 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         } catch (Exception e) {
             return 0f;
         }
+    }
+
+    private static final DecimalFormat TOOLTIP_NUMBER_FORMAT = new DecimalFormat("0.##");
+
+    private static String tooltipFormatTicksAsSeconds(int ticks) {
+        return TOOLTIP_NUMBER_FORMAT.format(ticks / 20F);
     }
 
     public int getLevelOf(LivingEntity en) {

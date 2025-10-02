@@ -18,7 +18,7 @@ public class CoinItem extends AutoItem implements ICreativeTabTiered {
     public Coin coin;
 
     public CoinItem(Coin coin) {
-        super(new Properties().stacksTo(64));
+        super(new Properties().stacksTo(256));
         this.coin = coin;
     }
 

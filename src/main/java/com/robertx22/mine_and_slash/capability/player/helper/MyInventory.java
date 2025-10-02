@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
@@ -7,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 // had to override tag methods because the simplecontainer doesn't save place in inventory, just autosorts items..
 public class MyInventory extends SimpleContainer {
+
 
     public MyInventory(int pSize) {
         super(pSize);

@@ -29,6 +29,7 @@ import java.util.Arrays;
 public class StatConditions implements ExileRegistryInit {
 
     public static DataHolder<String, StatCondition> IS_BOOLEAN = new DataHolder<>(Arrays.asList(
+            EventData.AILMENT_PROCCED,
             EventData.IS_BLOCKED,
             EventData.IS_DODGED,
             EventData.CRIT,
@@ -37,6 +38,7 @@ public class StatConditions implements ExileRegistryInit {
     ), x -> new IsBooleanTrueCondition(x));
 
     public static DataHolder<String, StatCondition> IS_FALSE = new DataHolder<>(Arrays.asList(
+            EventData.AILMENT_PROCCED,
             EventData.IS_BLOCKED,
             EventData.IS_BONUS_ELEMENT_DAMAGE,
             EventData.IS_DODGED,

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
 import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
+import com.robertx22.mine_and_slash.capability.player.container.JewelsMenu;
 import com.robertx22.mine_and_slash.capability.player.container.SkillGemsMenu;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.screen.CraftingStationMenu;
@@ -32,5 +33,7 @@ public class SlashContainers {
 
     public static RegObj<MenuType<SkillGemsMenu>> SKILL_GEMS = Def.container("runeword", () -> IForgeMenuType.create((x, y, z) -> new SkillGemsMenu(x, y)));
     public static RegObj<MenuType<BackpackMenu>> BACKPACK = Def.container("backpack", () -> IForgeMenuType.create((id, pInv, buf) -> new BackpackMenu(id, pInv)));
+
+    public static RegObj<MenuType<JewelsMenu>> JEWEL = Def.container("jewel", () -> IForgeMenuType.create((id, pInv, buf) -> new JewelsMenu(id, pInv)));
 
 }

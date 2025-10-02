@@ -52,10 +52,12 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.VanillaRariti
 import com.robertx22.test.test2.SchemaTest;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -181,7 +183,7 @@ public class MMORPG {
 
         bus.addListener(this::commonSetupEvent);
         bus.addListener(this::interMod);
-
+        MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, CurioEvents::attachCapability);
         ItemTooltipsRegister.init();
 
         CurioEvents.reg();
@@ -239,11 +241,11 @@ public class MMORPG {
 
     public void interMod(InterModEnqueueEvent event) {
 
-
+/*
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.RING).size(2).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.NECKLACE).size(1).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(RefCurio.OMEN).size(1).build());
-
+*/
         ModLoadingContext.get()
                 .registerConfig(ModConfig.Type.SERVER, CompatConfig.spec, NeatForgeConfig.defaultConfigName(ModConfig.Type.SERVER, "mine_and_slash_compatibility"));
 

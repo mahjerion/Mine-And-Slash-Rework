@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.loot.blueprints.MapBlueprint;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
+import com.robertx22.mine_and_slash.uncommon.UnstuckMobs;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
@@ -85,6 +86,7 @@ public class DungeonAddonEvents {
                     }
 
                 });
+                UnstuckMobs.unstuckFromWalls(event.mob);
             }
         });
 

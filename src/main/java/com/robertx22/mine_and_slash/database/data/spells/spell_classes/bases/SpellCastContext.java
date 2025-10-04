@@ -20,7 +20,6 @@ public class SpellCastContext {
     public final EntityData data;
     public final int ticksInUse;
     public final Spell spell;
-    public boolean isLastCastTick;
     public boolean castedThisTick = false;
     public SpellStatsCalculationEvent event;
     public CalculatedSpellData calcData;
@@ -39,15 +38,11 @@ public class SpellCastContext {
 
         event.Activate();
 
-
         this.calcData = event.savedData;
-
-        int castTicks = (int) event.data.getNumber(EventData.CAST_TICKS).number;
-        this.isLastCastTick = castTicks == ticksInUse;
 
         if (caster instanceof Player p) {
             try {
-                this.unit = Load.player(p).getSpellUnitStats(p, spell);
+                this.unit = Load.player(p).getSpellUnitStats(spell);
             } catch (Exception e) {
                 this.unit = this.data.getUnit();
             }

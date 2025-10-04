@@ -7,6 +7,9 @@ add_gear_level
 add_gear_quality
 add_potential
 add_socket
+add_spawn_rate
+add_tier
+add_wave
 affix_number_reroll
 corrupt_gear
 corrupt_gear_no_affix

@@ -19,9 +19,12 @@ public class CasterHasMnsEffectCondition extends EffectCondition {
     @Override
     public boolean canActivate(SpellCtx ctx, MapHolder data) {
         ExileEffect potion = data.getExileEffect();
-        int stacks = data.getOrDefault(MapField.EFFECT_STACKS, 1D).intValue();
-        var d = Load.Unit(ctx.caster).getStatusEffectsData();
-        return d.has(potion) && d.get(potion).stacks >= stacks;
+        if (potion != null){
+            int stacks = data.getOrDefault(MapField.EFFECT_STACKS, 1D).intValue();
+            var d = Load.Unit(ctx.caster).getStatusEffectsData();
+            return d.has(potion) && d.get(potion).stacks >= stacks;
+        }
+        return false;
     }
 
     public MapHolder create(EffectCtx effect) {

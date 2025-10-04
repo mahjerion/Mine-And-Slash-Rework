@@ -2,6 +2,7 @@ These are all default registry entries of this type.
 This registry is modify-able through datapacks.
 boss
 empty
+obelisk
 prophecy
 the_harvest
 uber_boss

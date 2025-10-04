@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MyCurioUtils {
+public class MyCuriosUtils {
 
     public static List<String> SLOTS = Arrays.asList("ring", "necklace", "omen", "backpack");
 

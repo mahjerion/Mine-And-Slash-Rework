@@ -70,7 +70,7 @@ public class ExilePotionEvent extends EffectEvent {
         } else {
 
 
-            extraData.stacks++;
+            extraData.stacks += stacks;
             extraData.stacks = Mth.clamp(extraData.stacks, 1, effect.getMaxCharges(this.targetData));
 
         }

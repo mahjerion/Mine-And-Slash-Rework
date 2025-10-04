@@ -4,7 +4,6 @@ import com.robertx22.mine_and_slash.gui.buttons.CharacterStatsButtons;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.library_of_exile.utils.GuiUtils;
 import com.robertx22.library_of_exile.utils.RenderUtils;
 import com.robertx22.library_of_exile.utils.TextUTIL;
@@ -12,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,8 @@ public class StatIconAndNumberButton extends ImageButton {
     public static int xSize = 19;
     public static int ySize = 19;
 
-
-    StatData stat;
-
+    private StatData stat;
+    private LivingEntity target;
 
     public StatIconAndNumberButton(StatScreen screen, StatData stat, int xPos, int yPos) {
         super(xPos, yPos, xSize, ySize, 0, 0, 0, SlashRef.guiId("stat_gui/stat_icon"), xSize, ySize, (button) -> {
@@ -32,6 +31,7 @@ public class StatIconAndNumberButton extends ImageButton {
         });
 
         this.stat = stat;
+        this.target = screen.getTarget();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StatIconAndNumberButton extends ImageButton {
 
         if (this.isHoveredOrFocused()) {
             List<Component> tooltip = new ArrayList<>();
-            var text = stat.GetStat().locName().append(": " + CharacterStatsButtons.getStatString(stat.GetStat(), Load.Unit(ClientOnly.getPlayer())));
+            var text = stat.GetStat().locName().append(": " + CharacterStatsButtons.getStatString(stat.GetStat(), Load.Unit(target)));
             tooltip.add(text);
 
             tooltip.addAll(stat.GetStat().getCutDescTooltip());

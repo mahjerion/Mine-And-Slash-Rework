@@ -43,6 +43,12 @@ versionRange = "[${the_harvest_version},)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.mmorpg]]
+modId = "ancient_obelisks"
+mandatory = true
+versionRange = "[${ancient_obelisks_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.mmorpg]]
 modId = "curios"
 mandatory = true
 versionRange = "[0,)"

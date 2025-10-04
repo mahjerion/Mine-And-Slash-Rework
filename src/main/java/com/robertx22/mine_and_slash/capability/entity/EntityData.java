@@ -614,7 +614,7 @@ public class EntityData implements ICap, INeededForClient {
             UnequipGear.check(p);
 
             data.getSkillGemInventory().removeSupportGemsIfTooMany(p);
-            data.getJewels().checkRemoveJewels(p);
+            data.jewelData.recalc(p);
 
             this.maxCharges.calc(this.unit.getStats());
 
@@ -973,10 +973,10 @@ public class EntityData implements ICap, INeededForClient {
                 .contains(target.getUUID());
     }
 
-
+    public static final String ID = "entity_data";
     @Override
     public String getCapIdForSyncing() {
-        return "entity_data";
+        return ID;
     }
 
 }

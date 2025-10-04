@@ -26,6 +26,8 @@ is_ailment_burn
 is_ailment_electrify
 is_ailment_freeze
 is_ailment_poison
+is_ailment_procced_true
+is_ailment_procced_true_is_false
 is_attack_or_spell_attack
 is_axe_wep_type
 is_blood_explosion_not_on_cd

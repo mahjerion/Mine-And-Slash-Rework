@@ -4,13 +4,12 @@ import com.robertx22.library_of_exile.components.ICap;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.packets.SyncPlayerCapToClient;
 import com.robertx22.library_of_exile.utils.LoadSave;
-import com.robertx22.mine_and_slash.a_libraries.curios.MyCurioUtils;
-import com.robertx22.mine_and_slash.a_libraries.curios.RefCurio;
+import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
+import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.SummonedData;
 import com.robertx22.mine_and_slash.capability.player.data.*;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
-import com.robertx22.mine_and_slash.capability.player.helper.JewelInvHelper;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.characters.CharStorageData;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
@@ -24,7 +23,6 @@ import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_calc.StatCalculation;
-import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 
 public class PlayerData implements ICap {
@@ -122,10 +120,10 @@ public class PlayerData implements ICap {
     public RestedExpData rested_xp = new RestedExpData();
     public PlayerPointsData points = new PlayerPointsData();
     public MiscSyncData miscInfo = new MiscSyncData();
+    public JewelData jewelData;
 
     private MyInventory skillGemInv = new MyInventory(GemInventoryHelper.TOTAL_SLOTS);
     private MyInventory auraInv = new MyInventory(GemInventoryHelper.TOTAL_AURAS);
-    private MyInventory jewelsInv = new MyInventory(9);
 
     public CharStorageData characters = new CharStorageData();
 
@@ -141,13 +139,14 @@ public class PlayerData implements ICap {
     public PlayerData(Player player) {
         this.player = player;
         this.cachedStats = new CachedPlayerStats(player);
+        this.jewelData = new JewelData(player);
     }
 
 
     public CachedPlayerStats cachedStats;
 
-    public JewelInvHelper getJewels() {
-        return new JewelInvHelper(jewelsInv);
+    public JewelData getJewels() {
+        return jewelData;
     }
 
     @Override
@@ -170,11 +169,13 @@ public class PlayerData implements ICap {
         LoadSave.Save(points, nbt, POINTS);
         LoadSave.Save(miscInfo, nbt, MISC_INFO);
         LoadSave.Save(summonedData, nbt, SUMMONED);
+
         // LoadSave.Save(ctxStats, nbt, "ctx");
 
         nbt.put(GEMS, skillGemInv.createTag());
         nbt.put(AURAS, auraInv.createTag());
-        nbt.put(JEWELS, jewelsInv.createTag());
+        //nbt.put(JEWELS, jewelsInv.createTag());
+        nbt.put(JEWELS, jewelData.jewelInventory.createTag());
 
         nbt.putInt(BONUS_TALENTS, bonusTalents);
         nbt.putInt(OMENS_FILLED, omensFilled);
@@ -200,11 +201,17 @@ public class PlayerData implements ICap {
         this.characters = loadOrBlank(CharStorageData.class, new CharStorageData(), nbt, CHARACTERS, new CharStorageData());
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
+        //generate a container with mutable size
         // this.ctxStats = loadOrBlank(SavedStatCtxList.class, new SavedStatCtxList(), nbt, "ctx", new SavedStatCtxList());
+
+        //todo this code sucks, we need Codec
+        this.jewelData = new JewelData(this.player);
+        this.jewelData.jewelInventory.fromTag(nbt.getList(JEWELS, 10));
+
 
         skillGemInv.fromTag(nbt.getList(GEMS, 10)); // todo
         auraInv.fromTag(nbt.getList(AURAS, 10)); // todo
-        jewelsInv.fromTag(nbt.getList(JEWELS, 10)); // todo
+        //jewelsInv.fromTag(nbt.getList(JEWELS, 10));
 
 
         this.bonusTalents = nbt.getInt(BONUS_TALENTS);
@@ -226,7 +233,7 @@ public class PlayerData implements ICap {
     public void recalcOmensFilled() {
         try {
             omensFilled = 0;
-            ItemStack stack = MyCurioUtils.get(RefCurio.OMEN, player, 0);
+            ItemStack stack = MyCuriosUtils.get(RefCurios.OMEN, player, 0);
             if (StackSaving.OMEN.has(stack)) {
                 var omen = StackSaving.OMEN.loadFrom(stack);
                 this.omensFilled = omen.calcPiecesEquipped(player);
@@ -238,7 +245,7 @@ public class PlayerData implements ICap {
 
     public OmenData getOmen() {
         try {
-            ItemStack stack = MyCurioUtils.get(RefCurio.OMEN, player, 0);
+            ItemStack stack = MyCuriosUtils.get(RefCurios.OMEN, player, 0);
             if (StackSaving.OMEN.has(stack)) {
                 var omen = StackSaving.OMEN.loadFrom(stack);
                 return omen;
@@ -249,20 +256,25 @@ public class PlayerData implements ICap {
         return null;
     }
 
-    public Unit getSpellUnitStats(Player p, Spell spell) {
-
+    public Unit getSpellUnitStats(Spell spell) {
         if (!spellUnits.containsKey(spell.GUID())) {
             int key = keyOf(spell);
             if (spell.config.usesSupportGemsFromAnotherSpell()) {
                 key = keyOf(spell.config.getSpellUsedForSuppGems());
             }
+
             var unit = calcSpellUnit(spell, key);
             spellUnits.put(spell.GUID(), unit);
         }
-        if (!spellUnits.containsKey(spell.GUID())) {
-            return Load.Unit(p).getUnit();
-        }
         return spellUnits.get(spell.GUID());
+    }
+
+    public boolean canHaveSpellUnit(Spell spell) {
+        int key = keyOf(spell);
+        if (spell.config.usesSupportGemsFromAnotherSpell()) {
+            key = keyOf(spell.config.getSpellUsedForSuppGems());
+        }
+        return key != SpellCastingData.SPELL_KEY_NOT_EXIST;
     }
 
     public void setSpellUnitsDirty() {
@@ -288,14 +300,21 @@ public class PlayerData implements ICap {
         return summonedData;
     }
 
-    public void addSummonedType(String spellId, int amount) {
-        this.summonedData.addSummonedType(spellId, amount);
+    public void setSummons(String spell, List<UUID> summons) {
+        summonedData.setSummons(spell, summons);
         this.playerDataSync.setDirty();
     }
 
-    public void setSummonedData(Map<String, Integer> summonedTypes) {
-        summonedData.setSummonedType(summonedTypes);
-        this.playerDataSync.setDirty();
+    public void removeSummon(String spell, UUID uuid) {
+        if (summonedData.removeSummon(spell, uuid)) {
+            this.playerDataSync.setDirty();
+        }
+    }
+
+    public void removeSummonType(String spell) {
+        if (summonedData.removeSummonType(spell)) {
+            this.playerDataSync.setDirty();
+        }
     }
 
     public static <OBJ> OBJ loadOrBlank(Class theclass, OBJ newobj, CompoundTag nbt, String loc, OBJ blank) {
@@ -311,10 +330,9 @@ public class PlayerData implements ICap {
         }
         return blank;
     }
-
+    public static final String ID = "rpg_player_data";
     @Override
     public String getCapIdForSyncing() {
-        return "rpg_player_data";
+        return ID;
     }
-
 }

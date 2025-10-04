@@ -108,6 +108,10 @@ public class GearSocketsData implements IStatsContainer, IGearPartTooltip {
         return so.size();
     }
 
+    public boolean isEmpty() {
+        return so.isEmpty();
+    }
+
     @Override
     public List<ExactStatData> GetAllStats(ExileStack stack) {
         var gear = stack.get(StackKeys.GEAR).get();

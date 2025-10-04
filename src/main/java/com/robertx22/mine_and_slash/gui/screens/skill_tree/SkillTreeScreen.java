@@ -257,7 +257,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         buttonConnections = new HashSet<>(3000);
 
-        var data = Load.player(ClientOnly.getPlayer());
 
         HashSet<PerkPointPair> integers = new HashSet(3000);
         children().forEach(b -> {
@@ -271,7 +270,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
                     PerkPointPair pair = new PerkPointPair(pb.point, sb.point);
                     if (!integers.contains(pair)) {
 
-                        var con = data.talents.getConnection(this.school, sb.point, pb.point);
+                        var con = this.playerData.talents.getConnection(this.school, sb.point, pb.point);
                         var result = new PerkConnectionRender(pair, con);
                         buttonConnections.add(result);
                         integers.add(pair);

@@ -65,7 +65,7 @@ public class UpgradeRarityItemMod extends GearModification {
         this.type = type;
     }
 
-    private static int uniformRescaleInt(int x, MinMax from, MinMax to) {
+    public static int uniformRescaleInt(int x, MinMax from, MinMax to) {
         return Math.min(to.min + (x - from.min) * (to.max - to.min + 1) / (from.max - from.min), to.max);
     }
 

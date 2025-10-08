@@ -318,6 +318,16 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> COMMON_TO_RUNED = ExileCurrency.Builder.of("common_to_runed", "Orb of Runic Invocation", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.RUNEWORD_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
+            .addAlwaysUseModification(ItemMods.INSTANCE.COMMON_TO_RUNED)
+            .potentialCost(20)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> UPGRADE_MAP_RARITY = ExileCurrency.Builder.of("map_rarity_upgrade", "Orb of Map Rarity", ItemReqs.INSTANCE.IS_MAP)
             .rarity(IRarity.EPIC_ID)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_MAP_RARITY)

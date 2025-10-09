@@ -84,6 +84,7 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
     public ExileKey<ItemModification, KeyInfo> JEWEL_CORRUPTION = ExileKey.ofId(this, "jewel_corrupt", x -> new CorruptJewelItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_AFFIX_NUMBERS = ExileKey.ofId(this, "affix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_IMPLICIT_NUMBERS = ExileKey.ofId(this, "implicit_number_reroll", x -> new RerollImplicitNumbersItemMod(x.GUID()));
+    public ExileKey<ItemModification, KeyInfo> REROLL_BASE_NUMBERS = ExileKey.ofId(this, "base_number_reroll", x -> new RerollBaseNumbersItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> EXTRACT_GEM = ExileKey.ofId(this, "extract_gem", x -> new ExtractSocketItemMod(x.GUID(), ExtractSocketItemMod.SocketedType.GEM));
     public ExileKey<ItemModification, KeyInfo> EXTRACT_RUNE = ExileKey.ofId(this, "extract_rune", x -> new ExtractSocketItemMod(x.GUID(), ExtractSocketItemMod.SocketedType.RUNE));
     public ExileKey<ItemModification, KeyInfo> MIRROR = ExileKey.ofId(this, "mirror", x -> new MirrorItemMod(x.GUID()));

@@ -329,6 +329,15 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.RARE)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_BASE_NUMBERS = ExileCurrency.Builder.of("base_number_reroll", "Orb of Introspection", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.LEGENDARY_ID)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_BASE_NUMBERS)
+            .potentialCost(15)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> UPGRADE_MAP_RARITY = ExileCurrency.Builder.of("map_rarity_upgrade", "Orb of Map Rarity", ItemReqs.INSTANCE.IS_MAP)
             .rarity(IRarity.EPIC_ID)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_MAP_RARITY)

@@ -5,17 +5,11 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemModi
 import com.robertx22.library_of_exile.localization.ExileTranslation;
 import com.robertx22.library_of_exile.localization.TranslationBuilder;
 import com.robertx22.library_of_exile.localization.TranslationType;
-import com.robertx22.mine_and_slash.database.data.MinMax;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
-import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
-import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;
 

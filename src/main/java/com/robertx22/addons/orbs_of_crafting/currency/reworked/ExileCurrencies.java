@@ -280,7 +280,6 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .rarity(IRarity.MYTHIC_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-            .addRequirement(ItemReqs.INSTANCE.HAS_IMPLICIT)
             .addRequirement(ItemReqs.INSTANCE.HAS_OTHER_IMPLICIT)
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_IMPLICIT_AFFIX)
             .potentialCost(15)

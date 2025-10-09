@@ -74,6 +74,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKey<ItemRequirement, KeyInfo> HAS_PREFIXES = ExileKey.ofId(this, "has_prefixes", x -> new MustHavePrefixesReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_SUFFIXES = ExileKey.ofId(this, "has_suffixes", x -> new MustHaveSuffixesReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_IMPLICIT = ExileKey.ofId(this, "has_implicit", x -> new MustHaveImplicitReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> HAS_OTHER_IMPLICIT = ExileKey.ofId(this, "has_other_implicit", x -> new MustHaveOtherPossibleImplicitReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_CORRUPTION_AFFIXES = ExileKey.ofId(this, "has_corrupt_affixes", x -> new HasCorruptAffixes(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_NOT_CORRUPTED = ExileKey.ofId(this, "is_not_corrupted", x -> new IsNotCorruptedReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_NOT_MIRRORED = ExileKey.ofId(this, "is_not_mirrored", x -> new IsNotMirroredReq(x.GUID()));

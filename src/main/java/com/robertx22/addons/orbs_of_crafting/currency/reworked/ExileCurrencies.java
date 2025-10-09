@@ -256,6 +256,17 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.RARE)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_IMPLICIT_AFFIX = ExileCurrency.Builder.of("implicit_affix_reroll", "Orb of Revelation", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.MYTHIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_IMPLICIT)
+            .addRequirement(ItemReqs.INSTANCE.HAS_OTHER_IMPLICIT)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_IMPLICIT_AFFIX)
+            .potentialCost(15)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> UPGRADE_CORRUPTION_AFFIX = ExileCurrency.Builder.of("up_corrupt_affix", "Orb of Foolish Risk",
                     ItemReqs.INSTANCE.IS_GEAR, ItemReqs.INSTANCE.IS_JEWEL)
             .rarity(IRarity.EPIC_ID)

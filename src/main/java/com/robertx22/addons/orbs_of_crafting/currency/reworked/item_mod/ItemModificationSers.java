@@ -24,6 +24,7 @@ public class ItemModificationSers {
     public static String JEWEL_CORRUPT = "corrupt_jewel";
     public static String REROLL_AFFIX_NUMBERS = "reroll_affix_numbers";
     public static String REROLL_IMPLICIT_NUMBERS = "reroll_implicit_numbers";
+    public static String REROLL_IMPLICIT_AFFIX = "reroll_implicit_affix";
     public static String REROLL_BASE_NUMBERS = "reroll_base_numbers";
     public static String EXTRACT_SOCKET = "extract_socket";
     public static String FORCE_SOUL_TAG = "force_soul_tag";

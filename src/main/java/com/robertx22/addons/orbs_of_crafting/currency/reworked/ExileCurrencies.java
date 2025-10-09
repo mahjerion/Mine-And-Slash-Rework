@@ -246,6 +246,26 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_PREFIX_NUMBERS = ExileCurrency.Builder.of("prefix_number_reroll", "Orb of Western Ciphers", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_PREFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_PREFIX_NUMBERS)
+            .potentialCost(10)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_SUFFIX_NUMBERS = ExileCurrency.Builder.of("suffix_number_reroll", "Orb of Eastern Ciphers", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_SUFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_SUFFIX_NUMBERS)
+            .potentialCost(10)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> REROLL_IMPLICIT_NUMBERS = ExileCurrency.Builder.of("implicit_number_reroll", "Orb of Genesis", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)

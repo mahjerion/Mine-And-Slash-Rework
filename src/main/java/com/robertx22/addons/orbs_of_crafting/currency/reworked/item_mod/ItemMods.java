@@ -82,7 +82,9 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
     public ExileKey<ItemModification, KeyInfo> COMMON_TO_RUNED = ExileKey.ofId(this, "common_to_runed", x -> new CommonToRunedItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> ADD_25_POTENTIAL = ExileKey.ofId(this, "add_potential", x -> new AddPotentialItemMod(x.GUID(), new AddPotentialItemMod.Data(25)));
     public ExileKey<ItemModification, KeyInfo> JEWEL_CORRUPTION = ExileKey.ofId(this, "jewel_corrupt", x -> new CorruptJewelItemMod(x.GUID()));
-    public ExileKey<ItemModification, KeyInfo> REROLL_AFFIX_NUMBERS = ExileKey.ofId(this, "affix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID()));
+    public ExileKey<ItemModification, KeyInfo> REROLL_AFFIX_NUMBERS = ExileKey.ofId(this, "affix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID(), RerollAffixNumbersItemMod.AffixFinder.AFFIX));
+    public ExileKey<ItemModification, KeyInfo> REROLL_PREFIX_NUMBERS = ExileKey.ofId(this, "prefix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID(), RerollAffixNumbersItemMod.AffixFinder.PREFIX));
+    public ExileKey<ItemModification, KeyInfo> REROLL_SUFFIX_NUMBERS = ExileKey.ofId(this, "suffix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID(), RerollAffixNumbersItemMod.AffixFinder.SUFFIX));
     public ExileKey<ItemModification, KeyInfo> REROLL_IMPLICIT_NUMBERS = ExileKey.ofId(this, "implicit_number_reroll", x -> new RerollImplicitNumbersItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_IMPLICIT_AFFIX = ExileKey.ofId(this, "implicit_affix_reroll", x -> new RerollImplicitAffixItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_BASE_NUMBERS = ExileKey.ofId(this, "base_number_reroll", x -> new RerollBaseNumbersItemMod(x.GUID()));

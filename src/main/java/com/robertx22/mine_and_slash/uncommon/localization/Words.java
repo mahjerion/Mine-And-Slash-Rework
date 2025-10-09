@@ -69,6 +69,8 @@ public enum Words implements IAutoLocName {
     RANDOM_AFFIX("Random Affix"),
     RANDOM_RARITY("Random Rarity"),
     AFFIX("Affix"),
+    PREFIX("Prefix"),
+    SUFFIX("Suffix"),
     SPECIFIC_RARITY_AFFIX("%1$s Affix"),
     LOWEST_RARITY_AFFIX("Lowest Rarity Affix"),
     ALL_AFFIXES("All Affixes"),

@@ -9,7 +9,6 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.AffixData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;

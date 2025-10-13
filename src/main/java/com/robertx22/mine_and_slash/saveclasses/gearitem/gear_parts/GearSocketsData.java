@@ -81,6 +81,10 @@ public class GearSocketsData implements IStatsContainer, IGearPartTooltip {
         sl++;
     }
 
+    public void removeSocket() {
+        sl--;
+    }
+
     public void removeRune() {
         so.removeIf(x -> x.isRune());
     }

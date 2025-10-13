@@ -12,6 +12,8 @@ public class ItemModificationSers {
     public static String UPGRADE_JEWEL_AFFIX_RARITY = "upgrade_jewel_affix_rarity";
     public static String SET_AFFIX_RARITY = "set_affix_rarity";
     public static String DOWNGRADE_AFFIX_RARITY = "downgrade_affix_rarity";
+    public static String UPGRADE_GEAR_RARITY = "upgrade_gear_rarity";
+    public static String COMMON_TO_RUNED = "common_to_runed";
     public static String CORRUPT_GEAR = "corrupt_gear";
     public static String MIRROR = "mirror";
 
@@ -22,6 +24,8 @@ public class ItemModificationSers {
     public static String JEWEL_CORRUPT = "corrupt_jewel";
     public static String REROLL_AFFIX_NUMBERS = "reroll_affix_numbers";
     public static String REROLL_IMPLICIT_NUMBERS = "reroll_implicit_numbers";
+    public static String REROLL_IMPLICIT_AFFIX = "reroll_implicit_affix";
+    public static String REROLL_BASE_NUMBERS = "reroll_base_numbers";
     public static String EXTRACT_SOCKET = "extract_socket";
     public static String FORCE_SOUL_TAG = "force_soul_tag";
 

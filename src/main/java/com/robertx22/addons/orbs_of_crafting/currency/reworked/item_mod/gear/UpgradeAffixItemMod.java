@@ -27,8 +27,8 @@ public class UpgradeAffixItemMod extends GearModification {
     public enum AffixFinder {
         SPECIFIC_RARITY(Words.SPECIFIC_RARITY_AFFIX) {
             @Override
-            public Optional<AffixData> getAffix(List<AffixData> affixes, AffixFinderData data) {
-                return affixes.stream().filter(x -> x.rar.equals(data.target_rar)).findAny();
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return optionalToList(affixes.stream().filter(x -> x.rar.equals(data.target_rar)).findAny());
             }
 
             @Override
@@ -38,16 +38,38 @@ public class UpgradeAffixItemMod extends GearModification {
         },
         RANDOM_AFFIX(Words.RANDOM_AFFIX) {
             @Override
-            public Optional<AffixData> getAffix(List<AffixData> affixes, AffixFinderData data) {
-                return Optional.of(RandomUtils.randomFromList(affixes));
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return List.of(RandomUtils.randomFromList(affixes));
             }
         },
         LOWEST_RARITY_AFFIX(Words.LOWEST_RARITY_AFFIX) {
             @Override
-            public Optional<AffixData> getAffix(List<AffixData> affixes, AffixFinderData data) {
-                return affixes.stream().min(Comparator.comparingInt(x -> x.getRarity().item_tier));
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return optionalToList(affixes.stream().min(Comparator.comparingInt(x -> x.getRarity().item_tier)));
+            }
+        },
+        ALL_AFFIXES(Words.ALL_AFFIXES) {
+            @Override
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return affixes;
+            }
+        },
+        ALL_PREFIXES(Words.ALL_PREFIXES) {
+            @Override
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return affixes.stream().filter(x -> x.ty.isPrefix()).toList();
+            }
+        },
+        ALL_SUFFIXES(Words.ALL_SUFFIXES) {
+            @Override
+            public List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data) {
+                return affixes.stream().filter(x -> x.ty.isSuffix()).toList();
             }
         };
+
+        private static <T> List<T> optionalToList(Optional<T> optional) {
+            return optional.isPresent() ? List.of(optional.get()) : List.of();
+        }
 
         public AffixFinderData get() {
             return new AffixFinderData(this, "");
@@ -71,7 +93,8 @@ public class UpgradeAffixItemMod extends GearModification {
             return word.locName();
         }
 
-        public abstract Optional<AffixData> getAffix(List<AffixData> affixes, AffixFinderData data);
+        public abstract List<AffixData> getAffixes(List<AffixData> affixes, AffixFinderData data);
+
     }
 
 
@@ -90,7 +113,7 @@ public class UpgradeAffixItemMod extends GearModification {
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
-            data.finder.getAffix(gear.affixes.getPrefixesAndSuffixes(), data).ifPresent(affix -> {
+            data.finder.getAffixes(gear.affixes.getPrefixesAndSuffixes(), data).forEach(affix -> {
                 affix.upgradeRarity();
             });
         });

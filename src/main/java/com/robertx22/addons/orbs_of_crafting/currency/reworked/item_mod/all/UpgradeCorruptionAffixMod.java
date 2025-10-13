@@ -33,12 +33,12 @@ public class UpgradeCorruptionAffixMod extends ItemModification {
         ExileStack ex = ExileStack.of(stack.stack);
 
         ex.get(StackKeys.GEAR).editIfHas(gear -> {
-            data.finder().getAffix(gear.affixes.cor, data).ifPresent(affix -> {
+            data.finder().getAffixes(gear.affixes.cor, data).forEach(affix -> {
                 affix.upgradeRarity();
             });
         });
         ex.get(StackKeys.JEWEL).editIfHas(jewel -> {
-            data.finder().getAffix(jewel.cor, data).ifPresent(affix -> {
+            data.finder().getAffixes(jewel.cor, data).forEach(affix -> {
                 affix.upgradeRarity();
             });
         });

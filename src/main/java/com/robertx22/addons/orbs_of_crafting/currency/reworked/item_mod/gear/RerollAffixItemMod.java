@@ -9,7 +9,6 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.AffixData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.orbs_of_crafting.register.mods.base.ItemModificationResult;
 import net.minecraft.network.chat.MutableComponent;
@@ -35,17 +34,14 @@ public class RerollAffixItemMod extends GearModification {
     @Override
     public void modifyGear(ExileStack stack, ItemModificationResult r) {
         stack.get(StackKeys.GEAR).edit(gear -> {
-            var opt = data.finder_data.finder().getAffix(gear.affixes.getPrefixesAndSuffixes(), data.finder_data);
-
-            if (opt.isPresent()) {
-                AffixData affixData = opt.get();
-                affixData.RerollFully(gear);
+            data.finder_data.finder().getAffixes(gear.affixes.getPrefixesAndSuffixes(), data.finder_data).forEach(affix -> {
+                affix.RerollFully(gear);
 
                 if (ExileDB.GearRarities().isRegistered(data.result_rar)) {
-                    affixData.rar = data.result_rar;
-                    affixData.RerollNumbers();
+                    affix.rar = data.result_rar;
+                    affix.RerollNumbers();
                 }
-            }
+            });
         });
 
     }

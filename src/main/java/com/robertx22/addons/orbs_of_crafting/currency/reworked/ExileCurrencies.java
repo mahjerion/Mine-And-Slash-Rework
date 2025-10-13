@@ -138,6 +138,36 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_AFFIXES = ExileCurrency.Builder.of("affix_reroll_all", "Orb of Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.RARE_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_AFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_AFFIXES)
+            .potentialCost(10)
+            .weight(CodeCurrency.Weights.COMMON)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_PREFIXES = ExileCurrency.Builder.of("prefix_reroll_all", "Orb of Sinistral Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_PREFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_PREFIXES)
+            .potentialCost(20)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_ALL_SUFFIXES = ExileCurrency.Builder.of("suffix_reroll_all", "Orb of Dextral Rebirth", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_SUFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_ALL_SUFFIXES)
+            .potentialCost(20)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> REROLL_RANDOM_AFFIX_TO_MYTHIC = ExileCurrency.Builder.of("affix_random_mythic_reroll", "Orb of Divine Benevolence", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.MYTHIC_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
@@ -216,6 +246,26 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .weight(CodeCurrency.Weights.COMMON)
             .build(this);
 
+    public ExileKey<ExileCurrency, IdKey> REROLL_PREFIX_NUMBERS = ExileCurrency.Builder.of("prefix_number_reroll", "Orb of Western Ciphers", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_PREFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_PREFIX_NUMBERS)
+            .potentialCost(10)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_SUFFIX_NUMBERS = ExileCurrency.Builder.of("suffix_number_reroll", "Orb of Eastern Ciphers", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.EPIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_SUFFIXES)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_SUFFIX_NUMBERS)
+            .potentialCost(10)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
     public ExileKey<ExileCurrency, IdKey> REROLL_IMPLICIT_NUMBERS = ExileCurrency.Builder.of("implicit_number_reroll", "Orb of Genesis", ItemReqs.INSTANCE.IS_GEAR)
             .rarity(IRarity.LEGENDARY_ID)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
@@ -224,6 +274,16 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_IMPLICIT_NUMBERS)
             .potentialCost(10)
             .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_IMPLICIT_AFFIX = ExileCurrency.Builder.of("implicit_affix_reroll", "Orb of Revelation", ItemReqs.INSTANCE.IS_GEAR)
+            .rarity(IRarity.MYTHIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .addRequirement(ItemReqs.INSTANCE.HAS_OTHER_IMPLICIT)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_IMPLICIT_AFFIX)
+            .potentialCost(15)
+            .weight(CodeCurrency.Weights.UBER)
             .build(this);
 
     public ExileKey<ExileCurrency, IdKey> UPGRADE_CORRUPTION_AFFIX = ExileCurrency.Builder.of("up_corrupt_affix", "Orb of Foolish Risk",
@@ -266,6 +326,46 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .potentialCost(1)
             .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_RELIEF_USES.toKey()))
             .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> UPGRADE_GEAR_RARITY = ExileCurrency.Builder.of("gear_rarity_upgrade", "Orb of Ascension", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.MYTHIC_ID)
+            .addRequirement(ItemReqs.INSTANCE.HAS_HIGHER_RARITY)
+            .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_GEAR_RARITY)
+            .potentialCost(35)
+            .weight(CodeCurrency.Weights.UBER)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> RANDOMIZE_GEAR_RARITY = ExileCurrency.Builder.of("gear_rarity_random", "Orb of Colors", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.UNCOMMON)
+            .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
+            .addAlwaysUseModification(ItemMods.INSTANCE.RANDOMIZE_GEAR_RARITY)
+            .potentialCost(1)
+            .weight(CodeCurrency.Weights.COMMON)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> COMMON_TO_RUNED = ExileCurrency.Builder.of("common_to_runed", "Orb of Runic Invocation", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.RUNEWORD_ID)
+            .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
+            .addModification(ItemMods.INSTANCE.COMMON_TO_RUNED, 75)
+            .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
+            .potentialCost(20)
+            .weight(CodeCurrency.Weights.RARE)
+            .build(this);
+
+    public ExileKey<ExileCurrency, IdKey> REROLL_BASE_NUMBERS = ExileCurrency.Builder.of("base_number_reroll", "Orb of Introspection", ItemReqs.INSTANCE.IS_GEAR)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
+            .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
+            .rarity(IRarity.LEGENDARY_ID)
+            .addAlwaysUseModification(ItemMods.INSTANCE.REROLL_BASE_NUMBERS)
+            .potentialCost(15)
+            .weight(CodeCurrency.Weights.UBER)
             .build(this);
 
     public ExileKey<ExileCurrency, IdKey> UPGRADE_MAP_RARITY = ExileCurrency.Builder.of("map_rarity_upgrade", "Orb of Map Rarity", ItemReqs.INSTANCE.IS_MAP)

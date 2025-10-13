@@ -1,0 +1,13 @@
+Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.3.txt
+
+
+v.6.3.8
+- jewel ui improvements - WARNING: your jewels will be wiped on this update. remove jewels before updating to ensure safety.
+- new currencies
+- exp gain toggle
+- party improvements
+- master bag uses curio slot now
+- entity stat view
+- casting improvements
+- improve neat bar ui
+- summon improvements

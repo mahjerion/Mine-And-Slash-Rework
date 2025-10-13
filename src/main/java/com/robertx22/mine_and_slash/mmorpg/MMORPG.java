@@ -72,7 +72,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

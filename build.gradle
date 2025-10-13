@@ -138,7 +138,9 @@ repositories {
 dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 
-    modImplementation("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    modCompileOnly ("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    modRuntimeOnly ("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     modCompileOnly("mezz.jei:jei-1.20.1-common-api:${project.jei_version}") //API for compile
     modCompileOnly("mezz.jei:jei-1.20.1-forge-api:${project.jei_version}") //API for compile

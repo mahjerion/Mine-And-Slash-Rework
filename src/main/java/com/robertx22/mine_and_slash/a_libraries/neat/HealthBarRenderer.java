@@ -274,7 +274,7 @@ public class HealthBarRenderer {
         float healthHalfSize = halfSize * healthBarPercent;
 
 
-        float healthPart = currentHealth * 1f / maxHealthPlusMagicShield;
+        float healthPart = Math.min(1f, currentHealth * 1f / currentHealthPlusMagicShield);
 
         {
             int argb = getColor(living, NeatConfig.instance.colorByType(), boss);

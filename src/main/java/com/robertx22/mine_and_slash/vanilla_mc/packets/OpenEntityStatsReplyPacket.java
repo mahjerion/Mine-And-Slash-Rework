@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.vanilla_mc.packets;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
-import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.UnitNbt;
@@ -53,7 +52,7 @@ public class OpenEntityStatsReplyPacket extends MyPacket<OpenEntityStatsReplyPac
 
         if (entity instanceof LivingEntity living) {
             Load.Unit(living).setUnit(UnitNbt.Load(nbt));
-            ClientOnly.setScreen(new StatScreen(living));
+            ClientOnly.openEntityStatScreen(living);
         }
     }
 

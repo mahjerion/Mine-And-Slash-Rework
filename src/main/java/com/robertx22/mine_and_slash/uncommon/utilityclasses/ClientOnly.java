@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.prophecy.gui.ProphecyScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -7,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -58,6 +60,10 @@ public class ClientOnly {
 
     public static void setScreen(Screen s) {
         Minecraft.getInstance().setScreen(s);
+    }
+
+    public static void openEntityStatScreen(LivingEntity entity) {
+        setScreen(new StatScreen(entity));
     }
 
     public static void closeScreen() {

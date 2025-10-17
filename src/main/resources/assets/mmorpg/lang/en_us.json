@@ -3661,6 +3661,11 @@
 	"library_of_exile.relic_stat.bonus_rune": "Rune Drop rate %1$s",
 	"library_of_exile.relic_stat.bonus_skill_gem": "Skill Gem Drop rate %1$s",
 	"library_of_exile.relic_stat.bonus_watcher_eye": "Watcher Eye Drop rate %1$s",
-	"library_of_exile.relic_type.mmorpg": "Mine and Slash Relic"
+	"library_of_exile.relic_type.mmorpg": "Mine and Slash Relic",
+
+  "_comment": " [CATEGORY]: JEI integration",
+
+    "mmorpg.jei.level_requirement": "LVL %s+",
+    "mmorpg.jei.exp_reward": "+%s EXP/LVL"
 
 }

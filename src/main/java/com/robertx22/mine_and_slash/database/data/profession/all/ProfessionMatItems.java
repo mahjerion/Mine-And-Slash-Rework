@@ -11,19 +11,20 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Item;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfessionMatItems {
 
-    public static HashMap<String, HashMap<SkillItemTier, RegObj<Item>>> TIERED_MAIN_MATS = new HashMap<>();
+    public static Map<String, Map<SkillItemTier, RegObj<Item>>> TIERED_MAIN_MATS = new HashMap<>();
 
 
     public static void init() {
 
 
         for (String prof : Professions.ALL) {
-            TIERED_MAIN_MATS.put(prof, new HashMap<>());
+            TIERED_MAIN_MATS.put(prof, new EnumMap<>(SkillItemTier.class));
         }
 
         for (SkillItemTier tier : SkillItemTier.values()) {
@@ -37,7 +38,7 @@ public class ProfessionMatItems {
     }
 
     public static void addDownRankRecipes() {
-        for (Map.Entry<String, HashMap<SkillItemTier, RegObj<Item>>> en : TIERED_MAIN_MATS.entrySet()) {
+        for (Map.Entry<String, Map<SkillItemTier, RegObj<Item>>> en : TIERED_MAIN_MATS.entrySet()) {
             for (Map.Entry<SkillItemTier, RegObj<Item>> e : en.getValue().entrySet()) {
 
                 if (e.getKey().tier != SkillItemTier.TIER0.tier) {

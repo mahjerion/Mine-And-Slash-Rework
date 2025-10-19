@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
+import com.google.gson.Gson;
 import com.robertx22.addons.dungeon_realm.DungeonAddonEvents;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.OrbAddonEvents;
 import com.robertx22.library_of_exile.events.base.EventConsumer;

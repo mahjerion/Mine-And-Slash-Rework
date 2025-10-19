@@ -27,12 +27,17 @@ public class ProfessionMatItems {
             TIERED_MAIN_MATS.put(prof, new EnumMap<>(SkillItemTier.class));
         }
 
+        var mining = TIERED_MAIN_MATS.get(Professions.MINING);
+        var farming = TIERED_MAIN_MATS.get(Professions.FARMING);
+        var husbandry = TIERED_MAIN_MATS.get(Professions.HUSBANDRY);
+        var fishing = TIERED_MAIN_MATS.get(Professions.FISHING);
+
         for (SkillItemTier tier : SkillItemTier.values()) {
 
-            TIERED_MAIN_MATS.get(Professions.MINING).put(tier, Def.item("material/mining/" + tier.tier, () -> new ProfTierMatItem(Professions.MINING, tier, "Ore")));
-            TIERED_MAIN_MATS.get(Professions.FARMING).put(tier, Def.item("material/farming/" + tier.tier, () -> new ProfTierMatItem(Professions.FARMING, tier, "Produce")));
-            TIERED_MAIN_MATS.get(Professions.HUSBANDRY).put(tier, Def.item("material/meat/" + tier.tier, () -> new ProfTierMatItem(Professions.HUSBANDRY, tier, "Raw Meat")));
-            TIERED_MAIN_MATS.get(Professions.FISHING).put(tier, Def.item("material/fishing/" + tier.tier, () -> new ProfTierMatItem(Professions.FISHING, tier, "Raw Fish")));
+            mining.put(tier, Def.item("material/mining/" + tier.tier, () -> new ProfTierMatItem(Professions.MINING, tier, "Ore")));
+            farming.put(tier, Def.item("material/farming/" + tier.tier, () -> new ProfTierMatItem(Professions.FARMING, tier, "Produce")));
+            husbandry.put(tier, Def.item("material/meat/" + tier.tier, () -> new ProfTierMatItem(Professions.HUSBANDRY, tier, "Raw Meat")));
+            fishing.put(tier, Def.item("material/fishing/" + tier.tier, () -> new ProfTierMatItem(Professions.FISHING, tier, "Raw Fish")));
         }
 
     }

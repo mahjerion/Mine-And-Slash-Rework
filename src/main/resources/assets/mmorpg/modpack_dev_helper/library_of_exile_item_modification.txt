@@ -11,6 +11,8 @@ add_spawn_rate
 add_tier
 add_wave
 affix_number_reroll
+base_number_reroll
+common_to_runed
 corrupt_gear
 corrupt_gear_no_affix
 destroy_item
@@ -24,6 +26,9 @@ extract_rune
 force_soul_tag_armor_stat
 force_soul_tag_dodge_stat
 force_soul_tag_magic_shield_stat
+gear_rarity_random
+gear_rarity_upgrade
+implicit_affix_reroll
 implicit_number_reroll
 increment_uses_level_up
 increment_uses_random_mythic_affix
@@ -32,7 +37,12 @@ increment_uses_sharpening_stone
 increment_uses_sure_jewel_up
 jewel_corrupt
 map_rarity_upgrade
+mirror
+prefix_number_reroll
 reduce_5_perc_unique_stats
+reroll_all_affixes
+reroll_all_prefixes
+reroll_all_suffixes
 reroll_infusion
 reroll_lowest_affix
 reroll_random_affix
@@ -51,6 +61,7 @@ sharpening_stone_quality_2
 sharpening_stone_quality_3
 sharpening_stone_quality_4
 sharpening_stone_quality_5
+suffix_number_reroll
 uber_upgrade
 up_corrupt_affix
 upgrade_jewel_affix_rarity

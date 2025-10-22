@@ -19,12 +19,16 @@ has_affix_uncommon
 has_affix_unique
 has_affixes
 has_corrupt_affixes
+has_higher_rar
 has_implicit
 has_infusion
 has_less_than_x_waves
 has_no_enchants
+has_other_implicit
+has_prefixes
 has_socketed_gem
 has_socketed_rune
+has_suffixes
 is_armor
 is_common
 is_common_or_uncommon
@@ -37,6 +41,7 @@ is_less_than_max_tier
 is_map
 is_mythic
 is_not_corrupted
+is_not_mirrored
 is_not_uber
 is_obelisk_map
 is_pickaxe_tag

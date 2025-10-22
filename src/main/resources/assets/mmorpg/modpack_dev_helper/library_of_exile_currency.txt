@@ -6,8 +6,11 @@ add_wave
 affix_common_reroll
 affix_number_reroll
 affix_random_mythic_reroll
+affix_reroll_all
 affix_tier_up_down
+base_number_reroll
 chaos_orb
+common_to_runed
 enchant_reroll
 entangled_affix_upgrade
 entangled_potential
@@ -18,11 +21,14 @@ extract_rune
 force_soul_tag_armor_stat
 force_soul_tag_dodge_stat
 force_soul_tag_magic_shield_stat
+gear_rarity_random
+gear_rarity_upgrade
 harvest_essence_0
 harvest_essence_1
 harvest_essence_2
 harvest_essence_3
 harvest_essence_4
+implicit_affix_reroll
 implicit_number_reroll
 jewel_corrupt
 jewel_sure_upgrade
@@ -30,8 +36,11 @@ jewel_upgrade_affix
 legendary_enchant_tool
 level_up_orb
 map_rarity_upgrade
+mirror
 orb_of_quality
 orb_of_relief
+prefix_number_reroll
+prefix_reroll_all
 sharpening_stone_0
 sharpening_stone_1
 sharpening_stone_2
@@ -39,6 +48,8 @@ sharpening_stone_3
 sharpening_stone_4
 sharpening_stone_5
 socket_adder
+suffix_number_reroll
+suffix_reroll_all
 uber_upgrade
 unique_reroll
 up_corrupt_affix

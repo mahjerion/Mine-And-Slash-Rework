@@ -395,11 +395,16 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         }
         for (SummonTooltip summon : summons) {
             list.add(Component.translatable(summon.type()).withStyle(ChatFormatting.BLUE));
-            Component durationComponent = Words.SUMMON_BASE_DURATION.locName(summon.duration() / 20);
+
+            MutableComponent durationValue = Component.literal(String.valueOf(summon.duration() / 20));
             if (summon.duration() == SummonPetAction.INFINITE_DURATION) {
-                durationComponent = Words.SUMMON_IS_INFINITE.locName();
+                durationValue = Words.SUMMON_IS_INFINITE.locName();
             }
-            list.add(durationComponent);
+
+            list.add(durationValue.withStyle(ChatFormatting.GREEN)
+                    .append(Words.UNIT_SECOND.locName()).append(" ")
+                    .append(Words.SUMMON_BASE_DURATION.locName().withStyle(ChatFormatting.GRAY))
+            );
             list.add(ExileText.emptyLine().get());
         }
 

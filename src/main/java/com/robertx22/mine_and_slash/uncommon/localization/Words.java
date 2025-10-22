@@ -381,8 +381,9 @@ public enum Words implements IAutoLocName {
 
     SUMMON_IS_INFINITE("Is infinite"),
     SUMMONS_LIST("Summons:"),
-    SUMMON_BASE_DURATION("Base Duration: %1$ss"),
+    SUMMON_BASE_DURATION("Base Duration"),
     SUMMON_UNKNOWN_ENTITY("Unknown"),
+    UNIT_SECOND("s"),
     ;
 
 

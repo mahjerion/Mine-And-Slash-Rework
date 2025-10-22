@@ -87,7 +87,8 @@ public class SummonPetAction extends SpellAction {
     }
 
     public static void updatePlayerSummons(LivingEntity caster, int totalSummons, String currentSummonSpell) {
-        List<SummonToRemove> list = new ArrayList<>();
+        ArrayList<NearbySummon> summonsNearby = new ArrayList<>();
+        int summonsTowardsMax = 0;
 
         for (SummonEntity en : EntityFinder.start(caster, SummonEntity.class, caster.blockPosition()).searchFor(AllyOrEnemy.all).radius(100).build()) {
             if (en.getOwner() != caster) {
@@ -96,25 +97,31 @@ public class SummonPetAction extends SpellAction {
 
             var data = Load.Unit(en).summonedPetData;
 
-            if (!data.counts_towards_max_summons) {
-                continue;
+            if (data.counts_towards_max_summons) {
+                summonsTowardsMax++;
             }
 
-            list.add(new SummonToRemove(en, data));
+            summonsNearby.add(new NearbySummon(en, data));
         }
 
-        list.sort(Comparator.comparingInt(x -> -x.summon.tickCount)); // todo this needs to be from highest to lowest age
+        summonsNearby.sort(Comparator.comparingInt(x -> -x.summon.tickCount)); // todo this needs to be from highest to lowest age
 
-        int excess = list.size() - totalSummons;
-        int firstSummonIndex = 0;
-        for (;firstSummonIndex < excess; firstSummonIndex++) {
-            SummonToRemove summonToRemove = list.get(firstSummonIndex);
+        int excess = summonsTowardsMax - totalSummons;
+        for (int i = 0; excess > 0 && i < summonsNearby.size(); i++) {
+            NearbySummon summonToRemove = summonsNearby.get(i);
+            if (!summonToRemove.data.counts_towards_max_summons) {
+                continue;
+            }
             summonToRemove.data.discard(summonToRemove.summon);
+            summonsNearby.remove(i);
+            excess--;
+            i--;
         }
+        summonsNearby.trimToSize();
 
         HashMap<String, List<UUID>> summonedTypes = new HashMap<>();
-        for (;firstSummonIndex < list.size(); firstSummonIndex++) {
-            var summonToRemove = list.get(firstSummonIndex);
+        for (int i = 0; i < summonsNearby.size(); i++) {
+            var summonToRemove = summonsNearby.get(i);
             if (!summonedTypes.containsKey(summonToRemove.data.spell)) {
                 summonedTypes.put(summonToRemove.data.spell, new ArrayList<>());
             }
@@ -145,11 +152,11 @@ public class SummonPetAction extends SpellAction {
         return "summon_pet";
     }
 
-    private static class SummonToRemove {
+    private static class NearbySummon {
         public SummonEntity summon;
         public SummonedPetData data;
 
-        public SummonToRemove(SummonEntity summon, SummonedPetData data) {
+        public NearbySummon(SummonEntity summon, SummonedPetData data) {
             this.summon = summon;
             this.data = data;
         }

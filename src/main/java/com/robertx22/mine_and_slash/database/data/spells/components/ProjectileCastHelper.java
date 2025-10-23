@@ -90,6 +90,9 @@ public class ProjectileCastHelper {
             }
 
             baseDirection = positionToVelocity(new MyPosition(pos), new MyPosition(target.getEyePosition()));
+
+            pitch = (float) Math.toDegrees(Math.asin(-baseDirection.y));
+            yaw = (float) Math.toDegrees(Math.atan2(-baseDirection.x, baseDirection.z));
         }
 
         for (int i = 0; i < projectilesAmount; i++) {
@@ -117,22 +120,11 @@ public class ProjectileCastHelper {
             }
 
             AbstractArrow en = (AbstractArrow) projectile.create(world);
-            float projectilePitch = pitch + randomPitchOffset;
-            float projectileYaw = yaw + addYaw + randomYawOffset;
-
-            Vector3f finalVel;
-            if (target == null) {
-                finalVel = calculateVelocity(pitch, yaw, randomPitchOffset, addYaw, randomYawOffset);
-            } else {
-                finalVel = calculateVelocityWithBase(baseDirection, randomPitchOffset, addYaw, randomYawOffset);
-                projectilePitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG + randomPitchOffset;
-                projectileYaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG + addYaw + randomYawOffset;
-            }
-
-            SpellUtils.shootProjectile(pos.add(posAdd), en, ctx.getPositionEntity(), shootSpeed, projectilePitch, projectileYaw);
+            SpellUtils.setUpProjectilePosition(pos.add(posAdd), en, ctx.getPositionEntity());
             SpellUtils.initSpellEntity(en, caster, data, holder);
 
-            en.shoot(finalVel.x, finalVel.y, finalVel.z, shootSpeed, 1);
+            Vector3f direction = calculateDirection(pitch, yaw, randomPitchOffset, addYaw, randomYawOffset);
+            en.shoot(direction.x, direction.y, direction.z, shootSpeed, 0f);
 
             if (fallDown) {
                 en.setDeltaMovement(0, -1, 0);
@@ -151,29 +143,24 @@ public class ProjectileCastHelper {
         return lifespanTicks * shootSpeed;
     }
 
-    private @NotNull Vector3f calculateVelocity(float pitch, float yaw, float randomPitchOffset, float addYaw, float randomYawOffset) {
-        Vector3f finalVel;
-        // Use original caster direction
-        float totalPitch = pitch + randomPitchOffset;
-        float totalYaw = yaw + addYaw + randomYawOffset;
+    private @NotNull Vector3f calculateDirection(float pitch, float yaw, float randomPitchOffset, float addYaw, float randomYawOffset) {
+        // Calculate direction vectors from pitch and yaw
+        float pitchRad = Math.toRadians(pitch);
+        float yawRad = Math.toRadians(yaw);
 
-        float pitchRad = Math.toRadians(totalPitch);
-        float yawRad = Math.toRadians(totalYaw);
+        float cosPitch = Mth.cos(pitchRad);
+        float sinPitch = Mth.sin(pitchRad);
+        float cosYaw = Mth.cos(yawRad);
+        float sinYaw = Mth.sin(yawRad);
 
-        // Calculate direction vector from pitch and yaw
-        float x = -Mth.sin(yawRad) * Mth.cos(pitchRad);
-        float y = -Mth.sin(pitchRad);
-        float z = Mth.cos(yawRad) * Mth.cos(pitchRad);
+        Vector3f forward = new Vector3f(-sinYaw * cosPitch, -sinPitch, cosYaw * cosPitch);
+        Vector3f right = new Vector3f(cosYaw, 0f, sinYaw);
+        Vector3f up = new Vector3f(-sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
 
-        finalVel = new Vector3f(x, y, z);
-        return finalVel;
-    }
+        float pitchOffset = Math.toRadians(randomPitchOffset);
+        float yawOffset = Math.toRadians(addYaw + randomYawOffset);
 
-    private @NotNull Vector3f calculateVelocityWithBase(Vec3 baseDirection, float randomPitchOffset, float addYaw, float randomYawOffset) {
-        // Calculate target-based direction with spread
-        float targetYaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG;
-        float targetPitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG;
-        return calculateVelocity(targetPitch, targetYaw, randomPitchOffset, addYaw, randomYawOffset);
+        return forward.rotateAxis(pitchOffset, right.x, right.y, right.z).rotateAxis(-yawOffset, up.x, up.y, up.z);
     }
 
     public static Vec3 positionToVelocity(MyPosition current, MyPosition destination) {

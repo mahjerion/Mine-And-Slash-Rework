@@ -355,7 +355,7 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
             .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
             .addModification(ItemMods.INSTANCE.COMMON_TO_RUNED, 75)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
-            .potentialCost(20)
+            .potentialCost(40)
             .weight(CodeCurrency.Weights.RARE)
             .build(this);
 

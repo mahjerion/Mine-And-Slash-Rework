@@ -58,6 +58,7 @@ public class HealthBarRenderer {
     private static final TagKey<EntityType<?>> FABRIC_BOSS_TAG =
             TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("c", "bosses"));
     private static final int magicShieldColor = FastColor.ARGB32.color(190, 66, 241, 224);
+    private static final int magicShieldShadowColor = makeShadowColor(magicShieldColor);
 
     private static Entity getEntityLookedAt(Entity e) {
         Entity foundEntity = null;
@@ -146,6 +147,14 @@ public class HealthBarRenderer {
             float hue = Math.max(0.0F, (health / entity.getMaxHealth()) / 3.0F - 0.07F);
             return Mth.hsvToRgb(hue, 1.0F, 1.0F);
         }
+    }
+
+    private static int makeShadowColor(int color) {
+        int a = (color >> 24) & 0xFF;
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        return FastColor.ARGB32.color(a, r*61/100, g*61/100, b*61/100);
     }
 
     private static boolean isBoss(Entity entity) {
@@ -260,10 +269,10 @@ public class HealthBarRenderer {
         if (NeatConfig.instance.drawBackground()) {
 
             VertexConsumer builder = buffers.getBuffer(renderType);
-            builder.vertex(poseStack.last().pose(), -halfSize - padding, -bgHeight, 0.01F).color(0, 0, 0, 64).uv(0.0F, 0.0F).endVertex();
-            builder.vertex(poseStack.last().pose(), -halfSize - padding, barHeight + padding, 0.01F).color(0, 0, 0, 64).uv(0.0F, 0.5F).endVertex();
-            builder.vertex(poseStack.last().pose(), halfSize + padding, barHeight + padding, 0.01F).color(0, 0, 0, 64).uv(1.0F, 0.5F).endVertex();
-            builder.vertex(poseStack.last().pose(), halfSize + padding, -bgHeight, 0.01F).color(0, 0, 0, 64).uv(1.0F, 0.0F).endVertex();
+            builder.vertex(poseStack.last().pose(), -halfSize - padding, -bgHeight, 0.01F).color(0, 0, 0, 64).uv(0.0F, 0.0F).uv2(light).endVertex();
+            builder.vertex(poseStack.last().pose(), -halfSize - padding, barHeight + padding, 0.01F).color(0, 0, 0, 64).uv(0.0F, 0.5F).uv2(light).endVertex();
+            builder.vertex(poseStack.last().pose(), halfSize + padding, barHeight + padding, 0.01F).color(0, 0, 0, 64).uv(1.0F, 0.5F).uv2(light).endVertex();
+            builder.vertex(poseStack.last().pose(), halfSize + padding, -bgHeight, 0.01F).color(0, 0, 0, 64).uv(1.0F, 0.0F).uv2(light).endVertex();
         }
 
         // Health Bar
@@ -277,57 +286,33 @@ public class HealthBarRenderer {
         float healthPart = Math.min(1f, currentHealth * 1f / currentHealthPlusMagicShield);
 
         {
-            int argb = getColor(living, NeatConfig.instance.colorByType(), boss);
-            int r = (argb >> 16) & 0xFF;
-            int g = (argb >> 8) & 0xFF;
-            int b = argb & 0xFF;
-
-
+            final int alpha = 127;
+            int argb = (getColor(living, NeatConfig.instance.colorByType(), boss) & 0x00FFFFFF) | (alpha << 24);
+            int argbShadow = makeShadowColor(argb);
 
             VertexConsumer builder = buffers.getBuffer(renderType);
             Matrix4f poseInHere = poseStack.last().pose();
             float healthLayerZ = 0.001f;
             float backgroundLayerZ = 0.002f;
-            float shadowLayerZ = 0.0005f;
 
             //health
-            builder.vertex(poseInHere, -halfSize, 0, healthLayerZ).color(r, g, b, 127).uv(0.0F, 0.75F).endVertex();
-            builder.vertex(poseInHere, -halfSize, barHeight, healthLayerZ).color(r, g, b, 127).uv(0.0F, 1.0F).endVertex();
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, 0.001F).color(r, g, b, 127).uv(1.0F, 1.0F).endVertex();
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(r, g, b, 127).uv(1.0F, 0.75F).endVertex();
+            builder.vertex(poseInHere, -halfSize, 0, healthLayerZ).color(argb).uv(0.0F, 0.75F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize, barHeight, healthLayerZ).color(argbShadow).uv(0.0F, 1.0F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, 0.001F).color(argbShadow).uv(1.0F, 1.0F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(argb).uv(1.0F, 0.75F).uv2(light).endVertex();
 
             //magic shield
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(magicShieldColor).uv(0.0F, 0.75F).endVertex();
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, healthLayerZ).color(magicShieldColor).uv(0.0F, 1.0F).endVertex();
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, barHeight, healthLayerZ).color(magicShieldColor).uv(1.0F, 1.0F).endVertex();
-            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, 0, healthLayerZ).color(magicShieldColor).uv(1.0F, 0.75F).endVertex();
-
-            //shadow
-            VertexConsumer fillBuffer = buffers.getBuffer(NeatRenderType.getShadowType());
-            fillBuffer.vertex(poseInHere, -halfSize, 0, shadowLayerZ)
-                    .color(0f, 0f, 0f, 0f)
-                    .endVertex();
-
-            fillBuffer.vertex(poseInHere, -halfSize, barHeight, shadowLayerZ)
-                    .color(0f, 0f, 0f, 0.39f)
-                    .endVertex();
-
-            fillBuffer.vertex(poseInHere, -halfSize + 2 * healthHalfSize, barHeight, shadowLayerZ)
-                    .color(0f, 0f, 0f, 0.39f)
-                    .endVertex();
-
-            fillBuffer.vertex(poseInHere, -halfSize + 2 * healthHalfSize, 0, shadowLayerZ)
-                    .color(0f, 0f, 0f, 0f)
-                    .endVertex();
-
-
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, 0, healthLayerZ).color(magicShieldColor).uv(0.0F, 0.75F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize * healthPart, barHeight, healthLayerZ).color(magicShieldShadowColor).uv(0.0F, 1.0F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, barHeight, healthLayerZ).color(magicShieldShadowColor).uv(1.0F, 1.0F).uv2(light).endVertex();
+            builder.vertex(poseInHere, -halfSize + 2 * healthHalfSize, 0, healthLayerZ).color(magicShieldColor).uv(1.0F, 0.75F).uv2(light).endVertex();
 
             // Blank part of the bar
             if (healthHalfSize < halfSize) {
-                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.5F).endVertex();
-                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.75F).endVertex();
-                builder.vertex(poseStack.last().pose(), halfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.75F).endVertex();
-                builder.vertex(poseStack.last().pose(), halfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.5F).endVertex();
+                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.5F).uv2(light).endVertex();
+                builder.vertex(poseStack.last().pose(), -halfSize + 2 * healthHalfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(0.0F, 0.75F).uv2(light).endVertex();
+                builder.vertex(poseStack.last().pose(), halfSize, barHeight, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.75F).uv2(light).endVertex();
+                builder.vertex(poseStack.last().pose(), halfSize, 0, backgroundLayerZ).color(0, 0, 0, 127).uv(1.0F, 0.5F).uv2(light).endVertex();
             }
         }
 

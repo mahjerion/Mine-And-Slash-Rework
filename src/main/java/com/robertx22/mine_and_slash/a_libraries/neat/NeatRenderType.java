@@ -22,7 +22,6 @@ public class NeatRenderType extends RenderStateShard {
     public static final ResourceLocation HEALTH_BAR_TEXTURE = new ResourceLocation(SlashRef.MODID, "textures/gui/health_bar_texture.png");
     public static final String barKey = "bar";
     public static final String iconKey = "icon";
-    public static final String shadow = "shadow";
     //have to do this otherwise sometime the game will crash after hotswap.
     //prob is a mixin bug
     private static Map<String, RenderType> caches;
@@ -42,34 +41,26 @@ public class NeatRenderType extends RenderStateShard {
         return getCaches().computeIfAbsent(NeatRenderType.barKey, x -> NeatRenderType.generateHealthBarType());
     }
 
-    public static RenderType getShadowType(){
-        return getCaches().computeIfAbsent(NeatRenderType.shadow, x -> {
-            RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .createCompositeState(false);
-            return AccessorRenderType.neat_create("neat_health_bar_icon", POSITION_COLOR, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
-        });
-    }
-
     public static RenderType getHealthBarIconType(ResourceLocation location){
         return getCaches().computeIfAbsent(NeatRenderType.iconKey + location.getPath(), x -> {
             RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.POSITION_COLOR_TEX_SHADER)
+                    .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                     .setTextureState(new TextureStateShard(location, false, false))
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
                     .createCompositeState(false);
-            return AccessorRenderType.neat_create("neat_health_bar_icon", POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
+            return AccessorRenderType.neat_create("neat_health_bar_icon", POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
         });
     }
 
 
     private static RenderType generateHealthBarType() {
         RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.POSITION_COLOR_TEX_SHADER)
+                .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                 .setTextureState(new TextureStateShard(NeatRenderType.HEALTH_BAR_TEXTURE, false, false))
                 .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                .setLightmapState(LIGHTMAP)
                 .createCompositeState(false);
-        return AccessorRenderType.neat_create("neat_health_bar", POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
+        return AccessorRenderType.neat_create("neat_health_bar", POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
     }
 }

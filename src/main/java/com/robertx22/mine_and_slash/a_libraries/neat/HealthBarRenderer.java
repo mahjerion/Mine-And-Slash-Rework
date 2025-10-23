@@ -404,7 +404,7 @@ public class HealthBarRenderer {
         int lvl = Load.Unit(living).getLevel();
         int playerlvl = Load.Unit(mc.player).getLevel();
         int diffabove = lvl - playerlvl;
-        MutableComponent level = Component.literal(lvl + "");
+        MutableComponent level;
 
         if (entity instanceof Player == false && diffabove > ServerContainer.get().LEVEL_DISTANCE_SKULL_SHOW.get()) {
             if (ServerContainer.get().SKULL_HIDES_LEVEL.get()) {
@@ -412,8 +412,9 @@ public class HealthBarRenderer {
             } else {
                 level = Component.literal(lvl + " " + UNICODE.SKULL).withStyle(ChatFormatting.RED);
             }
+        } else {
+            level = Component.literal(lvl + "").withStyle(ChatFormatting.YELLOW);
         }
-        level = level.withStyle(ChatFormatting.YELLOW);
 
         Component prefix = CommonComponents.EMPTY;
         Component name = living.getDisplayName();

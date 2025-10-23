@@ -17,9 +17,11 @@ import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.data.stats.tooltips.SummonTooltip;
 import com.robertx22.mine_and_slash.database.data.value_calc.MaxLevelProvider;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
@@ -50,6 +52,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -319,6 +322,8 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             );
         }
 
+        List<SummonTooltip> summons = new ArrayList<>();
+
         try {
             this.getAttached()
                     .getAllComponents()
@@ -338,6 +343,20 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                                 } else {
                                     effectsWithDurations.put(eff, dur);
                                 }
+                            }
+                            if (a.has(MapField.SUMMONED_PET_ID)) {
+                                float duration = a.get(MapField.LIFESPAN_TICKS).intValue();
+                                Optional<EntityType<?>> type = EntityType.byString(a.get(MapField.SUMMONED_PET_ID));
+                                String name = Words.SUMMON_UNKNOWN_ENTITY.locNameLangFileGUID();
+                                if (type.isPresent()) {
+                                    name = type.get().getDescriptionId();
+                                }
+                                summons.add(new SummonTooltip(name, duration));
+                            }
+                            if (a.has(MapField.make(MapField.BLOCK))) {
+                                float duration = a.get(MapField.LIFESPAN_TICKS).intValue();
+                                String name = this.loc_name;
+                                summons.add(new SummonTooltip(name, duration));
                             }
                         });
                     });
@@ -369,6 +388,24 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (!summons.isEmpty()) {
+            list.add(Words.SUMMONS_LIST.locName());
+        }
+        for (SummonTooltip summon : summons) {
+            list.add(Component.translatable(summon.type()).withStyle(ChatFormatting.BLUE));
+
+            MutableComponent durationValue = Component.literal(String.valueOf(summon.duration() / 20));
+            if (summon.duration() == SummonPetAction.INFINITE_DURATION) {
+                durationValue = Words.SUMMON_IS_INFINITE.locName();
+            }
+
+            list.add(durationValue.withStyle(ChatFormatting.GREEN)
+                    .append(Words.UNIT_SECOND.locName()).append(" ")
+                    .append(Words.SUMMON_BASE_DURATION.locName().withStyle(ChatFormatting.GRAY))
+            );
+            list.add(ExileText.emptyLine().get());
         }
 
         if (!this.statsForSkillGem.isEmpty()) {

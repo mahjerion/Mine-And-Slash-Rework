@@ -22,7 +22,16 @@ public class OnTickCondition extends EffectCondition {
         }
         int ticks = data.get(MapField.TICK_RATE)
             .intValue();
-        return ctx.sourceEntity == null ? ctx.caster.tickCount % ticks == 0 : ctx.sourceEntity.tickCount % ticks == 0;
+        int firstTick = data.getOrDefault(MapField.FIRST_TICK, 0.0)
+            .intValue();
+
+        int tickCount = ctx.sourceEntity == null ? ctx.caster.tickCount : ctx.sourceEntity.tickCount;
+
+        if (ticks > 0) {
+            return tickCount >= firstTick && tickCount % ticks == firstTick % ticks;
+        } else {
+            return tickCount == firstTick;
+        }
     }
 
     public MapHolder create(Double ticks) {

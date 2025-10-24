@@ -63,8 +63,6 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     public boolean moveTowardsEnemies = false;
 
-    public float yawVelocity;
-
     private static final EntityDataAccessor<CompoundTag> SPELL_DATA = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<String> ENTITY_NAME = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> EXPIRE_ON_ENTITY_HIT = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.BOOLEAN);
@@ -82,6 +80,8 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     public Entity ignoreEntity;
 
     boolean collidedAlready = false;
+
+    private boolean motionDirty = false;
 
 
     @Override
@@ -265,6 +265,10 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
             return;
         }
 
+        if (motionDirty) {
+            syncMotion();
+        }
+
         try {
             onTick();
 
@@ -407,7 +411,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
                 var speed = getDeltaMovement().length();
                 var direction = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
                 setDeltaMovement(direction.scale(speed));
-                syncMotion();
+                motionDirty = true;
             }
         }
     }
@@ -761,8 +765,6 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     @Override
     public void handleModifyProjectileAction(MapHolder data) {
-        boolean motionDirty = false;
-
         if (data.has(MapField.PROJECTILE_SPEED)) {
             setSpeed(data.get(MapField.PROJECTILE_SPEED));
             motionDirty = true;
@@ -787,10 +789,6 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         }
         if (data.has(MapField.YAW_ACCELERATION)) {
             entityData.set(YAW_ACCELERATION, data.get(MapField.YAW_ACCELERATION).floatValue());
-        }
-
-        if (motionDirty) {
-            syncMotion();
         }
     }
 }

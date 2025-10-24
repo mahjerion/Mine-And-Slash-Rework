@@ -17,6 +17,7 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRequirement;
 import com.robertx22.mine_and_slash.tags.TagList;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
+import com.robertx22.mine_and_slash.tags.imp.SlotTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
@@ -45,7 +46,7 @@ public final class BaseGearType implements IAutoLocName, JsonExileRegistry<BaseG
     public List<StatMod> base_stats = new ArrayList<>();
 
     public String weapon_type = WeaponTypes.none.id;
-    public TagList tags = new TagList();
+    public TagList<SlotTag> tags = new TagList<>();
 
     public List<ItemChance> possible_items = new ArrayList<>();
 
@@ -94,7 +95,7 @@ public final class BaseGearType implements IAutoLocName, JsonExileRegistry<BaseG
         return ExileDB.WeaponTypes().get(weapon_type);
     }
 
-    public TagList getTags() {
+    public TagList<SlotTag> getTags() {
         return tags;
     }
 

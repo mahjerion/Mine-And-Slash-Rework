@@ -49,7 +49,7 @@ import java.util.UUID;
 
 import org.joml.Vector3f;
 
-public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAsItem, IDatapackSpellEntity, IDatapackProjectileEntity {
+public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAsItem, IDatapackProjectileEntity {
 
     CalculatedSpellData spellData;
 

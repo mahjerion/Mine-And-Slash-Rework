@@ -351,12 +351,17 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                                 if (type.isPresent()) {
                                     name = type.get().getDescriptionId();
                                 }
-                                summons.add(new SummonTooltip(name, duration));
+                                String finalName = name;
+                                if (summons.stream().filter(i -> i.type().equals(finalName) && i.duration() == duration).findAny().isEmpty()) {
+                                    summons.add(new SummonTooltip(name, duration));
+                                }
                             }
                             if (a.has(MapField.make(MapField.BLOCK))) {
                                 float duration = a.get(MapField.LIFESPAN_TICKS).intValue();
                                 String name = this.loc_name;
-                                summons.add(new SummonTooltip(name, duration));
+                                if (summons.stream().filter(i -> i.type().equals(name) && i.duration() == duration).findAny().isEmpty()) {
+                                    summons.add(new SummonTooltip(name, duration));
+                                }
                             }
                         });
                     });

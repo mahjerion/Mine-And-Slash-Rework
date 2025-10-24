@@ -48,6 +48,10 @@ public class ProjectileCastHelper {
     public float yaw;
     public float yawOffset;
 
+    public double offsetX;
+    public double offsetY;
+    public double offsetZ;
+
     public boolean fallDown = false;
     public boolean targetEnemy = false;
 
@@ -110,7 +114,7 @@ public class ProjectileCastHelper {
                     multiProjYawOffset = offset * apart / projectilesAmount;
                 } else if (this.castType == CastType.SPREAD_OUT_HORIZONTAL) {
                     // 1m between each projectile
-                    posAdd = getSideVelocity(caster).multiply(offset, offset, offset);
+                    posAdd = getSideVelocity(caster).scale(offset);
                 }
             }
 
@@ -121,6 +125,11 @@ public class ProjectileCastHelper {
                 randomYawOffset = (float) ((Math.random() * 2 - 1) * randomSpreadDegrees);
                 randomPitchOffset = (float) ((Math.random() * 2 - 1) * randomSpreadDegrees);
             }
+
+            // Apply offset from spell
+            posAdd = posAdd.add(getSideVelocity(caster).scale(offsetX));
+            posAdd = posAdd.add(caster.getUpVector(1f).scale(offsetY));
+            posAdd = posAdd.add(caster.getViewVector(1f).scale(offsetZ));
 
             AbstractArrow en = (AbstractArrow) projectile.create(world);
             SpellUtils.setUpProjectilePosition(pos.add(posAdd), en, ctx.getPositionEntity());

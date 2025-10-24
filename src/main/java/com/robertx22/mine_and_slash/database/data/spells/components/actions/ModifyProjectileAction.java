@@ -21,7 +21,7 @@ public class ModifyProjectileAction extends SpellAction {
         ((IDatapackProjectileEntity) ctx.sourceEntity).handleModifyProjectileAction(data);
     }
 
-    public MapHolder create(Optional<Double> projSpeed, Optional<Double> projAccel, Optional<Double> pitchOffset,
+    public MapHolder create(Optional<Double> projSpeed, Optional<Double> projAccel, Optional<Double> pitch, Optional<Double> pitchOffset,
                             Optional<Double> yawOffset, Optional<Double> yawVelocity, Optional<Double> yawAccel) {
         MapHolder c = new MapHolder();
         c.type = GUID();
@@ -30,6 +30,9 @@ public class ModifyProjectileAction extends SpellAction {
         }
         if (projAccel.isPresent()) {
             c.put(MapField.PROJECTILE_ACCELERATION, projAccel.get());
+        }
+        if (pitch.isPresent()) {
+            c.put(MapField.PITCH, pitch.get());
         }
         if (pitchOffset.isPresent()) {
             c.put(MapField.PITCH_OFFSET, pitchOffset.get());

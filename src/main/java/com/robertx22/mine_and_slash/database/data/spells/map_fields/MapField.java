@@ -52,6 +52,10 @@ public class MapField<T> implements IGUID {
     public static MapField<Double> RANDOM_X_OFFSET = make("random_x_offset");
     public static MapField<Double> RANDOM_Z_OFFSET = make("random_z_offset");
 
+    public static MapField<Double> X_OFFSET = make("x_offset");
+    public static MapField<Double> Y_OFFSET = make("y_offset");
+    public static MapField<Double> Z_OFFSET = make("z_offset");
+
     public static MapField<Double> PITCH_OFFSET = make("pitch_offset");
     public static MapField<Double> YAW_OFFSET = make("yaw_offset");
     public static MapField<Double> YAW_VELOCITY = make("yaw_velocity");

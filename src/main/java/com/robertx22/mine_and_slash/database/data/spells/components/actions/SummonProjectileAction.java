@@ -70,9 +70,17 @@ public class SummonProjectileAction extends SpellAction {
 
         builder.randomSpreadDegrees *= ctx.calculatedSpellData.data.getNumber(EventData.PROJECTILE_SPREAD_RANDOMNESS, 1).number;
 
+        if (data.has(MapField.PITCH)) {
+            builder.pitch = data.get(MapField.PITCH).floatValue();
+        }
+
         builder.pitchOffset = data.getOrDefault(MapField.PITCH_OFFSET, 0D).floatValue();
 
         builder.yawOffset = data.getOrDefault(MapField.YAW_OFFSET, 0D).floatValue();
+
+        builder.offsetX = data.getOrDefault(MapField.X_OFFSET, 0D);
+        builder.offsetY = data.getOrDefault(MapField.Y_OFFSET, 0D);
+        builder.offsetZ = data.getOrDefault(MapField.Z_OFFSET, 0D);
 
         builder.lifespanTicks = data.get(MapField.LIFESPAN_TICKS).intValue();
 

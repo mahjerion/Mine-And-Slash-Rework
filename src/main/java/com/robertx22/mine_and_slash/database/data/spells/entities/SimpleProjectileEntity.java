@@ -15,7 +15,6 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.Utilities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -25,7 +24,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -286,6 +285,26 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     }
 
+    private void syncMotion() {
+        if (level() instanceof ServerLevel level) {
+            level.getChunkSource().broadcast(this, new ClientboundSetEntityMotionPacket(this));
+        }
+    }
+
+    private void setSpeed(double newSpeed) {
+        Vec3 velocity = getDeltaMovement();
+        double speed = velocity.length();
+
+        if (speed >= 1e-4) {
+            double factor = newSpeed / speed;
+            setDeltaMovement(velocity.scale(factor));
+        } else if (newSpeed != 0.0) {
+            // handle accelerating from an initial speed of 0
+            Vector3f forward = entityData.get(FORWARD_VECTOR);
+            setDeltaMovement(new Vec3(forward.mul((float) newSpeed)));
+        }
+    }
+
     private void applyAcceleration() {
         float acceleration = entityData.get(ACCELERATION);
 
@@ -295,15 +314,21 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
         Vec3 velocity = getDeltaMovement();
         double speed = velocity.length();
+        setSpeed(Math.max(speed + acceleration, 0.0));
+    }
 
-        if (speed >= 1e-4) {
-            double factor = Math.max(speed + acceleration, 0.0) / speed;
-            setDeltaMovement(velocity.scale(factor));
-        } else if (acceleration > 0f) {
-            // handle accelerating from an initial speed of 0
-            Vector3f forward = entityData.get(FORWARD_VECTOR);
-            setDeltaMovement(new Vec3(forward.mul(acceleration)));
-        }
+    private void adjustPitch(float angle) {
+        Vector3f velocity = getDeltaMovement().toVector3f();
+        Vector3f axis = velocity.cross(new Vector3f(0f, 1f, 0f)).normalize();
+        velocity.rotateAxis(angle * Mth.DEG_TO_RAD, axis.x, axis.y, axis.z);
+        setDeltaMovement(velocity.x, velocity.y, velocity.z);
+    }
+
+    private void adjustYaw(float angle) {
+        Vector3f velocity = getDeltaMovement().toVector3f();
+        Vector3f axis = entityData.get(UP_VECTOR);
+        velocity.rotateAxis(-angle * Mth.DEG_TO_RAD, axis.x, axis.y, axis.z);
+        setDeltaMovement(velocity.x, velocity.y, velocity.z);
     }
 
     private void applyYawVelocity() {
@@ -317,12 +342,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         yawVelocity += yawAcceleration;
         entityData.set(YAW_VELOCITY, yawVelocity);
 
-        Vector3f axis = entityData.get(UP_VECTOR);
-        float angle = -yawVelocity * Mth.DEG_TO_RAD;
-
-        Vector3f velocity = getDeltaMovement().toVector3f();
-        velocity.rotateAxis(angle, axis.x, axis.y, axis.z);
-        setDeltaMovement(velocity.x, velocity.y, velocity.z);
+        adjustYaw(yawVelocity);
     }
 
     Entity target = null;
@@ -347,12 +367,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
                 var speed = getDeltaMovement().length();
                 var direction = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
                 setDeltaMovement(direction.scale(speed));
-
-
-                PlayerUtils.getNearbyPlayers(level(), blockPosition(), 40)
-                        .forEach(p -> {
-                            ((ServerPlayer) p).connection.send(new ClientboundSetEntityMotionPacket(this));
-                        });
+                syncMotion();
             }
         }
     }
@@ -702,5 +717,36 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     public void setVectors(Vector3f forward, Vector3f up) {
         this.entityData.set(FORWARD_VECTOR, forward);
         this.entityData.set(UP_VECTOR, up);
+    }
+
+    @Override
+    public void handleModifyProjectileAction(MapHolder data) {
+        boolean motionDirty = false;
+
+        if (data.has(MapField.PROJECTILE_SPEED)) {
+            setSpeed(data.get(MapField.PROJECTILE_SPEED));
+            motionDirty = true;
+        }
+        if (data.has(MapField.PROJECTILE_ACCELERATION)) {
+            entityData.set(ACCELERATION, data.get(MapField.PROJECTILE_ACCELERATION).floatValue());
+        }
+        if (data.has(MapField.PITCH_OFFSET)) {
+            adjustPitch(data.get(MapField.PITCH_OFFSET).floatValue());
+            motionDirty = true;
+        }
+        if (data.has(MapField.YAW_OFFSET)) {
+            adjustYaw(data.get(MapField.YAW_OFFSET).floatValue());
+            motionDirty = true;
+        }
+        if (data.has(MapField.YAW_VELOCITY)) {
+            entityData.set(YAW_VELOCITY, data.get(MapField.YAW_VELOCITY).floatValue());
+        }
+        if (data.has(MapField.YAW_ACCELERATION)) {
+            entityData.set(YAW_ACCELERATION, data.get(MapField.YAW_ACCELERATION).floatValue());
+        }
+
+        if (motionDirty) {
+            syncMotion();
+        }
     }
 }

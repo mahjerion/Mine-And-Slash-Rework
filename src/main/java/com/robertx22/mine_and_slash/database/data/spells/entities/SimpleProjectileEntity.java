@@ -317,6 +317,46 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         setSpeed(Math.max(speed + acceleration, 0.0));
     }
 
+    private void setPitch(float pitch) {
+        float pitchRad = pitch * Mth.DEG_TO_RAD;
+        float cosPitch = Mth.cos(pitchRad);
+        float sinPitch = Mth.sin(pitchRad);
+
+        Vector3f velocity = getDeltaMovement().toVector3f();
+        float speed = velocity.length();
+
+        // try to determine yaw from velocity
+        float speedXY = (float) Math.sqrt(Math.fma(velocity.x, velocity.x, velocity.z * velocity.z));
+
+        if (speedXY < 1e-4f) {
+            // try to determine yaw from forward vector
+            velocity = entityData.get(FORWARD_VECTOR);
+            speedXY = (float) Math.sqrt(Math.fma(velocity.x, velocity.x, velocity.z * velocity.z));
+            if (speedXY < 1e-4f) {
+                // determine yaw from up vector
+                if (velocity.y > 0f) {
+                    // head tilted back, invert
+                    velocity = entityData.get(UP_VECTOR);
+                    velocity.x *= -1f;
+                    velocity.z *= -1f;
+                } else {
+                    velocity = entityData.get(UP_VECTOR);
+                }
+                speedXY = (float) Math.sqrt(Math.fma(velocity.x, velocity.x, velocity.z * velocity.z));
+            }
+        }
+
+        float scale = cosPitch / speedXY;
+        velocity.x *= scale;
+        velocity.z *= scale;
+
+        velocity.y = -sinPitch;
+
+        velocity.mul(speed);
+
+        setDeltaMovement(velocity.x, velocity.y, velocity.z);
+    }
+
     private void adjustPitch(float angle) {
         Vector3f velocity = getDeltaMovement().toVector3f();
         Vector3f axis = velocity.cross(new Vector3f(0f, 1f, 0f)).normalize();
@@ -729,6 +769,10 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         }
         if (data.has(MapField.PROJECTILE_ACCELERATION)) {
             entityData.set(ACCELERATION, data.get(MapField.PROJECTILE_ACCELERATION).floatValue());
+        }
+        if (data.has(MapField.PITCH)) {
+            setPitch(data.get(MapField.PITCH).floatValue());
+            motionDirty = true;
         }
         if (data.has(MapField.PITCH_OFFSET)) {
             adjustPitch(data.get(MapField.PITCH_OFFSET).floatValue());

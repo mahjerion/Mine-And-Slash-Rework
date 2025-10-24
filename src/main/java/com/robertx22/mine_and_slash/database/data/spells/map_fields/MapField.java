@@ -27,6 +27,7 @@ public class MapField<T> implements IGUID {
     public static MapField<Double> WIDTH = make("width");
     public static MapField<Double> CHANCE = make("chance");
     public static MapField<Double> PROJECTILE_SPEED = make("proj_speed");
+    public static MapField<Double> PROJECTILE_ACCELERATION = make("proj_accel");
     public static MapField<Double> PROJECTILES_APART = make("proj_apart");
     public static MapField<Double> SELECTION_CHANCE = make("selection_chance");
     public static MapField<Double> PUSH_STRENGTH = make("push_str");
@@ -49,7 +50,12 @@ public class MapField<T> implements IGUID {
     public static MapField<Double> RANDOM_Y_OFFSET = make("random_y_offset");
     public static MapField<Double> RANDOM_X_OFFSET = make("random_x_offset");
     public static MapField<Double> RANDOM_Z_OFFSET = make("random_z_offset");
-  
+
+    public static MapField<Double> PITCH_OFFSET = make("pitch_offset");
+    public static MapField<Double> YAW_OFFSET = make("yaw_offset");
+    public static MapField<Double> YAW_VELOCITY = make("yaw_velocity");
+    public static MapField<Double> YAW_ACCELERATION = make("yaw_acceleration");
+
     // string
     public static MapField<String> PROJECTILE_ENTITY = make("proj_en");
     public static MapField<String> SUMMONED_PET_ID = make("summon_id");

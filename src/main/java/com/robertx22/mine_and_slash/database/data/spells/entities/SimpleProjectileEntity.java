@@ -27,6 +27,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -47,7 +48,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAsItem, IDatapackSpellEntity {
+import org.joml.Vector3f;
+
+public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAsItem, IDatapackSpellEntity, IDatapackProjectileEntity {
 
     CalculatedSpellData spellData;
 
@@ -61,6 +64,8 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     public boolean moveTowardsEnemies = false;
 
+    public float yawVelocity;
+
     private static final EntityDataAccessor<CompoundTag> SPELL_DATA = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<String> ENTITY_NAME = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> EXPIRE_ON_ENTITY_HIT = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.BOOLEAN);
@@ -69,6 +74,11 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     private static final EntityDataAccessor<Integer> DEATH_TIME = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> CHAINS = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> EXPIRE_ON_BLOCK_HIT = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> ACCELERATION = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> YAW_VELOCITY = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> YAW_ACCELERATION = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Vector3f> FORWARD_VECTOR = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> UP_VECTOR = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.VECTOR3);
 
     public Entity ignoreEntity;
 
@@ -189,6 +199,9 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     public void onTick() {
 
+        applyAcceleration();
+        applyYawVelocity();
+
         if (getCaster() != null) {
 
             tryMoveTowardsTargets();
@@ -273,6 +286,45 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     }
 
+    private void applyAcceleration() {
+        float acceleration = entityData.get(ACCELERATION);
+
+        if (acceleration == 0f) {
+            return;
+        }
+
+        Vec3 velocity = getDeltaMovement();
+        double speed = velocity.length();
+
+        if (speed >= 1e-4) {
+            double factor = Math.max(speed + acceleration, 0.0) / speed;
+            setDeltaMovement(velocity.scale(factor));
+        } else if (acceleration > 0f) {
+            // handle accelerating from an initial speed of 0
+            Vector3f forward = entityData.get(FORWARD_VECTOR);
+            setDeltaMovement(new Vec3(forward.mul(acceleration)));
+        }
+    }
+
+    private void applyYawVelocity() {
+        float yawVelocity = entityData.get(YAW_VELOCITY);
+        float yawAcceleration = entityData.get(YAW_ACCELERATION);
+
+        if (yawVelocity == 0f && yawAcceleration == 0f) {
+            return;
+        }
+
+        yawVelocity += yawAcceleration;
+        entityData.set(YAW_VELOCITY, yawVelocity);
+
+        Vector3f axis = entityData.get(UP_VECTOR);
+        float angle = -yawVelocity * Mth.DEG_TO_RAD;
+
+        Vector3f velocity = getDeltaMovement().toVector3f();
+        velocity.rotateAxis(angle, axis.x, axis.y, axis.z);
+        setDeltaMovement(velocity.x, velocity.y, velocity.z);
+    }
+
     Entity target = null;
 
     public void tryMoveTowardsTargets() {
@@ -292,9 +344,9 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
             }
 
             if (target != null) {
-                var vel = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
-                vel = vel.normalize().multiply(speed, speed, speed); // todo this doesnt fix the speed problem
-                setDeltaMovement(vel);
+                var speed = getDeltaMovement().length();
+                var direction = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
+                setDeltaMovement(direction.scale(speed));
 
 
                 PlayerUtils.getNearbyPlayers(level(), blockPosition(), 40)
@@ -541,6 +593,11 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.entityData.define(PIERCE, false);
         this.entityData.define(DEATH_TIME, 100);
         this.entityData.define(CHAINS, 0);
+        this.entityData.define(ACCELERATION, 0f);
+        this.entityData.define(YAW_VELOCITY, 0f);
+        this.entityData.define(YAW_ACCELERATION, 0f);
+        this.entityData.define(FORWARD_VECTOR, new Vector3f());
+        this.entityData.define(UP_VECTOR, new Vector3f());
         super.defineSynchedData();
     }
 
@@ -625,6 +682,11 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.moveTowardsEnemies = holder.getOrDefault(MapField.TRACKS_ENEMIES, false);
         this.speed = holder.getOrDefault(MapField.PROJECTILE_SPEED, 1D).floatValue();
 
+        this.entityData.set(ACCELERATION, holder.getOrDefault(MapField.PROJECTILE_ACCELERATION, 0D).floatValue());
+
+        this.entityData.set(YAW_VELOCITY, holder.getOrDefault(MapField.YAW_VELOCITY, 0D).floatValue());
+        this.entityData.set(YAW_ACCELERATION, holder.getOrDefault(MapField.YAW_ACCELERATION, 0D).floatValue());
+
         data.data.setString(EventData.ITEM_ID, holder.get(MapField.ITEM));
         CompoundTag nbt = new CompoundTag();
         nbt.putString("spell", GSON.toJson(spellData));
@@ -634,5 +696,11 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         String name = holder.get(MapField.ENTITY_NAME);
         entityData.set(ENTITY_NAME, name);
 
+    }
+
+    @Override
+    public void setVectors(Vector3f forward, Vector3f up) {
+        this.entityData.set(FORWARD_VECTOR, forward);
+        this.entityData.set(UP_VECTOR, up);
     }
 }

@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database.data.spells.components;
 import com.robertx22.library_of_exile.utils.geometry.MyPosition;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.AoeSelector;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
+import com.robertx22.mine_and_slash.database.data.spells.entities.IDatapackProjectileEntity;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellUtils;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
@@ -42,8 +43,10 @@ public class ProjectileCastHelper {
     }
 
     public float pitch;
+    public float pitchOffset;
 
     public float yaw;
+    public float yawOffset;
 
     public boolean fallDown = false;
     public boolean targetEnemy = false;
@@ -91,12 +94,12 @@ public class ProjectileCastHelper {
 
             baseDirection = positionToVelocity(new MyPosition(pos), new MyPosition(target.getEyePosition()));
 
-            pitch = (float) Math.toDegrees(Math.asin(-baseDirection.y));
-            yaw = (float) Math.toDegrees(Math.atan2(-baseDirection.x, baseDirection.z));
+            pitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG;
+            yaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG;
         }
 
         for (int i = 0; i < projectilesAmount; i++) {
-            float addYaw = 0;
+            float multiProjYawOffset = 0f;
             Vec3 posAdd = new Vec3(0, 0, 0);
 
             if (projectilesAmount > 1) {
@@ -104,7 +107,7 @@ public class ProjectileCastHelper {
 
                 if (this.castType == CastType.SPREAD_OUT_IN_RADIUS) {
                     // total cone is apart * (projectilesAmount - 1) / projectilesAmount
-                    addYaw = offset * apart / projectilesAmount;
+                    multiProjYawOffset = offset * apart / projectilesAmount;
                 } else if (this.castType == CastType.SPREAD_OUT_HORIZONTAL) {
                     // 1m between each projectile
                     posAdd = getSideVelocity(caster).multiply(offset, offset, offset);
@@ -123,7 +126,13 @@ public class ProjectileCastHelper {
             SpellUtils.setUpProjectilePosition(pos.add(posAdd), en, ctx.getPositionEntity());
             SpellUtils.initSpellEntity(en, caster, data, holder);
 
-            Vector3f direction = calculateDirection(pitch, yaw, randomPitchOffset, addYaw, randomYawOffset);
+            float totalPitchOffset = pitchOffset + randomPitchOffset;
+            float totalYawOffset = yawOffset + multiProjYawOffset + randomYawOffset;
+            Vector3f upVector = new Vector3f();
+            Vector3f direction = calculateDirection(pitch, yaw, totalPitchOffset, totalYawOffset, upVector);
+
+            ((IDatapackProjectileEntity) en).setVectors(direction, upVector);
+
             en.shoot(direction.x, direction.y, direction.z, shootSpeed, 0f);
 
             if (fallDown) {
@@ -143,10 +152,11 @@ public class ProjectileCastHelper {
         return lifespanTicks * shootSpeed;
     }
 
-    private @NotNull Vector3f calculateDirection(float pitch, float yaw, float randomPitchOffset, float addYaw, float randomYawOffset) {
+    private @NotNull Vector3f calculateDirection(float pitch, float yaw, float pitchOffset, float yawOffset, Vector3f outUpVector) {
         // Calculate direction vectors from pitch and yaw
-        float pitchRad = Math.toRadians(pitch);
-        float yawRad = Math.toRadians(yaw);
+        float pitchRad = (pitch + pitchOffset) * Mth.DEG_TO_RAD;
+        float yawRad = yaw * Mth.DEG_TO_RAD;
+        float yawOffsetRad = yawOffset * Mth.DEG_TO_RAD;
 
         float cosPitch = Mth.cos(pitchRad);
         float sinPitch = Mth.sin(pitchRad);
@@ -154,13 +164,9 @@ public class ProjectileCastHelper {
         float sinYaw = Mth.sin(yawRad);
 
         Vector3f forward = new Vector3f(-sinYaw * cosPitch, -sinPitch, cosYaw * cosPitch);
-        Vector3f right = new Vector3f(cosYaw, 0f, sinYaw);
-        Vector3f up = new Vector3f(-sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
+        outUpVector.set(-sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
 
-        float pitchOffset = Math.toRadians(randomPitchOffset);
-        float yawOffset = Math.toRadians(addYaw + randomYawOffset);
-
-        return forward.rotateAxis(pitchOffset, right.x, right.y, right.z).rotateAxis(-yawOffset, up.x, up.y, up.z);
+        return forward.rotateAxis(-yawOffsetRad, outUpVector.x, outUpVector.y, outUpVector.z);
     }
 
     public static Vec3 positionToVelocity(MyPosition current, MyPosition destination) {

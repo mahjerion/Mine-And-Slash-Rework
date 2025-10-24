@@ -295,6 +295,10 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         }
     }
 
+    protected void setMotionDirty() {
+        motionDirty = true;
+    }
+
     private void setSpeed(double newSpeed) {
         Vec3 velocity = getDeltaMovement();
         double speed = velocity.length();
@@ -411,7 +415,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
                 var speed = getDeltaMovement().length();
                 var direction = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(target.getEyePosition()));
                 setDeltaMovement(direction.scale(speed));
-                motionDirty = true;
+                setMotionDirty();
             }
         }
     }
@@ -767,22 +771,22 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     public void handleModifyProjectileAction(MapHolder data) {
         if (data.has(MapField.PROJECTILE_SPEED)) {
             setSpeed(data.get(MapField.PROJECTILE_SPEED));
-            motionDirty = true;
+            setMotionDirty();
         }
         if (data.has(MapField.PROJECTILE_ACCELERATION)) {
             entityData.set(ACCELERATION, data.get(MapField.PROJECTILE_ACCELERATION).floatValue());
         }
         if (data.has(MapField.PITCH)) {
             setPitch(data.get(MapField.PITCH).floatValue());
-            motionDirty = true;
+            setMotionDirty();
         }
         if (data.has(MapField.PITCH_OFFSET)) {
             adjustPitch(data.get(MapField.PITCH_OFFSET).floatValue());
-            motionDirty = true;
+            setMotionDirty();
         }
         if (data.has(MapField.YAW_OFFSET)) {
             adjustYaw(data.get(MapField.YAW_OFFSET).floatValue());
-            motionDirty = true;
+            setMotionDirty();
         }
         if (data.has(MapField.YAW_VELOCITY)) {
             entityData.set(YAW_VELOCITY, data.get(MapField.YAW_VELOCITY).floatValue());

@@ -34,7 +34,7 @@ public class EffectsOverlay {
         // Minecraft mc = Minecraft.getInstance();
 
         for (Map.Entry<String, ExileEffectInstanceData> en : Load.Unit(p).getStatusEffectsData().exileMap.entrySet()) {
-            if (!en.getValue().shouldRemove()) {
+            if (!en.getValue().shouldRemove() && !shouldHideLeeching(en.getKey())) {
                 var eff = ExileDB.ExileEffects().get(en.getKey());
 
                 gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
@@ -58,5 +58,37 @@ public class EffectsOverlay {
             }
         }
 
+        var thresholdMap = com.robertx22.mine_and_slash.mechanics.thresholds.ui.ThresholdUiClient.visibleEntries();
+        if (!thresholdMap.isEmpty()) {
+            for (var e : thresholdMap.entrySet()) {
+                String key = e.getKey();
+                String resId = e.getValue();
+                var rt = com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.ofId(resId);
+                if (rt == null) continue;
+
+                gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+                gui.blit(SlashRef.guiId("effect/effect_overlay"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+
+                float prog = com.robertx22.mine_and_slash.mechanics.thresholds.ui.ThresholdUiClient.getProgress(key);
+                GuiUtils.renderScaledText(gui, (int) x + 10, (int) y + 10, 0.7F, String.valueOf((int) prog), ChatFormatting.YELLOW);
+
+                if (horizontal) {
+                    x += bgX;
+                } else {
+                    y += bgY;
+                }
+            }
+        }
+
+    }
+
+    private static boolean shouldHideLeeching(String effectId) {
+        if (effectId == null) {
+            return false;
+        }
+        if (effectId.equals("leeching_state")) {
+            return true;
+        }
+        return effectId.startsWith("leeching_") && effectId.endsWith("_state");
     }
 }

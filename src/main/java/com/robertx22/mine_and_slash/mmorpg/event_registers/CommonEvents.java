@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.database.DatabaseCaches;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
+import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.reworked.NewDamageMain;
 import com.robertx22.mine_and_slash.event_hooks.entity.OnMobSpawn;
@@ -60,6 +61,14 @@ public class CommonEvents {
             x.put(SlashEntities.COLD_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.45).build());
             x.put(SlashEntities.LIGHTNING_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.45).build());
 
+        });
+
+        ForgeEvents.registerForgeEvent(LivingDamageEvent.class, evt -> {
+            if (!(evt.getEntity() instanceof ServerPlayer sp)) return;
+            float applied = evt.getAmount();
+            if (applied > 0f) {
+                OnResourceLost.trigger(sp, ResourceType.health, applied, OnResourceLost.LossSource.Damage);
+            }
         });
 
 

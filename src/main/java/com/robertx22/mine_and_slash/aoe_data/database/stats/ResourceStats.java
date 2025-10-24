@@ -360,6 +360,21 @@ public class ResourceStats {
             })
             .build();
 
+        // Allows life leech to persist when at full Health (reservoir is NOT discarded).
+        public static final DataPackStatAccessor<EmptyAccessor> LEECH_AT_FULL_HEALTH = DatapackStatBuilder
+                .ofSingle("leech_at_full_health", Elements.Physical)
+                .setLocName(x -> "Leech at Full Health")
+                .setLocDesc(x -> "Allows Leech to Persist When at Full Health")
+                .modifyAfterDone(x -> {
+                x.is_perc = false;     // treat as boolean (0 = off, >0 = on)
+                x.base    = 0;
+                x.min     = 0;
+                x.max     = 1;
+                x.format  = ChatFormatting.RED.getName();
+                x.group   = Stat.StatGroup.MAIN;
+                })
+                .build();
+
     public static void init() {
 
     }

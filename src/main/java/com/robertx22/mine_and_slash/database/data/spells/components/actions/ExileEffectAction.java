@@ -59,6 +59,12 @@ public class ExileEffectAction extends SpellAction {
             targets.forEach(t -> {
 
                 if (RandomUtils.roll(chance)) {
+                    // If ON_EXPIRE, skip only GIVE_STACKS (handled upstream to avoid same-tick races),
+                    // but DO allow REMOVE_STACKS so consumptions like Overheat work on entity-expire.
+                    if (ctx.activation == com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation.ON_EXPIRE
+                            && action == GiveOrTake.GIVE_STACKS) {
+                        return;
+                    }
                     ExilePotionEvent potionEvent = EventBuilder.ofEffect(ctx.calculatedSpellData, ctx.caster, t, Load.Unit(ctx.caster)
                                     .getLevel(), potion, action.getOther(), duration, infinite)
                             .setSpell(ctx.calculatedSpellData.getSpell())
@@ -68,7 +74,11 @@ public class ExileEffectAction extends SpellAction {
                     potionEvent.spellid = ctx.calculatedSpellData.getSpell()
                             .GUID();
 
-                    potionEvent.Activate();
+                    try {
+                        potionEvent.Activate();
+                    } catch (Exception ex) {
+                        throw ex;
+                    }
                 }
 
             });

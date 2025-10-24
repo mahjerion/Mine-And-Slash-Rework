@@ -70,6 +70,12 @@ public class SummonProjectileAction extends SpellAction {
 
         builder.randomSpreadDegrees *= ctx.calculatedSpellData.data.getNumber(EventData.PROJECTILE_SPREAD_RANDOMNESS, 1).number;
 
+        if (data.has(MapField.MIN_PITCH)) {
+            builder.pitch = Math.max(builder.pitch, data.get(MapField.MIN_PITCH).floatValue());
+        }
+        if (data.has(MapField.MAX_PITCH)) {
+            builder.pitch = Math.min(builder.pitch, data.get(MapField.MAX_PITCH).floatValue());
+        }
         if (data.has(MapField.PITCH)) {
             builder.pitch = data.get(MapField.PITCH).floatValue();
         }

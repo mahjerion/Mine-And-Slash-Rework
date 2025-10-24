@@ -45,6 +45,8 @@ public class MapField<T> implements IGUID {
 
     public static MapField<Double> VOLUME = make("volume");
     public static MapField<Double> PITCH = make("pitch");
+    public static MapField<Double> MIN_PITCH = make("min_pitch");
+    public static MapField<Double> MAX_PITCH = make("max_pitch");
     public static MapField<Double> SECONDS = make("seconds");
     public static MapField<Double> MOTION_MULTI = make("motion_multiplier");
 

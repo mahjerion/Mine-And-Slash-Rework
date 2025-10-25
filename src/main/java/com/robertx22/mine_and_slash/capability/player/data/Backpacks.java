@@ -30,25 +30,25 @@ public class Backpacks {
         this.player = player;
 
         for (BackpackType type : BackpackType.values()) {
-            map.put(type, new BackpackInventory(player, type, MAX_SIZE));
+            map.put(type, new BackpackInventory(player, type));
         }
     }
 
 
     public enum BackpackType {
-        GEARS("gear", Words.Gear) {
+        GEARS("gear", Words.Gear, 6, 1) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.GEARS.has(stack) || StackSaving.JEWEL.has(stack) || StackSaving.STAT_SOULS.has(stack);
             }
         },
-        MAPS("map", Words.Maps) {
+        MAPS("map", Words.Maps, 6, 1) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.MAP.has(stack) || DataSaverCheckUtil.checkForDataSaver("ancient_obelisks" + "_obelisk", stack) || DataSaverCheckUtil.checkForDataSaver("the_harvest" + "_map", stack);
             }
         },
-        CURRENCY("currency", Words.Currency) {
+        CURRENCY("currency", Words.Currency, 9, 64) {
             @Override
             public boolean isValid(ItemStack stack) {
                 var cur = ExileCurrency.get(stack);
@@ -58,13 +58,13 @@ public class Backpacks {
                 return stack.getItem() instanceof IItemAsCurrency || stack.getItem() instanceof RuneItem || stack.getItem() instanceof RarityStoneItem;
             }
         },
-        SKILL_GEMS("skill_gem", Words.SkillGem) {
+        SKILL_GEMS("skill_gem", Words.SkillGem, 6, 1) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.SKILL_GEM.has(stack);
             }
         },
-        PROFESSION("profession", Words.PROFESSIONS) {
+        PROFESSION("profession", Words.PROFESSIONS, 6, 64) {
             @Override
             public boolean isValid(ItemStack stack) {
                 Item item = stack.getItem();
@@ -74,10 +74,18 @@ public class Backpacks {
 
         public String id;
         public Words name;
+        public int rows;
+        public int stackMultiplier;
 
-        BackpackType(String id, Words name) {
+        BackpackType(String id, Words name, int rows, int stackMultiplier) {
             this.id = id;
             this.name = name;
+            this.rows = rows;
+            this.stackMultiplier = stackMultiplier;
+        }
+
+        public int getSize() {
+            return 9 * rows;
         }
 
         public ResourceLocation getIcon() {
@@ -88,8 +96,6 @@ public class Backpacks {
     }
 
     Player player;
-
-    public static int MAX_SIZE = 6 * 9;
 
     private HashMap<BackpackType, BackpackInventory> map = new HashMap<>();
 
@@ -133,12 +139,11 @@ public class Backpacks {
     }
     // todo every time before you open backpack, it will replace locked slots with blocked slots that cant be clicked on and throw out/give items back
 
-    public void openBackpack(BackpackType type, Player p, int rows) {
+    public void openBackpack(BackpackType type, Player p) {
         if (!p.level().isClientSide) {
             BackpackInventory inv = getInv(type);
-            //inv.throwOutBlockedSlotItems(rows * 9);
             p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> {
-                return new BackpackMenu(type, i, playerInventory, inv, rows);
+                return new BackpackMenu(type, i, playerEntity, playerInventory, inv);
             }, Component.literal("")));
         }
     }

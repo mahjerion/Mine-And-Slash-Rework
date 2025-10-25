@@ -41,12 +41,7 @@ public class OpenBackpackPacket extends MyPacket<OpenBackpackPacket> {
     @Override
     public void onReceived(ExilePacketContext ctx) {
         Player player = ctx.getPlayer();
-        BackpackItem backpack = getBackpackItem(player);
-
-        if (backpack != null) {
-            int rows = backpack.getSlots() / 9;
-            Load.backpacks(player).getBackpacks().openBackpack(type, player, rows);
-        }
+        Load.backpacks(player).getBackpacks().openBackpack(type, player);
     }
 
     private static @Nullable BackpackItem getBackpackItem(Player player) {

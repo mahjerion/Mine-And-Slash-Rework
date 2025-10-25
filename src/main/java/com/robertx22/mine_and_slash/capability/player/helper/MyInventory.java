@@ -1,8 +1,8 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,7 +26,14 @@ public class MyInventory extends SimpleContainer {
             CompoundTag compoundtag = pContainerNbt.getCompound(k);
             int j = compoundtag.getByte("Slot") & 255;
             if (j >= 0 && j < this.getContainerSize()) {
-                this.setItem(j, ItemStack.of(compoundtag));
+                ItemStack stack = ItemStack.of(compoundtag);
+
+                // handle 128+ stack size
+                if (compoundtag.contains("BigCount", Tag.TAG_SHORT)) {
+                    stack.setCount(compoundtag.getShort("BigCount"));
+                }
+
+                this.setItem(j, stack);
             }
         }
 
@@ -42,6 +49,11 @@ public class MyInventory extends SimpleContainer {
                 CompoundTag compoundtag = new CompoundTag();
                 compoundtag.putByte("Slot", (byte) i);
                 itemstack.save(compoundtag);
+
+                if (itemstack.getCount() > 127) {
+                    compoundtag.putShort("BigCount", (short)itemstack.getCount());
+                }
+
                 listtag.add(compoundtag);
             }
         }

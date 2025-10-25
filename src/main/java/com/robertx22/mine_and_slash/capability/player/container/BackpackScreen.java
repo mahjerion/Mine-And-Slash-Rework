@@ -20,11 +20,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
     public static double iMouseY = (double)(Minecraft.getInstance().getWindow().getHeight() / 2);
 
     private static final int TEXTURE_TOP_Y = 0;
-    private static final int TEXTURE_TOP_HEIGHT = 115;
+    private static final int TEXTURE_TOP_HEIGHT = 17;
     private static final int TEXTURE_ROW_Y = TEXTURE_TOP_HEIGHT;
     private static final int TEXTURE_ROW_HEIGHT = 18;
     private static final int TEXTURE_BOTTOM_Y = TEXTURE_ROW_Y + TEXTURE_ROW_HEIGHT;
     private static final int TEXTURE_BOTTOM_HEIGHT = 99;
+    private static final int TEXTURE_TABS_Y = TEXTURE_BOTTOM_Y + TEXTURE_BOTTOM_HEIGHT;
+    private static final int TEXTURE_TABS_HEIGHT = 106;
 
     private static final int ROW_START_Y = 16;
 
@@ -34,7 +36,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
         super(pMenu, pPlayerInventory, Component.literal(""));
         this.rows = pMenu.containerRows;
         this.imageWidth = 199;
-        this.imageHeight = ROW_START_Y + TEXTURE_ROW_HEIGHT * rows + TEXTURE_BOTTOM_HEIGHT;
+        // - 1 because the top pixel of the bottom texture overlaps the bottom pixel of the bottom row
+        this.imageHeight = ROW_START_Y + TEXTURE_ROW_HEIGHT * rows + TEXTURE_BOTTOM_HEIGHT - 1;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
         super.init();
 
         int x = leftPos + 175;
-        int y = topPos + 18;
+        int y = topPos + 9 + 18 * (rows - Backpacks.BackpackType.values().length) / 2;
 
         for (Backpacks.BackpackType type : Backpacks.BackpackType.values()) {
             this.addRenderableWidget(new BackpackButton(type, x, y));
@@ -92,10 +95,13 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             rowY += TEXTURE_ROW_HEIGHT;
         }
 
+        // Draw top and bottom, covering the top/bottom 1px of the repeating textures
+        pGuiGraphics.blit(BACKGROUND_LOCATION, x, y, 0, TEXTURE_TOP_Y, this.imageWidth, TEXTURE_TOP_HEIGHT);
         pGuiGraphics.blit(BACKGROUND_LOCATION, x, rowY - 1, 0, TEXTURE_BOTTOM_Y, this.imageWidth, TEXTURE_BOTTOM_HEIGHT);
 
-        // draw top border + tabs over the repeating texture
-        pGuiGraphics.blit(BACKGROUND_LOCATION, x, y, 0, TEXTURE_TOP_Y, this.imageWidth, TEXTURE_TOP_HEIGHT);
+        // Draw tabs in the middle of the upper section
+        int tabsY = (y + rowY - TEXTURE_TABS_HEIGHT) / 2;
+        pGuiGraphics.blit(BACKGROUND_LOCATION, x, tabsY, 0, TEXTURE_TABS_Y, this.imageWidth, TEXTURE_TABS_HEIGHT);
     }
 
 }

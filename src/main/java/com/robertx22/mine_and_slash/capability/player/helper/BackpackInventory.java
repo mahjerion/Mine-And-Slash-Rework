@@ -20,12 +20,15 @@ public class BackpackInventory extends MyInventory {
         return super.getMaxStackSize() * type.stackMultiplier;
     }
 
+    public int getMaxStackSize(ItemStack stack) {
+        return stack.getMaxStackSize() * type.stackMultiplier;
+    }
+
     @Override
     public boolean canAddItem(ItemStack stack) {
         for (int i = 0; i < getContainerSize(); ++i) {
-            ItemStack itemstack = this.getItem(i);
-            int stackSize = itemstack.getMaxStackSize() * type.stackMultiplier;
-            if (itemstack.isEmpty() || (ItemStack.isSameItemSameTags(itemstack, stack) && itemstack.getCount() < stackSize)) {
+            ItemStack destStack = this.getItem(i);
+            if (destStack.isEmpty() || (ItemStack.isSameItemSameTags(destStack, stack) && destStack.getCount() < getMaxStackSize(destStack))) {
                 return true;
             }
         }
@@ -72,7 +75,7 @@ public class BackpackInventory extends MyInventory {
     }
 
     private void moveItemsBetweenStacks(ItemStack source, ItemStack destination) {
-        int maxStack = Math.min(getMaxStackSize(), destination.getMaxStackSize() * type.stackMultiplier);
+        int maxStack = Math.min(getMaxStackSize(), getMaxStackSize(destination));
         int amount = Math.min(source.getCount(), maxStack - destination.getCount());
         if (amount > 0) {
             destination.grow(amount);

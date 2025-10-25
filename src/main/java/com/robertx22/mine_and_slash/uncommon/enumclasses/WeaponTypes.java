@@ -10,11 +10,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<WeaponTypes> {
@@ -109,7 +107,12 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
 
                 String id = source.getMsgId();
                 // todo this seems to need fixing but im afraid itll fuck things up now id = dmgid.getPath();
-                return data.containsInDmgIdPattern != null && data.containsInDmgIdPattern.matcher(id).find();
+                for (String name : data.contains_in_dmg_id) {
+                    if (id.contains(name)) {
+                        return true;
+                    }
+                }
+                return false;
             }
         };
 
@@ -124,23 +127,12 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
 
         private List<String> valid_proj_dmg_id = Arrays.asList("testmodid:name");
         private List<String> contains_in_dmg_id = Arrays.asList("arrow", "bolt", "ammo", "bullet", "dart", "missile");
-        private transient @Nullable Pattern containsInDmgIdPattern;
 
         public DamageValidityData(SourceCheck shortcheck, TagCheck tag_and_id_check, List<String> valid_proj_dmg_id, List<String> contains_in_dmg_id) {
             this.tag_and_id_check = tag_and_id_check;
             this.source_check = shortcheck;
             this.valid_proj_dmg_id = valid_proj_dmg_id;
             this.contains_in_dmg_id = contains_in_dmg_id;
-            this.init();
-        }
-
-        public void init() {
-            if (!this.contains_in_dmg_id.isEmpty()) {
-                this.containsInDmgIdPattern = Pattern.compile(
-                        this.contains_in_dmg_id.stream()
-                                .map(Pattern::quote)
-                                .collect(Collectors.joining("|")));
-            }
         }
 
         public static DamageValidityData projectile() {
@@ -227,10 +219,5 @@ public class WeaponTypes implements JsonExileRegistry<WeaponTypes>, IAutoGson<We
     @Override
     public String GUID() {
         return this.id;
-    }
-
-    @Override
-    public void onLoadedFromJson() {
-        this.damage_validity_check.init();
     }
 }

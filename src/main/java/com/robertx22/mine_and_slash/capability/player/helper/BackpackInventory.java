@@ -37,32 +37,7 @@ public class BackpackInventory extends MyInventory {
     }
 
     @Override
-    public ItemStack addItem(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
-        } else {
-            ItemStack copy = stack.copy();
-            this.moveItemToOccupiedSlotsWithSameType(copy);
-            if (copy.isEmpty()) {
-                return ItemStack.EMPTY;
-            } else {
-                this.moveItemToEmptySlots(copy);
-                return copy.isEmpty() ? ItemStack.EMPTY : copy;
-            }
-        }
-    }
-
-    private void moveItemToEmptySlots(ItemStack stack) {
-        for(int slot = 0; slot < getContainerSize(); slot++) {
-            ItemStack existing = getItem(slot);
-            if (existing.isEmpty()) {
-                setItem(slot, stack.copyAndClear());
-                return;
-            }
-        }
-    }
-
-    private void moveItemToOccupiedSlotsWithSameType(ItemStack stack) {
+    protected void moveItemToOccupiedSlotsWithSameType(ItemStack stack) {
         for (int slot = 0; slot < getContainerSize(); slot++) {
             ItemStack existing = this.getItem(slot);
             if (ItemStack.isSameItemSameTags(existing, stack)) {
@@ -74,7 +49,8 @@ public class BackpackInventory extends MyInventory {
         }
     }
 
-    private void moveItemsBetweenStacks(ItemStack source, ItemStack destination) {
+    @Override
+    protected void moveItemsBetweenStacks(ItemStack source, ItemStack destination) {
         int maxStack = Math.min(getMaxStackSize(), getMaxStackSize(destination));
         int amount = Math.min(source.getCount(), maxStack - destination.getCount());
         if (amount > 0) {

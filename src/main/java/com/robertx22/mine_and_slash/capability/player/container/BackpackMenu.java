@@ -11,6 +11,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -18,21 +20,22 @@ import net.minecraft.world.item.ItemStack;
 public class BackpackMenu extends AbstractContainerMenu {
 
     Player player;
-    int size = 6 * 9;
+    Backpacks.BackpackType type;
+    int size;
     int containerRows;
+    int stackMultiplier;
 
     public BackpackMenu(Backpacks.BackpackType type, int pContainerId, Inventory inv) {
         this(type, pContainerId, inv.player, inv, new BackpackInventory(inv.player, type));
     }
 
-    Backpacks.BackpackType type;
-
     public BackpackMenu(Backpacks.BackpackType type, int pContainerId, Player player, Container playerINV, Container backpackINV) {
         super(SlashContainers.BACKPACK_TABS.get(type).get(), pContainerId);
-        this.containerRows = type.getRows();
         this.player = player;
-        this.size = type.getSize();
         this.type = type;
+        this.size = type.getSize();
+        this.containerRows = type.getRows();
+        this.stackMultiplier = type.getStackMultiplier();
 
         try {
             int i = (containerRows - 4) * 18;
@@ -83,8 +86,8 @@ public class BackpackMenu extends AbstractContainerMenu {
             }
         }
 
-
-        return itemstack;
+        // don't loop, we want to limit how many get transferred
+        return ItemStack.EMPTY;
     }
 
     // Apply stack size multiplier
@@ -96,10 +99,14 @@ public class BackpackMenu extends AbstractContainerMenu {
             i = endIndex - 1;
         }
 
-        Slot slot1;
+        // Only transfer the normal max stack size
+        int amountLeftToTake = stack.getMaxStackSize();
+
+        Slot slot;
         ItemStack itemstack;
+
         if (stack.isStackable()) {
-            while(!stack.isEmpty()) {
+            while (!stack.isEmpty() && amountLeftToTake > 0) {
                 if (reverseDirection) {
                     if (i < startIndex) {
                         break;
@@ -108,20 +115,25 @@ public class BackpackMenu extends AbstractContainerMenu {
                     break;
                 }
 
-                slot1 = (Slot)this.slots.get(i);
-                itemstack = slot1.getItem();
+                slot = (Slot)this.slots.get(i);
+                itemstack = slot.getItem();
                 if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemstack)) {
-                    int j = itemstack.getCount() + stack.getCount();
-                    int maxSize = Math.min(slot1.getMaxStackSize(), stack.getMaxStackSize() * type.getStackMultiplier());
-                    if (j <= maxSize) {
-                        stack.setCount(0);
-                        itemstack.setCount(j);
-                        slot1.setChanged();
+                    int amountToTake = Math.min(stack.getCount(), amountLeftToTake);
+                    int newDestSize = itemstack.getCount() + amountToTake;
+                    int maxSize = slot.getMaxStackSize(stack);
+
+                    if (newDestSize <= maxSize) {
+                        stack.shrink(amountToTake);
+                        itemstack.setCount(newDestSize);
+                        slot.setChanged();
                         flag = true;
+                        break;
                     } else if (itemstack.getCount() < maxSize) {
-                        stack.shrink(maxSize - itemstack.getCount());
+                        int amount = maxSize - itemstack.getCount();
+                        amountLeftToTake -= amount;
+                        stack.shrink(amount);
                         itemstack.setCount(maxSize);
-                        slot1.setChanged();
+                        slot.setChanged();
                         flag = true;
                     }
                 }
@@ -134,7 +146,7 @@ public class BackpackMenu extends AbstractContainerMenu {
             }
         }
 
-        if (!stack.isEmpty()) {
+        if (!stack.isEmpty() && amountLeftToTake > 0) {
             if (reverseDirection) {
                 i = endIndex - 1;
             } else {
@@ -150,16 +162,12 @@ public class BackpackMenu extends AbstractContainerMenu {
                     break;
                 }
 
-                slot1 = (Slot)this.slots.get(i);
-                itemstack = slot1.getItem();
-                if (itemstack.isEmpty() && slot1.mayPlace(stack)) {
-                    if (stack.getCount() > slot1.getMaxStackSize()) {
-                        slot1.setByPlayer(stack.split(slot1.getMaxStackSize()));
-                    } else {
-                        slot1.setByPlayer(stack.split(stack.getCount()));
-                    }
-
-                    slot1.setChanged();
+                slot = (Slot)this.slots.get(i);
+                itemstack = slot.getItem();
+                if (itemstack.isEmpty() && slot.mayPlace(stack)) {
+                    int amount = Math.min(stack.getCount(), Math.min(slot.getMaxStackSize(), amountLeftToTake));
+                    slot.setByPlayer(stack.split(amount));
+                    slot.setChanged();
                     flag = true;
                     break;
                 }
@@ -175,6 +183,29 @@ public class BackpackMenu extends AbstractContainerMenu {
         return flag;
     }
 
+    // Make right click take only up to 32
+    @Override
+    protected boolean tryItemClickBehaviourOverride(Player player, ClickAction action, Slot slot, ItemStack clickedItem, ItemStack carriedItem) {
+        if (super.tryItemClickBehaviourOverride(player, action, slot, clickedItem, carriedItem)) {
+            return true;
+        }
+
+        if (!clickedItem.isEmpty() && slot.mayPickup(player) && carriedItem.isEmpty() && action == ClickAction.SECONDARY) {
+            int count = (Math.min(clickedItem.getCount(), clickedItem.getMaxStackSize()) + 1) / 2;
+
+            Optional<ItemStack> optional = slot.tryRemove(count, Integer.MAX_VALUE, player);
+
+            optional.ifPresent((taken) -> {
+                this.setCarried(taken);
+                slot.onTake(player, taken);
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
     public class BackpackSlot extends Slot {
 
         public BackpackSlot(Container pContainer, int pSlot, int pX, int pY) {
@@ -188,7 +219,7 @@ public class BackpackMenu extends AbstractContainerMenu {
 
         @Override
         public int getMaxStackSize(ItemStack stack) {
-            return Math.min(getMaxStackSize(), stack.getMaxStackSize() * type.getStackMultiplier());
+            return Math.min(getMaxStackSize(), stack.getMaxStackSize() * stackMultiplier);
         }
 
         @Override

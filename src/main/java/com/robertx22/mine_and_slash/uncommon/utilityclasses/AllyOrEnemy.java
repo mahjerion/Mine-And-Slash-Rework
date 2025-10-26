@@ -15,13 +15,6 @@ public enum AllyOrEnemy {
 
     summonShouldAttack() {
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
-
-        @Override
         public boolean is(Entity caster, LivingEntity target) {
 
             if (!enemies.is(caster, target)) {
@@ -61,11 +54,6 @@ public enum AllyOrEnemy {
 
     allies() {
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream().filter(x -> is(caster, x)).collect(Collectors.toList());
-        }
-
-        @Override
         public boolean is(Entity caster, LivingEntity target) {
             return !enemies.is(caster, target);
         }
@@ -75,12 +63,8 @@ public enum AllyOrEnemy {
             return true;
         }
     },
-    allies_not_self() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream().filter(x -> is(caster, x)).collect(Collectors.toList());
-        }
 
+    allies_not_self() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             return allies.is(caster, target);
@@ -91,14 +75,8 @@ public enum AllyOrEnemy {
             return false;
         }
     },
-    pets() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
 
+    pets() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             if (caster instanceof Player p) {
@@ -114,14 +92,8 @@ public enum AllyOrEnemy {
             return false;
         }
     },
-    casters_summons() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
 
+    casters_summons() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             if (caster instanceof Player p) {
@@ -139,6 +111,7 @@ public enum AllyOrEnemy {
             return false;
         }
     },
+
     enemies {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
@@ -171,17 +144,11 @@ public enum AllyOrEnemy {
         }
 
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
-
-        @Override
         public boolean includesCaster() {
             return false;
         }
     },
+
     non_ai_enemies {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
@@ -225,13 +192,6 @@ public enum AllyOrEnemy {
         }
 
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
-
-        @Override
         public boolean includesCaster() {
             return false;
         }
@@ -253,7 +213,11 @@ public enum AllyOrEnemy {
         }
     };
 
-    public abstract <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster);
+    public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
+        return list.stream()
+                .filter(x -> is(caster, x))
+                .collect(Collectors.toList());
+    }
 
     /**
      * @return whether {@code target} is an appropriate target for this target type for the caster {@code caster}

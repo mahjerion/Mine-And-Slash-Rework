@@ -28,7 +28,9 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.Stats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.AutoDatapackStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.aoe_data.database.unique_gears.UniqueGearReg;
+import com.robertx22.mine_and_slash.capability.player.data.Backpacks.BackpackType;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGems;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.BackpackTabConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
@@ -106,14 +108,20 @@ public class GeneratedData {
         new StatCompats().registerAll();
 
         new ProphecyModifiers().registerAll();
-       
+
         GameBalanceConfig orig = new GameBalanceConfig();
         orig.id = GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE.id;
+
         orig.player_points.put(PlayerPointsType.TALENTS, new PlayerPointsConfig(PlayerPointsType.TALENTS, 1, 1, 30, 200));
         orig.player_points.put(PlayerPointsType.ASCENDANCY, new PlayerPointsConfig(PlayerPointsType.ASCENDANCY, 0, 0.1F, 0, 9));
         orig.player_points.put(PlayerPointsType.SPELLS, new PlayerPointsConfig(PlayerPointsType.SPELLS, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.PASSIVES, new PlayerPointsConfig(PlayerPointsType.PASSIVES, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 2, 50, 300));
+
+        for (BackpackType type : BackpackType.values()) {
+            orig.backpack_tabs.put(type, new BackpackTabConfig(6, 1));
+        }
+
         orig.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         GameBalanceConfig com = orig.fromJson(orig.toJson());

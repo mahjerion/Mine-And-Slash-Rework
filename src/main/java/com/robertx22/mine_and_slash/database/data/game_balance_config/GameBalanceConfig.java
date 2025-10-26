@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.capability.player.data.Backpacks.BackpackType;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
@@ -63,6 +64,8 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
     }
 
     public HashMap<PlayerPointsType, PlayerPointsConfig> player_points = new HashMap<>();
+
+    public HashMap<BackpackType, BackpackTabConfig> backpack_tabs = new HashMap<>();
 
     public double MOB_DMG_MULTI_PER_MAP_RES_REQ_LACKING = 0.05;
 

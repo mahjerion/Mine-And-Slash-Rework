@@ -17,11 +17,11 @@ public class BackpackInventory extends MyInventory {
 
     @Override
     public int getMaxStackSize() {
-        return super.getMaxStackSize() * type.stackMultiplier;
+        return super.getMaxStackSize() * type.getStackMultiplier();
     }
 
     public int getMaxStackSize(ItemStack stack) {
-        return stack.getMaxStackSize() * type.stackMultiplier;
+        return stack.getMaxStackSize() * type.getStackMultiplier();
     }
 
     @Override

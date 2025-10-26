@@ -6,6 +6,8 @@ import com.robertx22.mine_and_slash.a_libraries.curios.CuriosSlots;
 import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
 import com.robertx22.mine_and_slash.capability.player.helper.BackpackInventory;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.BackpackTabConfig;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
@@ -36,19 +38,19 @@ public class Backpacks {
 
 
     public enum BackpackType {
-        GEARS("gear", Words.Gear, 6, 1) {
+        GEARS("gear", Words.Gear) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.GEARS.has(stack) || StackSaving.JEWEL.has(stack) || StackSaving.STAT_SOULS.has(stack);
             }
         },
-        MAPS("map", Words.Maps, 6, 1) {
+        MAPS("map", Words.Maps) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.MAP.has(stack) || DataSaverCheckUtil.checkForDataSaver("ancient_obelisks" + "_obelisk", stack) || DataSaverCheckUtil.checkForDataSaver("the_harvest" + "_map", stack);
             }
         },
-        CURRENCY("currency", Words.Currency, 9, 64) {
+        CURRENCY("currency", Words.Currency) {
             @Override
             public boolean isValid(ItemStack stack) {
                 var cur = ExileCurrency.get(stack);
@@ -58,13 +60,13 @@ public class Backpacks {
                 return stack.getItem() instanceof IItemAsCurrency || stack.getItem() instanceof RuneItem || stack.getItem() instanceof RarityStoneItem;
             }
         },
-        SKILL_GEMS("skill_gem", Words.SkillGem, 6, 1) {
+        SKILL_GEMS("skill_gem", Words.SkillGem) {
             @Override
             public boolean isValid(ItemStack stack) {
                 return StackSaving.SKILL_GEM.has(stack);
             }
         },
-        PROFESSION("profession", Words.PROFESSIONS, 6, 64) {
+        PROFESSION("profession", Words.PROFESSIONS) {
             @Override
             public boolean isValid(ItemStack stack) {
                 Item item = stack.getItem();
@@ -74,18 +76,26 @@ public class Backpacks {
 
         public String id;
         public Words name;
-        public int rows;
-        public int stackMultiplier;
 
-        BackpackType(String id, Words name, int rows, int stackMultiplier) {
+        BackpackType(String id, Words name) {
             this.id = id;
             this.name = name;
-            this.rows = rows;
-            this.stackMultiplier = stackMultiplier;
+        }
+
+        public int getRows() {
+            return getConfig().rows;
         }
 
         public int getSize() {
-            return 9 * rows;
+            return getRows() * 9;
+        }
+
+        public int getStackMultiplier() {
+            return getConfig().stack_multiplier;
+        }
+
+        public BackpackTabConfig getConfig() {
+            return GameBalanceConfig.get().backpack_tabs.get(this);
         }
 
         public ResourceLocation getIcon() {

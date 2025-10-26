@@ -29,7 +29,7 @@ public class BackpackMenu extends AbstractContainerMenu {
 
     public BackpackMenu(Backpacks.BackpackType type, int pContainerId, Player player, Container playerINV, Container backpackINV) {
         super(SlashContainers.BACKPACK_TABS.get(type).get(), pContainerId);
-        this.containerRows = type.rows;
+        this.containerRows = type.getRows();
         this.player = player;
         this.size = type.getSize();
         this.type = type;
@@ -112,7 +112,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                 itemstack = slot1.getItem();
                 if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
-                    int maxSize = Math.min(slot1.getMaxStackSize(), stack.getMaxStackSize() * type.stackMultiplier);
+                    int maxSize = Math.min(slot1.getMaxStackSize(), stack.getMaxStackSize() * type.getStackMultiplier());
                     if (j <= maxSize) {
                         stack.setCount(0);
                         itemstack.setCount(j);
@@ -188,7 +188,7 @@ public class BackpackMenu extends AbstractContainerMenu {
 
         @Override
         public int getMaxStackSize(ItemStack stack) {
-            return Math.min(getMaxStackSize(), stack.getMaxStackSize() * type.stackMultiplier);
+            return Math.min(getMaxStackSize(), stack.getMaxStackSize() * type.getStackMultiplier());
         }
 
         @Override

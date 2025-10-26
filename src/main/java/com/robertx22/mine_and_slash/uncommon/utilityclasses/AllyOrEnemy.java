@@ -3,10 +3,7 @@ package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -197,7 +194,7 @@ public enum AllyOrEnemy {
                 if (EntityFinder.isTamedByAlly(p, target)) {
                     return false;
                 }
-                if (target.serializeNBT().contains("NoAI")) {
+                if (target instanceof Mob mob && mob.isNoAi()) {
                     return false;
                 }
                 // Check for villagers and other NPCs

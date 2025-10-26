@@ -8,17 +8,14 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class SetBackpackContentPacket extends MyPacket<SetBackpackContentPacket> {
 
-    // Like ClientboundContainerSetContentPacket, but sends stack sizes as shorts
+    // Like ClientboundContainerSetContentPacket, but sends stack sizes as varints
 
     public int containerId;
     public int stateId;

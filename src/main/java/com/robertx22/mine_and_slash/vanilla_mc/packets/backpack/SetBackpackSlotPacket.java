@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SetBackpackSlotPacket extends MyPacket<SetBackpackSlotPacket> {
 
-    // Like ClientboundContainerSetSlotPacket, but sends stack sizes as shorts
+    // Like ClientboundContainerSetSlotPacket, but sends stack sizes as varints
 
     public int containerId;
     public int stateId;

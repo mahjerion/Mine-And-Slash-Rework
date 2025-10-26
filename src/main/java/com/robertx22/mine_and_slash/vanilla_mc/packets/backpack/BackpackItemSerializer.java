@@ -18,7 +18,7 @@ public class BackpackItemSerializer {
             buf.writeBoolean(true);
             Item item = stack.getItem();
             buf.writeId(BuiltInRegistries.ITEM, item);
-            buf.writeShort(stack.getCount());
+            buf.writeVarInt(stack.getCount());
             CompoundTag compoundtag = null;
             if (item.isDamageable(stack) || item.shouldOverrideMultiplayerNbt()) {
                 compoundtag = limitedTag ? stack.getShareTag() : stack.getTag();
@@ -32,7 +32,7 @@ public class BackpackItemSerializer {
             return ItemStack.EMPTY;
         } else {
             Item item = (Item)buf.readById(BuiltInRegistries.ITEM);
-            int count = buf.readShort();
+            int count = buf.readVarInt();
             ItemStack itemstack = new ItemStack(item, count);
             itemstack.readShareTag(buf.readNbt());
             return itemstack;

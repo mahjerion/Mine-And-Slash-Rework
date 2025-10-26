@@ -67,7 +67,7 @@ public enum AllyOrEnemy {
 
         @Override
         public boolean is(Entity caster, LivingEntity target) {
-            return enemies.is(caster, target) == false;
+            return !enemies.is(caster, target);
         }
 
         @Override
@@ -143,19 +143,15 @@ public enum AllyOrEnemy {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
-            if (caster instanceof Player p) {
-                if (EntityFinder.isTamedByAlly(p, target)) {
+            if (caster instanceof Player casterPlayer) {
+                if (EntityFinder.isTamedByAlly(casterPlayer, target)) {
                     return false;
                 }
-                if (target instanceof Player) {
+                if (target instanceof Player targetPlayer) {
                     if (!caster.level().getServer().isPvpAllowed()) {
                         return false;
                     }
-                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target, false)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return target != caster && !TeamUtils.areOnSameTeam(casterPlayer, targetPlayer, false);
                 }
 
             } else {
@@ -190,8 +186,8 @@ public enum AllyOrEnemy {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
-            if (caster instanceof Player p) {
-                if (EntityFinder.isTamedByAlly(p, target)) {
+            if (caster instanceof Player casterPlayer) {
+                if (EntityFinder.isTamedByAlly(casterPlayer, target)) {
                     return false;
                 }
                 if (target instanceof Mob mob && mob.isNoAi()) {
@@ -205,15 +201,11 @@ public enum AllyOrEnemy {
                 if (target instanceof net.minecraft.world.entity.npc.AbstractVillager) {
                     return false;
                 }*/
-                if (target instanceof Player) {
+                if (target instanceof Player targetPlayer) {
                     if (!caster.level().getServer().isPvpAllowed()) {
                         return false;
                     }
-                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target, false)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return target != caster && !TeamUtils.areOnSameTeam(casterPlayer, targetPlayer, false);
                 }
 
             } else {
@@ -263,6 +255,9 @@ public enum AllyOrEnemy {
 
     public abstract <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster);
 
+    /**
+     * @return whether {@code target} is an appropriate target for this target type for the caster {@code caster}
+     */
     public abstract boolean is(Entity caster, LivingEntity target);
 
     public abstract boolean includesCaster();

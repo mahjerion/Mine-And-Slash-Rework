@@ -5,7 +5,7 @@ import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import net.minecraft.ChatFormatting;
 
-public interface Rarity extends IWeighted, IAutoLocName, JsonExileRegistry<Rarity> {
+public interface Rarity<Self extends Rarity<Self>> extends IWeighted, IAutoLocName, JsonExileRegistry<Self> {
 
     String GUID();
 

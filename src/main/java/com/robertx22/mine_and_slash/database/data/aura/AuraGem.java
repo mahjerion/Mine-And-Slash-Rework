@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuraGem implements JsonExileRegistry<SupportGem>, ISkillGem, IAutoGson<AuraGem> {
+public class AuraGem implements JsonExileRegistry<AuraGem>, ISkillGem, IAutoGson<AuraGem> {
 
     public static AuraGem SERIALIZER = new AuraGem(AuraGems.summon_dmg, PlayStyle.STR, 0, Arrays.asList());
 

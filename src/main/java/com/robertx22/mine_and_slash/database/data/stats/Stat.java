@@ -36,7 +36,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Stat implements IGUID, IAutoLocName, IWeighted, IAutoLocDesc, JsonExileRegistry<BaseDatapackStat> {
+public abstract class Stat implements IGUID, IAutoLocName, IWeighted, IAutoLocDesc, JsonExileRegistry<Stat> {
 
     public static String VAL1 = "[VAL1]";
     static ChatFormatting FORMAT = ChatFormatting.GRAY;

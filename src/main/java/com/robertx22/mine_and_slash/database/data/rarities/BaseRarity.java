@@ -5,7 +5,7 @@ import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.Rarity;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.ChatFormatting;
 
-public abstract class BaseRarity implements Rarity {
+public abstract class BaseRarity<Self extends BaseRarity<Self>> implements Rarity<Self> {
 
     public BaseRarity() {
     }

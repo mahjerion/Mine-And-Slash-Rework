@@ -29,8 +29,10 @@ public class MyInventory extends SimpleContainer {
                 ItemStack stack = ItemStack.of(compoundtag);
 
                 // handle 128+ stack size
-                if (compoundtag.contains("BigCount", Tag.TAG_SHORT)) {
-                    stack.setCount(compoundtag.getShort("BigCount"));
+                if (compoundtag.contains("IntCount", Tag.TAG_INT)) {
+                    stack.setCount(compoundtag.getInt("IntCount"));
+                } else if (compoundtag.contains("ShortCount", Tag.TAG_SHORT)) {
+                    stack.setCount(compoundtag.getShort("ShortCount"));
                 }
 
                 this.setItem(j, stack);
@@ -50,8 +52,10 @@ public class MyInventory extends SimpleContainer {
                 compoundtag.putByte("Slot", (byte) i);
                 itemstack.save(compoundtag);
 
-                if (itemstack.getCount() > 127) {
-                    compoundtag.putShort("BigCount", (short)itemstack.getCount());
+                if (itemstack.getCount() > 32767) {
+                    compoundtag.putInt("IntCount", itemstack.getCount());
+                } else if (itemstack.getCount() > 127) {
+                    compoundtag.putShort("ShortCount", (short)itemstack.getCount());
                 }
 
                 listtag.add(compoundtag);

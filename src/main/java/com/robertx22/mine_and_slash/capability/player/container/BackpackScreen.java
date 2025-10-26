@@ -1,15 +1,20 @@
 package com.robertx22.mine_and_slash.capability.player.container;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
 import com.robertx22.mine_and_slash.mixin_ducks.MouseHandlerDuck;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
@@ -104,4 +109,60 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
         pGuiGraphics.blit(BACKGROUND_LOCATION, x, tabsY, 0, TEXTURE_TABS_Y, this.imageWidth, TEXTURE_TABS_HEIGHT);
     }
 
+    @Override
+    protected void renderSlot(GuiGraphics guiGraphics, Slot slot) {
+        int x = slot.x;
+        int y = slot.y;
+        ItemStack stack = slot.getItem();
+        boolean isDragging = slot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
+
+        if (slot == this.clickedSlot && !this.draggingItem.isEmpty() && this.isSplittingStack && !stack.isEmpty()) {
+            stack = stack.copyWithCount(stack.getCount() - Math.min(stack.getCount(), stack.getMaxStackSize()) / 2);
+        }
+
+		PoseStack pose = guiGraphics.pose();
+        pose.pushPose();
+        pose.translate(0.0F, 0.0F, 100.0F);
+
+        if (stack.isEmpty() && slot.isActive()) {
+            Pair icon = slot.getNoItemIcon();
+            if (icon != null) {
+                TextureAtlasSprite sprite = (TextureAtlasSprite)this.minecraft.getTextureAtlas((ResourceLocation)icon.getFirst()).apply((ResourceLocation)icon.getSecond());
+                guiGraphics.blit(x, y, 0, 16, 16, sprite);
+                isDragging = true;
+            }
+        }
+
+        if (!isDragging && !stack.isEmpty()) {
+            guiGraphics.renderItem(stack, x, y, slot.x + slot.y * this.imageWidth);
+            guiGraphics.renderItemDecorations(this.font, stack, x, y, "");
+            if (stack.getCount() != 1) {
+                drawStackSize(guiGraphics, formatStackSize(stack), x, y);
+            }
+        }
+
+        pose.popPose();
+    }
+
+    // From SophisticatedCore
+    protected void drawStackSize(GuiGraphics guiGraphics, String count, int x, int y) {
+		PoseStack pose = guiGraphics.pose();
+		pose.pushPose();
+		pose.translate(0f, 0f, 200f);
+		float scale = Math.min(1f, 16f / font.width(count));
+		if (scale < 1f) {
+			pose.scale(scale, scale, 1f);
+		}
+		guiGraphics.drawString(font, count, (x + 19 - 2 - (font.width(count) * scale)) / scale, (y + 6 + 3 + (1 / (scale * scale) - 1)) / scale, 0xFFFFFF, true);
+		pose.popPose();
+    }
+
+    protected String formatStackSize(ItemStack stack) {
+        int count = stack.getCount();
+        if (count >= 10000) {
+            return String.format("%d.%dk", count / 1000, count / 100 % 10);
+        } else {
+            return String.valueOf(count);
+        }
+    }
 }

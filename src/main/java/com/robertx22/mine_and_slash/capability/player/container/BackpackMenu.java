@@ -153,7 +153,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                 i = startIndex;
             }
 
-            while(true) {
+            while (true) {
                 if (reverseDirection) {
                     if (i < startIndex) {
                         break;

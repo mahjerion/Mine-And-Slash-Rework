@@ -3,7 +3,7 @@ package com.robertx22.mine_and_slash.maps;
 import com.google.common.collect.ImmutableMap;
 import com.robertx22.dungeon_realm.item.DungeonItemMapData;
 import com.robertx22.dungeon_realm.item.DungeonItemNbt;
-import com.robertx22.dungeon_realm.main.DungeonWords;
+import com.robertx22.dungeon_realm.tooltip.MapTooltip;
 import com.robertx22.library_of_exile.utils.ItemstackDataSaver;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
@@ -222,9 +222,9 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                     DungeonItemMapData dungeonData = DungeonItemNbt.DUNGEON_MAP.loadFrom(stack.getStack());
 
                     if (dungeonData != null) {
-                        additional.add(DungeonWords.MAP_LAYOUT.get(dungeonData.dungeon).withStyle(ChatFormatting.GRAY, ChatFormatting.GREEN));
+                        additional.add(MapTooltip.MapLayoutName(dungeonData.dungeon));
                         if (dungeonData.uber) {
-                            additional.add(DungeonWords.MAP_HAS_UBER_ARENA.get().withStyle(ChatFormatting.RED, ChatFormatting.BOLD)); // Added Uber Map indicator
+                            additional.add(MapTooltip.MapHasUber()); // Added Uber Map indicator
                         }
                     }
 

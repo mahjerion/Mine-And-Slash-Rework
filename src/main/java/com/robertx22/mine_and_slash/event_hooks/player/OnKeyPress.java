@@ -108,7 +108,9 @@ public class OnKeyPress {
 
     private static boolean checkToAddSpellKeyPress(SpellKeybind key) {
         if (key.key.consumeClick()) {
-            spellKeysPressed.add(key);
+            if (!spellKeysPressed.contains(key)) {
+                spellKeysPressed.add(key);
+            }
             // Consume any remaining clicks
             while (key.key.consumeClick()) {
             }

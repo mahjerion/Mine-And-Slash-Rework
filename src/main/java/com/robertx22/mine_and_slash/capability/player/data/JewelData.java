@@ -102,11 +102,17 @@ public class JewelData implements IStatCtx {
 
     public boolean isWearableWithUniqueRegistry(ItemStack itemStack, Player player) {
         boolean isWearable = isWearable(itemStack, player);
-        if (!isWearable) return false;
+
+        if (!isWearable) {
+            return false;
+        }
+
         JewelItemData jewelItemData = StackSaving.JEWEL.loadFrom(itemStack);
+
         if (jewelItemData.uniq.id.isEmpty()) {
             return true;
         }
+
         wearingUniqueJewel.add(jewelItemData.uniq.id);
         return true;
     }

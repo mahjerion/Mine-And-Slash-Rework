@@ -34,7 +34,7 @@ public class CommandTests {
         reg(new GivePlayerCapNbt());
         reg(new CheckRunewordConflictTest());
         reg(new GenerateGearTest());
-
+        reg(new DungeonNamesTest());
 
     }
 

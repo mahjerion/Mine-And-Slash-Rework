@@ -110,7 +110,7 @@ public class GiveLoot {
         List<Map.Entry<Item, Integer>> list = new LinkedList(itemCounts.entrySet());
         list.sort(Comparator.comparingInt(e -> e.getValue()));
 
-        player.sendSystemMessage(Component.literal("Loot:").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED));
+        player.sendSystemMessage(Component.literal("Loot:").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 
         for (var entry : list) {
             ResourceLocation itemResource = BuiltInRegistries.ITEM.getKey(entry.getKey());

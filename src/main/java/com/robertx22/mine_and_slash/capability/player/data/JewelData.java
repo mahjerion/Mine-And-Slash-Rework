@@ -93,17 +93,20 @@ public class JewelData implements IStatCtx {
             return true;
         }
 
-        if (wearingUniqueJewel.contains(jewelItemData.uniq.id)) {
-            return false;
+        if (jewelItemData.uniq.id.isEmpty()) {
+            return true;
         }
 
-        return true;
+        return !wearingUniqueJewel.contains(jewelItemData.uniq.id);
     }
 
     public boolean isWearableWithUniqueRegistry(ItemStack itemStack, Player player) {
         boolean isWearable = isWearable(itemStack, player);
         if (!isWearable) return false;
         JewelItemData jewelItemData = StackSaving.JEWEL.loadFrom(itemStack);
+        if (jewelItemData.uniq.id.isEmpty()) {
+            return true;
+        }
         wearingUniqueJewel.add(jewelItemData.uniq.id);
         return true;
     }

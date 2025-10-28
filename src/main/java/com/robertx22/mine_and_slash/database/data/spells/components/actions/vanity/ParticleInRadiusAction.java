@@ -34,12 +34,12 @@ public class ParticleInRadiusAction extends SpellAction {
             //SimpleParticleType particle = data.getParticle();
 
             float radius = data.get(RADIUS).floatValue();
-
-            radius *= ctx.calculatedSpellData.data.getNumber(EventData.AREA_MULTI, 1F).number;
-
             float height = data.getOrDefault(HEIGHT, 0D).floatValue();
             int amount = data.get(PARTICLE_COUNT).intValue();
-            amount *= ctx.calculatedSpellData.data.getNumber(EventData.AREA_MULTI, 1F).number;
+
+            float areaMulti = ctx.calculatedSpellData.data.getNumber(EventData.AREA_MULTI, 1F).number;
+            radius *= areaMulti;
+            amount = (int) (amount * areaMulti);
 
          
             ParticleMotion motion = null;

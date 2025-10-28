@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.MasterLootGen;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 
 import net.minecraft.ChatFormatting;
@@ -82,12 +83,8 @@ public class GiveLoot {
         for (int i = 0; i < count; i++) {
             List<ItemStack> loot = MasterLootGen.generateLoot(lootInfo);
             for (ItemStack stack : loot) {
-                if (!filter.test(stack)) {
-                    continue;
-                }
-                ItemEntity item = player.spawnAtLocation(stack, 1F);
-                if (item != null) {
-                    item.setNoPickUpDelay();
+                if (filter.test(stack)) {
+                    PlayerUtils.giveItem(stack, player);
                 }
             }
         }

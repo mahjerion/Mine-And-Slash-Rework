@@ -29,9 +29,13 @@ public class PlayerUtils {
 
     public static void giveItem(ItemStack stack, Player player) {
         if (player.addItem(stack) == false) {
-            player.spawnAtLocation(stack, 1F);
+            spawnAtPlayer(stack, player);
         }
         player.getInventory().setChanged();
+    }
+
+    public static void spawnAtPlayer(ItemStack stack, Player player) {
+        player.spawnAtLocation(stack, 1F);
     }
 
     public static Player nearestPlayer(ServerLevel world, LivingEntity entity) {

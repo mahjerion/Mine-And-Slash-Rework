@@ -17,7 +17,7 @@ import net.minecraft.world.item.Rarity;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public final class GearRarity extends BaseRarity implements IGearRarity, IAutoGson<GearRarity> {
+public final class GearRarity extends BaseRarity<GearRarity> implements IGearRarity<GearRarity>, IAutoGson<GearRarity> {
     public static GearRarity SERIALIZER = new GearRarity();
 
     public GearRarity() {

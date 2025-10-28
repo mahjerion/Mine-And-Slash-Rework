@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MapAffix implements JsonExileRegistry<MobAffix>, IAutoGson<MapAffix> {
+public class MapAffix implements JsonExileRegistry<MapAffix>, IAutoGson<MapAffix> {
 
     public static MapAffix SER = new MapAffix("");
 

@@ -102,7 +102,7 @@ public class ExileDB {
     }
 
     public static ExileRegistryContainer<GearSlot> GearSlots() {
-        return Database.getRegistry(ExileRegistryTypes.GEAR_SLOT);
+        return Database.<GearSlot>getRegistry(ExileRegistryTypes.GEAR_SLOT);
     }
 
     public static ExileRegistryContainer<UniqueGear> UniqueGears() {

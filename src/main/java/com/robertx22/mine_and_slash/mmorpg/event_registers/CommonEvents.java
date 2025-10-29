@@ -15,6 +15,8 @@ import com.robertx22.mine_and_slash.event_hooks.my_events.OnPlayerDeath;
 import com.robertx22.mine_and_slash.event_hooks.ontick.OnServerTick;
 import com.robertx22.mine_and_slash.event_hooks.player.OnLogin;
 import com.robertx22.mine_and_slash.event_hooks.player.StopCastingIfInteract;
+import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mixin_methods.OnItemInteract;
 import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
 import com.robertx22.mine_and_slash.mmorpg.ModErrors;
@@ -31,6 +33,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.monster.Zombie;
@@ -159,13 +162,17 @@ public class CommonEvents {
         {
             if (event.getEntity() instanceof ServerPlayer player) {
                 if (!player.level().isClientSide) {
-                    ItemStack stack = event.getItem().getItem();
+                    ItemEntity item = event.getItem();
+                    ItemStack stack = item.getItem();
                     if (!stack.isEmpty()) {
 
                         if (!player.level().isClientSide) {
                             if (Load.player(player).config.salvage.trySalvageOnPickup(player, stack)) {
                                 stack.shrink(100);
                             } else {
+                                ExileStack ex = new ExileStack();
+                                ex.setStack(stack); // we need to write to the stack directly instead of copying
+                                ex.get(StackKeys.DROPPED).delete(); // clear dropped item data when we pick up
                                 Load.backpacks(player).getBackpacks().tryAutoPickup(event.getEntity(), stack);
                             }
                         }

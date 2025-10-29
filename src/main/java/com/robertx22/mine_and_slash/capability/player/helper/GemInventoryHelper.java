@@ -178,21 +178,21 @@ public class GemInventoryHelper {
 
         if (this.getAurasGems().stream().anyMatch(x -> x.getAura().min_lvl > Load.Unit(p).getLevel())) {
             for (ItemStack s : getAuras()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
             }
             p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.TOO_LOW_LEVEL));
         }
         if (getRemainingSpirit(p) < 0) {
             for (ItemStack s : getAuras()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
             }
             p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.LACK_AURA_CAPACITY));
         }
         if (hasDuplicates()) {
             for (ItemStack s : getAuras()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
             }
             p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_AURA_ERROR, Chats.NO_DUPLICATE_AURA));

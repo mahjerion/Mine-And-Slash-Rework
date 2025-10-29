@@ -80,7 +80,7 @@ public class JewelData implements IStatCtx {
                 if (i < newInventory.getContainerSize()) {
                     newInventory.addItem(item);
                 } else {
-                    PlayerUtils.giveItem(item.copy(), player);
+                    PlayerUtils.forceUnequipItem(item.copy(), player);
                     item.shrink(100);
                 }
             }

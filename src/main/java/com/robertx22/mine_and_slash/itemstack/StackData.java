@@ -44,6 +44,10 @@ public class StackData<T> {
         return saver.has(stack.getStack());
     }
 
+    public void delete() {
+        saver.removeFrom(stack.getStack());
+    }
+
     public T createDefault() {
         return saver.getConstructor().get();
     }
@@ -84,7 +88,7 @@ public class StackData<T> {
     public void save() {
         this.saver.saveTo(stack.getStack(), get());
         resetGetterCache();
-        
+
     }
 
     // this seems dumb

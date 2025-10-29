@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.utils.ItemstackDataSaver;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChestData;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
 import com.robertx22.mine_and_slash.itemstack.CustomItemData;
+import com.robertx22.mine_and_slash.itemstack.DroppedItemData;
 import com.robertx22.mine_and_slash.itemstack.PotentialData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -28,6 +29,7 @@ public class StackSaving {
     public static ItemstackDataSaver<OmenData> OMEN = of(new ItemstackDataSaver<>(SlashRef.MODID + "_omen", OmenData.class, () -> new OmenData()));
     public static ItemstackDataSaver<PotentialData> POTENTIAL = of(new ItemstackDataSaver<>(SlashRef.MODID + "_potential", PotentialData.class, () -> new PotentialData()));
     public static ItemstackDataSaver<CustomItemData> CUSTOM_DATA = of(new ItemstackDataSaver<>(SlashRef.MODID + "_custom_data", CustomItemData.class, () -> new CustomItemData()));
+    public static ItemstackDataSaver<DroppedItemData> DROPPED = of(new ItemstackDataSaver<>(SlashRef.MODID + "_dropped", DroppedItemData.class, () -> new DroppedItemData()));
 
     static ItemstackDataSaver of(ItemstackDataSaver t) {
         return t;

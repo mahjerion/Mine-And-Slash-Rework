@@ -19,6 +19,7 @@ public class MapField<T> implements IGUID {
     //public static MapField<Double> MAX_SUMMONS = make("max_summons");
     public static MapField<Double> HEIGHT = make("height");
     public static MapField<Double> TICK_RATE = make("tick_rate");
+    public static MapField<Double> FIRST_TICK = make("first_tick");
     public static MapField<Double> PARTICLE_COUNT = make("particle_count");
     public static MapField<Double> Y_RANDOM = make("y_rand");
     public static MapField<Double> LIFESPAN_TICKS = make("life_ticks");
@@ -27,6 +28,7 @@ public class MapField<T> implements IGUID {
     public static MapField<Double> WIDTH = make("width");
     public static MapField<Double> CHANCE = make("chance");
     public static MapField<Double> PROJECTILE_SPEED = make("proj_speed");
+    public static MapField<Double> PROJECTILE_ACCELERATION = make("proj_accel");
     public static MapField<Double> PROJECTILES_APART = make("proj_apart");
     public static MapField<Double> SELECTION_CHANCE = make("selection_chance");
     public static MapField<Double> PUSH_STRENGTH = make("push_str");
@@ -43,13 +45,24 @@ public class MapField<T> implements IGUID {
 
     public static MapField<Double> VOLUME = make("volume");
     public static MapField<Double> PITCH = make("pitch");
+    public static MapField<Double> MIN_PITCH = make("min_pitch");
+    public static MapField<Double> MAX_PITCH = make("max_pitch");
     public static MapField<Double> SECONDS = make("seconds");
     public static MapField<Double> MOTION_MULTI = make("motion_multiplier");
 
     public static MapField<Double> RANDOM_Y_OFFSET = make("random_y_offset");
     public static MapField<Double> RANDOM_X_OFFSET = make("random_x_offset");
     public static MapField<Double> RANDOM_Z_OFFSET = make("random_z_offset");
-  
+
+    public static MapField<Double> X_OFFSET = make("x_offset");
+    public static MapField<Double> Y_OFFSET = make("y_offset");
+    public static MapField<Double> Z_OFFSET = make("z_offset");
+
+    public static MapField<Double> PITCH_OFFSET = make("pitch_offset");
+    public static MapField<Double> YAW_OFFSET = make("yaw_offset");
+    public static MapField<Double> YAW_VELOCITY = make("yaw_velocity");
+    public static MapField<Double> YAW_ACCELERATION = make("yaw_acceleration");
+
     // string
     public static MapField<String> PROJECTILE_ENTITY = make("proj_en");
     public static MapField<String> SUMMONED_PET_ID = make("summon_id");

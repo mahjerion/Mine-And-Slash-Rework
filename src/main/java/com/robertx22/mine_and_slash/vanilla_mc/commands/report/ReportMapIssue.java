@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.vanilla_mc.commands.report;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.dungeon_realm.structure.DungeonMapData;
 import com.robertx22.dungeon_realm.structure.DungeonMapStructure;
 import com.robertx22.library_of_exile.dimension.structure.dungeon.BuiltRoom;
 import com.robertx22.library_of_exile.dimension.structure.dungeon.DungeonBuilder;
@@ -12,6 +13,8 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Optional;
 
 import static net.minecraft.commands.Commands.literal;
 
@@ -35,7 +38,13 @@ public class ReportMapIssue {
 
                 String text = "Map Bug Report, Problem Room: ";
 
-                DungeonBuilder builder = new DungeonBuilder(DungeonMapStructure.dungeonSettings(p.chunkPosition()));
+                Optional<DungeonMapData> dungeonMapData = DungeonMain.ifMapData(p.level(), p.getOnPos());
+                if (dungeonMapData.isEmpty()) {
+                    p.sendSystemMessage(Component.literal(ChatFormatting.RED + "You must be standing in a dungeon to use this command."));
+                    return 1;
+                }
+
+                DungeonBuilder builder = new DungeonBuilder(DungeonMapStructure.dungeonSettings(p.chunkPosition(), dungeonMapData.get().dungeon));
                 builder.build();
                 BuiltRoom room = builder.builtDungeon.getRoomForChunk(DungeonMain.MAIN_DUNGEON_STRUCTURE, p.chunkPosition());
 

@@ -1,10 +1,10 @@
 package com.robertx22.mine_and_slash.maps;
 
 import com.google.common.collect.ImmutableMap;
-import com.robertx22.library_of_exile.utils.ItemstackDataSaver;
 import com.robertx22.dungeon_realm.item.DungeonItemMapData;
 import com.robertx22.dungeon_realm.item.DungeonItemNbt;
-import com.robertx22.library_of_exile.utils.RandomUtils;
+import com.robertx22.dungeon_realm.tooltip.MapTooltip;
+import com.robertx22.library_of_exile.utils.ItemstackDataSaver;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
@@ -221,8 +221,11 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                     // Load DungeonItemMapData and check for uber status
                     DungeonItemMapData dungeonData = DungeonItemNbt.DUNGEON_MAP.loadFrom(stack.getStack());
 
-                    if (dungeonData != null && dungeonData.uber) {
-                        additional.add(Component.literal("Uber Map").withStyle(ChatFormatting.RED)); // Added Uber Map indicator
+                    if (dungeonData != null) {
+                        additional.add(MapTooltip.MapLayoutName(dungeonData.dungeon));
+                        if (dungeonData.uber) {
+                            additional.add(MapTooltip.MapHasUber()); // Added Uber Map indicator
+                        }
                     }
 
                     if (!tooltipInfo.shouldShowDescriptions()) {

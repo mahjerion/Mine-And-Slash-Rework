@@ -67,8 +67,9 @@ public class CommandRegister {
         AutoSalvageHelp.register(dispatcher);
 
         SetEntityRarity.register(dispatcher);
-    
+
         GiveExp.register(dispatcher);
+        GiveLoot.register(dispatcher);
         GivePerLvlExp.register(dispatcher);
         GiveProfessionExp.register(dispatcher);
         GivePerLvlProfessionExp.register(dispatcher);

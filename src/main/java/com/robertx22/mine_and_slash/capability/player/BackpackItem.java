@@ -34,12 +34,6 @@ public class BackpackItem extends AutoItem implements IAutoLocName, IAutoModel, 
 
     }
 
-
-    public int getSlots() {
-        return 6 * 9;
-    }
-
-
     @Override
     public String locNameForLangFile() {
         return ChatFormatting.DARK_PURPLE + "Master Backpack";
@@ -53,7 +47,7 @@ public class BackpackItem extends AutoItem implements IAutoLocName, IAutoModel, 
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player p, InteractionHand pUsedHand) {
         if (!pLevel.isClientSide) {
-            Load.backpacks(p).getBackpacks().openBackpack(Backpacks.BackpackType.GEARS, p, getSlots() / 9);
+            Load.backpacks(p).getBackpacks().openBackpack(Backpacks.BackpackType.GEARS, p);
         }
         return InteractionResultHolder.success(p.getItemInHand(pUsedHand));
 

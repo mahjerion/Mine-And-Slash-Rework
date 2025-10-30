@@ -21,7 +21,10 @@ public class ContainerGuiRegisters {
         MenuScreens.register(SlashContainers.STATIONS.get(Professions.COOKING).get(), CookingScreen::new);
 
         MenuScreens.register(SlashContainers.SKILL_GEMS.get(), SkillGemsScreen::new);
-        MenuScreens.register(SlashContainers.BACKPACK.get(), BackpackScreen::new);
+
+        for (var tab : SlashContainers.BACKPACK_TABS.values()) {
+            MenuScreens.register(tab.get(), BackpackScreen::new);
+        }
 
         MenuScreens.register(SlashContainers.JEWEL.get(), JewelScreen::new);
 

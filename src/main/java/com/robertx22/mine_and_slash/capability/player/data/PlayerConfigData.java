@@ -31,6 +31,7 @@ public class PlayerConfigData {
         AUTO_PVE("auto_pve", false, Words.TITLE_FEATURE_AUTO_TEAM, Words.AUTOMATIC_PVE, false),
         AGGRESSIVE_SUMMONS("aggressive_summons", true, Words.TITLE_FEATURE_AGGRO_SUMMONS, Words.AGGRESIVE_SUMMONS, false),
         ENABLE_EXP_GAIN("enable_exp_gain", true, Words.TITLE_FEATURE_ENABLE_EXP_GAIN, Words.ENABLE_EXP_GAIN, false),
+        AUTO_SALVAGE_DROP("auto_salvage_drop", false, Words.TITLE_FEATURE_AUTO_SALVAGE_DROP, Words.AUTO_SALVAGE_DROP, false),
         STAT_ORDER_TEST("stat_order_test", false, Words.TITLE_FEATURE_STAT_ORDER_DEBUG, Words.STAT_ORDER_TEST, true),
         DAMAGE_CONFLICT_MSG("damage_conflict_check", false, Words.TITLE_FEATURE_DMG_CONFLICT_DEBUG, Words.DMG_CONFLICT_CHECK, true),
         //EVERYONE_IS_ALLY("everyone_is_ally", false, Words.TITLE_FEATURE_EVERYONE_ALLY, Words.EVERYONE_IS_ALLY, false),
@@ -130,10 +131,21 @@ public class PlayerConfigData {
                         Load.player(player).professions.addExp(player, salvagingProfession.GUID(), data.getAutoSalvageExpReward(), false);
                     }
 
+                    boolean shouldAutoSalvageDrop = Load.player(player).config.isConfigEnabled(Config.AUTO_SALVAGE_DROP);
                     stack.shrink(stack.getCount() + 100);
                     data.getSalvageResult(ex).forEach(e -> {
                         Backpacks backpacks = Load.backpacks(player).getBackpacks();
-                        if (!backpacks.tryAutoPickup(player, e, false)) PlayerUtils.giveItem(e, player);
+
+                        if (shouldAutoSalvageDrop) {
+                            PlayerUtils.spawnAtPlayer(e, player);
+                            return;
+                        }
+
+                        if (backpacks.tryAutoPickup(player, e, false)) {
+                            return;
+                        }
+
+                        PlayerUtils.giveItem(e, player);
                     });
                     return true;
                 }

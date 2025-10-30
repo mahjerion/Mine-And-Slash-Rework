@@ -51,7 +51,7 @@ public class WeaponPrefixes implements ExileRegistryInit {
                 .guid(x -> x.guidName + "_spell_ele_dmg")
                 .add(Elements.Fire, "Scorched")
                 .add(Elements.Cold, "Chilled")
-                .add(Elements.Nature, "Poisoned")
+                .add(Elements.Nature, "Lightning")
                 .stats(x -> Arrays.asList(new StatMod(5, 15, OffenseStats.ELEMENTAL_SPELL_DAMAGE.get(x))))
                 .Weight(500)
                 .includesTags(SlotTags.mage_weapon, SlotTags.jewel_int)

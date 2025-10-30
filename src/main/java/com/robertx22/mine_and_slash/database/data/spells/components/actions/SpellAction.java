@@ -36,6 +36,7 @@ public abstract class SpellAction extends BaseFieldNeeder implements IGUID {
     public static RideAction RIDE = of(new RideAction());
     public static OpenEnderChestAction OPEN_ENDER_CHEST = of(new OpenEnderChestAction());
     public static SummonProjectileAction SUMMON_PROJECTILE = of(new SummonProjectileAction());
+    public static ModifyProjectileAction MODIFY_PROJECTILE = of(new ModifyProjectileAction());
     public static DamageAction DEAL_DAMAGE = of(new DamageAction());
     public static ParticleInRadiusAction PARTICLES_IN_RADIUS = of(new ParticleInRadiusAction());
     public static SoundAction PLAY_SOUND = of(new SoundAction());
@@ -51,6 +52,7 @@ public abstract class SpellAction extends BaseFieldNeeder implements IGUID {
     public static RestoreMagicShieldAction RESTORE_MAGIC_SHIELD = of(new RestoreMagicShieldAction());
     public static RestoreManaAction RESTORE_MANA = of(new RestoreManaAction());
     public static RestoreEnergyAction RESTORE_ENERGY = of(new RestoreEnergyAction());
+    public static RestoreBloodAction RESTORE_BLOOD = of(new RestoreBloodAction());
     public static CancelCastAction CANCEL_CAST = of(new CancelCastAction());
     public static SpellMotionAction SET_ADD_MOTION = of(new SpellMotionAction());
     public static CasterCommandAction CASTER_USE_COMMAND = of(new CasterCommandAction());

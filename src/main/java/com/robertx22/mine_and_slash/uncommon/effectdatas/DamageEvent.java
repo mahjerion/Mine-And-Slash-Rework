@@ -704,9 +704,12 @@ public class DamageEvent extends EffectEvent {
             }
         }
 
+        if (attri.getValue() >= 100.0) {
+            target.hurtMarked = false;
+        }
+
         if (attri.hasModifier(NO_KNOCKBACK)) {
             attri.removeModifier(NO_KNOCKBACK);
-            target.hurtMarked = false;
         }
 
         if (dmg > 0) {

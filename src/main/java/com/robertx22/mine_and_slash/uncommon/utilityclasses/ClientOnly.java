@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -84,5 +85,8 @@ public class ClientOnly {
         Minecraft.getInstance().player.sendSystemMessage(text);
     }
 
+    public static AbstractContainerMenu getContainerMenu() {
+        return Minecraft.getInstance().player.containerMenu;
+    }
 
 }

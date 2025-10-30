@@ -34,7 +34,7 @@ public class PlayerUtils {
 
     public static void giveItem(ItemStack stack, Player player) {
         if (player.addItem(stack) == false) {
-            player.spawnAtLocation(stack, 1F);
+            spawnAtPlayer(stack, player);
         }
         player.getInventory().setChanged();
     }
@@ -49,7 +49,11 @@ public class PlayerUtils {
     public static ItemEntity forceDropItem(ItemStack stack, Player player) {
         ExileStack ex = ExileStack.of(stack);
         ex.get(StackKeys.DROPPED).edit(x -> x.forcedDrop = true);
-        return player.spawnAtLocation(ex.getStack(), 1F);
+        return spawnAtPlayer(ex.getStack(), player);
+    }
+
+    public static ItemEntity spawnAtPlayer(ItemStack stack, Player player) {
+        return player.spawnAtLocation(stack, 1F);
     }
 
     public static Player nearestPlayer(ServerLevel world, LivingEntity entity) {

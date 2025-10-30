@@ -6,6 +6,8 @@ import com.robertx22.mine_and_slash.a_libraries.curios.CuriosSlots;
 import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.capability.player.container.BackpackMenu;
 import com.robertx22.mine_and_slash.capability.player.helper.BackpackInventory;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.BackpackTabConfig;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
@@ -30,7 +32,7 @@ public class Backpacks {
         this.player = player;
 
         for (BackpackType type : BackpackType.values()) {
-            map.put(type, new BackpackInventory(player, type, MAX_SIZE));
+            map.put(type, new BackpackInventory(player, type));
         }
     }
 
@@ -80,6 +82,22 @@ public class Backpacks {
             this.name = name;
         }
 
+        public int getRows() {
+            return getConfig().rows;
+        }
+
+        public int getSize() {
+            return getRows() * 9;
+        }
+
+        public int getStackMultiplier() {
+            return getConfig().stack_multiplier;
+        }
+
+        public BackpackTabConfig getConfig() {
+            return GameBalanceConfig.get().backpack_tabs.get(this);
+        }
+
         public ResourceLocation getIcon() {
             return SlashRef.guiId("backpack/" + id);
         }
@@ -88,8 +106,6 @@ public class Backpacks {
     }
 
     Player player;
-
-    public static int MAX_SIZE = 6 * 9;
 
     private HashMap<BackpackType, BackpackInventory> map = new HashMap<>();
 
@@ -133,12 +149,11 @@ public class Backpacks {
     }
     // todo every time before you open backpack, it will replace locked slots with blocked slots that cant be clicked on and throw out/give items back
 
-    public void openBackpack(BackpackType type, Player p, int rows) {
+    public void openBackpack(BackpackType type, Player p) {
         if (!p.level().isClientSide) {
             BackpackInventory inv = getInv(type);
-            //inv.throwOutBlockedSlotItems(rows * 9);
             p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> {
-                return new BackpackMenu(type, i, playerInventory, inv, rows);
+                return new BackpackMenu(type, i, playerEntity, playerInventory, inv);
             }, Component.literal("")));
         }
     }

@@ -63,6 +63,7 @@ public class SpellStatsCalculationEvent extends EffectEvent {
         this.data.setupNumber(EventData.PROJECTILE_SPREAD_RANDOMNESS, 1F);
         this.data.setupNumber(EventData.DURATION_MULTI, 1F);
         this.data.setupNumber(EventData.AREA_MULTI, 1);
+        this.data.setupNumber(EventData.AGGRO_RADIUS_MULTI, 1);
 
         // todo test spells like summon duration multi etc
     }

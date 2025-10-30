@@ -40,20 +40,6 @@ public class JewelData implements IStatCtx {
         this.jewelInventory = new MyInventory(size);
 
         this.jewelInventory.addListener(container -> {
-            List<String> uniques = new ArrayList<>();
-            for (int i = 0; i < container.getContainerSize(); i++) {
-                var stack = jewelInventory.getItem(i);
-                JewelItemData data = StackSaving.JEWEL.loadFrom(stack);
-
-                if (data != null) {
-                    //unique id getter
-                    //I don't think we need to check if there are same uniques jewels in inventory.
-                    if (!data.uniq.id.isEmpty()) {
-                        uniques.add(data.uniq.id);
-                    }
-                }
-            }
-            this.wearingUniqueJewel = uniques;
             updatePlayerData(player);
         });
     }
@@ -67,8 +53,9 @@ public class JewelData implements IStatCtx {
 
     public void recalc(Player player) {
         //check if all jewels are wearable.
+        wearingUniqueJewel.clear();
         for (int i = 0; i < jewelInventory.getContainerSize(); i++) {
-            if (!isWearable(jewelInventory.getItem(i), player)) unequip(player, i);
+            if (!isWearableWithUniqueRegistry(jewelInventory.getItem(i), player)) unequip(player, i);
         }
         int jewelSocketsMaxStat = getJewelSocketsMaxStat(player);
         //if the size is change, make a new inventory.
@@ -97,7 +84,37 @@ public class JewelData implements IStatCtx {
         if (jewelItemData == null || player == null) {
             return false;
         }
-        return jewelItemData.canWear(Load.Unit(player)) && (!jewelItemData.isUnique() || (jewelItemData.isUnique() && !wearingUniqueJewel.contains(jewelItemData.uniq.id)));
+
+        if (!jewelItemData.canWear(Load.Unit(player))) {
+            return false;
+        }
+
+        if (!jewelItemData.isUnique()) {
+            return true;
+        }
+
+        if (jewelItemData.uniq.id.isEmpty()) {
+            return true;
+        }
+
+        return !wearingUniqueJewel.contains(jewelItemData.uniq.id);
+    }
+
+    public boolean isWearableWithUniqueRegistry(ItemStack itemStack, Player player) {
+        boolean isWearable = isWearable(itemStack, player);
+
+        if (!isWearable) {
+            return false;
+        }
+
+        JewelItemData jewelItemData = StackSaving.JEWEL.loadFrom(itemStack);
+
+        if (jewelItemData.uniq.id.isEmpty()) {
+            return true;
+        }
+
+        wearingUniqueJewel.add(jewelItemData.uniq.id);
+        return true;
     }
 
     public void unequip(Player p, int i) {

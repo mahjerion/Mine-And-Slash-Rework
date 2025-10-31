@@ -32,11 +32,11 @@ public class UnequipGear {
 
         if (player.getItemBySlot(slot).isEmpty()) {
             if (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) {
-                var en = player.spawnAtLocation(stack, 1F);
+                var en = PlayerUtils.forceDropItem(stack, player);
                 en.setPickUpDelay(40);
 
             } else {
-                PlayerUtils.giveItem(copy, player);
+                PlayerUtils.forceUnequipItem(copy, player);
             }
             player.displayClientMessage(txt
                     , false);
@@ -50,7 +50,7 @@ public class UnequipGear {
     static void drop(Player player, ICurioStacksHandler handler, int number, ItemStack stack, MutableComponent txt) {
         ItemStack copy = stack.copy();
         handler.getStacks().setStackInSlot(number, ItemStack.EMPTY);
-        PlayerUtils.giveItem(copy, player);
+        PlayerUtils.forceUnequipItem(copy, player);
         player.displayClientMessage(txt, false);
     }
 

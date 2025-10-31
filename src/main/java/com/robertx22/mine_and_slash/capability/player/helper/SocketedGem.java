@@ -44,7 +44,7 @@ public class SocketedGem {
 
         if (this.getSupportDatas().stream().anyMatch(x -> x.getSupport().min_lvl > Load.Unit(p).getLevel())) {
             for (ItemStack s : getSupports()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
             }
             p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.TOO_LOW_LEVEL));
@@ -53,7 +53,7 @@ public class SocketedGem {
 
         if (getSupportDatas().size() > getMaxLinks(p).links) {
             for (ItemStack s : this.getSupports()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
             }
             p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.CANT_EQUIP_THAT_MANY_SUPPORTS));
@@ -87,7 +87,7 @@ public class SocketedGem {
 
         if (toomany) {
             for (ItemStack s : this.getSupports()) {
-                PlayerUtils.giveItem(s.copy(), p);
+                PlayerUtils.forceUnequipItem(s.copy(), p);
                 s.shrink(100);
                 p.sendSystemMessage(Chats.CANT_USE_MULTIPLE_SAME_SUPPORTS.locName());
 

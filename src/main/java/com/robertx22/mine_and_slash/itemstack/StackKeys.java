@@ -17,6 +17,7 @@ public class StackKeys {
     public static StackKey<OmenData> OMEN = of(StackSaving.OMEN);
     public static StackKey<ProfessionToolData> TOOL = of(StackSaving.TOOL);
     public static StackKey<CustomItemData> CUSTOM = of(StackSaving.CUSTOM_DATA);
+    public static StackKey<DroppedItemData> DROPPED = of(StackSaving.DROPPED);
 
 
     private static <T> StackKey<T> of(ItemstackDataSaver<T> saver) {

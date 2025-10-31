@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
+import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
@@ -103,6 +104,10 @@ public class PlayerConfigData {
 
             if (stack.isEnchanted()) {
                 return false; // we don't want to auto salvage gear that is likely to have been worn or important
+            }
+
+            if (ex.get(StackKeys.DROPPED).hasAndTrue(x -> x.forcedDrop)) {
+                return false; // don't auto salvage items that we forced the player to drop
             }
 
             ICommonDataItem<GearRarity> data = ICommonDataItem.load(stack);

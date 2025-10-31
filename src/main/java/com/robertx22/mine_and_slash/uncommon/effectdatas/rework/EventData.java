@@ -63,6 +63,7 @@ public class EventData {
     public static String PIERCE = "pierce";
     public static String BARRAGE = "barrage";
     public static String PROJECTILE_SPEED_MULTI = "proj_speed";
+    public static String PROJECTILE_YAW_SPEED_MULTI = "proj_yaw_speed";
     public static String PROJECTILE_SPREAD_RANDOMNESS = "proj_spread_randomness";
     public static String BONUS_PROJECTILES = "bonus_proj";
     public static String BONUS_CHAINS = "bonus_chains";

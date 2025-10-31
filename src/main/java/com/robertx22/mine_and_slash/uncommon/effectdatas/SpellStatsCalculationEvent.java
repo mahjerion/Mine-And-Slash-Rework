@@ -60,6 +60,7 @@ public class SpellStatsCalculationEvent extends EffectEvent {
         this.data.setupNumber(EventData.COOLDOWN_TICKS, spell.config.cooldown_ticks);
         this.data.setupNumber(EventData.CHARGE_COOLDOWN_TICKS, spell.config.charge_regen);
         this.data.setupNumber(EventData.PROJECTILE_SPEED_MULTI, 1F);
+        this.data.setupNumber(EventData.PROJECTILE_YAW_SPEED_MULTI, 1F);
         this.data.setupNumber(EventData.PROJECTILE_SPREAD_RANDOMNESS, 1F);
         this.data.setupNumber(EventData.DURATION_MULTI, 1F);
         this.data.setupNumber(EventData.AREA_MULTI, 1);

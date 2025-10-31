@@ -48,6 +48,7 @@ increase_mana_cost_num
 increase_number_per_curse_on_target
 increase_proj_speed_num
 increase_proj_spread_randomness_num
+increase_proj_yaw_speed_num
 increase_seconds_num
 leech_blood
 leech_energy

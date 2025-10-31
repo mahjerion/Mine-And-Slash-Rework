@@ -162,6 +162,7 @@ public class StatEffects implements ExileRegistryInit {
     public static StatEffect DECREASE_COOLDOWN_BY_X_TICKS = new AddToNumberEffect("reduce_cd_by_ticks", EventData.COOLDOWN_TICKS, NumberProvider.ofStatData());
     public static StatEffect INCREASE_MANA_COST = new IncreaseNumberByPercentEffect(EventData.MANA_COST);
     public static StatEffect INCREASE_PROJ_SPEED = new IncreaseNumberByPercentEffect(EventData.PROJECTILE_SPEED_MULTI);
+    public static StatEffect INCREASE_PROJ_YAW_SPEED = new IncreaseNumberByPercentEffect(EventData.PROJECTILE_YAW_SPEED_MULTI);
     public static StatEffect INCREASE_PROJ_SPREAD_RANDOMNESS = new IncreaseNumberByPercentEffect(EventData.PROJECTILE_SPREAD_RANDOMNESS);
     public static StatEffect PROJECTILE_COUNT = new AddToNumberEffect("proj_count", EventData.BONUS_PROJECTILES, NumberProvider.ofStatData());
     public static StatEffect BONUS_CHAINS = new AddToNumberEffect("bonus_chains", EventData.BONUS_CHAINS, NumberProvider.ofStatData());

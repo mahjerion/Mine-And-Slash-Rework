@@ -84,6 +84,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     private boolean motionDirty = false;
 
     private Float cachedSpeedMultiplier = null;
+    private Float cachedYawSpeedMultiplier = null;
 
     @Override
     protected ItemStack getPickupItem() {
@@ -131,6 +132,13 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
             cachedSpeedMultiplier = getSpellData().data.getNumber(EventData.PROJECTILE_SPEED_MULTI, 1F).number;
         }
         return cachedSpeedMultiplier;
+    }
+
+    public float getYawSpeedMultiplier() {
+        if (cachedYawSpeedMultiplier == null) {
+            cachedYawSpeedMultiplier = getSpellData().data.getNumber(EventData.PROJECTILE_YAW_SPEED_MULTI, 1F).number;
+        }
+        return cachedYawSpeedMultiplier;
     }
 
     public SimpleProjectileEntity(EntityType<? extends Entity> type, Level worldIn) {
@@ -753,13 +761,10 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.moveTowardsEnemies = holder.getOrDefault(MapField.TRACKS_ENEMIES, false);
         this.speed = holder.getOrDefault(MapField.PROJECTILE_SPEED, 1D).floatValue();
 
-        // scale all projectile movement (except gravity) by speed
-        float speedMultiplier = getSpeedMultiplier();
+        this.entityData.set(ACCELERATION, holder.getOrDefault(MapField.PROJECTILE_ACCELERATION, 0D).floatValue() * getSpeedMultiplier());
 
-        this.entityData.set(ACCELERATION, holder.getOrDefault(MapField.PROJECTILE_ACCELERATION, 0D).floatValue() * speedMultiplier);
-
-        this.entityData.set(YAW_VELOCITY, holder.getOrDefault(MapField.YAW_VELOCITY, 0D).floatValue() * speedMultiplier);
-        this.entityData.set(YAW_ACCELERATION, holder.getOrDefault(MapField.YAW_ACCELERATION, 0D).floatValue() * speedMultiplier);
+        this.entityData.set(YAW_VELOCITY, holder.getOrDefault(MapField.YAW_VELOCITY, 0D).floatValue() * getYawSpeedMultiplier());
+        this.entityData.set(YAW_ACCELERATION, holder.getOrDefault(MapField.YAW_ACCELERATION, 0D).floatValue() * getYawSpeedMultiplier());
 
         data.data.setString(EventData.ITEM_ID, holder.get(MapField.ITEM));
         CompoundTag nbt = new CompoundTag();
@@ -800,10 +805,10 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
             setMotionDirty();
         }
         if (data.has(MapField.YAW_VELOCITY)) {
-            entityData.set(YAW_VELOCITY, data.get(MapField.YAW_VELOCITY).floatValue() * getSpeedMultiplier());
+            entityData.set(YAW_VELOCITY, data.get(MapField.YAW_VELOCITY).floatValue() * getYawSpeedMultiplier());
         }
         if (data.has(MapField.YAW_ACCELERATION)) {
-            entityData.set(YAW_ACCELERATION, data.get(MapField.YAW_ACCELERATION).floatValue() * getSpeedMultiplier());
+            entityData.set(YAW_ACCELERATION, data.get(MapField.YAW_ACCELERATION).floatValue() * getYawSpeedMultiplier());
         }
     }
 }

@@ -39,7 +39,7 @@ public class DashUtils {
 
         if (f > 0.0F) {
             en.hasImpulse = true;
-            Vec3 vec3d = en.getDeltaMovement();
+            Vec3 vec3d = ExileEffectUtils.EnsureNotNaN(en.getDeltaMovement());
             Vec3 vec3d2 = (new Vec3(d, 0.0D, e)).normalize()
                     .scale((double) f);
             en.setDeltaMovement(vec3d.x / 2.0D - vec3d2.x, en.onGround() ? Math.min(0.4D, vec3d.y / 2.0D + (double) f) : vec3d.y, vec3d.z / 2.0D - vec3d2.z);

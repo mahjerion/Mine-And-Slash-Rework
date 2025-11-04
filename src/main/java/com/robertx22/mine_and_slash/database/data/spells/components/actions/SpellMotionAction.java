@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.vanity.ParticleMotion;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.ExileEffectUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,7 +60,7 @@ public class SpellMotionAction extends SpellAction {
                             x.setDeltaMovement(motionWithY);
                         }
                     } else {
-                        x.setDeltaMovement(x.getDeltaMovement()
+                        x.setDeltaMovement(ExileEffectUtils.EnsureNotNaN(x.getDeltaMovement())
                                 .add(motionWithY));
                     }
 

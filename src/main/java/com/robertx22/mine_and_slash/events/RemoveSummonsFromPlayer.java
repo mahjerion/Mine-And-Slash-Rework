@@ -11,9 +11,12 @@ public class RemoveSummonsFromPlayer extends EventConsumer<MineAndSlashEvents.On
     public void accept(MineAndSlashEvents.OnPerkUnlearnedAndRemoved event) {
         var perk = ExileDB.Perks().get(event.perk);
         Spell spell = perk.getSpell();
-        if (spell.getConfig().tags.contains(SpellTags.has_pet_ability)) {
-            Load.player(event.player).removeSummonType(spell.identifier);
+
+        if (spell == null || !spell.getConfig().tags.contains(SpellTags.has_pet_ability)) {
+            return;
         }
+
+        Load.player(event.player).removeSummonType(spell.identifier);
     }
 
     @Override

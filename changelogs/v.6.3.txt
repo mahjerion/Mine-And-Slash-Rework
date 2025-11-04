@@ -1,5 +1,10 @@
 Changelog of recent updates: https://github.com/mahjerion/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.3.txt
 
+v.6.3.14
+- fix summon crash
+- entity NaN handle
+
+
 v.6.3.13
 - spirally stuff
 - proj stuff

@@ -157,7 +157,7 @@ dependencies {
     modImplementation("com.robertx22:Library-of-Exile-Rework:${project.exile_library_version}")
     modImplementation("com.robertx22:ancient-obelisks:${project.ancient_obelisks_version}")
     modImplementation("com.robertx22:the_harvest:${project.the_harvest_version}")
-    modImplementation("com.robertx22:dungeon_realm:${project.the_harvest_version}")
+    modImplementation("com.robertx22:dungeon_realm:${project.dungeon_realm_version}")
     //modImplementation("maven.modrinth:library-of-exile:${project.exile_library_version}")
 }
 

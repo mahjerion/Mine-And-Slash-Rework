@@ -49,3 +49,4 @@ includeBuild("ancient_obelisks") {
         substitute(module("com.robertx22:ancient-obelisks")).using(project(":"))
     }
 }
+includeBuild "dungeon_realm"

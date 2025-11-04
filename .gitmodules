@@ -7,3 +7,6 @@
 [submodule "ancient_obelisks"]
 	path = ancient_obelisks
 	url = https://github.com/mahjerion/ancient_obelisks.git
+[submodule "dungeon_realm"]
+	path = dungeon_realm
+	url = https://github.com/mahjerion/dungeon_realm.git

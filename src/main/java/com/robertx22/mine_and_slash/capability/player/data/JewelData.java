@@ -89,7 +89,7 @@ public class JewelData implements IStatCtx {
             return false;
         }
 
-        if (!jewelItemData.isUnique()) {
+        if (!jewelItemData.uniq.isUnique()) {
             return true;
         }
 

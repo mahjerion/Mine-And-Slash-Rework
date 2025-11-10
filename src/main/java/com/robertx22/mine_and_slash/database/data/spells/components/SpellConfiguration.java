@@ -121,6 +121,11 @@ public class SpellConfiguration {
         return this;
     }
 
+    public SpellConfiguration setSummonAggroRadius(int radius) {
+        this.aggro_radius = radius;
+        return this;
+    }
+
 
     public static class Builder {
         public static SpellConfiguration energy(int ene, int cd) {

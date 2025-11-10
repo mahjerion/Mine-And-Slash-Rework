@@ -78,8 +78,9 @@ public class Profession implements JsonExileRegistry<Profession>, IAutoGson<Prof
 
         List<ChancedDrop> ALLDROPS = new ArrayList<>();
 
-        if (tiered_drops.containsKey(tier)) {
-            ALLDROPS.addAll(tiered_drops.get(tier));
+        List<ChancedDrop> tieredDrop = tiered_drops.get(tier);
+        if (tieredDrop != null) {
+            ALLDROPS.addAll(tieredDrop);
         }
         ALLDROPS.addAll(chance_drops);
 

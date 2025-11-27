@@ -704,7 +704,7 @@ public class DamageEvent extends EffectEvent {
             }
         }
 
-        if (attri.getValue() >= 100.0) {
+        if (attri.getValue() >= 1.0) {
             target.hurtMarked = false;
         }
 

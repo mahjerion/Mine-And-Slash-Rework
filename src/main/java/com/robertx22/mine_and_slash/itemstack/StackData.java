@@ -46,6 +46,7 @@ public class StackData<T> {
 
     public void delete() {
         saver.removeFrom(stack.getStack());
+        resetGetterCache();
     }
 
     public T createDefault() {

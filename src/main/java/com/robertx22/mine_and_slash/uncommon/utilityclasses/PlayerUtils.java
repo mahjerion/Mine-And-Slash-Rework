@@ -40,6 +40,9 @@ public class PlayerUtils {
     }
 
     public static void forceUnequipItem(ItemStack stack, Player player) {
+        if (stack.isEmpty()) {
+            return;
+        }
         if (player.addItem(stack) == false) {
             forceDropItem(stack, player);
         }

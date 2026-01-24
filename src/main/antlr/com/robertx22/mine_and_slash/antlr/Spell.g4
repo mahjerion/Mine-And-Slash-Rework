@@ -45,7 +45,7 @@ enPredPrefix: 'en' '.';
 condition: enPredPrefix? mapHolder; // single condition
 conditionParen: '(' conditionExpr ')' | condition;
 conditionNot: Not conditionParen | conditionParen;
-conditionAnd: conditionNot (And conditionNot)*;
+conditionAnd: conditionNot ('&&' conditionNot)*;
 conditionExpr: conditionAnd;
 
 // corresponds to MapHolder with type and map
@@ -66,7 +66,6 @@ bool: True | False;
  */
 
 Not: '!';
-And: '&&';
 
 OnCast: 'on_cast';
 OnTick: 'on_tick';

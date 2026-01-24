@@ -397,7 +397,14 @@ public class SpellCompiler {
         selectorStack.forEach(conditions -> part.targets.addAll(conditions));
 
         ifNotNull(node.perEntityHit(), perEntityHit -> {
+            // don't propagate conditions and selectors to per_entity_hit block
+            var oldConditionStack = conditionStack;
+            var oldSelectorStack = selectorStack;
+            conditionStack = new ArrayDeque();
+            selectorStack = new ArrayDeque();
             part.per_entity_hit = handleScriptBlock(perEntityHit.scriptBlock());
+            conditionStack = oldConditionStack;
+            selectorStack = oldSelectorStack;
         });
 
         return part;

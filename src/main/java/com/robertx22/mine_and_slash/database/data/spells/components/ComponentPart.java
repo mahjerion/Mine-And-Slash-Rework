@@ -18,7 +18,7 @@ public class ComponentPart {
     public List<MapHolder> ifs = new ArrayList<>();
     public List<MapHolder> en_preds = new ArrayList<>();
 
-    List<ComponentPart> per_entity_hit = null;
+    public List<ComponentPart> per_entity_hit = null;
 
     public ComponentPart addPerEntityHit(ComponentPart add) {
 
@@ -72,7 +72,7 @@ public class ComponentPart {
         } else {
             throw new NullPointerException("Activation not found"); // ... why did i do it like this
         }
-        
+
         return this;
     }
 

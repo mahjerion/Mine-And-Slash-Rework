@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class BaseFieldNeeder implements IGUID {
 
-    List<MapField> requiredPieces;
+    public List<MapField> requiredPieces;
 
     public BaseFieldNeeder(List<MapField> requiredPieces) {
         this.requiredPieces = requiredPieces;

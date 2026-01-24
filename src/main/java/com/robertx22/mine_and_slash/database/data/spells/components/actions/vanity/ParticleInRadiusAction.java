@@ -41,14 +41,16 @@ public class ParticleInRadiusAction extends SpellAction {
             int amount = data.get(PARTICLE_COUNT).intValue();
             amount *= ctx.calculatedSpellData.data.getNumber(EventData.AREA_MULTI, 1F).number;
 
-         
-            ParticleMotion motion = null;
 
-            try {
-                motion = ParticleMotion.valueOf(data.get(MOTION));
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                motion = ParticleMotion.None;
+            ParticleMotion motion = ParticleMotion.None;
+
+            if (data.has(MOTION)) {
+                try {
+                    motion = ParticleMotion.valueOf(data.get(MOTION));
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    motion = ParticleMotion.None;
+                }
             }
 
             float yrand = data.getOrDefault(Y_RANDOM, 0D).floatValue();

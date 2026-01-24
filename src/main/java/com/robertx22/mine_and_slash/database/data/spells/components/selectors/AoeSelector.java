@@ -22,7 +22,7 @@ import static com.robertx22.mine_and_slash.database.data.spells.map_fields.MapFi
 public class AoeSelector extends BaseTargetSelector {
 
     public AoeSelector() {
-        super(Arrays.asList(RADIUS, SELECTION_TYPE, ENTITY_PREDICATE));
+        super(Arrays.asList(RADIUS, ENTITY_PREDICATE));
     }
 
     @Override

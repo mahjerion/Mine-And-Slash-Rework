@@ -31,7 +31,6 @@ sourceSets.main.resources{
 }
 
 generateGrammarSource {
-    //arguments += ["-visitor", "-package", "com.robertx22.mine_and_slash.antlr"]
     arguments += ["-visitor", "-package", "com.robertx22.mine_and_slash.antlr"]
 }
 

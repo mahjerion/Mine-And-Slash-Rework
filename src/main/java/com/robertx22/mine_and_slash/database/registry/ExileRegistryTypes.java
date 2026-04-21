@@ -1,5 +1,9 @@
 package com.robertx22.mine_and_slash.database.registry;
 
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.ExtendedOrb;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.SyncTime;
@@ -30,6 +34,7 @@ import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
 import com.robertx22.mine_and_slash.database.data.runes.Rune;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
+import com.robertx22.mine_and_slash.database.data.spells.SpellCompiler;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stat_compat.StatCompat;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.base.BaseDatapackStat;
@@ -44,6 +49,8 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.StatEffec
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.StatCondition;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 public class ExileRegistryTypes {
 
@@ -70,7 +77,14 @@ public class ExileRegistryTypes {
     public static ExileRegistryType RUNEWORDS = ExileRegistryType.register(SlashRef.MODID, "runeword", 12, RuneWord.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType DIMENSION_CONFIGS = ExileRegistryType.register(SlashRef.MODID, "dimension", 13, DimensionConfig.EMPTY, SyncTime.ON_LOGIN);
     public static ExileRegistryType ENTITY_CONFIGS = ExileRegistryType.register(SlashRef.MODID, "entity", 14, Serializers.ENTITY_CONFIG_SER, SyncTime.NEVER);
-    public static ExileRegistryType SPELL = ExileRegistryType.register(SlashRef.MODID, "spells", 17, Spell.SERIALIZER, SyncTime.ON_LOGIN);
+
+    public static ExileRegistryType SPELL = ExileRegistryType.register(new ExileRegistryType(SlashRef.MODID, "spells", 17, Spell.SERIALIZER, SyncTime.ON_LOGIN) {
+        @Override
+        public void injectResources(ResourceManager manager, String name, Gson gson, Map<ResourceLocation, JsonElement> output) {
+            SpellCompiler.compileSpells(this, manager, name, gson, output);
+        }
+    });
+
     public static ExileRegistryType PERK = ExileRegistryType.register(SlashRef.MODID, "perk", 18, Perk.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType TALENT_TREE = ExileRegistryType.register(SlashRef.MODID, "talent_tree", 19, TalentTree.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType BASE_STATS = ExileRegistryType.register(SlashRef.MODID, "base_stats", 22, BaseStatsConfig.SERIALIZER, SyncTime.ON_LOGIN);

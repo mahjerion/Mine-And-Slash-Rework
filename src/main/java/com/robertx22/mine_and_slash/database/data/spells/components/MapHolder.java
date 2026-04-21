@@ -62,6 +62,10 @@ public class MapHolder {
         return (T) map.get(field.GUID());
     }
 
+    public <T> void remove(MapField<T> field) {
+        this.map.remove(field);
+    }
+
     public ExileEffect getExileEffect() {
         return ExileDB.ExileEffects().get(get(EXILE_POTION_ID));
     }

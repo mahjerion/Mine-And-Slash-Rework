@@ -33,7 +33,7 @@ public class StatMod implements ISerializable<StatMod> {
 
     public static StatMod EMPTY = new StatMod();
 
-    private StatMod() {
+    public StatMod() {
 
     }
 

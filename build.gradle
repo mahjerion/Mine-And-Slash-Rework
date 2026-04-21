@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'net.neoforged.moddev.legacyforge' version "2.0.107"
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id 'antlr'
 }
 
 //archivesBaseName = "${mod_archive_name}-${minecraft_version}"
@@ -20,9 +21,17 @@ base {
     archivesName = "${mod_archive_name}-${minecraft_version}"
 }
 
+sourceSets.main.java {
+    srcDir 'build/generated-src/antlr'
+}
+
 sourceSets.main.resources{
     srcDir 'src/generated/resources'
     exclude '.cache/**'
+}
+
+generateGrammarSource {
+    arguments += ["-visitor", "-package", "com.robertx22.mine_and_slash.antlr"]
 }
 
 legacyForge {
@@ -159,6 +168,8 @@ dependencies {
     modImplementation("com.robertx22:the_harvest:${project.the_harvest_version}")
     modImplementation("com.robertx22:dungeon_realm:${project.dungeon_realm_version}")
     //modImplementation("maven.modrinth:library-of-exile:${project.exile_library_version}")
+
+    antlr "org.antlr:antlr4:4.5" // use ANTLR version 4
 }
 
 

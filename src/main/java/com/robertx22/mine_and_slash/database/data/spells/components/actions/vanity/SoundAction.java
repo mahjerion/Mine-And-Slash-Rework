@@ -16,14 +16,14 @@ import static com.robertx22.mine_and_slash.database.data.spells.map_fields.MapFi
 public class SoundAction extends SpellAction {
 
     public SoundAction() {
-        super(Arrays.asList(SOUND, PITCH, VOLUME));
+        super(Arrays.asList(SOUND, VOLUME));
     }
 
     @Override
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
         if (!ctx.world.isClientSide) {
             try {
-                float pitch = data.get(PITCH).floatValue();
+                float pitch = data.getOrDefault(PITCH, 1.0).floatValue();
                 float volume = data.get(VOLUME).floatValue();
                 SoundEvent sound = data.getSound();
 

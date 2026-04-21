@@ -45,7 +45,8 @@ public class SummonSpells implements ExileRegistryInit {
     public void registerAll() {
 
         SpellBuilder.of(SUMMON_FIRE_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.FIRE_GOLEM).setSummonType(SummonType.GOLEM), "Summon Fire Golem",
+                                .setSummonBasicAttack(PetSpells.FIRE_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonAggroRadius(15), "Summon Fire Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.FIRE))
 
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
@@ -60,7 +61,8 @@ public class SummonSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(SUMMON_COLD_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.FROST_GOLEM).setSummonType(SummonType.GOLEM), "Summon Frost Golem",
+                                .setSummonBasicAttack(PetSpells.FROST_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonAggroRadius(15), "Summon Frost Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.COLD))
                 .manualDesc("Summon a Golem that can cast Frost Nova to aid you in combat.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
@@ -73,7 +75,8 @@ public class SummonSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(SUMMON_LIGHTNING_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.LIGHTNING_GOLEM).setSummonType(SummonType.GOLEM), "Summon Lightning Golem",
+                                .setSummonBasicAttack(PetSpells.LIGHTNING_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonAggroRadius(15), "Summon Lightning Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.LIGHTNING))
                 .manualDesc("Summon a Golem that can cast Lightning Nova to aid you in combat .")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
@@ -88,7 +91,8 @@ public class SummonSpells implements ExileRegistryInit {
 
         SpellBuilder.of(SUMMON_SPIRIT_WOLF, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(30, 30 * 20, 30)
                                 .setSummonBasicAttack(PetSpells.WOLF)
-                                .setSummonType(SummonType.BEAST), "Summon Spirit Wolf",
+                                .setSummonType(SummonType.BEAST)
+                                .setSummonAggroRadius(15), "Summon Spirit Wolf",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.beast, SpellTags.has_pet_ability, SpellTags.PHYSICAL))
                 .manualDesc("Summon a Spirit Wolf to aid you in combat.")
 
@@ -100,7 +104,8 @@ public class SummonSpells implements ExileRegistryInit {
 
         SpellBuilder.of(SUMMON_ZOMBIE, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(30, 20 * 60, 40)
                                 .setSummonBasicAttack(PetSpells.ZOMBIE)
-                                .setSummonType(SummonType.UNDEAD), "Summon Zombie",
+                                .setSummonType(SummonType.UNDEAD)
+                                .setSummonAggroRadius(15), "Summon Zombie",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.has_pet_ability, SpellTags.PHYSICAL))
                 .manualDesc("Summon a Zombie to aid you in combat.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
@@ -113,7 +118,8 @@ public class SummonSpells implements ExileRegistryInit {
 
         SpellBuilder.of(SUMMON_SPIDER, PlayStyle.INT, SpellConfiguration.Builder.instant(15, 1)
                                 .setSummonBasicAttack(PetSpells.SPIDER)
-                                .setChargesAndRegen("spider", 3, 20 * 15).setSummonType(SummonType.UNDEAD), "Summon Spider",
+                                .setChargesAndRegen("spider", 3, 20 * 15).setSummonType(SummonType.UNDEAD)
+                                .setSummonAggroRadius(15), "Summon Spider",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.has_pet_ability, SpellTags.CHAOS))
                 .manualDesc("Summon a fast moving spider to aid you in combat.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
@@ -126,7 +132,8 @@ public class SummonSpells implements ExileRegistryInit {
 
         SpellBuilder.of(SUMMON_SKELETAL_ARMY, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(35, 20 * 3, 40)
                                 .setSummonBasicAttack(PetSpells.SKELETON)
-                                .setSummonType(SummonType.UNDEAD), "Summon Skeleton",
+                                .setSummonType(SummonType.UNDEAD)
+                                .setSummonAggroRadius(15), "Summon Skeleton",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.has_pet_ability, SpellTags.PHYSICAL))
                 .manualDesc("Summon Skeleton to fight for you using ranged attacks.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)

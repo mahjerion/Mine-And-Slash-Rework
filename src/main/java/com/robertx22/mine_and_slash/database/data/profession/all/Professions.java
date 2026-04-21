@@ -205,7 +205,7 @@ public class Professions {
             return this;
         }
 
-        public Builder dropTiered(HashMap<SkillItemTier, RegObj<Item>> map, float chancemulti) {
+        public Builder dropTiered(Map<SkillItemTier, RegObj<Item>> map, float chancemulti) {
             for (Map.Entry<SkillItemTier, RegObj<Item>> en : map.entrySet()) {
                 Item item = en.getValue().get();
 

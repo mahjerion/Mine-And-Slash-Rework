@@ -44,18 +44,12 @@ public class PotionAction extends SpellAction {
                 } else if (action == GiveOrTake.REMOVE_NEGATIVE) {
                     int count = data.getOrDefault(COUNT, 1D).intValue();
 
-                    for (int i = 0; i < count; i++) {
-
-                        List<MobEffectInstance> opt = t.getActiveEffects()
-                                .stream()
-                                .filter(x -> x.getEffect().getCategory() == MobEffectCategory.HARMFUL)
-                                .collect(Collectors.toList());
-
-                        if (!opt.isEmpty()) {
-                            t.removeEffect(opt.get(0).getEffect());
-                        }
-                    }
-
+                    List<MobEffectInstance> effectsToRemove = t.getActiveEffects()
+                            .stream()
+                            .filter(x -> x.getEffect().getCategory() == MobEffectCategory.HARMFUL)
+                            .limit(count)
+                            .toList();
+                    effectsToRemove.forEach(effect -> t.removeEffect(effect.getEffect()));
                 }
 
             }

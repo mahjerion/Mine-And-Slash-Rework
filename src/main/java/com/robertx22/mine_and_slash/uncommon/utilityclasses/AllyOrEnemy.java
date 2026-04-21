@@ -3,10 +3,7 @@ package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -17,13 +14,6 @@ public enum AllyOrEnemy {
 
 
     summonShouldAttack() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
-
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
@@ -64,13 +54,8 @@ public enum AllyOrEnemy {
 
     allies() {
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream().filter(x -> is(caster, x)).collect(Collectors.toList());
-        }
-
-        @Override
         public boolean is(Entity caster, LivingEntity target) {
-            return enemies.is(caster, target) == false;
+            return !enemies.is(caster, target);
         }
 
         @Override
@@ -78,12 +63,8 @@ public enum AllyOrEnemy {
             return true;
         }
     },
-    allies_not_self() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream().filter(x -> is(caster, x)).collect(Collectors.toList());
-        }
 
+    allies_not_self() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             return allies.is(caster, target);
@@ -94,14 +75,8 @@ public enum AllyOrEnemy {
             return false;
         }
     },
-    pets() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
 
+    pets() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             if (caster instanceof Player p) {
@@ -117,14 +92,8 @@ public enum AllyOrEnemy {
             return false;
         }
     },
-    casters_summons() {
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
 
+    casters_summons() {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
             if (caster instanceof Player p) {
@@ -142,23 +111,20 @@ public enum AllyOrEnemy {
             return false;
         }
     },
+
     enemies {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
-            if (caster instanceof Player p) {
-                if (EntityFinder.isTamedByAlly(p, target)) {
+            if (caster instanceof Player casterPlayer) {
+                if (EntityFinder.isTamedByAlly(casterPlayer, target)) {
                     return false;
                 }
-                if (target instanceof Player) {
+                if (target instanceof Player targetPlayer) {
                     if (!caster.level().getServer().isPvpAllowed()) {
                         return false;
                     }
-                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target, false)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return target != caster && !TeamUtils.areOnSameTeam(casterPlayer, targetPlayer, false);
                 }
 
             } else {
@@ -178,26 +144,20 @@ public enum AllyOrEnemy {
         }
 
         @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
-        }
-
-        @Override
         public boolean includesCaster() {
             return false;
         }
     },
+
     non_ai_enemies {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
-            if (caster instanceof Player p) {
-                if (EntityFinder.isTamedByAlly(p, target)) {
+            if (caster instanceof Player casterPlayer) {
+                if (EntityFinder.isTamedByAlly(casterPlayer, target)) {
                     return false;
                 }
-                if (target.serializeNBT().contains("NoAI")) {
+                if (target instanceof Mob mob && mob.isNoAi()) {
                     return false;
                 }
                 // Check for villagers and other NPCs
@@ -208,15 +168,11 @@ public enum AllyOrEnemy {
                 if (target instanceof net.minecraft.world.entity.npc.AbstractVillager) {
                     return false;
                 }*/
-                if (target instanceof Player) {
+                if (target instanceof Player targetPlayer) {
                     if (!caster.level().getServer().isPvpAllowed()) {
                         return false;
                     }
-                    if (target == caster || TeamUtils.areOnSameTeam((Player) caster, (Player) target, false)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return target != caster && !TeamUtils.areOnSameTeam(casterPlayer, targetPlayer, false);
                 }
 
             } else {
@@ -233,13 +189,6 @@ public enum AllyOrEnemy {
             }
 
             return true;
-        }
-
-        @Override
-        public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
-            return list.stream()
-                    .filter(x -> is(caster, x))
-                    .collect(Collectors.toList());
         }
 
         @Override
@@ -264,8 +213,15 @@ public enum AllyOrEnemy {
         }
     };
 
-    public abstract <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster);
+    public <T extends LivingEntity> List<T> getMatchingEntities(List<T> list, Entity caster) {
+        return list.stream()
+                .filter(x -> is(caster, x))
+                .collect(Collectors.toList());
+    }
 
+    /**
+     * @return whether {@code target} is an appropriate target for this target type for the caster {@code caster}
+     */
     public abstract boolean is(Entity caster, LivingEntity target);
 
     public abstract boolean includesCaster();

@@ -116,10 +116,10 @@ public class ComponentPart {
                 EffectCondition pred = EffectCondition.MAP.get(entityPredicate.type);
 
                 if (pred != null) {
-                    selected = selected.stream().filter(targetEntity -> {
+                    selected.removeIf(targetEntity -> {
                         SpellCtx chainedCtx = SpellCtx.onEntityHit(ctx, targetEntity);
-                        return pred.can(chainedCtx, entityPredicate);
-                    }).collect(Collectors.toList());
+                        return !pred.can(chainedCtx, entityPredicate);
+                    });
                 }
             }
             list.addAll(selected);

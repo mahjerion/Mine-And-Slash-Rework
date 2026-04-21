@@ -117,15 +117,15 @@ public enum SkillItemTier {
 
     }
 
-    public LevelRange levelRange;
-    public float lvl_req;
-    public String word;
-    public String rar;
-    public int tier;
-    public float statMulti;
-    public ChatFormatting format;
-    public int durationSeconds;
-    public int repairDurab;
-    public float percent_healed;
+    public final LevelRange levelRange;
+    public final float lvl_req;
+    public final String word;
+    public final String rar;
+    public final int tier;
+    public final float statMulti;
+    public final ChatFormatting format;
+    public final int durationSeconds;
+    public final int repairDurab;
+    public final float percent_healed;
 
 }

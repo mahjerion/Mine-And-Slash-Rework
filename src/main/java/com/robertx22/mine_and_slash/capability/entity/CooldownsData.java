@@ -27,13 +27,15 @@ public class CooldownsData {
     }
 
     public void tickSpellCooldowns(int ticks) {
-        getAllSpellsOnCooldown().forEach(x -> tickDownCooldown(x, ticks));
+        map.values().removeIf(data -> {
+            data.ticks -= ticks;
+            return data.ticks < 1;
+        });
     }
 
     public void tickDownCooldown(String id, int ticks) {
-
-        if (map.containsKey(id)) {
-            Data data = map.get(id);
+        Data data = map.get(id);
+        if (data != null) {
             data.ticks -= ticks;
 
             if (data.ticks < 1) {
@@ -43,13 +45,10 @@ public class CooldownsData {
     }
 
     public void onTicksPass(int ticks) {
-        if (map.isEmpty()) {
-            return;
-        }
-        new HashMap<>(map).entrySet()
-                .forEach(x -> {
-                    tickDownCooldown(x.getKey(), ticks);
-                });
+        map.values().removeIf(data -> {
+            data.ticks -= ticks;
+            return data.ticks < 1;
+        });
     }
 
     public List<String> getAllSpellsOnCooldown() {

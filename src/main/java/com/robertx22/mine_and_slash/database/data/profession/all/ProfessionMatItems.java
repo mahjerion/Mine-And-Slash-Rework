@@ -11,33 +11,39 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Item;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfessionMatItems {
 
-    public static HashMap<String, HashMap<SkillItemTier, RegObj<Item>>> TIERED_MAIN_MATS = new HashMap<>();
+    public static Map<String, Map<SkillItemTier, RegObj<Item>>> TIERED_MAIN_MATS = new HashMap<>();
 
 
     public static void init() {
 
 
         for (String prof : Professions.ALL) {
-            TIERED_MAIN_MATS.put(prof, new HashMap<>());
+            TIERED_MAIN_MATS.put(prof, new EnumMap<>(SkillItemTier.class));
         }
+
+        var mining = TIERED_MAIN_MATS.get(Professions.MINING);
+        var farming = TIERED_MAIN_MATS.get(Professions.FARMING);
+        var husbandry = TIERED_MAIN_MATS.get(Professions.HUSBANDRY);
+        var fishing = TIERED_MAIN_MATS.get(Professions.FISHING);
 
         for (SkillItemTier tier : SkillItemTier.values()) {
 
-            TIERED_MAIN_MATS.get(Professions.MINING).put(tier, Def.item("material/mining/" + tier.tier, () -> new ProfTierMatItem(Professions.MINING, tier, "Ore")));
-            TIERED_MAIN_MATS.get(Professions.FARMING).put(tier, Def.item("material/farming/" + tier.tier, () -> new ProfTierMatItem(Professions.FARMING, tier, "Produce")));
-            TIERED_MAIN_MATS.get(Professions.HUSBANDRY).put(tier, Def.item("material/meat/" + tier.tier, () -> new ProfTierMatItem(Professions.HUSBANDRY, tier, "Raw Meat")));
-            TIERED_MAIN_MATS.get(Professions.FISHING).put(tier, Def.item("material/fishing/" + tier.tier, () -> new ProfTierMatItem(Professions.FISHING, tier, "Raw Fish")));
+            mining.put(tier, Def.item("material/mining/" + tier.tier, () -> new ProfTierMatItem(Professions.MINING, tier, "Ore")));
+            farming.put(tier, Def.item("material/farming/" + tier.tier, () -> new ProfTierMatItem(Professions.FARMING, tier, "Produce")));
+            husbandry.put(tier, Def.item("material/meat/" + tier.tier, () -> new ProfTierMatItem(Professions.HUSBANDRY, tier, "Raw Meat")));
+            fishing.put(tier, Def.item("material/fishing/" + tier.tier, () -> new ProfTierMatItem(Professions.FISHING, tier, "Raw Fish")));
         }
 
     }
 
     public static void addDownRankRecipes() {
-        for (Map.Entry<String, HashMap<SkillItemTier, RegObj<Item>>> en : TIERED_MAIN_MATS.entrySet()) {
+        for (Map.Entry<String, Map<SkillItemTier, RegObj<Item>>> en : TIERED_MAIN_MATS.entrySet()) {
             for (Map.Entry<SkillItemTier, RegObj<Item>> e : en.getValue().entrySet()) {
 
                 if (e.getKey().tier != SkillItemTier.TIER0.tier) {

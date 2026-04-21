@@ -5,11 +5,12 @@ import com.robertx22.mine_and_slash.database.data.talent_tree.TalentTree;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
-public enum PlayerPointsType implements IGUID {
+public enum PlayerPointsType implements IGUID, StringRepresentable {
     TALENTS() {
         @Override
         public String GUID() {
@@ -214,5 +215,10 @@ public enum PlayerPointsType implements IGUID {
         int free = total - spent;
 
         return free;
+    }
+
+    @Override
+    public String getSerializedName() {
+        return this.GUID();
     }
 }

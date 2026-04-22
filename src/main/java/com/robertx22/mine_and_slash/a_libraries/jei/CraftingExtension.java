@@ -10,8 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CraftingExtension implements ICraftingCategoryExtension {
@@ -23,10 +21,7 @@ public class CraftingExtension implements ICraftingCategoryExtension {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
-        List<List<ItemStack>> inputs = new ArrayList<>();
-        for (ItemStack m : recipe.getMaterials()) {
-            inputs.add(Arrays.asList(m));
-        }
+        List<List<ItemStack>> inputs = recipe.getMaterialsForJei();
 
         ItemStack resultItem = recipe.toResultStackForJei();
 

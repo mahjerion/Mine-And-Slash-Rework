@@ -119,8 +119,8 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
 
         int spacing = 18;
 
-        for (ItemStack stack : recipe.getMaterials()) {
-            var button = new ItemButton(stack, leftPos + 64 + xoff, topPos + 75 + yoff);
+        for (List<ItemStack> stack : recipe.getMaterialsForJei()) {
+            var button = new ItemButton(stack.isEmpty() ? ItemStack.EMPTY : stack.get(0), leftPos + 64 + xoff, topPos + 75 + yoff);
 
             List<Component> tip = new ArrayList<>();
             tip.add(Component.literal(UNICODE.CUBE + " ").append(Itemtips.RECIPE_MATERIAL.locName()).append(" " + UNICODE.CUBE).withStyle(ChatFormatting.RED, ChatFormatting.BOLD));

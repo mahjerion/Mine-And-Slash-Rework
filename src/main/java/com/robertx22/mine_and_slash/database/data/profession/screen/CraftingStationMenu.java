@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.profession.screen;
 
 import com.robertx22.mine_and_slash.database.data.profession.Crafting_State;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlockEntity;
+import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashContainers;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import net.minecraft.world.Container;
@@ -126,8 +127,8 @@ public class CraftingStationMenu extends AbstractContainerMenu {
                 if (be.last_recipe == null)
                     return false;
 
-                for (ItemStack item : be.last_recipe.getMaterials()) {
-                    if (item.getItem() == pStack.getItem()) {
+                for (ProfessionRecipe.CraftingMaterial mat : be.last_recipe.getMaterials()) {
+                    if (mat.hasAnyCount(pStack)) {
                         if (be.craftingState == Crafting_State.IDLE)
                             be.craftingState = Crafting_State.ACTIVE;
                         return true;

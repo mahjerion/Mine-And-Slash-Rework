@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.profession;
 
+import com.google.common.collect.ImmutableList;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -16,9 +17,13 @@ import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import com.robertx22.temp.SkillItemTier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -128,23 +133,40 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
         public Type type = Type.ITEM;
 
         public boolean matches(ItemStack stack) {
-            if (type == Type.ITEM) {
-                return VanillaUTIL.REGISTRY.items().getKey(stack.getItem()).toString().equals(id) && stack.getCount() >= num;
-            }
-            return false;
+            if (stack.getCount() < num) return false;
+            return hasAnyCount(stack);
         }
 
         public boolean hasAnyCount(ItemStack stack) {
             if (type == Type.ITEM) {
                 return VanillaUTIL.REGISTRY.items().getKey(stack.getItem()).toString().equals(id);
+            } else if (type == Type.TAG) {
+                return stack.is(TagKey.create(Registries.ITEM, new ResourceLocation(id)));
             }
             return false;
         }
 
-        public ItemStack toStackForJei() {
-            return new ItemStack(VanillaUTIL.REGISTRY.items().get(new ResourceLocation(id)), num);
+        public List<ItemStack> toStackForJei() {
+            if (type == Type.ITEM) {
+                return List.of(new ItemStack(VanillaUTIL.REGISTRY.items().get(new ResourceLocation(id)), num));
+            } else if (type == Type.TAG) {
+                ImmutableList.Builder<ItemStack> builder = ImmutableList.builder();
+                for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(TagKey.create(Registries.ITEM, new ResourceLocation(id)))) {
+                    builder.add(new ItemStack(holder.get(), num));
+                }
+                return builder.build();
+            }
+            return List.of();
         }
 
+        public Component getDisplayName() {
+            if (type == Type.ITEM) {
+                return new ItemStack(VanillaUTIL.REGISTRY.items().get(new ResourceLocation(id)), num).getDisplayName();
+            } else if (type == Type.TAG) {
+                return Words.ANY_IN_TAG.locName(id);
+            }
+            return Component.literal("???");
+        }
 
         public void spend(ItemStack stack) {
             stack.shrink(num);
@@ -237,7 +259,7 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
             }
             if (stacks.stream().noneMatch(x -> mat.matches(x))) {
                 fail = true;
-                msg.append(reason.word.locName(mat.toStackForJei().getDisplayName(), mat.num, have));
+                msg.append(reason.word.locName(mat.getDisplayName(), mat.num, have));
             }
         }
 
@@ -271,8 +293,12 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
     }
 
 
-    public List<ItemStack> getMaterials() {
-        return this.mats.stream().map(x -> x.toStackForJei()).collect(Collectors.toList());
+    public List<List<ItemStack>> getMaterialsForJei() {
+        return this.mats.stream().map(CraftingMaterial::toStackForJei).collect(Collectors.toList());
+    }
+
+    public List<CraftingMaterial> getMaterials() {
+        return this.mats;
     }
 
 

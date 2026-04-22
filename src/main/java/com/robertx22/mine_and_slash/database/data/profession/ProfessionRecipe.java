@@ -57,6 +57,7 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
         var prof = ExileDB.Professions().get(profession);
 
         list.add(prof.locName().append(" ").append(TooltipUtils.level(getLevelRequirement())));
+        list.add(Component.translatable("mmorpg.jei.exp_reward", this.exp).withStyle(ChatFormatting.GREEN));
 
 
         return list;

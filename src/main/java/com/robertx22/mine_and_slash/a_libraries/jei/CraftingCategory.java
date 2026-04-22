@@ -13,6 +13,8 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.extensions.IExtendableRecipeCategory;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -87,6 +89,10 @@ public class CraftingCategory implements IExtendableRecipeCategory<ProfessionRec
         int recipeWidth = this.getWidth();
         int recipeHeight = this.getHeight();
         recipeExtension.drawInfo(recipeWidth, recipeHeight, guiGraphics, mouseX, mouseY);
+
+        Font font = Minecraft.getInstance().font;
+        Component levelText = Component.translatable("mmorpg.jei.level_requirement", recipe.getLevelRequirement());
+        guiGraphics.drawString(font, levelText, CraftingCategory.width - font.width(levelText), 0, 0xFF808080, false);
     }
 
     @Override

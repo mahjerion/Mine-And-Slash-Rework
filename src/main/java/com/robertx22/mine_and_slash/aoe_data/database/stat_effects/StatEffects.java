@@ -135,7 +135,8 @@ public class StatEffects implements ExileRegistryInit {
                     EventData.RESISTED_ALREADY,
                     EventData.CRIT,
                     EventData.PIERCE,
-                    EventData.BARRAGE
+                    EventData.BARRAGE,
+                    EventData.NOVA
             )
             , x -> new SetBooleanEffect(x)
     );

@@ -223,6 +223,20 @@ public class SpellChangeStats {
             })
             .build();
 
+    public static DataPackStatAccessor<EmptyAccessor> PROJECTILE_NOVA = DatapackStatBuilder
+            .ofSingle("projectile_nova", Elements.Physical)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
+            .addEffect(StatEffects.SET_BOOLEAN.get(EventData.NOVA))
+            .setLocName(x -> "Projectiles Nova")
+            .setLocDesc(x -> "")
+            .modifyAfterDone(x -> {
+                x.is_perc = false;
+            })
+            .build();
+
     // todo merge this into duration per spell tag
     public static DataPackStatAccessor<EmptyAccessor> SUMMON_DURATION = DatapackStatBuilder
             .ofSingle("summon_duration", Elements.Physical)

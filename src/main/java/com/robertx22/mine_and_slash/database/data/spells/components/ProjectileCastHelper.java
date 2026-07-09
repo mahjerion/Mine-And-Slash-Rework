@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.utils.geometry.MyPosition;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.AoeSelector;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.data.spells.entities.IDatapackProjectileEntity;
+import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellUtils;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
@@ -39,7 +40,7 @@ public class ProjectileCastHelper {
     public CastType castType = CastType.SPREAD_OUT_IN_RADIUS;
 
     public enum CastType {
-        SPREAD_OUT_IN_RADIUS, SPREAD_OUT_HORIZONTAL
+        SPREAD_OUT_IN_RADIUS, SPREAD_OUT_HORIZONTAL, SPREAD_OUT_CIRCLE
     }
 
     public float pitch;
@@ -73,6 +74,8 @@ public class ProjectileCastHelper {
 
         if (data.data.getBoolean(EventData.BARRAGE)) {
             this.castType = CastType.SPREAD_OUT_HORIZONTAL;
+        } else if (data.data.getBoolean(EventData.NOVA) || this.holder.getOrDefault(MapField.NOVA, false)) {
+            this.castType = CastType.SPREAD_OUT_CIRCLE;
         }
 
         Level world = caster.level();
@@ -115,6 +118,10 @@ public class ProjectileCastHelper {
                 } else if (this.castType == CastType.SPREAD_OUT_HORIZONTAL) {
                     // 1m between each projectile
                     posAdd = getSideVelocity(caster).scale(offset);
+                } else if (this.castType == CastType.SPREAD_OUT_CIRCLE) {
+                    // just spread all the projectiles in a circle and reset the pitch, so it's always horizontal
+                    multiProjYawOffset = i * (float) 360 / projectilesAmount;
+                    pitch = 0;
                 }
             }
 

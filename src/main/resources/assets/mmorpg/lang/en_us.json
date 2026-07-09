@@ -1615,6 +1615,7 @@
 	"mmorpg.stat.projectile_count": "Projectile Count",
 	"mmorpg.stat.projectile_damage": "Projectile Damage",
 	"mmorpg.stat.projectile_damage_per_5_strength": "\u00A7a[VAL1] \u00A7c\u27B9 Projectile Damage\u00A77 per 5 \u00A7b\u2605 Strength\u00A77",
+	"mmorpg.stat.projectile_nova": "Projectiles Nova",
 	"mmorpg.stat.projectile_spell_dmg": "Projectile Spell Tag Damage",
 	"mmorpg.stat.projectile_spell_dmg_taken": "Projectile Damage Taken",
 	"mmorpg.stat.ranged_cast_time": "Ranged Cast Time",
@@ -1845,22 +1846,6 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
-
-	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
-	"item.mmorpg.jewelry.necklace.gold": "Necklace",
-	"item.mmorpg.jewelry.necklace.iron": "Necklace",
-	"item.mmorpg.jewelry.ring.diamond": "Ring",
-	"item.mmorpg.jewelry.ring.gold": "Ring",
-	"item.mmorpg.jewelry.ring.iron": "Ring",
-	"item.mmorpg.omen": "Omen",
-	"item.mmorpg.weapon.staff.diamond": "Staff",
-	"item.mmorpg.weapon.staff.iron": "Staff",
-	"item.mmorpg.weapon.staff.wood": "Staff",
-
-"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
-
-
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
@@ -1875,6 +1860,22 @@
 	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
 
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+
+"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
+
+	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
+	"item.mmorpg.jewelry.necklace.gold": "Necklace",
+	"item.mmorpg.jewelry.necklace.iron": "Necklace",
+	"item.mmorpg.jewelry.ring.diamond": "Ring",
+	"item.mmorpg.jewelry.ring.gold": "Ring",
+	"item.mmorpg.jewelry.ring.iron": "Ring",
+	"item.mmorpg.omen": "Omen",
+	"item.mmorpg.weapon.staff.diamond": "Staff",
+	"item.mmorpg.weapon.staff.iron": "Staff",
+	"item.mmorpg.weapon.staff.wood": "Staff",
+
+"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",

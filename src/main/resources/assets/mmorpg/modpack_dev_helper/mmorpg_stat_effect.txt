@@ -90,6 +90,7 @@ restore_magic_shield_per_stat_data
 restore_mana_per_stat_data
 set_bool_barrage
 set_bool_crit
+set_bool_nova
 set_bool_pierce
 set_bool_resisted_already
 set_cooldown_bone_shatter20

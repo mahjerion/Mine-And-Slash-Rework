@@ -643,6 +643,7 @@ projectile_cdr
 projectile_count
 projectile_damage
 projectile_damage_per_5_strength
+projectile_nova
 projectile_spell_dmg
 projectile_spell_dmg_taken
 ranged_cast_time

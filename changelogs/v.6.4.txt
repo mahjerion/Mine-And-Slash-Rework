@@ -6,6 +6,7 @@ v.6.4.1
 - reduced potion cooldown
 - added 6 currencies to be used with ancient obelisks
 - prophecy coins no longer have tiers
+- updated skills descriptions when holding tab to also show the base value
 
 v.6.4.0
 - fixed some backend issues

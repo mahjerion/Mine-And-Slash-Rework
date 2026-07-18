@@ -28,5 +28,8 @@ public class ItemModificationSers {
     public static String REROLL_BASE_NUMBERS = "reroll_base_numbers";
     public static String EXTRACT_SOCKET = "extract_socket";
     public static String FORCE_SOUL_TAG = "force_soul_tag";
+    public static String COMMON_TO_EPIC_GUARANTEED_TAG = "common_to_epic_guaranteed_tag";
+    public static String COMMON_TO_MYTHIC_GUARANTEED_TAG = "common_to_mythic_guaranteed_tag";
+
 
 }

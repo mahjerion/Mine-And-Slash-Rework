@@ -161,6 +161,7 @@ public enum Chats implements IAutoLocName {
     TOO_LOW_LEVEL("You need to be higher level to do this"),
 
     EAT_FOOD_ERROR("[Food Eat Fail]: "),
+    DRINK_POTION_ERROR("[Potion Drink Fail]: "),
     EQUIP_AURA_ERROR("[Augment Equip Fail]: "),
     EQUIP_JEWEL_ERROR("[Jewel Equip Fail]: "),
     EQUIP_SUPP_ERROR("[Support Gem Equip Fail]: "),

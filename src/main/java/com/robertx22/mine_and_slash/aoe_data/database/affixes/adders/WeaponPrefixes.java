@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.Arrays;
 
@@ -19,7 +20,7 @@ public class WeaponPrefixes implements ExileRegistryInit {
         AffixBuilder.Normal("wep_item_flat")
                 .Named("Deadly")
                 .stats(new StatMod(10, 50, GearDamage.getInstance(), ModType.PERCENT))
-                .includesTags(SlotTags.weapon_family)
+                .includesTags(SlotTags.weapon_family, SlotTags.strength)
                 .Prefix()
                 .Build();
         AffixBuilder.Normal("wep_item_perc")
@@ -43,7 +44,7 @@ public class WeaponPrefixes implements ExileRegistryInit {
                 .add(Elements.Shadow, "Poisoned")
                 .add(Elements.Physical, "Tyrannical")
                 .stats(x -> Arrays.asList(new StatMod(5, 15, OffenseStats.ELEMENTAL_DAMAGE.get(x), ModType.FLAT)))
-                .includesTags(SlotTags.weapon_family, SlotTags.jewel_dex)
+                .includesTags(SlotTags.weapon_family, SlotTags.jewel_dex, SlotTags.intelligence)
                 .Prefix()
                 .Build();
 
@@ -70,7 +71,7 @@ public class WeaponPrefixes implements ExileRegistryInit {
         AffixBuilder.Normal("true_hit")
                 .Named("True Hit")
                 .stats(new StatMod(3, 25, OffenseStats.CRIT_CHANCE.get(), ModType.FLAT))
-                .includesTags(SlotTags.weapon_family)
+                .includesTags(SlotTags.weapon_family, SlotTags.dexterity)
                 .Prefix()
                 .Build();
 

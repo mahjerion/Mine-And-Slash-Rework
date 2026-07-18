@@ -12,6 +12,12 @@ add_tier
 add_wave
 affix_number_reroll
 base_number_reroll
+common_to_epic_with_tag_dexterity
+common_to_epic_with_tag_intelligence
+common_to_epic_with_tag_strength
+common_to_mythic_with_tag_dexterity
+common_to_mythic_with_tag_intelligence
+common_to_mythic_with_tag_strength
 common_to_runed
 corrupt_gear
 corrupt_gear_no_affix

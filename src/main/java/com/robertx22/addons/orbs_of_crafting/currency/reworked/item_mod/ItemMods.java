@@ -57,6 +57,28 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
             .ofList(ItemReqs.Datas.allMaxUses(), x -> new MaxUsesKey(x))
             .build((id, info) -> new IncrementUsesItemMod(id, info.data));
 
+    public ExileKeyMap<ItemModification, IdKey> COMMON_TO_EPIC_WITH_TAG = new ExileKeyMap<ItemModification, IdKey>(this, "common_to_epic_with_tag")
+            .ofList(Arrays.asList(
+                    new IdKey(SlotTags.intelligence.GUID()),
+                    new IdKey(SlotTags.strength.GUID()),
+                    new IdKey(SlotTags.dexterity.GUID())
+            ))
+            .build((id, info) -> {
+                var data = new CommonToEpicGuaranteedTagItemMod.Data(info.GUID());
+                return new CommonToEpicGuaranteedTagItemMod(id, data);
+            });
+
+    public ExileKeyMap<ItemModification, IdKey> COMMON_TO_MYTHIC_WITH_TAG = new ExileKeyMap<ItemModification, IdKey>(this, "common_to_mythic_with_tag")
+            .ofList(Arrays.asList(
+                    new IdKey(SlotTags.intelligence.GUID()),
+                    new IdKey(SlotTags.strength.GUID()),
+                    new IdKey(SlotTags.dexterity.GUID())
+            ))
+            .build((id, info) -> {
+                var data = new CommonToMythicGuaranteedTagItemMod.Data(info.GUID());
+                return new CommonToMythicGuaranteedTagItemMod(id, data);
+            });
+
     public ExileKey<ItemModification, KeyInfo> ADD_GEAR_LEVEL = ExileKey.ofId(this, "add_gear_level", x -> new AddGearLevelItemMod(x.GUID(), new AddGearLevelItemMod.Data(1)));
     public ExileKey<ItemModification, KeyInfo> ADD_GEAR_QUALITY = ExileKey.ofId(this, "add_gear_quality", x -> new AddQualityItemMod(x.GUID(), new AddQualityItemMod.Data(new MinMax(1, 1))));
     public ExileKey<ItemModification, KeyInfo> ADD_UP_TO_5_GEAR_QUALITY = ExileKey.ofId(this, "add_1_to_5_gear_quality", x -> new AddQualityItemMod(x.GUID(), new AddQualityItemMod.Data(new MinMax(1, 5))));

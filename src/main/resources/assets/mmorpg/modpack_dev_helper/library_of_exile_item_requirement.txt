@@ -24,6 +24,7 @@ has_implicit
 has_infusion
 has_less_than_x_waves
 has_no_enchants
+has_nothing_socketed
 has_other_implicit
 has_prefixes
 has_socketed_gem

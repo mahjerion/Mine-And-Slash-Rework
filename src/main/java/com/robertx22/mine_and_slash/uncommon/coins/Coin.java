@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.uncommon.coins;
 
 import com.robertx22.library_of_exile.registry.IGUID;
 import com.robertx22.library_of_exile.util.ExplainedResult;
-import com.robertx22.mine_and_slash.database.data.profession.LeveledItem;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.network.chat.Component;
@@ -23,11 +22,6 @@ public class Coin implements IGUID {
             var map = Load.mapAt(p.level(), p.blockPosition());
             if (map == null) {
                 return ExplainedResult.failure(Component.literal("Need to be in a Map to check."));
-            }
-            var range = LeveledItem.getTier(stack);
-
-            if (!range.levelRange.isLevelInRange(map.map.getLevel())) {
-                return ExplainedResult.failure(Component.literal("Coin not usable in this map - wrong level range."));
             }
             return ExplainedResult.success(Component.literal("Usable Coin"));
         }

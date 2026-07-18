@@ -130,6 +130,12 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
             return text;
         }
 
+        int baseVal = getCalculatedBaseValue(en, provider);
+        if (baseVal > 0) {
+            text.append(" ").append(Words.BASE_SPELL_DAMAGE.locName(baseVal));
+        }
+
+
         stat_scalings.forEach(x -> {
             text.append(" ").append(x.GetStatTooltipString(en, provider));
         });

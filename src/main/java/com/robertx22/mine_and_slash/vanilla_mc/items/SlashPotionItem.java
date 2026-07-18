@@ -11,14 +11,17 @@ import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.LeveledItemBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.NameBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
+import com.robertx22.mine_and_slash.gui.texts.textblocks.RequirementBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.ProfessionDropSourceBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.usableitemblocks.UsageBlock;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourcesData;
+import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
+import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.HealthUtils;
@@ -76,13 +79,15 @@ public class SlashPotionItem extends AutoItem implements ICreativeTabTiered {
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
 
         int num = (int) this.type.getHealPercent(pStack);
+        int minLevel = LeveledItem.getTier(pStack).levelRange.getMinLevel();
+
         pTooltipComponents.clear();
         pTooltipComponents.addAll(new ExileTooltips()
                 .accept(new NameBlock(pStack.getHoverName()))
                 .accept(new RarityBlock(getRarity()))
+                .accept(new RequirementBlock(minLevel))
                 .accept(new ProfessionDropSourceBlock(Professions.ALCHEMY))
                 .accept(new UsageBlock(Collections.singletonList(Itemtips.Restores.locName(Component.literal(num + "%").withStyle(ChatFormatting.GREEN), this.type.name).withStyle(ChatFormatting.GRAY))))
-                .accept(new LeveledItemBlock(pStack))
                 .accept(new UsageBlock(Collections.singletonList(Words.COOLDOWN.locName(Component.literal(getCooldownTicks() / 20 + "").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GOLD))))
                 .release());
 
@@ -101,6 +106,12 @@ public class SlashPotionItem extends AutoItem implements ICreativeTabTiered {
     }
 
     public boolean handlePotionRestore(Player p, ItemStack stack) {
+        int itemLevel = LeveledItem.getLevel(stack);
+        if (itemLevel > Load.Unit(p).getLevel()) {
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.DRINK_POTION_ERROR, Chats.TOO_LOW_LEVEL));
+            return false;
+        }
+
         boolean b = type.restoreResource(p, stack, this);
         if (b) {
             type.getSameTypePotions().forEach(x -> p.getCooldowns().addCooldown(x, getCooldownTicks()));
@@ -111,7 +122,7 @@ public class SlashPotionItem extends AutoItem implements ICreativeTabTiered {
     }
 
     public int getCooldownTicks() {
-        return 20 * 30;
+        return 20 * 10;
     }
 
 

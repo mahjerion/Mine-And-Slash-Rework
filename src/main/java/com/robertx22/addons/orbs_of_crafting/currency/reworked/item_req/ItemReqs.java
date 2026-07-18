@@ -86,6 +86,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKey<ItemRequirement, KeyInfo> HAS_GEM_SOCKETED = ExileKey.ofId(this, "has_socketed_gem", x -> new HasSocketedReq(x.GUID(), ExtractSocketItemMod.SocketedType.GEM));
     public ExileKey<ItemRequirement, KeyInfo> HAS_RUNE_SOCKETED = ExileKey.ofId(this, "has_socketed_rune", x -> new HasSocketedReq(x.GUID(), ExtractSocketItemMod.SocketedType.RUNE));
     public ExileKey<ItemRequirement, KeyInfo> HAS_HIGHER_RARITY = ExileKey.ofId(this, "has_higher_rar", x -> new HasHigherRarityReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> HAS_NOTHING_SOCKETED = ExileKey.ofId(this, "has_nothing_socketed", x -> new HasNothingSocketedReq(x.GUID()));
 
 
     // maps

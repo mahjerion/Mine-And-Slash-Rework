@@ -194,6 +194,7 @@ public enum Words implements IAutoLocName {
     CASTED_TIMES_CHANNEL("Casted %1$s times during channel."),
     INSTANT_CAST("Instant Cast"),
     CAPPED_TO_WEP_DMG(" (Capped to %1$s%% of Wep-Dmg)"),
+    BASE_SPELL_DAMAGE(" (Base: %1$s)"),
 
     CAST_TIME("Cast Time: %1$ss"),
     MANA_COST("Mana Cost: %1$s"),

@@ -1,13 +1,11 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
-import com.robertx22.mine_and_slash.database.data.profession.LeveledItem;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.ItemBlueprint;
 import com.robertx22.mine_and_slash.uncommon.coins.Coin;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.LootType;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
 import net.minecraft.world.item.ItemStack;
 
 public class ProphecyCoinLootGen extends BaseLootGen<ItemBlueprint> {
@@ -47,7 +45,7 @@ public class ProphecyCoinLootGen extends BaseLootGen<ItemBlueprint> {
     @Override
     public ItemStack generateOne() {
         ItemStack s = new ItemStack(Coin.PROPHECY.getItem());
-        LeveledItem.setTier(s, LevelUtils.levelToTier(info.level));
+        // LeveledItem.setTier(s, LevelUtils.levelToTier(info.level));
         return s;
     }
 

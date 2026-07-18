@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.uncommon.coins;
 
 import com.robertx22.mine_and_slash.database.data.profession.ICreativeTabTiered;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
-import com.robertx22.mine_and_slash.gui.texts.textblocks.LeveledItemBlock;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.AutoItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -32,7 +31,7 @@ public class CoinItem extends AutoItem implements ICreativeTabTiered {
         try {
             // todo need info for each coin type
             //  pTooltipComponents.add(coin.validator.isCoinValid(ClientOnly.getPlayer(), pStack).answer);
-            pTooltipComponents.addAll(new ExileTooltips().accept(new LeveledItemBlock(pStack)).release());
+            //  pTooltipComponents.addAll(new ExileTooltips().accept(new LeveledItemBlock(pStack)).release());
         } catch (Exception e) {
             e.printStackTrace();
         }

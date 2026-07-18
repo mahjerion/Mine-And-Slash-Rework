@@ -13,7 +13,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 
+import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -25,6 +28,7 @@ public class SummonBlockAction extends SpellAction {
     }
 
     static int SEARCH = 10;
+    static double SAME_NAME_RADIUS = 10D;
 
 
     static boolean isSolid(Level level, BlockPos pos) {
@@ -97,6 +101,11 @@ public class SummonBlockAction extends SpellAction {
 
 
         if (found) {
+            if (data.getOrDefault(MapField.DELETE_SAME_NAME, false)) {
+                String entityName = data.getOrDefault(MapField.ENTITY_NAME, Spell.DEFAULT_EN_NAME);
+                removeDuplicateNamedBlocks(ctx.world, pos, entityName);
+            }
+
             StationaryFallingBlockEntity be = new StationaryFallingBlockEntity(ctx.world, pos.asBlockPos(), block.defaultBlockState());
             be.getEntityData().set(StationaryFallingBlockEntity.IS_FALLING, data.getOrDefault(MapField.IS_BLOCK_FALLING, false));
             SpellUtils.initSpellEntity(be, ctx.caster, ctx.calculatedSpellData, data);
@@ -105,6 +114,27 @@ public class SummonBlockAction extends SpellAction {
         }
 
 
+    }
+
+    static void removeDuplicateNamedBlocks(Level level, MyPosition pos, String entityName) {
+        if (entityName == null || entityName.isEmpty()) {
+            return;
+        }
+
+        AABB area = new AABB(
+                pos.x() - SAME_NAME_RADIUS, pos.y() - SAME_NAME_RADIUS, pos.z() - SAME_NAME_RADIUS,
+                pos.x() + SAME_NAME_RADIUS, pos.y() + SAME_NAME_RADIUS, pos.z() + SAME_NAME_RADIUS
+        );
+
+        List<StationaryFallingBlockEntity> nearby = level.getEntitiesOfClass(
+                StationaryFallingBlockEntity.class,
+                area,
+                e -> entityName.equals(e.getEntityName())
+        );
+
+        for (StationaryFallingBlockEntity old : nearby) {
+            old.remove(Entity.RemovalReason.DISCARDED);
+        }
     }
 
     public MapHolder create(Block block, Double lifespan) {

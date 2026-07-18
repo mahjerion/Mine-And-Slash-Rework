@@ -10,6 +10,9 @@ affix_reroll_all
 affix_tier_up_down
 base_number_reroll
 chaos_orb
+common_to_epic_with_tag_dexterity
+common_to_epic_with_tag_intelligence
+common_to_epic_with_tag_strength
 common_to_runed
 enchant_reroll
 entangled_affix_upgrade
@@ -39,6 +42,9 @@ map_rarity_upgrade
 mirror
 orb_of_quality
 orb_of_relief
+perfected_orb_with_tag_dexterity
+perfected_orb_with_tag_intelligence
+perfected_orb_with_tag_strength
 prefix_number_reroll
 prefix_reroll_all
 sharpening_stone_0

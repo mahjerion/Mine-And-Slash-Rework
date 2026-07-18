@@ -193,6 +193,10 @@ public class StationaryFallingBlockEntity extends FallingBlockEntity implements 
         return entityData.get(ENTITY_NAME);
     }
 
+    public String getEntityName() {
+        return entityData.get(ENTITY_NAME);
+    }
+
     @Override
     public void init(LivingEntity caster, CalculatedSpellData data, MapHolder holder) {
         this.spellData = data;

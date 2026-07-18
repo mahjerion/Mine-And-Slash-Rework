@@ -20,10 +20,7 @@ import com.robertx22.mine_and_slash.saveclasses.item_classes.tooltips.TooltipSta
 import com.robertx22.mine_and_slash.saveclasses.item_classes.tooltips.TooltipStatWithContext;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -113,8 +110,14 @@ public class AffixData implements IRerollable, IStatsContainer {
     public void RerollNumbers() {
 
         var minmax = getMinMax();
-
         p = minmax.random();
+
+    }
+
+    public void RerollNumbersMax() {
+
+        var minmax = getMinMax();
+        p = minmax.max;
 
     }
 
@@ -201,6 +204,26 @@ public class AffixData implements IRerollable, IStatsContainer {
 
     }
 
+    public static AffixData rollGuaranteedTagAffix(GearItemData gear, String tagGuid) {
+
+        FilterListWrap<Affix> list = ExileDB.Affixes()
+                .getFilterWrapped(x -> (x.type == Affix.AffixSlot.prefix || x.type == Affix.AffixSlot.suffix)
+                        && gear.canGetAffix(x)
+                        && x.getAllTagReq().contains(tagGuid));
+
+        if (list.list.isEmpty()) {
+            return null; // no affix anywhere carries this tag — caller handles fallback
+        }
+
+        Affix affix = list.random();
+
+        AffixData data = new AffixData(affix.type); // slot type comes from the affix we found, not a coin flip
+        data.randomizeTier(gear.getRarity());
+        data.create(gear, affix);
+
+        return data;
+    }
+
 
     // this is kinda simplified.. but might be fine
 
@@ -215,5 +238,19 @@ public class AffixData implements IRerollable, IStatsContainer {
         this.rar = RandomUtils.weightedRandom(list).obj.GUID();
 
 
+    }
+    public void setMaxPossibleTier(GearRarity gearRarity) {
+
+        var eligible = ExileDB.GearRarities()
+                .getFilterWrapped(x -> !x.is_unique_item && gearRarity.item_tier >= x.item_tier)
+                .list;
+
+        GearRarity highest = eligible.stream()
+                .max(Comparator.comparingInt(x -> x.item_tier))
+                .orElse(null);
+
+        if (highest != null) {
+            this.rar = highest.GUID();
+        }
     }
 }

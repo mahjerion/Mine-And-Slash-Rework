@@ -43,7 +43,9 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
 
 
     public HarvestCurrencies HARVEST = new HarvestCurrencies(this);
+    public AncientObeliskCurrencies OBELISK = new AncientObeliskCurrencies(this);
     public JewelCurrencies JEWEL = new JewelCurrencies(this);
+    public SkillCurrencies SKILL = new SkillCurrencies(this);
 
 
     public ExileKeyMap<ExileCurrency, NamedKey> FORCE_SOUL_TAGS = new ExileKeyMap<ExileCurrency, NamedKey>(this, "force_soul_tag")
@@ -75,67 +77,6 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
                         .weight(0)
                         .buildCurrency(this);
             });
-
-    public ExileKeyMap<ExileCurrency, NamedKey> COMMON_TO_EPIC_WITH_TAG = new ExileKeyMap<ExileCurrency, NamedKey>(this, "common_to_epic_with_tag")
-            .ofList(Arrays.asList(
-                    new NamedKey(SlotTags.intelligence.GUID(), "Intelligence"),
-                    new NamedKey(SlotTags.strength.GUID(), "Strength"),
-                    new NamedKey(SlotTags.dexterity.GUID(), "Dexterity")
-            ))
-            .build((id, info) -> {
-
-                String currencyName;
-                if (info.GUID().equals(SlotTags.intelligence.GUID())) {
-                    currencyName = "Orb of the Aegis";
-                } else if (info.GUID().equals(SlotTags.strength.GUID())) {
-                    currencyName = "Orb of the Bulwark";
-                } else if (info.GUID().equals(SlotTags.dexterity.GUID())) {
-                    currencyName = "Orb of the Phantom";
-                } else {
-                    currencyName = info.name + " Orb of Epiphany";
-                }
-
-                return ExileCurrency.Builder.of(id, currencyName, ItemReqs.INSTANCE.IS_GEAR)
-                        .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
-                        .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-                        .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
-                        .rarity(IRarity.EPIC_ID)
-                        .addAlwaysUseModification(ItemMods.INSTANCE.COMMON_TO_EPIC_WITH_TAG.get(info))
-                        .potentialCost(15)
-                        .weight(0)
-                        .buildCurrency(this);
-            });
-
-    public ExileKeyMap<ExileCurrency, NamedKey> PERFECTED_ORB_WITH_TAG = new ExileKeyMap<ExileCurrency, NamedKey>(this, "perfected_orb_with_tag")
-            .ofList(Arrays.asList(
-                    new NamedKey(SlotTags.intelligence.GUID(), "Intelligence"),
-                    new NamedKey(SlotTags.strength.GUID(), "Strength"),
-                    new NamedKey(SlotTags.dexterity.GUID(), "Dexterity")
-            ))
-            .build((id, info) -> {
-
-                String currencyName;
-                if (info.GUID().equals(SlotTags.intelligence.GUID())) {
-                    currencyName = "Perfected Orb of the Aegis";
-                } else if (info.GUID().equals(SlotTags.strength.GUID())) {
-                    currencyName = "Perfected Orb of the Bulwark";
-                } else if (info.GUID().equals(SlotTags.dexterity.GUID())) {
-                    currencyName = "Perfected Orb of the Phantom";
-                } else {
-                    currencyName = "Perfected " + info.name + " Orb";
-                }
-
-                return ExileCurrency.Builder.of(id, currencyName, ItemReqs.INSTANCE.IS_GEAR)
-                        .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
-                        .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-                        .addRequirement(ItemReqs.INSTANCE.IS_RARITY.get(new RarityKeyInfo(IRarity.COMMON_ID)))
-                        .rarity(IRarity.MYTHIC_ID)
-                        .addAlwaysUseModification(ItemMods.INSTANCE.COMMON_TO_MYTHIC_WITH_TAG.get(info))
-                        .potentialCost(25)
-                        .weight(0)
-                        .buildCurrency(this);
-            });
-
 
     public ExileKey<ExileCurrency, IdKey> CORRUPT_GEAR = ExileCurrency.Builder.of("chaos_orb", "Orb of Chaos", ItemReqs.INSTANCE.IS_GEAR)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)

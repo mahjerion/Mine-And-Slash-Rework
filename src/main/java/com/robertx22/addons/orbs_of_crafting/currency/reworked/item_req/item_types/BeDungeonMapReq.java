@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class BeDungeonMapReq extends BeItemTypeRequirement {
     public BeDungeonMapReq(String id) {
-        super(id, "Must be a Dungeon Map Item");
+        super(id, "Must be an Adventure Map Item");
     }
 
     @Override

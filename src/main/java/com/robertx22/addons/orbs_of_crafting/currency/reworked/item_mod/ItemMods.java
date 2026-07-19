@@ -8,6 +8,8 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.jewel.CorruptJewelItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.jewel.UpgradeJewelAffixRarityMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.map.UpgradeMapRarityItemMod;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.skill_gem.RerollSkillGemStatsItemMod;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.skill_gem.UpgradeSkillGemRarityItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.soul.ForceGearSlotSoulMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
@@ -117,6 +119,9 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
     // jewels
     public ExileKey<ItemModification, KeyInfo> UPGRADE_JEWEL_AFFIX_RARITY = ExileKey.ofId(this, "upgrade_jewel_affix_rarity", x -> new UpgradeJewelAffixRarityMod(x.GUID(), UpgradeAffixItemMod.AffixFinder.RANDOM_AFFIX.get()));
 
+    // skill gems
+    public ExileKey<ItemModification, KeyInfo> UPGRADE_SKILL_GEM_RARITY = ExileKey.ofId(this, "upgrade_skill_gem_rarity", x -> new UpgradeSkillGemRarityItemMod(x.GUID()));
+    public ExileKey<ItemModification, KeyInfo> REROLL_SKILL_GEM_STATS = ExileKey.ofId(this, "reroll_skill_gem_stats", x -> new RerollSkillGemStatsItemMod(x.GUID()));
 
     // any
 

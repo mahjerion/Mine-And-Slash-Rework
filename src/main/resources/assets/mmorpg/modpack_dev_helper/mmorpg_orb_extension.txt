@@ -9,3 +9,6 @@ harvest_essence_1
 harvest_essence_2
 harvest_essence_3
 harvest_essence_4
+perfected_orb_with_tag_dexterity
+perfected_orb_with_tag_intelligence
+perfected_orb_with_tag_strength

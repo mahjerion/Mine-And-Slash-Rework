@@ -22,6 +22,8 @@ public class ItemModificationSers {
     public static String REROLL_INFUSION = "reroll_infusion";
     public static String UPGRADE_MAP_RARITY = "upgrade_map_rarity";
     public static String JEWEL_CORRUPT = "corrupt_jewel";
+    public static String UPGRADE_SKILL_GEM_RARITY = "upgrade_skill_gem_rarity";
+    public static String REROLL_SKILL_GEM_STATS = "reroll_skill_gem_stats";
     public static String REROLL_AFFIX_NUMBERS = "reroll_affix_numbers";
     public static String REROLL_IMPLICIT_NUMBERS = "reroll_implicit_numbers";
     public static String REROLL_IMPLICIT_AFFIX = "reroll_implicit_affix";

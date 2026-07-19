@@ -40,6 +40,8 @@ increment_uses_level_up
 increment_uses_random_mythic_affix
 increment_uses_relief
 increment_uses_sharpening_stone
+increment_uses_skill_gem_rarity_upgrade
+increment_uses_skill_gem_stat_reroll
 increment_uses_sure_jewel_up
 jewel_corrupt
 map_rarity_upgrade
@@ -53,6 +55,7 @@ reroll_infusion
 reroll_lowest_affix
 reroll_random_affix
 reroll_random_affix_to_mythic
+reroll_skill_gem_stats
 set_lowest_affix_rar_common
 set_lowest_affix_rar_epic
 set_lowest_affix_rar_legendary
@@ -73,6 +76,7 @@ up_corrupt_affix
 upgrade_jewel_affix_rarity
 upgrade_lowest_affix
 upgrade_random_affix
+upgrade_skill_gem_rarity
 upgrade_specific_rar_common
 upgrade_specific_rar_epic
 upgrade_specific_rar_legendary

@@ -2,15 +2,9 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req;
 
 import com.robertx22.addons.orbs_of_crafting.currency.base.ExileKeyUtil;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.ExtractSocketItemMod;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.HasCorruptAffixes;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotCorruptedReq;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.IsNotMirroredReq;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.MaximumUsesReq;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.custom.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.gear.*;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeDungeonMapReq;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeGearReq;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeJewelReq;
-import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.BeSoulReq;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.item_types.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.jewel.JewelHasAffixesReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.map.MapHasHigherRarityReq;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.map.MapIsRarityReq;
@@ -23,7 +17,6 @@ import com.robertx22.library_of_exile.registry.helpers.KeyInfo;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
-import com.robertx22.orbs_of_crafting.register.reqs.IsAnyReq;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 
 import java.util.Arrays;
@@ -46,7 +39,8 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
         public static MaximumUsesReq.Data MAX_JEWEL_UPGRADE_USES = new MaximumUsesReq.Data("sure_jewel_up", 3);
 
         public static List<MaximumUsesReq.Data> allMaxUses() {
-            return Arrays.asList(MAX_RELIEF_USES, MAX_JEWEL_UPGRADE_USES, MAX_LEVEL_USES, RANDOM_MYTHIC_AFFIX, MAX_SHARPENING_STONE_USES);
+            return Arrays.asList(MAX_RELIEF_USES, MAX_JEWEL_UPGRADE_USES, MAX_LEVEL_USES, RANDOM_MYTHIC_AFFIX,
+                    MAX_SHARPENING_STONE_USES);
         }
     }
 
@@ -67,9 +61,13 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKeyMap<ItemRequirement, MaxUsesKey> MAXIMUM_USES = new ExileKeyMap<ItemRequirement, MaxUsesKey>(this, "max_uses")
             .ofList(Datas.allMaxUses(), x -> new MaxUsesKey(x))
             .build((id, info) -> new MaximumUsesReq(id, info.data));
+    public ExileKeyMap<ItemRequirement, RarityKeyInfo> IS_SKILL_GEM_RARITY = new ExileKeyMap<ItemRequirement, RarityKeyInfo>(this, "is_skill_gem_rarity")
+            .ofList(ExileKeyUtil.ofGearRarities())
+            .build((id, info) -> new IsSkillGemRarityReq(id, new IsSkillGemRarityReq.Data(info.rar)));
 
 
     public ExileKey<ItemRequirement, KeyInfo> LEVEL_NOT_MAX = ExileKey.ofId(this, "lvl_not_max", x -> new LevelNotMaxReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> LEVEL_AT_LEAST_50 = ExileKey.ofId(this, "lvl_is_50", x -> new LevelAtLeastReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_AFFIXES = ExileKey.ofId(this, "has_affixes", x -> new MustHaveAffixesReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_PREFIXES = ExileKey.ofId(this, "has_prefixes", x -> new MustHavePrefixesReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_SUFFIXES = ExileKey.ofId(this, "has_suffixes", x -> new MustHaveSuffixesReq(x.GUID()));
@@ -96,14 +94,15 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
 
     // any
     public ExileKey<ItemRequirement, KeyInfo> IS_COMMON_OR_UNCOMMON = ExileKey.ofId(this, "is_common_or_uncommon",
-            x -> new IsAnyReq(
+            x -> new SlashIsAnyReq(
                     x.GUID(),
-                    new IsAnyReq.Data(Arrays.asList(
+                    new SlashIsAnyReq.Data(Arrays.asList(
                             IS_RARITY.getId(new RarityKeyInfo(IRarity.COMMON_ID)),
                             IS_RARITY.getId(new RarityKeyInfo(IRarity.UNCOMMON))
                     )),
                     "Must be Common Or Uncommon")
     );
+    public ExileKey<ItemRequirement, KeyInfo> IS_SKILL_GEM_COMMON_OR_UNCOMMON = ExileKey.ofId(this, "is_skill_gem_common_or_uncommon", x -> new IsSkillGemCommonOrUncommonReq(x.GUID()));
 
     // nones
 
@@ -116,6 +115,8 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKey<ItemRequirement, KeyInfo> IS_JEWEL = ExileKey.ofId(this, "is_jewel", x -> new BeJewelReq());
     public ExileKey<ItemRequirement, KeyInfo> IS_GEAR = ExileKey.ofId(this, "is_gear", x -> new BeGearReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_MAP = ExileKey.ofId(this, "is_map", x -> new BeDungeonMapReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> IS_AURA_GEM = ExileKey.ofId(this, "is_aura_gem", x -> new BeAuraGemReq());
+    public ExileKey<ItemRequirement, KeyInfo> IS_SUPPORT_GEM = ExileKey.ofId(this, "is_support_gem", x -> new BeSupportGemReq());
 
 
     @Override

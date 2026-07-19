@@ -31,6 +31,7 @@ has_socketed_gem
 has_socketed_rune
 has_suffixes
 is_armor
+is_aura_gem
 is_common
 is_common_or_uncommon
 is_damaged
@@ -49,7 +50,17 @@ is_pickaxe_tag
 is_rare
 is_runeword
 is_single_item
+is_skill_gem_common_or_uncommon
+is_skill_gem_rarity_common
+is_skill_gem_rarity_epic
+is_skill_gem_rarity_legendary
+is_skill_gem_rarity_mythic
+is_skill_gem_rarity_rare
+is_skill_gem_rarity_runeword
+is_skill_gem_rarity_uncommon
+is_skill_gem_rarity_unique
 is_soul
+is_support_gem
 is_sword_tag
 is_tool_tag
 is_uncommon
@@ -57,6 +68,7 @@ is_under_20_quality
 is_under_21_quality
 is_unique
 jewel_has_affixes
+lvl_is_50
 lvl_not_max
 map_has_higher_rar
 map_is_mythic
@@ -64,6 +76,8 @@ max_uses_level_up
 max_uses_random_mythic_affix
 max_uses_relief
 max_uses_sharpening_stone
+max_uses_skill_gem_rarity_upgrade
+max_uses_skill_gem_stat_reroll
 max_uses_sure_jewel_up
 not_crafted_gear
 obelisk_spawnrate_cap

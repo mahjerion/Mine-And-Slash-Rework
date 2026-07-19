@@ -3,6 +3,7 @@ package com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req;
 public class ItemReqSers {
 
     public static String LVL_NOT_MAX = "lvl_not_max";
+    public static String LVL_IS_50 = "lvl_is_50";
     public static String MAX_USES = "max_uses";
     public static String IS_RARITY = "is_rarity";
     public static String HAS_AFFIXES = "has_affixes";

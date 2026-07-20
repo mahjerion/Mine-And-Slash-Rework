@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.GearBlueprint;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.LootType;
+import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.GemItem;
 import net.minecraft.world.item.ItemStack;
 
 public class GemLootGen extends BaseLootGen<GearBlueprint> {
@@ -35,8 +36,10 @@ public class GemLootGen extends BaseLootGen<GearBlueprint> {
         return droppableAtLevel(this.info.level).random().getItem().getDefaultInstance();
     }
 
+    // Pinnacle-tier gems are excluded here explicitly (not just left to their weight=0) - they
+    // must only ever come from PinnacleGemLootGen, never the normal per-kill pool
     public static FilterListWrap<Gem> droppableAtLevel(int lvl) {
-        return ExileDB.Gems().getFilterWrapped(x -> lvl >= x.getReqLevelToDrop());
+        return ExileDB.Gems().getFilterWrapped(x -> lvl >= x.getReqLevelToDrop() && x.tier < GemItem.GemRank.PINNACLE.tier);
     }
 
 }

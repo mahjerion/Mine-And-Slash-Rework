@@ -5,6 +5,7 @@ common
 epic
 legendary
 mythic
+pinnacle
 rare
 summon
 uber

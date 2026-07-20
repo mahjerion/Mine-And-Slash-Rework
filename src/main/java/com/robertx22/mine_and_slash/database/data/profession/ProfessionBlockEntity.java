@@ -290,6 +290,9 @@ public class ProfessionBlockEntity extends BlockEntity {
         if (recipe.getLevelRequirement() > ownerLvl) {
             return ExplainedResult.failure(Chats.PROF_RECIPE_LEVEL_NOT_ENOUGH.locName(getProfession().locName(), recipe.getLevelRequirement(), ownerLvl));
         }
+        if (recipe.requires_pinnacle_unlock && !Load.player(p).atlas.pinnacleUnlocked) {
+            return ExplainedResult.failure(Chats.PROF_RECIPE_NEEDS_PINNACLE_UNLOCK.locName());
+        }
 
         float expMulti = 1;
 

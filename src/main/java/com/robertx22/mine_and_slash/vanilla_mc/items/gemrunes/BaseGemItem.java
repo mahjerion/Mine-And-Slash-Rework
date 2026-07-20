@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
+import com.robertx22.mine_and_slash.gui.texts.textblocks.AdditionalBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.OperationTipBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.RarityBlock;
 import com.robertx22.mine_and_slash.gui.texts.textblocks.StatBlock;
@@ -41,6 +42,10 @@ public abstract class BaseGemItem extends Item {
     public abstract float getStatValueMulti();
 
     public abstract List<StatMod> getStatModsForSerialization(SlotFamily family);
+
+    public boolean isCraftable() {
+        return true;
+    }
 
     public List<OptScaleExactStat> getStatsForSerialization(SlotFamily family) {
 
@@ -108,12 +113,17 @@ public abstract class BaseGemItem extends Item {
         });
         t.accept(WorksOnBlock.usableOn(WorksOnBlock.ItemType.GEAR));
 
-        t.accept(new UsageBlock(Arrays.asList(Itemtips.GEM_ITEM_USAGE.locName().withStyle(ChatFormatting.BLUE))));
-        t.accept(new DropLevelBlock(gem.getReqLevelToDrop(), GameBalanceConfig.get().MAX_LEVEL));
+        var usage = isCraftable() ? Itemtips.GEM_ITEM_USAGE : Itemtips.GEM_ITEM_USAGE_NOT_CRAFTABLE;
+        t.accept(new UsageBlock(Arrays.asList(usage.locName().withStyle(ChatFormatting.BLUE))));
         t.accept(new OperationTipBlock().setAlt().setShift());
 
-        var lvl = Load.Unit(ClientOnly.getPlayer()).getLevel();
-        t.accept(new DropChanceBlock(GemLootGen.droppableAtLevel(lvl).getDropChance(gem)));
+        if (this.weight > 0) {
+            t.accept(new DropLevelBlock(gem.getReqLevelToDrop(), GameBalanceConfig.get().MAX_LEVEL));
+            var lvl = Load.Unit(ClientOnly.getPlayer()).getLevel();
+            t.accept(new DropChanceBlock(GemLootGen.droppableAtLevel(lvl).getDropChance(gem)));
+        } else {
+            t.accept(new AdditionalBlock(Itemtips.PINNACLE_GEM_DROP_INFO.locName().withStyle(ChatFormatting.BLUE)));
+        }
         return t.release();
     }
 

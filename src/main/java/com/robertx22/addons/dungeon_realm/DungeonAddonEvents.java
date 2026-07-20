@@ -1,12 +1,14 @@
 package com.robertx22.addons.dungeon_realm;
 
 import com.robertx22.dungeon_realm.api.*;
+import com.robertx22.dungeon_realm.database.DungeonDatabase;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
@@ -26,7 +28,11 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.OnScreenMessageUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -71,6 +77,15 @@ public class DungeonAddonEvents {
             public void accept(SpawnUberEvent event) {
                 LivingEntity en = event.uberBoss;
                 Load.Unit(en).setRarity(IRarity.UBER);
+                Load.Unit(en).recalcStats_DONT_CALL();
+            }
+        });
+
+        DungeonExileEvents.ON_SPAWN_PINNACLE_BOSS.register(new EventConsumer<SpawnPinnacleEvent>() {
+            @Override
+            public void accept(SpawnPinnacleEvent event) {
+                LivingEntity en = event.pinnacleBoss;
+                Load.Unit(en).setRarity(IRarity.PINNACLE);
                 Load.Unit(en).recalcStats_DONT_CALL();
             }
         });
@@ -181,6 +196,20 @@ public class DungeonAddonEvents {
                         if (pd.atlas.markCompleted(node)) {
                             pd.points.get(PlayerPointsType.ATLAS).giveBonusPoints(node.atlas_points_reward);
                             pd.playerDataSync.setDirty();
+
+                            if (node.is_pinnacle_unlock && !pd.atlas.pinnacleUnlocked) {
+                                boolean allDone = DungeonDatabase.AtlasNodes().getList().stream()
+                                        .filter(n -> n.is_pinnacle_unlock)
+                                        .allMatch(n -> pd.atlas.isCompleted(n.id));
+                                if (allDone) {
+                                    pd.atlas.pinnacleUnlocked = true;
+                                    pd.playerDataSync.setDirty();
+                                    OnScreenMessageUtils.sendMessage((ServerPlayer) p,
+                                            Component.literal("Pinnacle Unlocked").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+                                            Component.literal("You may now craft a Pinnacle Upgrade").withStyle(ChatFormatting.GRAY));
+                                    SoundUtils.playSound(p.level(), p.blockPosition(), SoundEvents.WITHER_SPAWN);
+                                }
+                            }
                         }
                     }
                 }

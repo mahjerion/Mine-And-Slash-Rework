@@ -31,11 +31,17 @@ public class AtlasGridPoint {
 
         this.point = new PointData(x, y);
 
-        // checked before the length==1/[CENTER] checks below - unlike Perk ids, AtlasNode ids
+        // checked before the length<=2/[CENTER] checks below - unlike Perk ids, AtlasNode ids
         // can be as short as 2 characters (e.g. "it"), so a length heuristic isn't reliable here
         if (DungeonDatabase.AtlasNodes().isRegistered(id)) {
             this.isNode = true;
-        } else if (id.length() == 1) {
+        } else if (id.length() <= 2 && !id.isEmpty()) {
+            // 1-2 character tokens are connectors. A single character only gives 36 truly-unique
+            // values after the toLowerCase() above collapses case (26 letters + 10 digits) - not
+            // enough once the tree has hundreds of edges, each of which needs its own token to stay
+            // unambiguous (a shared token is only safe if its cells never come within reach of an
+            // unrelated edge's same-token cells - not practical to guarantee by hand at that scale).
+            // 2 characters gives 900+ combinations, comfortably enough for one unique token per edge.
             this.isConnector = true;
         } else if (id.equalsIgnoreCase(CENTER_ID)) {
             this.isCenter = true;

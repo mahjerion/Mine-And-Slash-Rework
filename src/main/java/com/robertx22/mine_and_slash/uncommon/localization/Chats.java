@@ -191,6 +191,7 @@ public enum Chats implements IAutoLocName {
     PROF_RECIPE_NOT_SELECTED("You did not select any recipe!"),
     PROF_OUTPUT_SLOT_NOT_EMPTY("Needs at least 1 empty Output slot."),
     PROF_RECIPE_LEVEL_NOT_ENOUGH("This Recipe requires %1$s level %2$s. But your profession level is only %3$s"),
+    PROF_RECIPE_NEEDS_PINNACLE_UNLOCK("This Recipe requires unlocking the Pinnacle boss on your Atlas first"),
     GEAR_DROP("You do not meet the requirements of that item."),
     COMMAND_BLOCK_UNAVALIABLE("Command blocks are disabled, this will stop you from playing Mine and slash Dungeons!"),
     HOW_TO_ENABLE_COMMAND_BLOCK("To enable go to your server.properties file and put enable-command-block as true."),

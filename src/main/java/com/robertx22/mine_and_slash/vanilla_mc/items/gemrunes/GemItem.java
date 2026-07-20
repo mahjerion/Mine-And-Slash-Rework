@@ -108,6 +108,11 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
     }
 
     @Override
+    public boolean isCraftable() {
+        return this.gemRank.lower() != null;
+    }
+
+    @Override
     public List<StatMod> getStatModsForSerialization(SlotFamily family) {
         return gemType.stats.getFor(family);
     }
@@ -367,7 +372,11 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
         REGULAR("Regular", 3, 0.4F, 25, 1000, 0.5F, IRarity.RARE_ID),
         GRAND("Grand", 4, 0.6F, 10, 200, 0.75F, IRarity.EPIC_ID),
         GLORIOUS("Glorious", 5, 0.8F, 5, 25, 0.9F, IRarity.LEGENDARY_ID),
-        DIVINE("Divine", 6, 1F, 0, 1, 0.95F, IRarity.MYTHIC_ID);
+        DIVINE("Divine", 6, 1F, 0, 1, 0.95F, IRarity.MYTHIC_ID),
+        // only drops from Pinnacle boss kills (see PinnacleGemLootGen) - never in the normal loot
+        // pool (weight 0, and hard-excluded in GemLootGen regardless) and never craftable (lower()
+        // below returns null for this rank specifically, suppressing the usual 3x-lower-tier recipe)
+        PINNACLE("Pinnacle", 7, 1.15F, 0, 0, 1F, IRarity.MYTHIC_ID);
 
         public String rar;
         public String locName;
@@ -400,6 +409,9 @@ public class GemItem extends BaseGemItem implements IGUID, IAutoModel, IItemAsCu
         }
 
         public GemRank lower() {
+            if (this == PINNACLE) {
+                return null; // no crafting-up recipe - only obtainable from a Pinnacle boss kill
+            }
             for (GemRank gr : GemRank.values()) {
                 if (gr.tier == (tier - 1)) {
                     return gr;

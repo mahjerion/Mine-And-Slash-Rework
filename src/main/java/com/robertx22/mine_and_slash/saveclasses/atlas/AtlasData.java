@@ -11,6 +11,7 @@ public class AtlasData {
 
     public Set<String> unlockedNodes = new HashSet<>();
     public Set<String> completedNodes = new HashSet<>();
+    public boolean pinnacleUnlocked = false;
 
     private transient boolean initialized = false;
 

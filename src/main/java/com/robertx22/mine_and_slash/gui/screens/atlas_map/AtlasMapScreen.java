@@ -69,6 +69,12 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
 
     private AtlasNavButton navButton;
 
+    // computed once in init() from that AtlasNode/AtlasData snapshot - the player can't earn
+    // progress while this screen is open, so no need to recompute every frame
+    private int pinnacleDone;
+    private int pinnacleTotal;
+    private boolean pinnacleUnlocked;
+
     public AtlasMapScreen() {
         super(Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight());
     }
@@ -83,6 +89,11 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
 
         AtlasData atlas = Load.player(ClientOnly.getPlayer()).atlas;
         layout = ExileDB.AtlasNodeLayouts().getList().get(0).calcData;
+
+        var pinnacleNodes = DungeonDatabase.AtlasNodes().getList().stream().filter(n -> n.is_pinnacle_unlock).toList();
+        pinnacleTotal = pinnacleNodes.size();
+        pinnacleDone = (int) pinnacleNodes.stream().filter(n -> atlas.isCompleted(n.id)).count();
+        pinnacleUnlocked = atlas.pinnacleUnlocked;
 
         var points = layout.nodes.keySet();
 
@@ -188,6 +199,20 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         graphics.pose().scale(1F / zoom, 1F / zoom, 1F / zoom);
 
         navButton.render(graphics, mouseX, mouseY, partialTick);
+        renderPinnacleProgress(graphics);
+    }
+
+    // fixed/unzoomed corner HUD text, same treatment as navButton - not tied to any node's
+    // position so it doesn't belong inside the zoomed/scrolled tree render block
+    private void renderPinnacleProgress(GuiGraphics graphics) {
+        if (pinnacleTotal <= 0) {
+            return;
+        }
+        Component text = pinnacleUnlocked
+                ? Component.literal("Pinnacle Unlocked").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
+                : Component.literal("Pinnacle Progress: " + pinnacleDone + "/" + pinnacleTotal).withStyle(ChatFormatting.DARK_RED);
+        var font = Minecraft.getInstance().font;
+        graphics.drawString(font, text, this.width - font.width(text) - 8, 8, 0xFFFFFFFF, true);
     }
 
     // same blit shape as SkillTreeScreen.renderBackgroundDirt, pointed at the Atlas map's own texture

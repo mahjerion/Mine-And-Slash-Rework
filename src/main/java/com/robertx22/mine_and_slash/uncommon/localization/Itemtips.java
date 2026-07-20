@@ -78,6 +78,8 @@ public enum Itemtips implements IAutoLocName {
     UBER_BOSS_FRAG_TIP("Combine with More Fragments in the Crafting Table\nCreates a Map That contains an Uber Boss"),
     RUNE_ITEM_USAGE("Use on Gear with sockets to Insert\nIf same rune is already socketed, rerolls it\n\nAll Runewords are shown in the Wiki.\nUse to view craftable Runewords."),
     GEM_ITEM_USAGE("Use on Gear with sockets to Insert.\nCan also be Crafted"),
+    GEM_ITEM_USAGE_NOT_CRAFTABLE("Use on Gear with sockets to Insert."),
+    PINNACLE_GEM_DROP_INFO("Only drops from Pinnacle Boss kills."),
     STONE_REPAIRE_DURABILITY("Repairs %1$s durability."),
     NOT_A_RANDOM_MNS_DROP_CHECK_MODPACK("No normal Drop-rate, this item might be obtainable in other ways. Check your Modpack's guide."),
     SOUL_CLEANER_USAGE_AND_WARNING("Click on items to remove their soul.\nThe item remains but the stats will be deleted."),

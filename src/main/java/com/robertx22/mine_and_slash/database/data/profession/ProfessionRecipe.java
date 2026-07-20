@@ -46,6 +46,11 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
 
     public int tier = 0;
 
+    // if true, this recipe additionally requires the crafting player to have
+    // AtlasData.pinnacleUnlocked - checked in ProfessionBlockEntity alongside the normal
+    // profession-level gate, since no generic player-state requirement hook exists here otherwise
+    public boolean requires_pinnacle_unlock = false;
+
     public int getLevelRequirement() {
         return getTier().levelRange.getMinLevel();
     }
@@ -372,13 +377,20 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
 
         public void buildEachTier() {
             for (SkillItemTier tier : SkillItemTier.values()) {
-                ProfessionRecipe r = new ProfessionRecipe();
-                Data data = new Data(tier, r);
-                for (Consumer<Data> action : this.actions) {
-                    action.accept(data);
-                }
-                r.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+                buildAtTier(tier);
             }
+        }
+
+        // for recipes that shouldn't scale across every tier (e.g. a single fixed-cost endgame
+        // recipe) - builds exactly one ProfessionRecipe, at the given tier, instead of one per
+        // SkillItemTier
+        public void buildAtTier(SkillItemTier tier) {
+            ProfessionRecipe r = new ProfessionRecipe();
+            Data data = new Data(tier, r);
+            for (Consumer<Data> action : this.actions) {
+                action.accept(data);
+            }
+            r.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         }
     }
 

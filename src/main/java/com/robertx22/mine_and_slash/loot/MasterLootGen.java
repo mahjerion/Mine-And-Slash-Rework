@@ -85,6 +85,12 @@ public class MasterLootGen {
             e.printStackTrace();
         }
 
+        try {
+            items.addAll(new PinnacleGemLootGen(info).tryGenerate());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         return items.stream()
                 .filter(x -> x != null && !x.isEmpty())

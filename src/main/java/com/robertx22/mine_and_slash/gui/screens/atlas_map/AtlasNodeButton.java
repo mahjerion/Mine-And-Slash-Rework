@@ -53,10 +53,10 @@ public class AtlasNodeButton extends AbstractWidget {
         }
         if (!node.min_rarity.isEmpty()) {
             GearRarity rar = ExileDB.GearRarities().get(node.min_rarity);
-            return Component.literal("Requires ").append(rar.coloredName()).append(" rarity or higher");
+            return Component.literal("Must be at least ").append(rar.coloredName());
         }
         if (node.min_tier > 0) {
-            return Component.literal("Requires Tier " + node.min_tier + "+ map").withStyle(ChatFormatting.YELLOW);
+            return Component.literal("Must be at least Tier " + node.min_tier).withStyle(ChatFormatting.YELLOW);
         }
         return null;
     }
@@ -93,10 +93,16 @@ public class AtlasNodeButton extends AbstractWidget {
         if ((state == AtlasMapScreen.NodeState.UNLOCKED || state == AtlasMapScreen.NodeState.LOCKED) && isInside(zx, zy)) {
             MutableComponent reward = Component.literal(node.atlas_points_reward
                     + " Atlas Point" + (node.atlas_points_reward == 1 ? "" : "s") + " Available");
+            if (node.is_pinnacle_unlock) {
+                reward.append("\n").append(Component.literal("+1 Pinnacle Progress").withStyle(ChatFormatting.DARK_RED));
+            }
             Component req = describeRequirement(node);
             if (req != null) {
                 reward.append("\n").append(req);
             }
+            // orthogonal to describeRequirement (a node can both require e.g. an Uber map AND
+            // count toward the Pinnacle unlock), so it's appended separately rather than folded
+            // into that if/else-if chain
             setTooltip(Tooltip.create(reward));
 
             Screen mcScreen = Minecraft.getInstance().screen;

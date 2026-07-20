@@ -95,6 +95,7 @@ public class ServerContainer {
         RUNE_DROPRATE = b.defineInRange("rune_drop_rate", 0.5D, 0, 1000);
         CURRENCY_DROPRATE = b.defineInRange("currency_drop_rate", 1D, 0, 1000);
         WATCHER_EYE_DROPRATE = b.defineInRange("WATCHER_EYE_DROPRATE", 33D, 0, 1000);
+        PINNACLE_GEM_DROPRATE = b.defineInRange("PINNACLE_GEM_DROPRATE", 100D, 0, 1000);
         PROPHECY_COIN_DROPRATE = b.defineInRange("PROPHECY_COIN_DROPRATE", 1D, 0, 1000);
         JEWEL_DROPRATE = b.defineInRange("jewel_drop_rate", 0.25D, 0, 1000);
         LOOT_CHEST_DROPRATE = b.defineInRange("loot_chest_drop_rate", 0.1D, 0, 1000);
@@ -279,6 +280,7 @@ public class ServerContainer {
     public ForgeConfigSpec.DoubleValue CURRENCY_DROPRATE;
     public ForgeConfigSpec.DoubleValue JEWEL_DROPRATE;
     public ForgeConfigSpec.DoubleValue WATCHER_EYE_DROPRATE;
+    public ForgeConfigSpec.DoubleValue PINNACLE_GEM_DROPRATE;
     public ForgeConfigSpec.DoubleValue PROPHECY_COIN_DROPRATE;
     public ForgeConfigSpec.DoubleValue OMEN_DROPRATE;
     public ForgeConfigSpec.DoubleValue MAP_DROPRATE;

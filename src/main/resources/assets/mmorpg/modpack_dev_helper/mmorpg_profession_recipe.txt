@@ -510,6 +510,7 @@ food_uncommon_mana2
 food_uncommon_mana3
 food_uncommon_mana4
 food_uncommon_mana5
+pinnacle_upgrade5
 potion_health_00
 potion_health_01
 potion_health_02

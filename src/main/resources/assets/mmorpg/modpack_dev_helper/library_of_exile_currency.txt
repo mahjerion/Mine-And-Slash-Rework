@@ -47,6 +47,7 @@ orb_of_relief
 perfected_orb_with_tag_dexterity
 perfected_orb_with_tag_intelligence
 perfected_orb_with_tag_strength
+pinnacle_upgrade
 prefix_number_reroll
 prefix_reroll_all
 sharpening_stone_0

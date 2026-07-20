@@ -31,6 +31,7 @@ public interface IRarity {
     String MYTHIC_ID = "mythic";
     String BOSS = "boss";
     String UBER = "uber";
+    String PINNACLE = "pinnacle";
 
     public static List<String> NORMAL_GEAR_RARITIES = Arrays.asList(COMMON_ID, UNCOMMON, RARE_ID, EPIC_ID, LEGENDARY_ID, MYTHIC_ID);
 

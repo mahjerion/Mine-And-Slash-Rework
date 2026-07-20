@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.profession.all;
 
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.ExileCurrencies;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.SkillItemTierKey;
+import com.robertx22.dungeon_realm.database.holders.DungeonOrbs;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;
@@ -20,6 +21,18 @@ public class ProfessionRecipes {
         buffConsumes();
         gearCrafting();
         enchanting();
+        pinnacleUpgrade();
+    }
+
+    // 4x Uber Upgrade -> 1x Pinnacle Upgrade, via Infusing - not tier-scaled like the other
+    // recipes in this file (a single fixed-cost endgame recipe, hence buildAtTier instead of
+    // buildEachTier), and additionally gated on AtlasData.pinnacleUnlocked
+    private static void pinnacleUpgrade() {
+        ProfessionRecipe.TierBuilder.of(x -> DungeonOrbs.INSTANCE.PINNACLE_UPGRADE.get().getItem(), Professions.INFUSING, 1)
+                .onTierOrAbove(SkillItemTier.TIER0, DungeonOrbs.INSTANCE.UBER_UPGRADE.get().getItem(), 4)
+                .custom(data -> data.recipe.requires_pinnacle_unlock = true)
+                .exp(1000)
+                .buildAtTier(SkillItemTier.TIER5);
     }
 
     private static void enchanting() {

@@ -7,6 +7,7 @@ amethyst3
 amethyst4
 amethyst5
 amethyst6
+amethyst7
 azurite0
 azurite1
 azurite2
@@ -14,6 +15,7 @@ azurite3
 azurite4
 azurite5
 azurite6
+azurite7
 emerald0
 emerald1
 emerald2
@@ -21,6 +23,7 @@ emerald3
 emerald4
 emerald5
 emerald6
+emerald7
 garnet0
 garnet1
 garnet2
@@ -28,6 +31,7 @@ garnet3
 garnet4
 garnet5
 garnet6
+garnet7
 opal0
 opal1
 opal2
@@ -35,6 +39,7 @@ opal3
 opal4
 opal5
 opal6
+opal7
 ruby0
 ruby1
 ruby2
@@ -42,6 +47,7 @@ ruby3
 ruby4
 ruby5
 ruby6
+ruby7
 sapphire0
 sapphire1
 sapphire2
@@ -49,6 +55,7 @@ sapphire3
 sapphire4
 sapphire5
 sapphire6
+sapphire7
 topaz0
 topaz1
 topaz2
@@ -56,6 +63,7 @@ topaz3
 topaz4
 topaz5
 topaz6
+topaz7
 tourmaline0
 tourmaline1
 tourmaline2
@@ -63,3 +71,4 @@ tourmaline3
 tourmaline4
 tourmaline5
 tourmaline6
+tourmaline7

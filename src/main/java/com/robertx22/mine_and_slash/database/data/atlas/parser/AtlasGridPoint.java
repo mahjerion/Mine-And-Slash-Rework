@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.atlas.parser;
 
 import com.google.common.hash.HashCode;
-import com.robertx22.library_of_exile.database.init.LibDatabase;
+import com.robertx22.dungeon_realm.database.DungeonDatabase;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class AtlasGridPoint {
 
         // checked before the length==1/[CENTER] checks below - unlike Perk ids, AtlasNode ids
         // can be as short as 2 characters (e.g. "it"), so a length heuristic isn't reliable here
-        if (LibDatabase.AtlasNodes().isRegistered(id)) {
+        if (DungeonDatabase.AtlasNodes().isRegistered(id)) {
             this.isNode = true;
         } else if (id.length() == 1) {
             this.isConnector = true;

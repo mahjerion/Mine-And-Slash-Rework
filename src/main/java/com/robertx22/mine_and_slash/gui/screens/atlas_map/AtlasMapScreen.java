@@ -2,9 +2,10 @@ package com.robertx22.mine_and_slash.gui.screens.atlas_map;
 
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
+import com.robertx22.dungeon_realm.database.DungeonDatabase;
+import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.main.DungeonWords;
-import com.robertx22.library_of_exile.database.atlas.AtlasNode;
-import com.robertx22.library_of_exile.database.init.LibDatabase;
+import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
@@ -40,9 +41,11 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     // the grid places one connector cell between adjacent nodes, so a "1 grid step" in the old
     // x/y system is 2 grid cells here - half the old SPACING (60) keeps the layout visually the same
     private static final int PIXELS_PER_CELL = 30;
-    // extra travel allowed past the point where the outermost node reaches the screen edge,
-    // so panning can't drag the whole graph out of view
-    private static final int SCROLL_PAD = 40;
+    // generous fixed pan range on both axes (not fitted to the tree's actual content box) - the
+    // current tree is much taller than wide, so a content-fitted horizontal limit clamps to 0 at
+    // typical screen widths even though vertical stays positive. Same magnitude SkillTreeScreen
+    // already uses for its own pan clamp, so it's not an arbitrary new number.
+    private static final int MAX_SCROLL = 3333;
 
     // provided separately - drop the PNG at src/main/resources/assets/mmorpg/textures/gui/atlas_map/background.png
     private static final ResourceLocation BACKGROUND = SlashRef.guiId("atlas_map/background");
@@ -57,6 +60,14 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     private int maxScrollY;
     public int scrollX = 0;
     public int scrollY = 0;
+
+    // 1 = default/full size, matching the screen's pre-zoom layout exactly, down to 0.15 zoomed
+    // out - same range/step/smoothing as SkillTreeScreen's zoom, so it feels consistent across
+    // both Atlas screens
+    public float zoom = 1F;
+    public float targetZoom = zoom;
+
+    private AtlasNavButton navButton;
 
     public AtlasMapScreen() {
         super(Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight());
@@ -86,19 +97,17 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         originX = this.width / 2 - graphCenterX;
         originY = this.height / 2 - graphCenterY;
 
-        int graphWidth = (maxX - minX) * PIXELS_PER_CELL;
-        int graphHeight = (maxY - minY) * PIXELS_PER_CELL;
-        maxScrollX = Math.max(0, graphWidth / 2 - this.width / 2 + SCROLL_PAD);
-        maxScrollY = Math.max(0, graphHeight / 2 - this.height / 2 + SCROLL_PAD);
+        maxScrollX = MAX_SCROLL;
+        maxScrollY = MAX_SCROLL;
 
         for (Map.Entry<PointData, String> entry : layout.nodes.entrySet()) {
-            AtlasNode node = LibDatabase.AtlasNodes().get(entry.getValue());
+            AtlasNode node = DungeonDatabase.AtlasNodes().get(entry.getValue());
             if (node == null) {
                 continue;
             }
             Component name = resolveName(node);
             NodeState state = computeState(atlas, node);
-            AtlasNodeButton btn = new AtlasNodeButton(0, 0, node, state, name);
+            AtlasNodeButton btn = new AtlasNodeButton(this, 0, 0, node, state, name);
             nodeButtons.put(node.id, btn);
             nodePoints.put(node.id, entry.getKey());
             addRenderableWidget(btn);
@@ -106,14 +115,24 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
 
         updateNodePositions();
 
-        addRenderableWidget(new AtlasNavButton(4, 4, this, new AtlasPassiveTreeScreen()));
+        // registered for input/hover only (not addRenderableWidget) - render() draws all
+        // renderables inside a gui.pose().scale(zoom, ...) transform so the tree can zoom, but the
+        // nav button should stay fixed-size/unzoomed in the corner like the rest of the screen
+        // chrome - rendered manually below, after the scale is popped back to 1:1
+        navButton = new AtlasNavButton(4, 4, this, new AtlasPassiveTreeScreen());
+        addWidget(navButton);
     }
 
     private void updateNodePositions() {
+        // re-centers the zoom on screen middle, same formula SkillTreeScreen uses - node
+        // positions/scroll stay in unzoomed tree space, this term shifts them so scaling the pose
+        // around the origin still visually zooms around the screen center instead of the corner
+        float addx = (1F / zoom - 1) * this.width / 2F;
+        float addy = (1F / zoom - 1) * this.height / 2F;
         for (Map.Entry<String, AtlasNodeButton> entry : nodeButtons.entrySet()) {
             PointData p = nodePoints.get(entry.getKey());
-            int x = originX + p.x * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollX;
-            int y = originY + p.y * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollY;
+            int x = (int) (originX + p.x * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollX + addx);
+            int y = (int) (originY + p.y * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollY + addy);
             entry.getValue().setX(x);
             entry.getValue().setY(y);
         }
@@ -137,18 +156,38 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        scrollX = Mth.clamp((int) (scrollX + dragX), -maxScrollX, maxScrollX);
-        scrollY = Mth.clamp((int) (scrollY + dragY), -maxScrollY, maxScrollY);
+        // divide by zoom so a given mouse-pixel drag always covers the same visual screen
+        // distance regardless of zoom level, matching SkillTreeScreen's pan behavior
+        scrollX = Mth.clamp((int) (scrollX + dragX / zoom), -maxScrollX, maxScrollX);
+        scrollY = Mth.clamp((int) (scrollY + dragY / zoom), -maxScrollY, maxScrollY);
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+        if (scroll < 0) {
+            targetZoom -= 0.1F;
+        }
+        if (scroll > 0) {
+            targetZoom += 0.1F;
+        }
+        targetZoom = Mth.clamp(targetZoom, 0.15F, 1F);
+        return true;
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderAtlasBackground(graphics);
+        zoom = Mth.lerp(ClientConfigs.getConfig().SKILL_TREE_ZOOM_SPEED.get().floatValue(), zoom, targetZoom);
         updateNodePositions();
+
+        graphics.pose().scale(zoom, zoom, zoom);
         renderConnections(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderLabels(graphics);
+        graphics.pose().scale(1F / zoom, 1F / zoom, 1F / zoom);
+
+        navButton.render(graphics, mouseX, mouseY, partialTick);
     }
 
     // same blit shape as SkillTreeScreen.renderBackgroundDirt, pointed at the Atlas map's own texture

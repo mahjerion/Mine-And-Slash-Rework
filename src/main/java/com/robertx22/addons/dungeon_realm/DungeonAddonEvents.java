@@ -1,10 +1,10 @@
 package com.robertx22.addons.dungeon_realm;
 
 import com.robertx22.dungeon_realm.api.*;
+import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
+import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
-import com.robertx22.library_of_exile.database.atlas.AtlasNode;
-import com.robertx22.library_of_exile.database.atlas.AtlasNodeUtils;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;

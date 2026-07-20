@@ -28,7 +28,7 @@ public class MapBlueprint extends RarityItemBlueprint {
     @Override
     public ItemStack generate() {
 
-        return DungeonMapItem.newRandomMapItemStack(new DungeonMapGenSettings());
+        return DungeonMapItem.newRandomMapItemStack(new DungeonMapGenSettings(), this.info.player);
 
         // todo need to fix this
 

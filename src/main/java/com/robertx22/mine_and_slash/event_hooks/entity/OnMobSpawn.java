@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.event_hooks.entity;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.MobModifierDensity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -74,7 +75,8 @@ public class OnMobSpawn {
 
         String rar = endata.getRarity();
 
-        rar = mob.randomRarity(endata.getLevel(), endata);
+        float densityBonus = nearestPlayer != null ? Load.Unit(nearestPlayer).getUnit().getCalculatedStat(MobModifierDensity.getInstance()).getValue() : 0;
+        rar = mob.randomRarity(endata.getLevel(), endata, densityBonus);
 
         if (config.hasSpecificRarity()) {
             rar = config.set_rar;

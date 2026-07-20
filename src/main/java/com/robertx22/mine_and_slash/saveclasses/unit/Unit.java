@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.saveclasses.unit;
 
 import com.robertx22.library_of_exile.main.MyPacket;
+import com.robertx22.library_of_exile.registry.IWeighted;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
@@ -180,6 +181,12 @@ public class Unit {
     }
 
     public String randomRarity(int lvl, EntityData data) {
+        return randomRarity(lvl, data, 0);
+    }
+
+    // densityBonusPercent (e.g. from the Atlas passive tree's mob_modifier_density stat) biases
+    // the weighted roll toward non-common rarities without mutating the MobRarity registry itself.
+    public String randomRarity(int lvl, EntityData data, float densityBonusPercent) {
         // if it's already set
         if (!data.getRarity().equals(IRarity.COMMON_ID) && ExileDB.MobRarities().isRegistered(data.getRarity())) {
             return data.getRarity();
@@ -195,12 +202,33 @@ public class Unit {
             rarities.add(ExileDB.MobRarities().get(IRarity.COMMON_ID));
         }
 
+        List<WeightedMobRarity> weighted = rarities.stream()
+                .map(x -> new WeightedMobRarity(x, densityBonusPercent))
+                .collect(Collectors.toList());
 
-        MobRarity finalRarity = RandomUtils.weightedRandom(rarities);
+        MobRarity finalRarity = RandomUtils.weightedRandom(weighted).rarity;
 
 
         return finalRarity.GUID();
 
+    }
+
+    private static class WeightedMobRarity implements IWeighted {
+        final MobRarity rarity;
+        final float bonusPercent;
+
+        WeightedMobRarity(MobRarity rarity, float bonusPercent) {
+            this.rarity = rarity;
+            this.bonusPercent = bonusPercent;
+        }
+
+        @Override
+        public int Weight() {
+            if (bonusPercent <= 0 || rarity.GUID().equals(IRarity.COMMON_ID)) {
+                return rarity.Weight();
+            }
+            return (int) (rarity.Weight() * (1F + bonusPercent / 100F));
+        }
     }
 
 

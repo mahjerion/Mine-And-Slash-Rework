@@ -3,9 +3,14 @@ package com.robertx22.addons.dungeon_realm;
 import com.robertx22.dungeon_realm.api.*;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.library_of_exile.database.atlas.AtlasNodeUtils;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
+import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.MapBlueprint;
@@ -119,6 +124,57 @@ public class DungeonAddonEvents {
 
             }
         });
+        DungeonExileEvents.GET_UNLOCKED_ATLAS_NODES.register(new EventConsumer<GetUnlockedAtlasNodesEvent>() {
+            @Override
+            public void accept(GetUnlockedAtlasNodesEvent event) {
+                PlayerData pd = Load.player(event.player);
+                pd.atlas.ensureInitialized();
+                event.unlockedNodeIds = pd.atlas.unlockedNodes;
+            }
+        });
+
+        DungeonExileEvents.GET_PACK_SIZE_BONUS.register(new EventConsumer<GetPackSizeBonusEvent>() {
+            @Override
+            public void accept(GetPackSizeBonusEvent event) {
+                float max = 0;
+                for (Player p : event.players) {
+                    float value = Load.Unit(p).getUnit().getCalculatedStat(PackSize.getInstance()).getValue();
+                    if (value > max) {
+                        max = value;
+                    }
+                }
+                event.bonusPercent = max;
+            }
+        });
+
+        DungeonExileEvents.GET_UBER_FRAGMENT_FIND_BONUS.register(new EventConsumer<GetUberFragmentFindBonusEvent>() {
+            @Override
+            public void accept(GetUberFragmentFindBonusEvent event) {
+                event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(UberFragmentFind.getInstance()).getValue();
+            }
+        });
+
+        DungeonExileEvents.ON_MAP_FULLY_CLEARED.register(new EventConsumer<OnMapFullyClearedEvent>() {
+            @Override
+            public void accept(OnMapFullyClearedEvent event) {
+                AtlasNodeUtils.byDungeon(event.dungeonGuid).ifPresent(node -> {
+                    for (Player p : event.players) {
+                        PlayerData pd = Load.player(p);
+                        // only credit players who'd already unlocked this node themselves -
+                        // i.e. who could have targeted/rolled this dungeon on their own atlas,
+                        // not just whoever happened to be along for the ride
+                        if (!pd.atlas.isUnlocked(node.id)) {
+                            continue;
+                        }
+                        if (pd.atlas.markCompleted(node)) {
+                            pd.points.get(PlayerPointsType.ATLAS).giveBonusPoints(node.atlas_points_reward);
+                            pd.playerDataSync.setDirty();
+                        }
+                    }
+                });
+            }
+        });
+
         DungeonExileEvents.CAN_ENTER_MAP.register(new EventConsumer<CanEnterMapEvent>() {
             @Override
             public void accept(CanEnterMapEvent event) {

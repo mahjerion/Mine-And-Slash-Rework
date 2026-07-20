@@ -18,5 +18,7 @@ public class AllPerks implements ExileRegistryInit {
         new SpellPassives().registerAll();
 
         AscendancyPerks.init();
+
+        AtlasPassivePerks.init();
     }
 }

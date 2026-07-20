@@ -51,6 +51,16 @@ public class TalentTree implements JsonExileRegistry<TalentTree>, IAutoGson<Tale
             public StatContext.StatCtxType getCtxType() {
                 return StatContext.StatCtxType.ASCENDANCY;
             }
+        }, ATLAS() {
+            @Override
+            public PlayerPointsType getPointType() {
+                return PlayerPointsType.ATLAS;
+            }
+
+            @Override
+            public StatContext.StatCtxType getCtxType() {
+                return StatContext.StatCtxType.ATLAS;
+            }
         };
 
         public abstract PlayerPointsType getPointType();

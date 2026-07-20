@@ -212,8 +212,8 @@ public class PerkButton extends ImageButton {
             opacity = status.getOpacity();
         }
 
-        // if newbie, show only the starter perks he can pick
-        if (playerData.talents.getAllocatedPoints(TalentTree.SchoolType.TALENTS) < 1) {
+        // if newbie in this specific school, show only the starter perks he can pick
+        if (playerData.talents.getAllocatedPoints(school.getSchool_type()) < 1) {
             opacity = this.perk.getType() == Perk.PerkType.START ? 1 : 0.2F;
         }
 

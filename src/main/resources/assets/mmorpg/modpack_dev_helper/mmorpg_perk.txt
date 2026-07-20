@@ -152,6 +152,7 @@ critical_hit
 critical_hit_big
 crossbow_damage
 crossbow_damage_big
+currency_find_node
 curse_duration
 curse_duration_big
 curse_effect
@@ -393,6 +394,7 @@ meteor
 meteor_arrow
 minion_catapult
 minion_explosion
+mob_modifier_density_node
 ms_all_in
 ms_energy_regen
 ms_energy_regen_big
@@ -455,6 +457,7 @@ p_totem_cdr
 p_totem_dmg
 p_trap_cdr
 p_trap_dmg
+pack_size_node
 performer
 phys_to_all
 phys_to_all_big
@@ -622,6 +625,7 @@ trickster_class_6
 trident_damage
 trident_damage_big
 true_hit
+uber_fragment_find_node
 undying_will
 unknown
 vamp_blood

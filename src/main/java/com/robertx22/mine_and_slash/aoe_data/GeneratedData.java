@@ -117,6 +117,7 @@ public class GeneratedData {
         orig.player_points.put(PlayerPointsType.SPELLS, new PlayerPointsConfig(PlayerPointsType.SPELLS, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.PASSIVES, new PlayerPointsConfig(PlayerPointsType.PASSIVES, 0, 1, 10, 150));
         orig.player_points.put(PlayerPointsType.STATS, new PlayerPointsConfig(PlayerPointsType.STATS, 0, 2, 50, 300));
+        orig.player_points.put(PlayerPointsType.ATLAS, new PlayerPointsConfig(PlayerPointsType.ATLAS, 0, 0, 200, 200));
 
         for (BackpackType type : BackpackType.values()) {
             orig.backpack_tabs.put(type, new BackpackTabConfig(6, 1));

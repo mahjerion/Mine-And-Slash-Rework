@@ -116,6 +116,32 @@ public enum PlayerPointsType implements IGUID, StringRepresentable {
             Load.player(p).talents.clearAllTalents(TalentTree.SchoolType.ASCENDANCY);
         }
     },
+    ATLAS() {
+        @Override
+        public String GUID() {
+            return "atlas";
+        }
+
+        @Override
+        public Words word() {
+            return Words.Atlas;
+        }
+
+        @Override
+        public Item matItem() {
+            return Items.COMPASS;
+        }
+
+        @Override
+        public int getPointsInUse(Player p) {
+            return Load.player(p).talents.getAllocatedPoints(TalentTree.SchoolType.ATLAS);
+        }
+
+        @Override
+        public void fullReset(Player p) {
+            Load.player(p).talents.clearAllTalents(TalentTree.SchoolType.ATLAS);
+        }
+    },
     STATS() {
         @Override
         public String GUID() {

@@ -278,6 +278,8 @@ public enum Words implements IAutoLocName {
 
     Talents("Talents"),
     Passive("Passive"),
+    Atlas("Atlas"),
+    AtlasPassives("Atlas Passives"),
 
 
     PressAltForStatInfo("Press Alt for Stat Desc"),

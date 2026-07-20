@@ -18,6 +18,7 @@ import com.robertx22.mine_and_slash.event_hooks.my_events.CachedPlayerStats;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.prophecy.PlayerProphecies;
+import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
@@ -96,6 +97,7 @@ public class PlayerData implements ICap {
     private static final String MISC_INFO = "minfo";
     private static final String OMENS_FILLED = "ofi";
     private static final String SUMMONED = "summoned";
+    private static final String ATLAS_DATA = "atlas";
 
     public DirtySync playerDataSync = new DirtySync("playerdata_sync", x -> syncData());
 
@@ -120,6 +122,7 @@ public class PlayerData implements ICap {
     public RestedExpData rested_xp = new RestedExpData();
     public PlayerPointsData points = new PlayerPointsData();
     public MiscSyncData miscInfo = new MiscSyncData();
+    public AtlasData atlas = new AtlasData();
     public JewelData jewelData;
 
     private MyInventory skillGemInv = new MyInventory(GemInventoryHelper.TOTAL_SLOTS);
@@ -169,6 +172,7 @@ public class PlayerData implements ICap {
         LoadSave.Save(points, nbt, POINTS);
         LoadSave.Save(miscInfo, nbt, MISC_INFO);
         LoadSave.Save(summonedData, nbt, SUMMONED);
+        LoadSave.Save(atlas, nbt, ATLAS_DATA);
 
         // LoadSave.Save(ctxStats, nbt, "ctx");
 
@@ -201,6 +205,7 @@ public class PlayerData implements ICap {
         this.characters = loadOrBlank(CharStorageData.class, new CharStorageData(), nbt, CHARACTERS, new CharStorageData());
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
+        this.atlas = loadOrBlank(AtlasData.class, new AtlasData(), nbt, ATLAS_DATA, new AtlasData());
         //generate a container with mutable size
         // this.ctxStats = loadOrBlank(SavedStatCtxList.class, new SavedStatCtxList(), nbt, "ctx", new SavedStatCtxList());
 

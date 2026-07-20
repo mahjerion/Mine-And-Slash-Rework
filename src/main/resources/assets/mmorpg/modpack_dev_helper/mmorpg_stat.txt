@@ -132,6 +132,7 @@ critical_damage
 critical_hit
 critical_hit_per_10_strength
 crossbow_damage
+currency_find
 curse_cast_time
 curse_cdr
 curse_eff_dur_u_cast
@@ -523,6 +524,7 @@ missile_spell_dmg_taken
 missing_hp_health_regen_per_2
 missing_magic_shield_dmg_received_per_10
 missing_mana_dmg_per_10
+mob_modifier_density
 more_dmg_per_frenzy
 more_dmg_per_power
 more_food_stats
@@ -543,6 +545,7 @@ not_affected_by_cast_speed_spell_dmg_taken
 offensive_eff_dur_u_cast
 on_death_ignite_explosion
 out_of_combat_regen
+pack_size
 phys_taken_as_all
 phys_taken_as_chaos
 phys_taken_as_elemental
@@ -724,6 +727,7 @@ trap_cdr
 trap_spell_dmg
 trap_spell_dmg_taken
 trident_damage
+uber_fragment_find
 unknown
 unknown_stat
 water_any_wep_damage

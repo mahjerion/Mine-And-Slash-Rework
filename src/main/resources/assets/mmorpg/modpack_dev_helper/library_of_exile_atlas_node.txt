@@ -1,0 +1,19 @@
+These are all default registry entries of this type.
+This registry can't be modified or added to.
+bastion
+cement
+it
+mine
+mossy_brick
+nature
+nether
+night_terror
+sandstone
+sewer2
+sewers
+spruce_mansion
+steampunk
+stone_brick
+tent
+warped
+wn

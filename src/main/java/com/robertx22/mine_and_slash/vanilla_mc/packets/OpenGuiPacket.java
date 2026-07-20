@@ -12,7 +12,8 @@ public class OpenGuiPacket extends MyPacket<OpenGuiPacket> {
 
     public enum GuiType {
         PICK_PROPHECY_CURSE,
-        MAIN_HUB;
+        MAIN_HUB,
+        ATLAS_MAP;
 
 
     }
@@ -44,6 +45,9 @@ public class OpenGuiPacket extends MyPacket<OpenGuiPacket> {
         }
         if (type == GuiType.PICK_PROPHECY_CURSE) {
             OpenGuiWrapper.openProphecyCards();
+        }
+        if (type == GuiType.ATLAS_MAP) {
+            OpenGuiWrapper.openAtlasMap();
         }
 
     }

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.vanilla_mc.packets.proxies;
 
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.card_picker.CardPickScreen;
+import com.robertx22.mine_and_slash.gui.screens.atlas_map.AtlasMapScreen;
 import com.robertx22.mine_and_slash.gui.card_picker.ICard;
 import com.robertx22.mine_and_slash.gui.card_picker.ProphecyCurseCard;
 import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
@@ -36,6 +37,10 @@ public class OpenGuiWrapper {
 
     public static void openProphecyCards() {
         net.minecraft.client.Minecraft.getInstance().setScreen(getProphecyCardsScreen());
+    }
+
+    public static void openAtlasMap() {
+        net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());
     }
 
     public static void openWikiRunewords() {

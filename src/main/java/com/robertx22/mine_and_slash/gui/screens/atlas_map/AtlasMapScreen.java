@@ -7,6 +7,7 @@ import com.robertx22.library_of_exile.database.atlas.AtlasNode;
 import com.robertx22.library_of_exile.database.init.LibDatabase;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
+import com.robertx22.mine_and_slash.gui.screens.skill_tree.AtlasPassiveTreeScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -87,6 +88,8 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         }
 
         updateNodePositions();
+
+        addRenderableWidget(new AtlasNavButton(4, 4, this, new AtlasPassiveTreeScreen()));
     }
 
     private void updateNodePositions() {

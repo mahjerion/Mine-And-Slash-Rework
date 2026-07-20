@@ -5,6 +5,8 @@ import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.library_of_exile.database.atlas.AtlasNodeUtils;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
+import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
@@ -172,6 +174,13 @@ public class DungeonAddonEvents {
                         }
                     }
                 });
+            }
+        });
+
+        DungeonExileEvents.OPEN_ATLAS_MAP.register(new EventConsumer<OpenAtlasMapEvent>() {
+            @Override
+            public void accept(OpenAtlasMapEvent event) {
+                Packets.sendToClient(event.player, new OpenGuiPacket(OpenGuiPacket.GuiType.ATLAS_MAP));
             }
         });
 

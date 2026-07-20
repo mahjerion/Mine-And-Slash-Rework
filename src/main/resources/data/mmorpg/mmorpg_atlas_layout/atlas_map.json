@@ -1,0 +1,4 @@
+{
+    "identifier":  "atlas_map",
+    "nodes":  ",,,,,,,,,,,pad\n,cement,[CENTER],,,warped,,,,sandstone,,pad\n,,a,,x,,y,,j,,,pad\n,,,wn,,,,bastion,,,,pad\n,,h,,u,,v,,s,,,pad\n,sewer2,,,,nature,,,,it,,pad\n,,i,,w,,k,,l,,,pad\n,,,mossy_brick,,,,nether,1,nether_tier,,pad\n,,f,,q,,m,,n,,,pad\n,mine,,,,sewers,,,,spruce_mansion,,pad\n,0,g,,r,,b,,c,,,pad\n,mine_uber,,stone_brick,,,,tent,,,,pad\n,,,,z,,d,,,,,pad\n,,,steampunk_rare,p,steampunk,,,,,,pad\n,,,,,t,,,,,,pad\n,,,,,night_terror,,,,,,pad\n,,,,,o,,,,,,pad\n,,,,,night_terror_apex,,,,,,pad\n,,,,,,,,,,,pad"
+}

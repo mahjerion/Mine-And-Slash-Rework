@@ -3,6 +3,7 @@ package com.robertx22.addons.dungeon_realm;
 import com.robertx22.dungeon_realm.api.*;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.library_of_exile.database.atlas.AtlasNode;
 import com.robertx22.library_of_exile.database.atlas.AtlasNodeUtils;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.main.Packets;
@@ -159,7 +160,16 @@ public class DungeonAddonEvents {
         DungeonExileEvents.ON_MAP_FULLY_CLEARED.register(new EventConsumer<OnMapFullyClearedEvent>() {
             @Override
             public void accept(OnMapFullyClearedEvent event) {
-                AtlasNodeUtils.byDungeon(event.dungeonGuid).ifPresent(node -> {
+                // resolve this specific run's rolled tier/rarity the same way CAN_ENTER_MAP does,
+                // so each Atlas node for this dungeon can be gated on its own requirement
+                MapData runMap = WorldData.get(event.level).map.getData(DungeonMain.MAIN_DUNGEON_STRUCTURE, event.pos);
+                int tier = runMap != null ? runMap.map.tier : 0;
+                String rar = runMap != null ? runMap.map.rar : IRarity.COMMON_ID;
+
+                for (AtlasNode node : AtlasNodeUtils.byDungeon(event.dungeonGuid)) {
+                    if (!meetsRequirement(node, tier, rar, event.uber)) {
+                        continue;
+                    }
                     for (Player p : event.players) {
                         PlayerData pd = Load.player(p);
                         // only credit players who'd already unlocked this node themselves -
@@ -173,7 +183,7 @@ public class DungeonAddonEvents {
                             pd.playerDataSync.setDirty();
                         }
                     }
-                });
+                }
             }
         });
 
@@ -207,6 +217,19 @@ public class DungeonAddonEvents {
             }
         });
 
+    }
+
+    static boolean meetsRequirement(AtlasNode node, int tier, String rarityId, boolean uber) {
+        if (node.require_uber && !uber) {
+            return false;
+        }
+        if (node.min_tier > 0 && tier < node.min_tier) {
+            return false;
+        }
+        if (!node.min_rarity.isEmpty() && tier < ExileDB.GearRarities().get(node.min_rarity).map_tiers.min) {
+            return false;
+        }
+        return true;
     }
 
     static boolean checkCooldown(Player p) {

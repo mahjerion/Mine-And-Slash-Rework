@@ -48,6 +48,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SPELL, IntSpells.BLACK_HOLE).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.PERK, Perks.UNKNOWN_ID).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.TALENT_TREE, UNKNOWN_ID).setIsDatapack());
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ATLAS_NODE_LAYOUT, UNKNOWN_ID).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SPELL_SCHOOL, SpellSchoolsAdder.SORCERER).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.BASE_STATS, BaseStatsAdder.EMPTY).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.GAME_BALANCE, GameBalanceConfig.BalanceEnum.ORIGINAL_BALANCE.id).setIsDatapack());

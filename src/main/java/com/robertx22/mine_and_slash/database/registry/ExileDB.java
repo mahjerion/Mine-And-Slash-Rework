@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.DimensionConfig;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
+import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
@@ -145,6 +146,10 @@ public class ExileDB {
 
     public static ExileRegistryContainer<TalentTree> TalentTrees() {
         return Database.getRegistry(ExileRegistryTypes.TALENT_TREE);
+    }
+
+    public static ExileRegistryContainer<AtlasNodeLayout> AtlasNodeLayouts() {
+        return Database.getRegistry(ExileRegistryTypes.ATLAS_NODE_LAYOUT);
     }
 
 

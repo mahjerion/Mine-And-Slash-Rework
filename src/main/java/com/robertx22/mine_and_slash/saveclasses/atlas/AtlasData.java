@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.saveclasses.atlas;
 
 import com.robertx22.library_of_exile.database.atlas.AtlasNode;
 import com.robertx22.library_of_exile.database.init.LibDatabase;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class AtlasData {
             return false;
         }
         unlockedNodes.add(node.id);
-        unlockedNodes.addAll(node.neighbors);
+        unlockedNodes.addAll(ExileDB.AtlasNodeLayouts().getList().get(0).calcData.getConnectedIds(node.id));
         return true;
     }
 }

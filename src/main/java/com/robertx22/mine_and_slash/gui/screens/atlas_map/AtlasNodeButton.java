@@ -4,13 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.robertx22.library_of_exile.database.atlas.AtlasNode;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.perks.PerkStatus;
+import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -35,10 +39,29 @@ public class AtlasNodeButton extends AbstractWidget {
         // name already renders as a persistent label below the node (AtlasMapScreen.renderLabels), so the
         // tooltip is used for the atlas point reward instead - only relevant for available, uncompleted nodes
         if (state == AtlasMapScreen.NodeState.UNLOCKED) {
-            Component reward = Component.literal(node.atlas_points_reward
+            MutableComponent reward = Component.literal(node.atlas_points_reward
                     + " Atlas Point" + (node.atlas_points_reward == 1 ? "" : "s") + " Available");
+            Component req = describeRequirement(node);
+            if (req != null) {
+                reward.append("\n").append(req);
+            }
             setTooltip(Tooltip.create(reward));
         }
+    }
+
+    // null if this node has no extra completion requirement beyond just clearing the dungeon
+    private static Component describeRequirement(AtlasNode node) {
+        if (node.require_uber) {
+            return Component.literal("Requires an Uber map").withStyle(ChatFormatting.LIGHT_PURPLE);
+        }
+        if (!node.min_rarity.isEmpty()) {
+            GearRarity rar = ExileDB.GearRarities().get(node.min_rarity);
+            return Component.literal("Requires ").append(rar.coloredName()).append(" rarity or higher");
+        }
+        if (node.min_tier > 0) {
+            return Component.literal("Requires Tier " + node.min_tier + "+ map").withStyle(ChatFormatting.YELLOW);
+        }
+        return null;
     }
 
     private PerkStatus perkStatus() {

@@ -5,10 +5,13 @@ import net.minecraft.ChatFormatting;
 import com.robertx22.dungeon_realm.main.DungeonWords;
 import com.robertx22.library_of_exile.database.atlas.AtlasNode;
 import com.robertx22.library_of_exile.database.init.LibDatabase;
+import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.AtlasPassiveTreeScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.saveclasses.PointData;
 import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
@@ -21,17 +24,22 @@ import net.minecraft.util.Mth;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 // Informational Atlas map: shows node unlock/completion state and how nodes connect.
 // Does not set map targets - random maps already respect the unlock gate (see DungeonMapItem),
 // and Fixed Dungeon Map recipes stay recipe-based.
+// Positions and connections come from the single AtlasNodeLayout datapack entry (one grid string,
+// same authoring format as TalentTree.perks) rather than per-node x/y/neighbors fields.
 public class AtlasMapScreen extends BaseScreen implements INamedScreen {
 
     public enum NodeState {
         LOCKED, UNLOCKED, COMPLETED
     }
 
-    private static final int SPACING = 60;
+    // the grid places one connector cell between adjacent nodes, so a "1 grid step" in the old
+    // x/y system is 2 grid cells here - half the old SPACING (60) keeps the layout visually the same
+    private static final int PIXELS_PER_CELL = 30;
     // extra travel allowed past the point where the outermost node reaches the screen edge,
     // so panning can't drag the whole graph out of view
     private static final int SCROLL_PAD = 40;
@@ -40,6 +48,8 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     private static final ResourceLocation BACKGROUND = SlashRef.guiId("atlas_map/background");
 
     private final Map<String, AtlasNodeButton> nodeButtons = new HashMap<>();
+    private final Map<String, PointData> nodePoints = new HashMap<>();
+    private AtlasNodeLayout.CalcData layout;
 
     private int originX;
     private int originY;
@@ -56,34 +66,41 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     protected void init() {
         super.init();
         nodeButtons.clear();
+        nodePoints.clear();
         scrollX = 0;
         scrollY = 0;
 
         AtlasData atlas = Load.player(ClientOnly.getPlayer()).atlas;
+        layout = ExileDB.AtlasNodeLayouts().getList().get(0).calcData;
 
-        var nodes = LibDatabase.AtlasNodes().getList();
+        var points = layout.nodes.keySet();
 
-        int minX = nodes.stream().mapToInt(n -> n.x).min().orElse(0);
-        int maxX = nodes.stream().mapToInt(n -> n.x).max().orElse(0);
-        int minY = nodes.stream().mapToInt(n -> n.y).min().orElse(0);
-        int maxY = nodes.stream().mapToInt(n -> n.y).max().orElse(0);
+        int minX = points.stream().mapToInt(p -> p.x).min().orElse(0);
+        int maxX = points.stream().mapToInt(p -> p.x).max().orElse(0);
+        int minY = points.stream().mapToInt(p -> p.y).min().orElse(0);
+        int maxY = points.stream().mapToInt(p -> p.y).max().orElse(0);
 
-        int graphCenterX = (minX + maxX) * SPACING / 2;
-        int graphCenterY = (minY + maxY) * SPACING / 2;
+        int graphCenterX = (minX + maxX) * PIXELS_PER_CELL / 2;
+        int graphCenterY = (minY + maxY) * PIXELS_PER_CELL / 2;
 
         originX = this.width / 2 - graphCenterX;
         originY = this.height / 2 - graphCenterY;
 
-        int graphWidth = (maxX - minX) * SPACING;
-        int graphHeight = (maxY - minY) * SPACING;
+        int graphWidth = (maxX - minX) * PIXELS_PER_CELL;
+        int graphHeight = (maxY - minY) * PIXELS_PER_CELL;
         maxScrollX = Math.max(0, graphWidth / 2 - this.width / 2 + SCROLL_PAD);
         maxScrollY = Math.max(0, graphHeight / 2 - this.height / 2 + SCROLL_PAD);
 
-        for (AtlasNode node : nodes) {
+        for (Map.Entry<PointData, String> entry : layout.nodes.entrySet()) {
+            AtlasNode node = LibDatabase.AtlasNodes().get(entry.getValue());
+            if (node == null) {
+                continue;
+            }
             Component name = resolveName(node);
             NodeState state = computeState(atlas, node);
             AtlasNodeButton btn = new AtlasNodeButton(0, 0, node, state, name);
             nodeButtons.put(node.id, btn);
+            nodePoints.put(node.id, entry.getKey());
             addRenderableWidget(btn);
         }
 
@@ -93,11 +110,12 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     }
 
     private void updateNodePositions() {
-        for (AtlasNodeButton btn : nodeButtons.values()) {
-            int x = originX + btn.node.x * SPACING - AtlasNodeButton.SIZE / 2 + scrollX;
-            int y = originY + btn.node.y * SPACING - AtlasNodeButton.SIZE / 2 + scrollY;
-            btn.setX(x);
-            btn.setY(y);
+        for (Map.Entry<String, AtlasNodeButton> entry : nodeButtons.entrySet()) {
+            PointData p = nodePoints.get(entry.getKey());
+            int x = originX + p.x * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollX;
+            int y = originY + p.y * PIXELS_PER_CELL - AtlasNodeButton.SIZE / 2 + scrollY;
+            entry.getValue().setX(x);
+            entry.getValue().setY(y);
         }
     }
 
@@ -154,23 +172,24 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
     }
 
     private void renderConnections(GuiGraphics graphics) {
-        for (AtlasNode node : LibDatabase.AtlasNodes().getList()) {
-            AtlasNodeButton from = nodeButtons.get(node.id);
-            if (from == null) {
+        for (Map.Entry<PointData, Set<PointData>> entry : layout.connections.entrySet()) {
+            PointData from = entry.getKey();
+            AtlasNodeButton fromBtn = nodeButtons.get(layout.nodes.get(from));
+            if (fromBtn == null) {
                 continue;
             }
-            for (String neighborId : node.neighbors) {
-                if (node.id.compareTo(neighborId) >= 0) {
+            for (PointData to : entry.getValue()) {
+                if (from.x > to.x || (from.x == to.x && from.y >= to.y)) {
                     continue; // draw each edge once
                 }
-                AtlasNodeButton to = nodeButtons.get(neighborId);
-                if (to == null) {
+                AtlasNodeButton toBtn = nodeButtons.get(layout.nodes.get(to));
+                if (toBtn == null) {
                     continue;
                 }
-                int color = lineColor(from.state, to.state);
+                int color = lineColor(fromBtn.state, toBtn.state);
                 drawLine(graphics,
-                        from.getX() + from.getWidth() / 2F, from.getY() + from.getHeight() / 2F,
-                        to.getX() + to.getWidth() / 2F, to.getY() + to.getHeight() / 2F, color);
+                        fromBtn.getX() + fromBtn.getWidth() / 2F, fromBtn.getY() + fromBtn.getHeight() / 2F,
+                        toBtn.getX() + toBtn.getWidth() / 2F, toBtn.getY() + toBtn.getHeight() / 2F, color);
             }
         }
     }

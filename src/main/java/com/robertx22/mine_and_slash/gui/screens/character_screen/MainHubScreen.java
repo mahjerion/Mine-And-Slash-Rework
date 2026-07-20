@@ -43,6 +43,7 @@ import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
 import com.robertx22.mine_and_slash.gui.screens.OpenInvGuiScreen;
 import com.robertx22.mine_and_slash.gui.screens.OpenJewelsScreen;
 import com.robertx22.mine_and_slash.gui.screens.OpenSkillGems;
+import com.robertx22.mine_and_slash.gui.screens.map.MapScreen;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.AscendancyTree;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.TalentsScreen;
 import com.robertx22.mine_and_slash.gui.screens.spell.SpellSchoolScreen;
@@ -272,6 +273,10 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         leftButtons.add(new OpenInvGuiScreen(Words.Salvaging, "salvage", GuiInventoryGrids.ofSalvageConfig()));
         leftButtons.add(new OpenInvGuiScreen(Words.Configs, "configs", GuiInventoryGrids.ofConfigs()));
         leftButtons.add(new StatScreen(ClientOnly.getPlayer()));
+
+        if (mc.level.dimension().location().equals(DungeonMain.DIMENSION_KEY)) {
+            leftButtons.add(new MapScreen());
+        }
 
 
         publicAddButton(new FavorButton(guiLeft + sizeX / 2 - FavorButton.FAVOR_BUTTON_SIZE_X / 2, guiTop - FavorButton.FAVOR_BUTTON_SIZE_Y));

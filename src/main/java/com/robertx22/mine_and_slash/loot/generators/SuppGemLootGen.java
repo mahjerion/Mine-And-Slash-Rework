@@ -1,10 +1,12 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.SkillGemFind;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.GearBlueprint;
 import com.robertx22.mine_and_slash.loot.blueprints.SkillGemBlueprint;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.LootType;
 import net.minecraft.world.item.ItemStack;
 
@@ -17,7 +19,14 @@ public class SuppGemLootGen extends BaseLootGen<GearBlueprint> {
 
     @Override
     public float baseDropChance() {
-        return (float) (ServerContainer.get().SUPP_GEM_DROPRATE.get().floatValue());
+        float chance = (float) (ServerContainer.get().SUPP_GEM_DROPRATE.get().floatValue());
+
+        if (info.player != null) {
+            float skillGemFind = Load.Unit(info.player).getUnit().getCalculatedStat(SkillGemFind.getInstance()).getValue();
+            chance *= 1F + (skillGemFind / 100F);
+        }
+
+        return chance;
     }
 
     @Override

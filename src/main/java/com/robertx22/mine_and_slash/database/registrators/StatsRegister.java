@@ -141,6 +141,10 @@ public class StatsRegister implements ExileRegistryInit {
                     add(OmenFind.getInstance());
                     add(UberFragmentFind.getInstance());
                     add(MobModifierDensity.getInstance());
+                    add(GemFind.getInstance());
+                    add(SkillGemFind.getInstance());
+                    add(RuneFind.getInstance());
+                    add(JewelFind.getInstance());
 
                     add(MapFind.getInstance());
                     add(ProphecyCoinFind.getInstance());

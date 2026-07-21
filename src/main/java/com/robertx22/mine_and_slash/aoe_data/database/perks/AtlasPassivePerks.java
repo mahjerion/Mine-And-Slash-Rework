@@ -21,6 +21,22 @@ public class AtlasPassivePerks {
         entry(PerkBuilder.stat("omen_find_node", new OptScaleExactStat(2, OmenFind.getInstance(), ModType.FLAT)));
         entry(PerkBuilder.stat("omen_find_node_big", new OptScaleExactStat(5, OmenFind.getInstance(), ModType.FLAT)));
 
+        // loot quantity/quality nodes (stats already exist + are consumed in LootInfo/rarity rolls)
+        entry(PerkBuilder.stat("item_find_node", new OptScaleExactStat(1, TreasureQuantity.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("item_find_node_big", new OptScaleExactStat(3, TreasureQuantity.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("magic_find_node", new OptScaleExactStat(1, TreasureQuality.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("magic_find_node_big", new OptScaleExactStat(3, TreasureQuality.getInstance(), ModType.FLAT)));
+
+        // gem find nodes: socketable gems (GemLootGen) and skill gems (Aura/Supp gem gens)
+        entry(PerkBuilder.stat("gem_find_node", new OptScaleExactStat(2, GemFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("gem_find_node_big", new OptScaleExactStat(5, GemFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("skill_gem_find_node", new OptScaleExactStat(2, SkillGemFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("skill_gem_find_node_big", new OptScaleExactStat(5, SkillGemFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("rune_find_node", new OptScaleExactStat(2, RuneFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("rune_find_node_big", new OptScaleExactStat(5, RuneFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("jewel_find_node", new OptScaleExactStat(2, JewelFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("jewel_find_node_big", new OptScaleExactStat(5, JewelFind.getInstance(), ModType.FLAT)));
+
         // find/quantity nodes for probabilistic drops
         entry(PerkBuilder.stat("uber_fragment_find_node", new OptScaleExactStat(3, UberFragmentFind.getInstance(), ModType.FLAT)));
         entry(PerkBuilder.stat("uber_fragment_find_node_big", new OptScaleExactStat(8, UberFragmentFind.getInstance(), ModType.FLAT)));

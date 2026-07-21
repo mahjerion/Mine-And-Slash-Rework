@@ -47,6 +47,8 @@ public class AncientObeliskCurrencies extends ExileKeyHolderSection<ExileCurrenc
             ))
             .build((id, info) -> {
 
+                obeliskOnlyDrop(id);
+
                 String currencyName;
                 if (info.GUID().equals(SlotTags.intelligence.GUID())) {
                     currencyName = "Orb of the Aegis";
@@ -76,8 +78,6 @@ public class AncientObeliskCurrencies extends ExileKeyHolderSection<ExileCurrenc
                     new NamedKey(SlotTags.dexterity.GUID(), "Dexterity")
             ))
             .build((id, info) -> {
-
-                obeliskOnlyDrop(id);
 
                 String currencyName;
                 if (info.GUID().equals(SlotTags.intelligence.GUID())) {

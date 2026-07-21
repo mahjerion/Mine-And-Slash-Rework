@@ -28,7 +28,7 @@ public class MobModifierDensity extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases the chance for mobs to spawn with rare modifiers";
+        return "Increases the chance for mobs to spawn with rare modifiers.";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class MobModifierDensity extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Mob Modifier Density";
+        return "Mob Rarity";
     }
 
     private static class SingletonHolder {

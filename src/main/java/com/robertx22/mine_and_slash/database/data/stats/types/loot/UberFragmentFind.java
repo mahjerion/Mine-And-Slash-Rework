@@ -28,7 +28,7 @@ public class UberFragmentFind extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance for map bosses to drop Uber Fragments";
+        return "Increases chance for map bosses to drop Uber Fragments.";
     }
 
     @Override

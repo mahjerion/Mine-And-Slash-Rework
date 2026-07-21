@@ -28,7 +28,7 @@ public class PackSize extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases the amount of mobs that spawn in packs";
+        return "Increases the amount of mobs that spawn in packs in maps.";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PackSize extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Pack Size";
+        return "Map Pack Size";
     }
 
     private static class SingletonHolder {

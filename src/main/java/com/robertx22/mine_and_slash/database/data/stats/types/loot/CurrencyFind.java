@@ -28,7 +28,7 @@ public class CurrencyFind extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance to find currency";
+        return "Increases chance to find currency.";
     }
 
     @Override

@@ -27,7 +27,7 @@ import static com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatR
 public class MapBarButton extends ImageButton {
 
     public static int BAR_WIDTH = 228;
-    public static int BAR_HEIGHT = 13;
+    public static int BAR_HEIGHT = 14;
     static ResourceLocation BAR = new ResourceLocation(SlashRef.MODID, "textures/gui/map/map_bar.png");
 
     public MapBarButton(int xPos, int yPos) {

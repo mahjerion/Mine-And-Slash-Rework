@@ -105,7 +105,7 @@ public class MobStatUtils {
         List<StatContext> list = new ArrayList<>();
         List<ExactStatData> stats = new ArrayList<>();
 
-        EntityConfig config = ExileDB.getEntityConfig(entity, unitdata);
+        EntityConfig config = unitdata.getEntityConfig();
         config.stats.stats.forEach(x -> stats.add(x.toExactStat(unitdata.getLevel())));
 
         DimensionConfig dimConfig = ExileDB.getDimensionConfig(entity.level());

@@ -150,7 +150,7 @@ public class LevelUtils {
 
         if (en != null) {
             if (!ignoreEntityConfig) {
-                var enconfig = ExileDB.getEntityConfig(en, Load.Unit(en));
+                var enconfig = Load.Unit(en).getEntityConfig();
                 info.capToRange(LevelInfo.LevelSource.ENTITY_CONFIG, new MinMax(enconfig.min_lvl, enconfig.max_lvl));
             }
         }

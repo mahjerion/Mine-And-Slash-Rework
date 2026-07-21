@@ -132,7 +132,7 @@ public class DamageEvent extends EffectEvent {
 
                 MobRarity rar = sourceData.getMobRarity();
 
-                float enconfigmulti = (float) ExileDB.getEntityConfig(source, sourceData).dmg_multi;
+                float enconfigmulti = (float) sourceData.getEntityConfig().dmg_multi;
 
                 this.addMoreMulti(Words.MOB_RARITY_MULTI.locName(), EventData.NUMBER, rar.DamageMultiplier());
 
@@ -667,7 +667,7 @@ public class DamageEvent extends EffectEvent {
         }
 
 
-        var config = ExileDB.getEntityConfig(target, Load.Unit(target));
+        var config = Load.Unit(target).getEntityConfig();
 
         if (target instanceof Player == false && config != null && config.set_health_damage_override) {
             float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth() + 1);

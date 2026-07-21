@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
+import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
@@ -168,6 +169,17 @@ public class EntityData implements ICap, INeededForClient {
     public DamageEvent lastDamageTaken = null;
 
     transient LivingEntity entity;
+
+    // the resolved EntityConfig is constant for a given entity type, but resolving it (ExileDB.getEntityConfig)
+    // does a registry key lookup + string allocations - cache it per entity since it's read on hot paths (per damage hit)
+    private transient EntityConfig cachedEntityConfig;
+
+    public EntityConfig getEntityConfig() {
+        if (cachedEntityConfig == null) {
+            cachedEntityConfig = ExileDB.getEntityConfig(entity, this);
+        }
+        return cachedEntityConfig;
+    }
 
     transient EntityGears gears = new EntityGears();
     public transient HashMap<UUID, List<UUID>> mobsHit = new HashMap<>();

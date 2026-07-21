@@ -1766,48 +1766,6 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gear_type.trident": "Trident",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-	"mmorpg.gearslot.trident": "Trident",
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1865,20 +1823,46 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
-	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
-	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
-	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
-	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
-	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
-	"mmorpg.stat_priority.first": "FIRST",
-	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
-	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gear_type.trident": "Trident",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+	"mmorpg.gearslot.trident": "Trident",
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
@@ -1895,6 +1879,22 @@
 	"item.mmorpg.weapon.staff.wood": "Staff",
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
+	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
+	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
+	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
+	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
+	"mmorpg.stat_priority.first": "FIRST",
+	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
+	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",
@@ -2905,6 +2905,18 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -2917,18 +2929,6 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
-
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3605,8 +3605,6 @@
 	"library_of_exile.item_modification.increment_uses_random_mythic_affix": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_relief": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_sharpening_stone": "Increments Uses",
-	"library_of_exile.item_modification.increment_uses_skill_gem_rarity_upgrade": "Increments Uses",
-	"library_of_exile.item_modification.increment_uses_skill_gem_stat_reroll": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_sure_jewel_up": "Increments Uses",
 	"library_of_exile.item_modification.jewel_corrupt": "Corrupts the Jewel",
 	"library_of_exile.item_modification.map_rarity_upgrade": "Upgrades Map Rarity",
@@ -3713,8 +3711,6 @@
 	"library_of_exile.item_requirement.max_uses_random_mythic_affix": "Maximum %1$s uses",
 	"library_of_exile.item_requirement.max_uses_relief": "Maximum %1$s uses",
 	"library_of_exile.item_requirement.max_uses_sharpening_stone": "Maximum %1$s uses",
-	"library_of_exile.item_requirement.max_uses_skill_gem_rarity_upgrade": "Maximum %1$s uses",
-	"library_of_exile.item_requirement.max_uses_skill_gem_stat_reroll": "Maximum %1$s uses",
 	"library_of_exile.item_requirement.max_uses_sure_jewel_up": "Maximum %1$s uses",
 	"library_of_exile.item_requirement.not_crafted_gear": "Must not be a Crafted Item",
 	"library_of_exile.league.prophecy": "Prophecy",

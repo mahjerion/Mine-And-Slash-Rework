@@ -66,7 +66,7 @@ public class OnMobSpawn {
     }
 
     public static Unit setupNewMob(LivingEntity entity, EntityData endata, Player nearestPlayer) {
-        EntityConfig config = ExileDB.getEntityConfig(entity, endata);
+        EntityConfig config = endata.getEntityConfig();
 
         Unit mob = new Unit();
         mob.initStats();

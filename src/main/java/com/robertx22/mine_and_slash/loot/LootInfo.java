@@ -218,7 +218,7 @@ public class LootInfo {
             }
 
             lootMods.add(new LootModifier(LootModifierEnum.MOB_HEALTH, LootUtils.getMobHealthBasedLootMulti(mobKilled)));
-            lootMods.add(new LootModifier(LootModifierEnum.MOB_DATAPACK, (float) ExileDB.getEntityConfig(mobKilled, this.mobData).loot_multi));
+            lootMods.add(new LootModifier(LootModifierEnum.MOB_DATAPACK, (float) this.mobData.getEntityConfig().loot_multi));
             lootMods.add(new LootModifier(LootModifierEnum.MOB_BONUS_LOOT_STAT, mobData.getUnit().getCalculatedStat(ExtraMobDropsStat.getInstance()).getMultiplier()));
             lootMods.add(new LootModifier(LootModifierEnum.MOB_RARITY, mobData.getMobRarity().LootMultiplier()));
 

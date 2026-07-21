@@ -73,7 +73,6 @@ nature_tier80
 nature_tier90
 nature_uber
 nether
-nether_tier
 nether_tier10
 nether_tier100
 nether_tier20
@@ -147,7 +146,6 @@ spruce_mansion_tier80
 spruce_mansion_tier90
 spruce_mansion_uber
 steampunk
-steampunk_rare
 steampunk_tier10
 steampunk_tier100
 steampunk_tier20

@@ -72,7 +72,7 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                     ServerPlayer player = (ServerPlayer) killerEntity;
                     EntityData playerData = Load.Unit(player);
 
-                    EntityConfig config = ExileDB.getEntityConfig(mobKilled, mobKilledData);
+                    EntityConfig config = mobKilledData.getEntityConfig();
 
                     float loot_multi = (float) config.loot_multi;
                     float exp_multi = (float) config.exp_multi;

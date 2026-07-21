@@ -2,16 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.perks;
 
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.CurrencyFind;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.HarvestEventChance;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.MapFind;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.MobModifierDensity;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyCoinFind;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyEventChance;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
-import com.robertx22.mine_and_slash.database.data.stats.types.loot.WatcherEyeFind;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.*;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 
 // Flat, player-wide stat perks placed on the Atlas passive tree (data/mmorpg/mmorpg_talent_tree/atlas_passives.json).
@@ -21,20 +12,32 @@ public class AtlasPassivePerks {
 
     public static void init() {
 
-        entry(PerkBuilder.stat("pack_size_node", new OptScaleExactStat(15, PackSize.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("currency_find_node", new OptScaleExactStat(15, CurrencyFind.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("uber_fragment_find_node", new OptScaleExactStat(10, UberFragmentFind.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("mob_modifier_density_node", new OptScaleExactStat(10, MobModifierDensity.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("pack_size_node", new OptScaleExactStat(4, PackSize.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("pack_size_node_big", new OptScaleExactStat(10, PackSize.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("mob_modifier_density_node", new OptScaleExactStat(3, MobModifierDensity.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("mob_modifier_density_node_big", new OptScaleExactStat(8, MobModifierDensity.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("currency_find_node", new OptScaleExactStat(2, CurrencyFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("currency_find_node_big", new OptScaleExactStat(5, CurrencyFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("omen_find_node", new OptScaleExactStat(2, OmenFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("omen_find_node_big", new OptScaleExactStat(5, OmenFind.getInstance(), ModType.FLAT)));
 
         // find/quantity nodes for probabilistic drops
-        entry(PerkBuilder.stat("map_find_node", new OptScaleExactStat(15, MapFind.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("prophecy_coin_find_node", new OptScaleExactStat(15, ProphecyCoinFind.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("watcher_eye_find_node", new OptScaleExactStat(10, WatcherEyeFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("uber_fragment_find_node", new OptScaleExactStat(3, UberFragmentFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("uber_fragment_find_node_big", new OptScaleExactStat(8, UberFragmentFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("map_find_node", new OptScaleExactStat(2, MapFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("map_find_node_big", new OptScaleExactStat(5, MapFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("prophecy_coin_find_node", new OptScaleExactStat(2, ProphecyCoinFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("prophecy_coin_find_node_big", new OptScaleExactStat(5, ProphecyCoinFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("watcher_eye_find_node", new OptScaleExactStat(3, WatcherEyeFind.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("watcher_eye_find_node_big", new OptScaleExactStat(8, WatcherEyeFind.getInstance(), ModType.FLAT)));
 
         // event-chance nodes: raise the chance the league encounter spawns as bonus content in a map
-        entry(PerkBuilder.stat("prophecy_event_chance_node", new OptScaleExactStat(25, ProphecyEventChance.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("harvest_event_chance_node", new OptScaleExactStat(25, HarvestEventChance.getInstance(), ModType.FLAT)));
-        entry(PerkBuilder.stat("obelisk_event_chance_node", new OptScaleExactStat(25, ObeliskEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("prophecy_event_chance_node", new OptScaleExactStat(2, ProphecyEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("prophecy_event_chance_node_big", new OptScaleExactStat(5, ProphecyEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("harvest_event_chance_node", new OptScaleExactStat(2, HarvestEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("harvest_event_chance_node_big", new OptScaleExactStat(5, HarvestEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("obelisk_event_chance_node", new OptScaleExactStat(2, ObeliskEventChance.getInstance(), ModType.FLAT)));
+        entry(PerkBuilder.stat("obelisk_event_chance_node_big", new OptScaleExactStat(5, ObeliskEventChance.getInstance(), ModType.FLAT)));
     }
 
     private static void entry(Perk perk) {

@@ -23,8 +23,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 // this stores data that can be lost without issue, stats that are recalculated all the time
@@ -181,12 +183,18 @@ public class Unit {
     }
 
     public String randomRarity(int lvl, EntityData data) {
-        return randomRarity(lvl, data, 0);
+        return randomRarity(lvl, data, 0, Collections.emptyMap());
+    }
+
+    public String randomRarity(int lvl, EntityData data, float densityBonusPercent) {
+        return randomRarity(lvl, data, densityBonusPercent, Collections.emptyMap());
     }
 
     // densityBonusPercent (e.g. from the Atlas passive tree's mob_modifier_density stat) biases
     // the weighted roll toward non-common rarities without mutating the MobRarity registry itself.
-    public String randomRarity(int lvl, EntityData data, float densityBonusPercent) {
+    // perRarityBonusPercent (rarity GUID -> percent, e.g. the Atlas tree's per-rarity monster chance
+    // stats) additionally biases the weight of a single specific rarity, stacking with the global bonus.
+    public String randomRarity(int lvl, EntityData data, float densityBonusPercent, Map<String, Float> perRarityBonusPercent) {
         // if it's already set
         if (!data.getRarity().equals(IRarity.COMMON_ID) && ExileDB.MobRarities().isRegistered(data.getRarity())) {
             return data.getRarity();
@@ -203,7 +211,7 @@ public class Unit {
         }
 
         List<WeightedMobRarity> weighted = rarities.stream()
-                .map(x -> new WeightedMobRarity(x, densityBonusPercent))
+                .map(x -> new WeightedMobRarity(x, densityBonusPercent, perRarityBonusPercent))
                 .collect(Collectors.toList());
 
         MobRarity finalRarity = RandomUtils.weightedRandom(weighted).rarity;
@@ -216,18 +224,24 @@ public class Unit {
     private static class WeightedMobRarity implements IWeighted {
         final MobRarity rarity;
         final float bonusPercent;
+        final Map<String, Float> perRarityBonusPercent;
 
-        WeightedMobRarity(MobRarity rarity, float bonusPercent) {
+        WeightedMobRarity(MobRarity rarity, float bonusPercent, Map<String, Float> perRarityBonusPercent) {
             this.rarity = rarity;
             this.bonusPercent = bonusPercent;
+            this.perRarityBonusPercent = perRarityBonusPercent;
         }
 
         @Override
         public int Weight() {
-            if (bonusPercent <= 0 || rarity.GUID().equals(IRarity.COMMON_ID)) {
+            if (rarity.GUID().equals(IRarity.COMMON_ID)) {
                 return rarity.Weight();
             }
-            return (int) (rarity.Weight() * (1F + bonusPercent / 100F));
+            float total = bonusPercent + perRarityBonusPercent.getOrDefault(rarity.GUID(), 0F);
+            if (total <= 0) {
+                return rarity.Weight();
+            }
+            return (int) (rarity.Weight() * (1F + total / 100F));
         }
     }
 

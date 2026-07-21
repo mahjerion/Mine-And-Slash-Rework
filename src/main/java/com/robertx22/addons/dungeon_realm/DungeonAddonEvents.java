@@ -15,6 +15,9 @@ import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.AdditionalBossChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.DoubleEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.DuplicateMapChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.HarvestEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
@@ -49,7 +52,10 @@ public class DungeonAddonEvents {
         DungeonExileEvents.ON_GENERATE_NEW_MAP_ITEM.register(new EventConsumer<OnGenerateNewMapItemEvent>() {
             @Override
             public void accept(OnGenerateNewMapItemEvent event) {
-                MapBlueprint b = new MapBlueprint(LootInfo.ofLevel(1));
+                // use a player-aware LootInfo so player-driven map rolls (Atlas map_rarity_bias) apply;
+                // fall back to the dummy level-1 context when there's no player to roll for.
+                LootInfo info = event.player != null ? LootInfo.ofPlayer(event.player) : LootInfo.ofLevel(1);
+                MapBlueprint b = new MapBlueprint(info);
                 StackSaving.MAP.saveTo(event.mapStack, b.createData());
             }
         });
@@ -169,10 +175,31 @@ public class DungeonAddonEvents {
             }
         });
 
+        DungeonExileEvents.GET_EXTRA_MAP_BOSS_CHANCE.register(new EventConsumer<GetExtraMapBossChanceEvent>() {
+            @Override
+            public void accept(GetExtraMapBossChanceEvent event) {
+                float max = 0;
+                for (Player p : event.players) {
+                    float value = Load.Unit(p).getUnit().getCalculatedStat(AdditionalBossChance.getInstance()).getValue();
+                    if (value > max) {
+                        max = value;
+                    }
+                }
+                event.bonusPercent = max;
+            }
+        });
+
         DungeonExileEvents.GET_UBER_FRAGMENT_FIND_BONUS.register(new EventConsumer<GetUberFragmentFindBonusEvent>() {
             @Override
             public void accept(GetUberFragmentFindBonusEvent event) {
                 event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(UberFragmentFind.getInstance()).getValue();
+            }
+        });
+
+        DungeonExileEvents.GET_DUPLICATE_MAP_CHANCE.register(new EventConsumer<GetDuplicateMapChanceEvent>() {
+            @Override
+            public void accept(GetDuplicateMapChanceEvent event) {
+                event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(DuplicateMapChance.getInstance()).getValue();
             }
         });
 
@@ -196,14 +223,26 @@ public class DungeonAddonEvents {
                     default:
                         return;
                 }
-                float max = 0;
+                // true per-player max (NOT floored at 0), so SingularFocus's negative event-chance
+                // penalty on non-focused leagues actually lowers their weight. Regular event-chance
+                // stats are always >= 0, so their behavior is unchanged. Only ever one player here.
+                Float best = null;
                 for (Player p : event.players) {
                     float value = Load.Unit(p).getUnit().getCalculatedStat(stat).getValue();
-                    if (value > max) {
-                        max = value;
+                    if (best == null || value > best) {
+                        best = value;
                     }
                 }
-                event.bonusPercent = max;
+                if (best != null) {
+                    event.bonusPercent = best;
+                }
+            }
+        });
+
+        DungeonExileEvents.GET_BONUS_CONTENT_CHANCE.register(new EventConsumer<GetBonusContentChanceEvent>() {
+            @Override
+            public void accept(GetBonusContentChanceEvent event) {
+                event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(DoubleEventChance.getInstance()).getValue();
             }
         });
 

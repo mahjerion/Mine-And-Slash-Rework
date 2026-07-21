@@ -4,15 +4,15 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import net.minecraft.ChatFormatting;
 
-public class HarvestEventChance extends Stat {
+public class ExtraDropFromMythics extends Stat {
 
-    private HarvestEventChance() {
+    private ExtraDropFromMythics() {
         this.group = StatGroup.Misc;
         this.icon = "♣";
-        this.format = ChatFormatting.YELLOW.getName();
+        this.format = ChatFormatting.DARK_PURPLE.getName();
     }
 
-    public static HarvestEventChance getInstance() {
+    public static ExtraDropFromMythics getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -28,20 +28,20 @@ public class HarvestEventChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance for a Harvest to appear in your Maps. Only applies if YOU start the Map.";
+        return "Increases the amount of loot dropped by Mythic monsters.";
     }
 
     @Override
     public String GUID() {
-        return "harvest_event_chance";
+        return "extra_drop_from_mythics";
     }
 
     @Override
     public String locNameForLangFile() {
-        return "Harvest Event Chance";
+        return "Mythic Extra Drops";
     }
 
     private static class SingletonHolder {
-        private static final HarvestEventChance INSTANCE = new HarvestEventChance();
+        private static final ExtraDropFromMythics INSTANCE = new ExtraDropFromMythics();
     }
 }

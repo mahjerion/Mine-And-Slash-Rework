@@ -153,6 +153,7 @@ critical_hit_big
 crossbow_damage
 crossbow_damage_big
 currency_find_node
+currency_find_node_big
 curse_duration
 curse_duration_big
 curse_effect
@@ -223,6 +224,8 @@ energy_percent_big
 energy_regen_percent
 energy_regen_percent_big
 entangling_seed
+epic_monster_chance_node
+epic_monster_chance_node_big
 execute
 explode_minions
 explosive_arrow
@@ -261,6 +264,8 @@ frostball
 frozen_orb
 gale_wind
 garden_of_thorns
+gem_find_node
+gem_find_node_big
 generosity
 ghast
 glancing_strikes
@@ -278,6 +283,8 @@ guardian_class_4
 guardian_class_5
 guardian_class_6
 harmony
+harvest_event_chance_node
+harvest_event_chance_node_big
 healing_aura
 healing_received
 healing_received_big
@@ -328,6 +335,8 @@ int
 int_big
 int_dmg
 int_dmg_big
+item_find_node
+item_find_node_big
 jester_class
 jester_class_0
 jester_class_1
@@ -336,7 +345,11 @@ jester_class_3
 jester_class_4
 jester_class_5
 jester_class_6
+jewel_find_node
+jewel_find_node_big
 jewel_socket
+legendary_monster_chance_node
+legendary_monster_chance_node_big
 less_aggro
 lich_class
 lich_class_0
@@ -363,6 +376,8 @@ lightning_totem
 lightning_weapon_damage
 mage
 mage_circle
+magic_find_node
+magic_find_node_big
 magic_shield_heal
 magic_shield_on_kill
 magic_shield_percent
@@ -389,16 +404,21 @@ mana_regen_percent_big
 manasteal
 manasteal_big
 mantra
+map_find_node
+map_find_node_big
 masochism
 meteor
 meteor_arrow
 minion_catapult
 minion_explosion
 mob_modifier_density_node
+mob_modifier_density_node_big
 ms_all_in
 ms_energy_regen
 ms_energy_regen_big
 ms_steal
+mythic_monster_chance_node
+mythic_monster_chance_node_big
 necromancer_class
 necromancer_class_0
 necromancer_class_1
@@ -409,6 +429,10 @@ necromancer_class_5
 necromancer_class_6
 necromantic_defenses
 nether_enthusiast
+obelisk_event_chance_node
+obelisk_event_chance_node_big
+omen_find_node
+omen_find_node_big
 p_armor_pen
 p_armor_per_mana
 p_aura_effect
@@ -458,6 +482,7 @@ p_totem_dmg
 p_trap_cdr
 p_trap_dmg
 pack_size_node
+pack_size_node_big
 performer
 phys_to_all
 phys_to_all_big
@@ -500,6 +525,10 @@ profane_explosion
 projectile_damage
 projectile_damage_big
 projection
+prophecy_coin_find_node
+prophecy_coin_find_node_big
+prophecy_event_chance_node
+prophecy_event_chance_node_big
 pull
 quickdraw
 raider_class
@@ -511,6 +540,8 @@ raider_class_4
 raider_class_5
 raider_class_6
 ranger
+rare_monster_chance_node
+rare_monster_chance_node_big
 reckless_defender
 recoil_shot
 refined_taste
@@ -521,6 +552,8 @@ resonance
 return_summons
 ritardando
 rogue
+rune_find_node
+rune_find_node_big
 shade
 shatter_proc_chance
 shatter_proc_chance_big
@@ -529,6 +562,8 @@ shock_proc_chance_big
 shooting_star
 shred
 skeleton_basic
+skill_gem_find_node
+skill_gem_find_node_big
 small_positive_effect_increase
 smoke_bomb
 sniper
@@ -626,6 +661,9 @@ trident_damage
 trident_damage_big
 true_hit
 uber_fragment_find_node
+uber_fragment_find_node_big
+uncommon_monster_chance_node
+uncommon_monster_chance_node_big
 undying_will
 unknown
 vamp_blood
@@ -634,6 +672,8 @@ vital_point
 wandering_bard
 warlock
 warrior
+watcher_eye_find_node
+watcher_eye_find_node_big
 water_any_wep_damage
 water_any_wep_damage_big
 water_dot_damage

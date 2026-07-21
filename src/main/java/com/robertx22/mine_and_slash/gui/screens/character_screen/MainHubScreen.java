@@ -259,6 +259,7 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         rightButtons.add(new OpenJewelsScreen());
 
         if (mc.level.dimension().location().equals(DungeonMain.DIMENSION_KEY)) {
+            rightButtons.add(new MapScreen());
             if (Load.player(mc.player).prophecy.affixOffers.isEmpty()) {
                 rightButtons.add(new ProphecyScreen());
             } else {
@@ -273,11 +274,6 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         leftButtons.add(new OpenInvGuiScreen(Words.Salvaging, "salvage", GuiInventoryGrids.ofSalvageConfig()));
         leftButtons.add(new OpenInvGuiScreen(Words.Configs, "configs", GuiInventoryGrids.ofConfigs()));
         leftButtons.add(new StatScreen(ClientOnly.getPlayer()));
-
-        if (mc.level.dimension().location().equals(DungeonMain.DIMENSION_KEY)) {
-            leftButtons.add(new MapScreen());
-        }
-
 
         publicAddButton(new FavorButton(guiLeft + sizeX / 2 - FavorButton.FAVOR_BUTTON_SIZE_X / 2, guiTop - FavorButton.FAVOR_BUTTON_SIZE_Y));
         publicAddButton(new ProfessionLevelsButton(guiLeft + sizeX / 2 - ProfessionLevelsButton.SX / 2, guiTop + 147));

@@ -49,7 +49,7 @@ public class AtlasNodeButton extends AbstractWidget {
     // null if this node has no extra completion requirement beyond just clearing the dungeon
     private static Component describeRequirement(AtlasNode node) {
         if (node.require_uber) {
-            return Component.literal("Requires an Uber map").withStyle(ChatFormatting.LIGHT_PURPLE);
+            return Component.literal("Must be an Uber Map").withStyle(ChatFormatting.LIGHT_PURPLE);
         }
         if (!node.min_rarity.isEmpty()) {
             GearRarity rar = ExileDB.GearRarities().get(node.min_rarity);

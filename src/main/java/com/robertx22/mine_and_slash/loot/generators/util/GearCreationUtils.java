@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.loot.generators.util;
 
 import com.google.common.base.Preconditions;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.StatRollQuality;
 import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.itemstack.CustomItemData;
@@ -71,9 +72,28 @@ public class GearCreationUtils {
         gear.imp.RerollFully(gear);
         gear.affixes.randomize(gear);
 
+        applyStatRollQuality(blueprint, gear);
 
         data.set(StackKeys.GEAR, gear);
 
         return data;
+    }
+
+    // Atlas stat_roll_quality biases each rolled affix's percentile toward the top of its range
+    // (lerp p -> max by quality%), so dropped gear rolls stronger stats. Only affects the initial
+    // drop roll here - crafting/reroll paths that call RerollNumbers directly are untouched.
+    private static void applyStatRollQuality(GearBlueprint blueprint, GearItemData gear) {
+        if (blueprint.info == null || blueprint.info.playerEntityData == null) {
+            return;
+        }
+        float quality = blueprint.info.playerEntityData.getUnit().getCalculatedStat(StatRollQuality.getInstance()).getValue();
+        if (quality <= 0) {
+            return;
+        }
+        float frac = Math.min(1F, quality / 100F);
+        for (var affix : gear.affixes.getPrefixesAndSuffixes()) {
+            int max = affix.getMinMax().max;
+            affix.p = Math.min(max, Math.round(affix.p + (max - affix.p) * frac));
+        }
     }
 }

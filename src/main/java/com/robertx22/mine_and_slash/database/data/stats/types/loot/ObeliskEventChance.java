@@ -28,7 +28,7 @@ public class ObeliskEventChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance for an Obelisk to appear in your Maps.";
+        return "Increases chance for an Obelisk to appear in your Maps. Only applies if YOU start the Map.";
     }
 
     @Override

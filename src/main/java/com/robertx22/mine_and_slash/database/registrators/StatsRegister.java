@@ -135,6 +135,8 @@ public class StatsRegister implements ExileRegistryInit {
 
                     add(TreasureQuality.getInstance());
                     add(TreasureQuantity.getInstance());
+                    add(ExtraDropFromMythics.getInstance());
+                    add(StatRollQuality.getInstance());
 
                     add(PackSize.getInstance());
                     add(CurrencyFind.getInstance());
@@ -145,13 +147,23 @@ public class StatsRegister implements ExileRegistryInit {
                     add(SkillGemFind.getInstance());
                     add(RuneFind.getInstance());
                     add(JewelFind.getInstance());
+                    add(AdditionalBossChance.getInstance());
+                    add(BossLootQuantity.getInstance());
+                    add(UncommonMonsterChance.getInstance());
+                    add(RareMonsterChance.getInstance());
+                    add(EpicMonsterChance.getInstance());
+                    add(LegendaryMonsterChance.getInstance());
+                    add(MythicMonsterChance.getInstance());
 
                     add(MapFind.getInstance());
+                    add(MapRarityBias.getInstance());
+                    add(DuplicateMapChance.getInstance());
                     add(ProphecyCoinFind.getInstance());
                     add(WatcherEyeFind.getInstance());
                     add(ProphecyEventChance.getInstance());
                     add(HarvestEventChance.getInstance());
                     add(ObeliskEventChance.getInstance());
+                    add(DoubleEventChance.getInstance());
 
                     add(new BonusAttackDamage(Elements.Physical));
                     add(new ElementalResist(Elements.Physical));

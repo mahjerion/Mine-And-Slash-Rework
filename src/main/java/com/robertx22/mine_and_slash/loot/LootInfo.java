@@ -9,6 +9,8 @@ import com.robertx22.library_of_exile.database.league.LibLeagues;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.BossLootQuantity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ExtraDropFromMythics;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.TreasureQuantity;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.ExtraMobDropsStat;
 import com.robertx22.mine_and_slash.database.holders.MnsRelicStats;
@@ -16,6 +18,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.generators.BaseLootGen;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TeamUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
@@ -221,6 +224,21 @@ public class LootInfo {
             lootMods.add(new LootModifier(LootModifierEnum.MOB_DATAPACK, (float) this.mobData.getEntityConfig().loot_multi));
             lootMods.add(new LootModifier(LootModifierEnum.MOB_BONUS_LOOT_STAT, mobData.getUnit().getCalculatedStat(ExtraMobDropsStat.getInstance()).getMultiplier()));
             lootMods.add(new LootModifier(LootModifierEnum.MOB_RARITY, mobData.getMobRarity().LootMultiplier()));
+
+            // map bosses drop extra loot based on the killer's Atlas boss-loot stat. Player-side, so
+            // in multiplayer only the killing player's stat applies (unlike spawn-time stats such as
+            // additional_boss_chance, which take the party max). Accepted tradeoff.
+            if (this.playerEntityData != null && IRarity.BOSS.equals(mobData.getMobRarity().GUID())) {
+                lootMods.add(new LootModifier(LootModifierEnum.BOSS_LOOT,
+                        playerEntityData.getUnit().getCalculatedStat(BossLootQuantity.getInstance()).getMultiplier()));
+            }
+
+            // Mythic monsters drop extra loot based on the killer's Atlas stat. Same killer-side
+            // caveat as boss loot. Boss and Mythic are distinct rarities, so these never both apply.
+            if (this.playerEntityData != null && IRarity.MYTHIC_ID.equals(mobData.getMobRarity().GUID())) {
+                lootMods.add(new LootModifier(LootModifierEnum.MYTHIC_LOOT,
+                        playerEntityData.getUnit().getCalculatedStat(ExtraDropFromMythics.getInstance()).getMultiplier()));
+            }
 
         }
 

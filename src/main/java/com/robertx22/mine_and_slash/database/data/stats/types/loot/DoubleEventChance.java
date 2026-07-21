@@ -4,15 +4,15 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import net.minecraft.ChatFormatting;
 
-public class HarvestEventChance extends Stat {
+public class DoubleEventChance extends Stat {
 
-    private HarvestEventChance() {
+    private DoubleEventChance() {
         this.group = StatGroup.Misc;
         this.icon = "♣";
         this.format = ChatFormatting.YELLOW.getName();
     }
 
-    public static HarvestEventChance getInstance() {
+    public static DoubleEventChance getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -28,20 +28,20 @@ public class HarvestEventChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance for a Harvest to appear in your Maps. Only applies if YOU start the Map.";
+        return "Chance for an additional bonus event to spawn in your Maps. Only applies if YOU start the Map.";
     }
 
     @Override
     public String GUID() {
-        return "harvest_event_chance";
+        return "double_event_chance";
     }
 
     @Override
     public String locNameForLangFile() {
-        return "Harvest Event Chance";
+        return "Additional Event Chance";
     }
 
     private static class SingletonHolder {
-        private static final HarvestEventChance INSTANCE = new HarvestEventChance();
+        private static final DoubleEventChance INSTANCE = new DoubleEventChance();
     }
 }

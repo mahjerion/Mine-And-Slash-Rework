@@ -4,15 +4,15 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import net.minecraft.ChatFormatting;
 
-public class HarvestEventChance extends Stat {
+public class BossLootQuantity extends Stat {
 
-    private HarvestEventChance() {
+    private BossLootQuantity() {
         this.group = StatGroup.Misc;
         this.icon = "♣";
-        this.format = ChatFormatting.YELLOW.getName();
+        this.format = ChatFormatting.GOLD.getName();
     }
 
-    public static HarvestEventChance getInstance() {
+    public static BossLootQuantity getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
@@ -28,20 +28,20 @@ public class HarvestEventChance extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance for a Harvest to appear in your Maps. Only applies if YOU start the Map.";
+        return "Increases the amount of loot dropped by Map Bosses.";
     }
 
     @Override
     public String GUID() {
-        return "harvest_event_chance";
+        return "boss_loot_quantity";
     }
 
     @Override
     public String locNameForLangFile() {
-        return "Harvest Event Chance";
+        return "Boss Loot Quantity";
     }
 
     private static class SingletonHolder {
-        private static final HarvestEventChance INSTANCE = new HarvestEventChance();
+        private static final BossLootQuantity INSTANCE = new BossLootQuantity();
     }
 }

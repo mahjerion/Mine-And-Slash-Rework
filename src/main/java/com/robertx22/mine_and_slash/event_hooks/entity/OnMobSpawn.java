@@ -3,15 +3,24 @@ package com.robertx22.mine_and_slash.event_hooks.entity;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.EpicMonsterChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.LegendaryMonsterChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.MobModifierDensity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.MythicMonsterChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.RareMonsterChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.UncommonMonsterChance;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class OnMobSpawn {
 
@@ -75,8 +84,18 @@ public class OnMobSpawn {
 
         String rar = endata.getRarity();
 
-        float densityBonus = nearestPlayer != null ? Load.Unit(nearestPlayer).getUnit().getCalculatedStat(MobModifierDensity.getInstance()).getValue() : 0;
-        rar = mob.randomRarity(endata.getLevel(), endata, densityBonus);
+        float densityBonus = 0;
+        Map<String, Float> perRarityBonus = new HashMap<>();
+        if (nearestPlayer != null) {
+            Unit playerUnit = Load.Unit(nearestPlayer).getUnit();
+            densityBonus = playerUnit.getCalculatedStat(MobModifierDensity.getInstance()).getValue();
+            perRarityBonus.put(IRarity.UNCOMMON, playerUnit.getCalculatedStat(UncommonMonsterChance.getInstance()).getValue());
+            perRarityBonus.put(IRarity.RARE_ID, playerUnit.getCalculatedStat(RareMonsterChance.getInstance()).getValue());
+            perRarityBonus.put(IRarity.EPIC_ID, playerUnit.getCalculatedStat(EpicMonsterChance.getInstance()).getValue());
+            perRarityBonus.put(IRarity.LEGENDARY_ID, playerUnit.getCalculatedStat(LegendaryMonsterChance.getInstance()).getValue());
+            perRarityBonus.put(IRarity.MYTHIC_ID, playerUnit.getCalculatedStat(MythicMonsterChance.getInstance()).getValue());
+        }
+        rar = mob.randomRarity(endata.getLevel(), endata, densityBonus, perRarityBonus);
 
         if (config.hasSpecificRarity()) {
             rar = config.set_rar;

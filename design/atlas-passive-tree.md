@@ -33,33 +33,33 @@ Rarity ladder in this mod (relevant because we go beyond PoE's Rare):
 |---|---|---|---|
 | Pack Size | `PackSize` | ✅ | mobs per pack; already on tree + consumed |
 | Mob Modifier Density | `MobModifierDensity` | ✅ | biases rarity roll; on tree |
-| Rarity chances | `UncommonMonsterChance` / `RareMonsterChance` / `EpicMonsterChance` / `LegendaryMonsterChance` / `MythicMonsterChance` | 🟡 | split the single density stat into per-rarity roll bonuses in `OnMobSpawn.randomRarity` |
+| Rarity chances | `UncommonMonsterChance` / `RareMonsterChance` / `EpicMonsterChance` / `LegendaryMonsterChance` / `MythicMonsterChance` | ✅ | per-rarity weight bonus threaded through `Unit.WeightedMobRarity` (stacks with global density); gathered in `OnMobSpawn`. First-pass node values, tunable |
 | High-rarity extra modifier | `HighRarityExtraModifier` | 🟡 | Rare+ mobs roll an extra affix |
-| Pack count | `PackCount` | 🟡 | after `MobHordeMB` spawns its pack, roll for one extra adjacent pack (no NBT edits) |
+| ~~Pack count~~ | ~~`PackCount`~~ | ❌ dropped | Redundant with pack size: packs spawn as a blob at a single point, so "more packs" and "bigger pack" collapse to the same effect. Would only be distinct if extra packs were spatially scattered (via `SpawnPointHelper`); decided not worth it |
 | Pack leader | `PackLeaderChance` | 🟡 | normal packs get a magic leader |
 | **Keystone** Purge the Weak | — | 🟡 | no magic monsters; greatly increased Rare-and-above chance |
 
 ## Cluster 2 — Map bosses  (maps always have a boss; spawn/difficulty only)
 | Perk | Stat | Status | Notes |
 |---|---|---|---|
-| Additional boss | `AdditionalBossChance` | 🟡 | chance a second boss spawns ("Twinned") |
-| Boss extra affixes | `BossExtraAffixChance` | 🟡 | boss spawns with extra affixes |
-| Boss extra drops | `ExtraMobDropsStat` (existing) | 🟡 | apply the existing `extra_mob_drops` stat to the boss |
+| Additional boss | `AdditionalBossChance` | ✅ | player-stat parallel to the `EXTRA_MAP_BOSS_CHANCE` relic stat; rolled in `MapBossMB` via `GetExtraMapBossChanceEvent`. Currently +1 boss max (extendable to multi) |
+| ~~Boss extra affixes~~ | ~~`BossExtraAffixChance`~~ | ❌ dropped | would need the mob-affix system fleshed out first (`MobData.randomizeAffixes` is a stub adding max 1 affix); not worth that broader change now |
+| Boss extra drops | `BossLootQuantity` | ✅ | killer-side loot multiplier in `LootInfo`, gated on `IRarity.BOSS`. NOTE: player-side, so in multiplayer only the killer's stat applies (unlike spawn-time stats which take the party max) — accepted tradeoff |
 
 ## Cluster 3 — Loot quality
 | Perk | Stat | Status | Notes |
 |---|---|---|---|
 | Item Find | `TreasureQuantity` | 🟢 | stat exists + consumed (`LootInfo`); just needs tree entry |
 | Magic Find | `TreasureQuality` | 🟢 | stat exists + consumed; just needs tree entry |
-| Mythic extra drops | `ExtraDropFromMythics` | 🟡 | Mythic monsters chance for an additional item |
-| Stat roll quality | `StatRollQuality` | 🟡 | higher quality/roll-strength of stats on dropped gear (no extra sockets) |
+| Mythic extra drops | `ExtraDropFromMythics` | ✅ | killer-side loot multiplier in `LootInfo` gated on `IRarity.MYTHIC_ID` (same shape as `BossLootQuantity`; killer-only in multiplayer) |
+| Stat roll quality | `StatRollQuality` | ✅ | biases each dropped-gear affix's roll percentile toward its max (lerp `p`→max by quality%) in `GearCreationUtils.CreateData`. Initial drop roll only — crafting/reroll paths untouched. No extra sockets |
 
 ## Cluster 4 — Map sustain
 | Perk | Stat | Status | Notes |
 |---|---|---|---|
 | Map Find | `MapFind` | ✅ | on tree + consumed (`MapLootGen`) |
-| Map Rarity | `MapRarityBias` | 🟡 | dropped maps skew higher rarity (tier follows rarity); modifies map drop roll |
-| Duplicate Map | `DuplicateMapChance` | 🟡 | chance completion drops a copy of the run map; normal node, **not** a keystone |
+| Map Rarity | `MapRarityBias` | ✅ | feeds `GearRarityPart`'s higher-rarity upgrade roll in `MapBlueprint.createData`. Required threading the player into `OnGenerateNewMapItemEvent` (the drop path previously used a dummy level-1 context, so map rarity never upgraded at all). DESIGN CHOICE: only the dedicated stat applies, not general magic find — map rarity stays gated behind the Atlas |
+| Duplicate Map | `DuplicateMapChance` | ✅ | killer-side roll at final-boss death (`DungeonEvents`) drops an exact copy of the run map rebuilt from `getSnapshotStack()`. Via `GetDuplicateMapChanceEvent`; multiplayer = killer only (like the uber-frag drop sharing this hook) |
 
 ## Cluster 5 — Reward-type find wheels
 | Perk | Stat | Status | Notes |
@@ -74,8 +74,8 @@ Rarity ladder in this mod (relevant because we go beyond PoE's Rare):
 | Perk | Stat | Status | Notes |
 |---|---|---|---|
 | Prophecy / Harvest / Obelisk event chance | existing | ✅ | raise MapContent weight |
-| Double event | `DoubleEventChance` | 🟡 | player-stat that raises the bonus-content *count* (parallels `BONUS_CONTENT_CHANCE` relic stat) |
-| Singular Focus (one per league) | perk set, `one_kind = "singular_focus"` | 🟡 | mutually exclusive; +50% weight to its event, −50% to the others |
+| Double event | `DoubleEventChance` | ✅ | player-stat parallel to `BONUS_CONTENT_CHANCE`; rolls for +1 bonus content in `MapBonusContentsData` via `GetBonusContentChanceEvent` |
+| Singular Focus (one per league) | multi-stat perks, `one_kind = "singular_focus"` | ✅ | 3 mutually-exclusive perks; each grants +50 to its league's event-chance stat and −50 to the other two, reusing the `GET_MAP_CONTENT_WEIGHT_BONUS` weight path. Required un-flooring that listener (was `max(0, …)`) so the −50 penalty applies; existing event-chance stats are ≥0 so unaffected |
 
 ## Cluster 7 — New encounters  (MapContent marker block + trigger; no NBT editing)
 Side content spawns by scattering a marker `block_id` per-chunk during map gen

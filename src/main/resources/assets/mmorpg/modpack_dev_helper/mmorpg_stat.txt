@@ -216,6 +216,7 @@ energy_per_10_mana
 energy_per_sec
 energy_reg_aura_cost
 energy_regen
+epic_monster_chance
 extra_mob_drops
 farming_core_drop_bonus
 farming_double_drop
@@ -262,12 +263,14 @@ full_swing_damage
 gale_force_on_hit
 gear_defense
 gear_weapon_damage
+gem_find
 golem_cast_time
 golem_cdr
 golem_eff_dur_u_cast
 golem_spell_chance
 golem_spell_dmg
 golem_spell_dmg_taken
+harvest_event_chance
 has_pet_ability_cast_time
 has_pet_ability_cdr
 has_pet_ability_spell_dmg
@@ -332,6 +335,7 @@ int_dmg
 int_dmg_per_5_strength
 intelligence
 jewel_effect
+jewel_find
 jewel_socket
 knockback_resist
 learn_arrow_barrage
@@ -433,6 +437,7 @@ learn_whirlwind
 learn_wish
 learn_wolf_basic
 learn_zombie_basic
+legendary_monster_chance
 lifesteal
 light_res_aura_cost
 lightning_ailment_aura_cost
@@ -491,6 +496,7 @@ mana_regen
 mana_regen_per_500_magic_shield
 mana_shield
 manasteal
+map_find
 max_all_resist
 max_chaos_resist
 max_charm_charges
@@ -535,6 +541,7 @@ movement_cast_time
 movement_cdr
 movement_spell_dmg
 movement_spell_dmg_taken
+mythic_monster_chance
 negative_eff_dur_u_cast
 no_attacker_stats_on_selfdmg
 non_crit_damage
@@ -542,7 +549,9 @@ not_affected_by_cast_speed_cast_time
 not_affected_by_cast_speed_cdr
 not_affected_by_cast_speed_spell_dmg
 not_affected_by_cast_speed_spell_dmg_taken
+obelisk_event_chance
 offensive_eff_dur_u_cast
+omen_find
 on_death_ignite_explosion
 out_of_combat_regen
 pack_size
@@ -649,15 +658,19 @@ projectile_damage_per_5_strength
 projectile_nova
 projectile_spell_dmg
 projectile_spell_dmg_taken
+prophecy_coin_find
+prophecy_event_chance
 ranged_cast_time
 ranged_cdr
 ranged_spell_dmg
 ranged_spell_dmg_taken
+rare_monster_chance
 rejuv_eff_on_self
 rejuvenate_cast_time
 rejuvenate_cdr
 rejuvenate_spell_dmg
 rejuvenate_spell_dmg_taken
+rune_find
 salvaging_core_drop_bonus
 salvaging_double_drop
 salvaging_exp_bonus
@@ -678,6 +691,7 @@ shout_cast_time
 shout_cdr
 shout_spell_dmg
 shout_spell_dmg_taken
+skill_gem_find
 slow_immunity
 song_cast_time
 song_cdr
@@ -728,8 +742,10 @@ trap_spell_dmg
 trap_spell_dmg_taken
 trident_damage
 uber_fragment_find
+uncommon_monster_chance
 unknown
 unknown_stat
+watcher_eye_find
 water_any_wep_damage
 water_dmg_reduction
 water_dmg_when_target_low_hp

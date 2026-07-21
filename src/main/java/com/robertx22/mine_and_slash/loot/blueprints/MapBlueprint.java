@@ -5,6 +5,7 @@ import com.robertx22.dungeon_realm.item.DungeonMapGenSettings;
 import com.robertx22.dungeon_realm.item.DungeonMapItem;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffix;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.MapRarityBias;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.maps.MapAffixData;
@@ -53,6 +54,13 @@ public class MapBlueprint extends RarityItemBlueprint {
 
     public MapItemData createData() {
         MapItemData data = new MapItemData();
+
+        // Atlas map_rarity_bias raises the chance the rolled map upgrades to the next rarity tier
+        // (GearRarityPart's higher-rarity roll). Only the dedicated stat applies here - not general
+        // magic find - so map rarity stays gated behind the Atlas rather than scaling with gear.
+        if (info.playerEntityData != null) {
+            this.rarity.chanceForHigherRarity += info.playerEntityData.getUnit().getCalculatedStat(MapRarityBias.getInstance()).getValue();
+        }
 
         GearRarity rarity = (GearRarity) this.rarity.get();
 

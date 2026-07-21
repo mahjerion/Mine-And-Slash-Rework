@@ -1,5 +1,8 @@
 These are all default registry entries of this type.
 This registry is modify-able through datapacks.
+common_to_epic_with_tag_dexterity
+common_to_epic_with_tag_intelligence
+common_to_epic_with_tag_strength
 entangled_affix_upgrade
 entangled_potential
 entangled_quality

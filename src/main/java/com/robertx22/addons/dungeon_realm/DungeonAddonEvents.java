@@ -14,7 +14,11 @@ import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
+import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.HarvestEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
@@ -172,6 +176,37 @@ public class DungeonAddonEvents {
             }
         });
 
+        DungeonExileEvents.GET_MAP_CONTENT_WEIGHT_BONUS.register(new EventConsumer<GetMapContentWeightBonusEvent>() {
+            @Override
+            public void accept(GetMapContentWeightBonusEvent event) {
+                // map the shared MapContent id (see MnsMapContents / ObeliskMapContents / HarvestMapContents)
+                // to the matching Atlas "event chance" stat. String literals so we don't compile-depend on
+                // the harvest/obelisk mods; if a league mod is absent its content isn't registered anyway.
+                Stat stat;
+                switch (event.contentId) {
+                    case "prophecy":
+                        stat = ProphecyEventChance.getInstance();
+                        break;
+                    case "obelisk":
+                        stat = ObeliskEventChance.getInstance();
+                        break;
+                    case "the_harvest":
+                        stat = HarvestEventChance.getInstance();
+                        break;
+                    default:
+                        return;
+                }
+                float max = 0;
+                for (Player p : event.players) {
+                    float value = Load.Unit(p).getUnit().getCalculatedStat(stat).getValue();
+                    if (value > max) {
+                        max = value;
+                    }
+                }
+                event.bonusPercent = max;
+            }
+        });
+
         DungeonExileEvents.ON_MAP_FULLY_CLEARED.register(new EventConsumer<OnMapFullyClearedEvent>() {
             @Override
             public void accept(OnMapFullyClearedEvent event) {
@@ -198,9 +233,16 @@ public class DungeonAddonEvents {
                             pd.playerDataSync.setDirty();
 
                             if (node.is_pinnacle_unlock && !pd.atlas.pinnacleUnlocked) {
-                                boolean allDone = DungeonDatabase.AtlasNodes().getList().stream()
+                                // only pinnacle nodes actually placed on the atlas map layout count -
+                                // the registry holds many generated nodes that aren't on the grid, and
+                                // an unplaced one would otherwise make Pinnacle impossible to unlock
+                                java.util.Set<String> placed = ExileDB.AtlasNodeLayouts().getList().get(0).calcData.pointOf.keySet();
+                                var placedPinnacle = DungeonDatabase.AtlasNodes().getList().stream()
                                         .filter(n -> n.is_pinnacle_unlock)
-                                        .allMatch(n -> pd.atlas.isCompleted(n.id));
+                                        .filter(n -> placed.contains(n.id))
+                                        .toList();
+                                boolean allDone = !placedPinnacle.isEmpty()
+                                        && placedPinnacle.stream().allMatch(n -> pd.atlas.isCompleted(n.id));
                                 if (allDone) {
                                     pd.atlas.pinnacleUnlocked = true;
                                     pd.playerDataSync.setDirty();

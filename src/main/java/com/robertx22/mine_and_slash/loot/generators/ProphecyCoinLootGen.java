@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyCoinFind;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.ItemBlueprint;
 import com.robertx22.mine_and_slash.uncommon.coins.Coin;
@@ -19,6 +20,10 @@ public class ProphecyCoinLootGen extends BaseLootGen<ItemBlueprint> {
         float chance = (float) ServerContainer.get().PROPHECY_COIN_DROPRATE.get().floatValue();
         chance *= 1F + (info.map_tier / 25F);
         chance *= Load.player(info.player).prophecy.affixesTaken.size();
+
+        float coinFind = Load.Unit(info.player).getUnit().getCalculatedStat(ProphecyCoinFind.getInstance()).getValue();
+        chance *= 1F + (coinFind / 100F);
+
         return chance;
     }
 

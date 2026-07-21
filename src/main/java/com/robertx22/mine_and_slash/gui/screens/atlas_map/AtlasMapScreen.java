@@ -90,7 +90,12 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         AtlasData atlas = Load.player(ClientOnly.getPlayer()).atlas;
         layout = ExileDB.AtlasNodeLayouts().getList().get(0).calcData;
 
-        var pinnacleNodes = DungeonDatabase.AtlasNodes().getList().stream().filter(n -> n.is_pinnacle_unlock).toList();
+        // only count pinnacle nodes actually placed on this layout, not every registered one
+        var placed = layout.pointOf.keySet();
+        var pinnacleNodes = DungeonDatabase.AtlasNodes().getList().stream()
+                .filter(n -> n.is_pinnacle_unlock)
+                .filter(n -> placed.contains(n.id))
+                .toList();
         pinnacleTotal = pinnacleNodes.size();
         pinnacleDone = (int) pinnacleNodes.stream().filter(n -> atlas.isCompleted(n.id)).count();
         pinnacleUnlocked = atlas.pinnacleUnlocked;

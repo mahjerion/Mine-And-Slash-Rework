@@ -20,11 +20,17 @@ import com.robertx22.mine_and_slash.database.data.stats.types.gear_base.GearDama
 import com.robertx22.mine_and_slash.database.data.stats.types.gear_base.GearDefense;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.*;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.CurrencyFind;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.HarvestEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.MapFind;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.MobModifierDensity;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyCoinFind;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.TreasureQuality;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.TreasureQuantity;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.WatcherEyeFind;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.BonusExp;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.DamageTakenToMana;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.ExtraMobDropsStat;
@@ -145,6 +151,13 @@ public class StatsRegister implements ExileRegistryInit {
                     add(CurrencyFind.getInstance());
                     add(UberFragmentFind.getInstance());
                     add(MobModifierDensity.getInstance());
+
+                    add(MapFind.getInstance());
+                    add(ProphecyCoinFind.getInstance());
+                    add(WatcherEyeFind.getInstance());
+                    add(ProphecyEventChance.getInstance());
+                    add(HarvestEventChance.getInstance());
+                    add(ObeliskEventChance.getInstance());
 
                     add(new BonusAttackDamage(Elements.Physical));
                     add(new ElementalResist(Elements.Physical));

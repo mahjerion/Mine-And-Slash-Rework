@@ -1,9 +1,11 @@
 package com.robertx22.mine_and_slash.loot.generators;
 
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.WatcherEyeFind;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.MapBlueprint;
 import com.robertx22.mine_and_slash.loot.blueprints.WatcherEyeBlueprint;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.LootType;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +19,12 @@ public class WatcherEyeLootGen extends BaseLootGen<MapBlueprint> {
     @Override
     public float baseDropChance() {
         float chance = (float) ServerContainer.get().WATCHER_EYE_DROPRATE.get().floatValue();
+
+        if (info.player != null) {
+            float find = Load.Unit(info.player).getUnit().getCalculatedStat(WatcherEyeFind.getInstance()).getValue();
+            chance *= 1F + (find / 100F);
+        }
+
         return chance;
     }
 

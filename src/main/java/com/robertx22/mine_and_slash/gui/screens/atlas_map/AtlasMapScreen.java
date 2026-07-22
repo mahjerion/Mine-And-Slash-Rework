@@ -225,7 +225,7 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         gui.blit(BACKGROUND, 0, 0, -10, 0.0F, 0.0F, this.width, this.height, 32, 32);
     }
 
-    private static final float LABEL_TEXT_SCALE = 0.7F;
+    private static final float LABEL_TEXT_SCALE = 0.85F;
 
     private void renderLabels(GuiGraphics graphics) {
         for (AtlasNodeButton btn : nodeButtons.values()) {

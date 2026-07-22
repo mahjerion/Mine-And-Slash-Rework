@@ -9,10 +9,13 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.rework.DataKey;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import com.robertx22.orbs_of_crafting.misc.StackHolder;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Arrays;
 
 public class MaximumUsesReq extends ItemRequirement {
 
@@ -22,6 +25,16 @@ public class MaximumUsesReq extends ItemRequirement {
     public static record Data(String use_id, int max_uses) {
         public MaxUsesKey toKey() {
             return new MaxUsesKey(this);
+        }
+
+        // human-readable label for the shared use-counter this requirement keys off of, eg "seed_uses" ->
+        // "Seed Uses" - shown in the tooltip so mutually-exclusive currencies (like the Imprisoned Monster
+        // Seeds, which all share ItemReqs.Datas.SEED_USES) make it clear they can't be mixed with each other.
+        public String label() {
+            return Arrays.stream(use_id.split("_"))
+                    .map(StringUTIL::capitalise)
+                    .reduce((a, b) -> a + " " + b)
+                    .orElse(use_id);
         }
     }
 
@@ -37,13 +50,13 @@ public class MaximumUsesReq extends ItemRequirement {
 
     @Override
     public MutableComponent getDescWithParams() {
-        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName(data.max_uses);
+        return this.getTranslation(TranslationType.DESCRIPTION).getTranslatedName(data.max_uses, data.label());
     }
 
     @Override
     public TranslationBuilder createTranslationBuilder() {
         return TranslationBuilder.of(SlashRef.MODID)
-                .desc(ExileTranslation.registry(this, "Maximum %1$s uses")
+                .desc(ExileTranslation.registry(this, "Maximum %1$s uses of: %2$s")
                 );
     }
 

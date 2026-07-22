@@ -28,7 +28,7 @@ public class SkillGemFind extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Increases chance to find Skill Gems.";
+        return "Increases chance to find Support and Augment Gems.";
     }
 
     @Override

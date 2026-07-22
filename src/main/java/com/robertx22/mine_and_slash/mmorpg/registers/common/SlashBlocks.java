@@ -4,6 +4,9 @@ import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlock;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.Def;
+import com.robertx22.addons.dungeon_realm.ImprisonedMonsterBlock;
+import com.robertx22.addons.dungeon_realm.ShrineBlock;
+import com.robertx22.addons.dungeon_realm.StrongboxBlock;
 import com.robertx22.mine_and_slash.prophecy.ProphecyAltarBlock;
 import com.robertx22.mine_and_slash.vanilla_mc.blocks.BlackHoleBlock;
 import com.robertx22.mine_and_slash.vanilla_mc.blocks.TotemBlock;
@@ -25,6 +28,9 @@ public class SlashBlocks {
     public static RegObj<TotemBlock> GLYPH = Def.block("glyph", () -> new TotemBlock());
     //    public static RegObj<LeagueTeleportBlock> HARVEST_TELEPORT = Def.block("harvest_teleport", () -> new LeagueTeleportBlock(LeagueMechanics.HARVEST_ID));
     public static RegObj<ProphecyAltarBlock> PROPHECY_ALTAR = Def.block("prophecy_altar", () -> new ProphecyAltarBlock());
+    public static RegObj<StrongboxBlock> STRONGBOX = Def.block("strongbox", () -> new StrongboxBlock());
+    public static RegObj<ImprisonedMonsterBlock> IMPRISONED_MONSTER = Def.block("imprisoned_monster", () -> new ImprisonedMonsterBlock());
+    public static RegObj<ShrineBlock> SHRINE = Def.block("shrine", () -> new ShrineBlock());
 
 
     public static HashMap<String, RegObj<ProfessionBlock>> STATIONS = new HashMap<>();

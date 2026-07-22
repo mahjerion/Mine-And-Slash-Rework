@@ -44,7 +44,6 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.higher_rar = IRarity.UNCOMMON;
             x.stat_percents = new MinMax(0, 10);
             x.setCommonFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         });
 
@@ -71,7 +70,6 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.higher_rar = IRarity.RARE_ID;
             x.stat_percents = new MinMax(10, 20);
             x.setUncommonFields();
-            x.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
         });
 

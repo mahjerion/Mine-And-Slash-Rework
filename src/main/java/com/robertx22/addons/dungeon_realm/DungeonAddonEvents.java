@@ -1,12 +1,15 @@
 package com.robertx22.addons.dungeon_realm;
 
 import com.robertx22.dungeon_realm.api.*;
+import com.robertx22.dungeon_realm.capability.DungeonEntityCapability;
+import com.robertx22.dungeon_realm.capability.DungeonEntityData;
 import com.robertx22.dungeon_realm.database.DungeonDatabase;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
+import com.robertx22.library_of_exile.main.ApiForgeEvents;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
@@ -18,10 +21,14 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.AdditionalBossChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.DoubleEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.DuplicateMapChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.EventFocusPenalty;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.HarvestEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ImprisonedMonsterEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ShrineEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.StrongboxEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
@@ -37,17 +44,38 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.OnScreenMessageUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.util.List;
 
 public class DungeonAddonEvents {
 
     public static void init() {
+
+        // Strongbox guardian death tracking (StrongboxBlock/StrongboxBE): decrement the owning
+        // box's persisted guardiansRemaining counter here, on the actual death event, rather than
+        // having the box poll isAlive() by UUID - that would falsely read "dead" for a guardian
+        // whose chunk has simply unloaded while the box's own chunk is still loaded and ticking.
+        ApiForgeEvents.registerForgeEvent(LivingDeathEvent.class, event -> {
+            LivingEntity mob = event.getEntity();
+            if (mob.level().isClientSide) {
+                return;
+            }
+            DungeonEntityData data = DungeonEntityCapability.get(mob).data;
+            if (data.isStrongboxGuardian) {
+                BlockPos boxPos = BlockPos.of(data.strongboxPos);
+                if (mob.level().getBlockEntity(boxPos) instanceof StrongboxBE be) {
+                    be.guardiansRemaining = Math.max(0, be.guardiansRemaining - 1);
+                    be.setChanged();
+                }
+            }
+        });
 
         DungeonExileEvents.ON_GENERATE_NEW_MAP_ITEM.register(new EventConsumer<OnGenerateNewMapItemEvent>() {
             @Override
@@ -220,15 +248,26 @@ public class DungeonAddonEvents {
                     case "the_harvest":
                         stat = HarvestEventChance.getInstance();
                         break;
+                    case "strongbox":
+                        stat = StrongboxEventChance.getInstance();
+                        break;
+                    case "imprisoned_monster":
+                        stat = ImprisonedMonsterEventChance.getInstance();
+                        break;
+                    case "shrine":
+                        stat = ShrineEventChance.getInstance();
+                        break;
                     default:
                         return;
                 }
-                // true per-player max (NOT floored at 0), so SingularFocus's negative event-chance
-                // penalty on non-focused leagues actually lowers their weight. Regular event-chance
-                // stats are always >= 0, so their behavior is unchanged. Only ever one player here.
+                // per content: (its event-chance stat) - (the shared EventFocusPenalty). A Singular
+                // Focus node boosts one event's chance by the same amount as the penalty, so the focused
+                // event nets to unpenalized while every other event is reduced. True per-player max (NOT
+                // floored at 0) so the negative penalty actually lowers weight. Only ever one player here.
                 Float best = null;
                 for (Player p : event.players) {
-                    float value = Load.Unit(p).getUnit().getCalculatedStat(stat).getValue();
+                    float value = Load.Unit(p).getUnit().getCalculatedStat(stat).getValue()
+                            - Load.Unit(p).getUnit().getCalculatedStat(EventFocusPenalty.getInstance()).getValue();
                     if (best == null || value > best) {
                         best = value;
                     }

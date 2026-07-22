@@ -36,6 +36,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPoin
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffixes;
 import com.robertx22.mine_and_slash.database.data.omen.Omens;
+import com.robertx22.mine_and_slash.database.data.shrine.ShrineBuffs;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
@@ -132,6 +133,7 @@ public class GeneratedData {
 
 
         Omens.init();
+        ShrineBuffs.init();
 
     }
 }

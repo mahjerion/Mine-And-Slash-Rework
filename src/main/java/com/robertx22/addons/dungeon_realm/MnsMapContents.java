@@ -18,6 +18,15 @@ public class MnsMapContents extends ExileKeyHolder<MapContent> {
 
     public ExileKey<MapContent, KeyInfo> PROPHECY = ExileKey.ofId(this, "prophecy", x -> MapContent.of(x.GUID(), 1000, SlashBlocks.PROPHECY_ALTAR.getRegistryObject().getKey().location().toString(), 3, 5));
 
+    // Strongbox bonus encounter: 5-7 boxes scattered per map when picked as bonus content.
+    public ExileKey<MapContent, KeyInfo> STRONGBOX = ExileKey.ofId(this, "strongbox", x -> MapContent.of(x.GUID(), 1000, SlashBlocks.STRONGBOX.getRegistryObject().getKey().location().toString(), 3, 5));
+
+    // Imprisoned Monster bonus encounter: 1 caged elite per map when picked as bonus content.
+    public ExileKey<MapContent, KeyInfo> IMPRISONED_MONSTER = ExileKey.ofId(this, "imprisoned_monster", x -> MapContent.of(x.GUID(), 1000, SlashBlocks.IMPRISONED_MONSTER.getRegistryObject().getKey().location().toString(), 2, 3));
+
+    // Shrine bonus encounter: 1-2 buff shrines scattered per map when picked as bonus content.
+    public ExileKey<MapContent, KeyInfo> SHRINE = ExileKey.ofId(this, "shrine", x -> MapContent.of(x.GUID(), 1000, SlashBlocks.SHRINE.getRegistryObject().getKey().location().toString(), 2, 3));
+
 
     @Override
     public void loadClass() {

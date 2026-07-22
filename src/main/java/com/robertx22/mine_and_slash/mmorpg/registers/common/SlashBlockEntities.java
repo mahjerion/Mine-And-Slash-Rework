@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.addons.dungeon_realm.ImprisonedMonsterBE;
+import com.robertx22.addons.dungeon_realm.StrongboxBE;
 import com.robertx22.library_of_exile.deferred.RegObj;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlock;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionBlockEntity;
@@ -19,5 +21,11 @@ public class SlashBlockEntities {
                 SlashBlocks.STATIONS.values().stream().map(x -> x.get()).collect(Collectors.toList()).toArray(new ProfessionBlock[SlashBlocks.STATIONS.size()])
         ).build(null);
     });
+
+    public static RegObj<BlockEntityType<StrongboxBE>> STRONGBOX = Def.blockEntity("strongbox", () ->
+            BlockEntityType.Builder.of(StrongboxBE::new, SlashBlocks.STRONGBOX.get()).build(null));
+
+    public static RegObj<BlockEntityType<ImprisonedMonsterBE>> IMPRISONED_MONSTER = Def.blockEntity("imprisoned_monster", () ->
+            BlockEntityType.Builder.of(ImprisonedMonsterBE::new, SlashBlocks.IMPRISONED_MONSTER.get()).build(null));
 
 }

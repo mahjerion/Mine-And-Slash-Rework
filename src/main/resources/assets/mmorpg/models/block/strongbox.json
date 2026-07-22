@@ -1,0 +1,10 @@
+{
+  "comment": "Placeholder model - reuses vanilla gold-block/chest textures so it renders without a new PNG. Swap for a real strongbox model/texture later.",
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "block/gold_block",
+    "bottom": "block/gold_block",
+    "side": "block/chiseled_stone_bricks",
+    "particle": "block/gold_block"
+  }
+}

@@ -32,6 +32,8 @@ public class ItemModificationSers {
     public static String FORCE_SOUL_TAG = "force_soul_tag";
     public static String COMMON_TO_EPIC_GUARANTEED_TAG = "common_to_epic_guaranteed_tag";
     public static String COMMON_TO_MYTHIC_GUARANTEED_TAG = "common_to_mythic_guaranteed_tag";
+    public static String REROLL_OMEN_STATS = "reroll_omen_stats";
+    public static String UPGRADE_OMEN_RARITY = "upgrade_omen_rarity";
 
 
 }

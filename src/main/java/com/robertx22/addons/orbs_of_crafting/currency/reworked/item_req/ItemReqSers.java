@@ -19,11 +19,13 @@ public class ItemReqSers {
     public static String IS_UNDER_QUALITY = "is_under_quality";
     public static String MAP_HAS_HIGHER_RAR = "map_has_higher_rar";
     public static String HAS_HIGHER_RAR = "has_higher_rar";
+    public static String OMEN_HAS_HIGHER_RAR = "omen_has_higher_rar";
     public static String HAS_RARITY_AFFIX = "has_affix_of_rar";
     public static String NOT_CRAFTED_GEAR = "not_crafted_gear";
     public static String JEWEL_HAS_AFFIXES = "jewel_has_affixes";
     public static String HAS_SOCKET_OF_TYPE = "has_socket_of_type";
     public static String HAS_NOTHING_SOCKETED = "has_nothing_socketed";
+    public static String IS_GEAR_SLOT_TAG = "is_gear_slot_tag";
 
 
 }

@@ -46,6 +46,8 @@ public class ExileCurrencies extends ExileKeyHolder<ExileCurrency> {
     public AncientObeliskCurrencies OBELISK = new AncientObeliskCurrencies(this);
     public JewelCurrencies JEWEL = new JewelCurrencies(this);
     public SkillCurrencies SKILL = new SkillCurrencies(this);
+    public OmenCurrencies OMEN = new OmenCurrencies(this);
+    public ImprisonedMonsterCurrencies IMPRISONED_MONSTER = new ImprisonedMonsterCurrencies(this);
 
 
     public ExileKeyMap<ExileCurrency, NamedKey> FORCE_SOUL_TAGS = new ExileKeyMap<ExileCurrency, NamedKey>(this, "force_soul_tag")

@@ -1,0 +1,10 @@
+{
+  "comment": "Placeholder model - reuses vanilla crying-obsidian/iron-bars textures so it renders without a new PNG. Swap for a real cage model/texture later.",
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "block/crying_obsidian",
+    "bottom": "block/crying_obsidian",
+    "side": "block/iron_bars",
+    "particle": "block/crying_obsidian"
+  }
+}

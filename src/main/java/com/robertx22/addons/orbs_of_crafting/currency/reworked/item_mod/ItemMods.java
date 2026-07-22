@@ -8,6 +8,8 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.gear.*;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.jewel.CorruptJewelItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.jewel.UpgradeJewelAffixRarityMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.map.UpgradeMapRarityItemMod;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.omen.RerollOmenStatsItemMod;
+import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.omen.UpgradeOmenRarityItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.skill_gem.RerollSkillGemStatsItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.skill_gem.UpgradeSkillGemRarityItemMod;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.soul.ForceGearSlotSoulMod;
@@ -105,6 +107,8 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
     public ExileKey<ItemModification, KeyInfo> RANDOMIZE_GEAR_RARITY = ExileKey.ofId(this, "gear_rarity_random", x -> new UpgradeRarityItemMod(x.GUID(), UpgradeRarityItemMod.UpgradeType.RANDOMIZE));
     public ExileKey<ItemModification, KeyInfo> COMMON_TO_RUNED = ExileKey.ofId(this, "common_to_runed", x -> new CommonToRunedItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> ADD_25_POTENTIAL = ExileKey.ofId(this, "add_potential", x -> new AddPotentialItemMod(x.GUID(), new AddPotentialItemMod.Data(25)));
+    public ExileKey<ItemModification, KeyInfo> ADD_20_POTENTIAL = ExileKey.ofId(this, "add_20_potential", x -> new AddPotentialItemMod(x.GUID(), new AddPotentialItemMod.Data(20)));
+    public ExileKey<ItemModification, KeyInfo> ADD_50_POTENTIAL = ExileKey.ofId(this, "add_50_potential", x -> new AddPotentialItemMod(x.GUID(), new AddPotentialItemMod.Data(50)));
     public ExileKey<ItemModification, KeyInfo> JEWEL_CORRUPTION = ExileKey.ofId(this, "jewel_corrupt", x -> new CorruptJewelItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_AFFIX_NUMBERS = ExileKey.ofId(this, "affix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID(), RerollAffixNumbersItemMod.AffixFinder.AFFIX));
     public ExileKey<ItemModification, KeyInfo> REROLL_PREFIX_NUMBERS = ExileKey.ofId(this, "prefix_number_reroll", x -> new RerollAffixNumbersItemMod(x.GUID(), RerollAffixNumbersItemMod.AffixFinder.PREFIX));
@@ -122,6 +126,10 @@ public class ItemMods extends ExileKeyHolder<ItemModification> {
     // skill gems
     public ExileKey<ItemModification, KeyInfo> UPGRADE_SKILL_GEM_RARITY = ExileKey.ofId(this, "upgrade_skill_gem_rarity", x -> new UpgradeSkillGemRarityItemMod(x.GUID()));
     public ExileKey<ItemModification, KeyInfo> REROLL_SKILL_GEM_STATS = ExileKey.ofId(this, "reroll_skill_gem_stats", x -> new RerollSkillGemStatsItemMod(x.GUID()));
+
+    // omens
+    public ExileKey<ItemModification, KeyInfo> REROLL_OMEN_STATS = ExileKey.ofId(this, "reroll_omen_stats", x -> new RerollOmenStatsItemMod(x.GUID()));
+    public ExileKey<ItemModification, KeyInfo> UPGRADE_OMEN_RARITY = ExileKey.ofId(this, "upgrade_omen_rarity", x -> new UpgradeOmenRarityItemMod(x.GUID()));
 
     // any
 

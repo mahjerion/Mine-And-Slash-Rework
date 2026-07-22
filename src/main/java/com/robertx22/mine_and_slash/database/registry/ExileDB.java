@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChest;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffix;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
 import com.robertx22.mine_and_slash.database.data.omen.Omen;
+import com.robertx22.mine_and_slash.database.data.shrine.ShrineBuff;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.data.profession.ProfessionRecipe;
@@ -209,6 +210,10 @@ public class ExileDB {
 
     public static ExileRegistryContainer<Omen> Omens() {
         return Database.getRegistry(ExileRegistryTypes.OMEN);
+    }
+
+    public static ExileRegistryContainer<ShrineBuff> ShrineBuffs() {
+        return Database.getRegistry(ExileRegistryTypes.SHRINE_BUFF);
     }
 
 

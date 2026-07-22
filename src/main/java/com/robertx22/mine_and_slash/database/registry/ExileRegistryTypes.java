@@ -29,6 +29,7 @@ import com.robertx22.mine_and_slash.database.data.prophecy.ProphecyModifier;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
 import com.robertx22.mine_and_slash.database.data.runes.Rune;
+import com.robertx22.mine_and_slash.database.data.shrine.ShrineBuff;
 import com.robertx22.mine_and_slash.database.data.runewords.RuneWord;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
@@ -107,6 +108,7 @@ public class ExileRegistryTypes {
     // these 2 need to go in lib, at least the mob one
     // mobs could be deterministic per pos, based on the current map world? but with an event to change it to specific if needed
     public static ExileRegistryType OMEN = ExileRegistryType.register(SlashRef.MODID, "omen", 47, Omen.SERIALIZER, SyncTime.ON_LOGIN);
+    public static ExileRegistryType SHRINE_BUFF = ExileRegistryType.register(SlashRef.MODID, "shrine_buff", 48, ShrineBuff.SERIALIZER, SyncTime.ON_LOGIN);
 
     public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 

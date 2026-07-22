@@ -16,6 +16,7 @@ effect_has_tag_immobilizing
 effect_has_tag_negative
 effect_has_tag_offensive
 effect_has_tag_positive
+effect_has_tag_shrine
 effect_has_tag_slow
 effect_has_tag_song
 effect_has_tag_weak

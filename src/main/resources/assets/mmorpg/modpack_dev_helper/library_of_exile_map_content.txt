@@ -2,7 +2,10 @@ These are all default registry entries of this type.
 This registry is modify-able through datapacks.
 boss
 empty
+imprisoned_monster
 obelisk
 prophecy
+shrine
+strongbox
 the_harvest
 uber_boss

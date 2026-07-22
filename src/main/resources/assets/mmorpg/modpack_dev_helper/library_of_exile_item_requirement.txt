@@ -35,8 +35,16 @@ is_aura_gem
 is_common
 is_common_or_uncommon
 is_damaged
+is_dungeon_map_item
 is_epic
 is_gear
+is_gear_slot_boots
+is_gear_slot_chest
+is_gear_slot_helmet
+is_gear_slot_necklace
+is_gear_slot_pants
+is_gear_slot_ring
+is_gear_slot_weapon_family
 is_jewel
 is_legendary
 is_less_than_max_tier
@@ -46,6 +54,7 @@ is_not_corrupted
 is_not_mirrored
 is_not_uber
 is_obelisk_map
+is_omen
 is_pickaxe_tag
 is_rare
 is_runeword
@@ -73,9 +82,12 @@ lvl_not_max
 map_has_higher_rar
 map_is_mythic
 max_uses_level_up
+max_uses_omen_rarity_uses
 max_uses_random_mythic_affix
 max_uses_relief
+max_uses_seed_uses
 max_uses_sharpening_stone
 max_uses_sure_jewel_up
 not_crafted_gear
 obelisk_spawnrate_cap
+omen_has_higher_rar

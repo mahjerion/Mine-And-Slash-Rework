@@ -2,6 +2,8 @@ These are all default registry entries of this type.
 This registry is modify-able through datapacks.
 add_10_perc_unique_stats
 add_1_to_5_gear_quality
+add_20_potential
+add_50_potential
 add_5_perc_unique_stats
 add_gear_level
 add_gear_quality
@@ -37,8 +39,10 @@ gear_rarity_upgrade
 implicit_affix_reroll
 implicit_number_reroll
 increment_uses_level_up
+increment_uses_omen_rarity_uses
 increment_uses_random_mythic_affix
 increment_uses_relief
+increment_uses_seed_uses
 increment_uses_sharpening_stone
 increment_uses_sure_jewel_up
 jewel_corrupt
@@ -52,6 +56,7 @@ reroll_all_prefixes
 reroll_all_suffixes
 reroll_infusion
 reroll_lowest_affix
+reroll_omen_stats
 reroll_random_affix
 reroll_random_affix_to_mythic
 reroll_skill_gem_stats
@@ -74,6 +79,7 @@ uber_upgrade
 up_corrupt_affix
 upgrade_jewel_affix_rarity
 upgrade_lowest_affix
+upgrade_omen_rarity
 upgrade_random_affix
 upgrade_skill_gem_rarity
 upgrade_specific_rar_common

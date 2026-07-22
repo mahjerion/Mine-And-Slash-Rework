@@ -200,7 +200,8 @@ public enum Chats implements IAutoLocName {
     THIS_IS_ONLY_USABLE_INSIDE_A_MAP("Only usable inside the Map."),
     GEM_SOCKETED("Gem Socketed"),
     LEVEL_UP_MESSAGE_UP("Leveled Up!"),
-    LEVEL_UP_MESSAGE_DOWN("%1$s Level: %2$s > %3$s!");
+    LEVEL_UP_MESSAGE_DOWN("%1$s Level: %2$s > %3$s!"),
+    SHRINE_BUFF_RECEIVED("You have received the Shrine's blessing: %1$s");
 
     private String localization = "";
 

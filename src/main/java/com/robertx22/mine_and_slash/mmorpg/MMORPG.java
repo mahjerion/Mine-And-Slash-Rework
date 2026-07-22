@@ -1,6 +1,8 @@
 package com.robertx22.mine_and_slash.mmorpg;
 
+import com.robertx22.addons.ancient_obelisks.ObeliskAddonEvents;
 import com.robertx22.addons.dungeon_realm.DungeonAddonEvents;
+import com.robertx22.addons.the_harvest.HarvestAddonEvents;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.OrbAddonEvents;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
@@ -81,7 +83,7 @@ import java.util.function.Consumer;
 public class MMORPG {
 
     // DISABLE WHEN PUBLIC BUILD
-    public static boolean RUN_DEV_TOOLS = true;
+    public static boolean RUN_DEV_TOOLS = false;
 
     public static SeriazableRegistration SERIAZABLE_REGISTRATION_INFO = new SeriazableRegistration(SlashRef.MODID);
     public static HardcodedRegistration HARDCODED_REGISTRATION_INFO = new HardcodedRegistration(SlashRef.MODID);
@@ -232,6 +234,8 @@ public class MMORPG {
         // OnClick.register();
 
         DungeonAddonEvents.init();
+        ObeliskAddonEvents.init();
+        HarvestAddonEvents.init();
 
         watch.print("Mine and slash mod initialization ");
 

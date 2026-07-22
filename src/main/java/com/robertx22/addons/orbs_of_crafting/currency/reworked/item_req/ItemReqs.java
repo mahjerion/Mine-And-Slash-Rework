@@ -13,9 +13,11 @@ import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.RarityKeyInf
 import com.robertx22.library_of_exile.registry.helpers.ExileKey;
 import com.robertx22.library_of_exile.registry.helpers.ExileKeyHolder;
 import com.robertx22.library_of_exile.registry.helpers.ExileKeyMap;
+import com.robertx22.library_of_exile.registry.helpers.IdKey;
 import com.robertx22.library_of_exile.registry.helpers.KeyInfo;
 import com.robertx22.library_of_exile.registry.register_info.ModRequiredRegisterInfo;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
+import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.register.reqs.base.ItemRequirement;
 
@@ -37,10 +39,14 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
         public static MaximumUsesReq.Data MAX_SHARPENING_STONE_USES = new MaximumUsesReq.Data("sharpening_stone", 1);
         public static MaximumUsesReq.Data MAX_RELIEF_USES = new MaximumUsesReq.Data("relief", 5);
         public static MaximumUsesReq.Data MAX_JEWEL_UPGRADE_USES = new MaximumUsesReq.Data("sure_jewel_up", 3);
+        public static MaximumUsesReq.Data MAX_OMEN_RARITY_USES = new MaximumUsesReq.Data("omen_rarity_uses", 1);
+        // shared across all 14 "Seed" potential-restore currencies (base + Perfected) so applying any
+        // one of them blocks every other one from ever being applied to the same item.
+        public static MaximumUsesReq.Data SEED_USES = new MaximumUsesReq.Data("seed_uses", 1);
 
         public static List<MaximumUsesReq.Data> allMaxUses() {
             return Arrays.asList(MAX_RELIEF_USES, MAX_JEWEL_UPGRADE_USES, MAX_LEVEL_USES, RANDOM_MYTHIC_AFFIX,
-                    MAX_SHARPENING_STONE_USES);
+                    MAX_SHARPENING_STONE_USES, MAX_OMEN_RARITY_USES, SEED_USES);
         }
     }
 
@@ -65,6 +71,18 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
             .ofList(ExileKeyUtil.ofGearRarities())
             .build((id, info) -> new IsSkillGemRarityReq(id, new IsSkillGemRarityReq.Data(info.rar)));
 
+    public ExileKeyMap<ItemRequirement, IdKey> IS_GEAR_SLOT = new ExileKeyMap<ItemRequirement, IdKey>(this, "is_gear_slot")
+            .ofList(Arrays.asList(
+                    new IdKey(SlotTags.weapon_family.GUID()),
+                    new IdKey(SlotTags.helmet.GUID()),
+                    new IdKey(SlotTags.chest.GUID()),
+                    new IdKey(SlotTags.pants.GUID()),
+                    new IdKey(SlotTags.boots.GUID()),
+                    new IdKey(SlotTags.necklace.GUID()),
+                    new IdKey(SlotTags.ring.GUID())
+            ))
+            .build((id, info) -> new IsGearSlotTagReq(id, new IsGearSlotTagReq.Data(info.GUID())));
+
 
     public ExileKey<ItemRequirement, KeyInfo> LEVEL_NOT_MAX = ExileKey.ofId(this, "lvl_not_max", x -> new LevelNotMaxReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> LEVEL_AT_LEAST_50 = ExileKey.ofId(this, "lvl_is_50", x -> new LevelAtLeastReq(x.GUID()));
@@ -84,6 +102,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     public ExileKey<ItemRequirement, KeyInfo> HAS_GEM_SOCKETED = ExileKey.ofId(this, "has_socketed_gem", x -> new HasSocketedReq(x.GUID(), ExtractSocketItemMod.SocketedType.GEM));
     public ExileKey<ItemRequirement, KeyInfo> HAS_RUNE_SOCKETED = ExileKey.ofId(this, "has_socketed_rune", x -> new HasSocketedReq(x.GUID(), ExtractSocketItemMod.SocketedType.RUNE));
     public ExileKey<ItemRequirement, KeyInfo> HAS_HIGHER_RARITY = ExileKey.ofId(this, "has_higher_rar", x -> new HasHigherRarityReq(x.GUID()));
+    public ExileKey<ItemRequirement, KeyInfo> OMEN_HAS_HIGHER_RARITY = ExileKey.ofId(this, "omen_has_higher_rar", x -> new OmenHasHigherRarityReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> HAS_NOTHING_SOCKETED = ExileKey.ofId(this, "has_nothing_socketed", x -> new HasNothingSocketedReq(x.GUID()));
 
 
@@ -113,6 +132,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
     // item types
     public ExileKey<ItemRequirement, KeyInfo> IS_SOUL = ExileKey.ofId(this, "is_soul", x -> new BeSoulReq());
     public ExileKey<ItemRequirement, KeyInfo> IS_JEWEL = ExileKey.ofId(this, "is_jewel", x -> new BeJewelReq());
+    public ExileKey<ItemRequirement, KeyInfo> IS_OMEN = ExileKey.ofId(this, "is_omen", x -> new BeOmenReq());
     public ExileKey<ItemRequirement, KeyInfo> IS_GEAR = ExileKey.ofId(this, "is_gear", x -> new BeGearReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_MAP = ExileKey.ofId(this, "is_map", x -> new BeDungeonMapReq(x.GUID()));
     public ExileKey<ItemRequirement, KeyInfo> IS_AURA_GEM = ExileKey.ofId(this, "is_aura_gem", x -> new BeAuraGemReq());

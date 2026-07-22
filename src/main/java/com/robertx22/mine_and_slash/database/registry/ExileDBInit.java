@@ -77,6 +77,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.STAT_COMPAT, ""));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.STAT_LAYER, ""));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.OMEN, ""));
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SHRINE_BUFF, ""));
 
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ORB_EXTEND, ""));
 

@@ -2,6 +2,7 @@ These are all default registry entries of this type.
 This registry is modify-able through datapacks.
 accuracy
 accuracy_per_10_dexterity
+additional_boss_chance
 aggro_radius
 agony_immunity
 ailment_damage
@@ -72,6 +73,7 @@ blood_on_kill
 blood_per_10_strength
 blood_user
 bonus_exp
+boss_loot_quantity
 bow_damage
 buff_cast_time
 buff_cdr
@@ -175,6 +177,8 @@ dot_dmg_multi
 dot_lifesteal
 dot_speed
 double_attack_chance
+double_event_chance
+duplicate_map_chance
 eff_dur_u_cast
 ele_axe_damage
 ele_bow_damage
@@ -217,6 +221,8 @@ energy_per_sec
 energy_reg_aura_cost
 energy_regen
 epic_monster_chance
+event_focus_penalty
+extra_drop_from_mythics
 extra_mob_drops
 farming_core_drop_bonus
 farming_double_drop
@@ -271,6 +277,7 @@ golem_spell_chance
 golem_spell_dmg
 golem_spell_dmg_taken
 harvest_event_chance
+harvest_extra_drops
 has_pet_ability_cast_time
 has_pet_ability_cdr
 has_pet_ability_spell_dmg
@@ -305,6 +312,8 @@ husbandry_exp_bonus
 husbandry_triple_drop
 ignore_ele_res
 immobilizing_eff_dur_u_cast
+imprisoned_monster_event_chance
+imprisoned_monster_extra_drops
 inc_aoe
 inc_effect_of_charge_buff_given
 inc_effect_of_charge_buff_on_you
@@ -326,6 +335,8 @@ inc_effect_of_offensive_buff_given
 inc_effect_of_offensive_buff_on_you
 inc_effect_of_positive_buff_given
 inc_effect_of_positive_buff_on_you
+inc_effect_of_shrine_buff_given
+inc_effect_of_shrine_buff_on_you
 inc_effect_of_song_buff_given
 inc_effect_of_song_buff_on_you
 inc_leech
@@ -497,6 +508,7 @@ mana_regen_per_500_magic_shield
 mana_shield
 manasteal
 map_find
+map_rarity_bias
 max_all_resist
 max_chaos_resist
 max_charm_charges
@@ -550,6 +562,7 @@ not_affected_by_cast_speed_cdr
 not_affected_by_cast_speed_spell_dmg
 not_affected_by_cast_speed_spell_dmg_taken
 obelisk_event_chance
+obelisk_extra_drops
 offensive_eff_dur_u_cast
 omen_find
 on_death_ignite_explosion
@@ -691,6 +704,8 @@ shout_cast_time
 shout_cdr
 shout_spell_dmg
 shout_spell_dmg_taken
+shrine_eff_dur_u_cast
+shrine_event_chance
 skill_gem_find
 slow_immunity
 song_cast_time
@@ -712,8 +727,11 @@ spell_physical_damage
 spell_water_damage
 spirit_cost
 staff_damage
+stat_roll_quality
 str_dmg
 strength
+strongbox_event_chance
+strongbox_extra_drops
 summon_cast_time
 summon_cdr
 summon_damage

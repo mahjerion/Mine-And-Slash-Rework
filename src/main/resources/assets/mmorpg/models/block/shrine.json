@@ -1,0 +1,10 @@
+{
+  "comment": "Placeholder model - reuses vanilla lodestone/gold textures so it renders without a new PNG. Swap for a real shrine model/texture later.",
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "block/lodestone_top",
+    "bottom": "block/gold_block",
+    "side": "block/lodestone_side",
+    "particle": "block/lodestone_side"
+  }
+}

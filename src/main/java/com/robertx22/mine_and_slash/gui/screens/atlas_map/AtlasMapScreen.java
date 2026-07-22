@@ -225,6 +225,8 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         gui.blit(BACKGROUND, 0, 0, -10, 0.0F, 0.0F, this.width, this.height, 32, 32);
     }
 
+    private static final float LABEL_TEXT_SCALE = 0.7F;
+
     private void renderLabels(GuiGraphics graphics) {
         for (AtlasNodeButton btn : nodeButtons.values()) {
             int nameColor = switch (btn.state) {
@@ -235,8 +237,15 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
             String suffix = btn.state == NodeState.COMPLETED ? " ✓" : " ✗";
             ChatFormatting suffixColor = btn.state == NodeState.COMPLETED ? ChatFormatting.GREEN : ChatFormatting.RED;
             Component label = btn.displayName.copy().append(Component.literal(suffix).withStyle(suffixColor));
-            graphics.drawCenteredString(Minecraft.getInstance().font, label,
-                    btn.getX() + btn.getWidth() / 2, btn.getY() + btn.getHeight() + 3, nameColor);
+
+            float centerX = btn.getX() + btn.getWidth() / 2F;
+            float y = btn.getY() + btn.getHeight() + 3;
+
+            graphics.pose().pushPose();
+            graphics.pose().translate(centerX, y, 0);
+            graphics.pose().scale(LABEL_TEXT_SCALE, LABEL_TEXT_SCALE, 1F);
+            graphics.drawCenteredString(Minecraft.getInstance().font, label, 0, 0, nameColor);
+            graphics.pose().popPose();
         }
     }
 

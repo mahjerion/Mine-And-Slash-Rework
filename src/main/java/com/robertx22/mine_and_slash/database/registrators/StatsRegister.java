@@ -158,6 +158,7 @@ public class StatsRegister implements ExileRegistryInit {
                     add(MapFind.getInstance());
                     add(MapRarityBias.getInstance());
                     add(DuplicateMapChance.getInstance());
+                    add(RelicFind.getInstance());
                     add(ProphecyCoinFind.getInstance());
                     add(WatcherEyeFind.getInstance());
                     add(ProphecyEventChance.getInstance());

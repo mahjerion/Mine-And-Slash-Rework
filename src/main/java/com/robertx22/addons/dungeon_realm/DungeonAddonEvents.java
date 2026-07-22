@@ -27,6 +27,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.loot.ImprisonedMon
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.PackSize;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyEventChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.RelicFind;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ShrineEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.StrongboxEventChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentFind;
@@ -221,6 +222,13 @@ public class DungeonAddonEvents {
             @Override
             public void accept(GetUberFragmentFindBonusEvent event) {
                 event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(UberFragmentFind.getInstance()).getValue();
+            }
+        });
+
+        DungeonExileEvents.GET_RELIC_FIND_BONUS.register(new EventConsumer<GetRelicFindBonusEvent>() {
+            @Override
+            public void accept(GetRelicFindBonusEvent event) {
+                event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(RelicFind.getInstance()).getValue();
             }
         });
 

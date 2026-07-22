@@ -86,6 +86,9 @@ public class AtlasPassivePerks {
         // duplicate map: chance a completed map's boss also drops an exact copy of the run map
         PerkBuilder.stat("duplicate_map_chance_node", new OptScaleExactStat(3, DuplicateMapChance.getInstance(), ModType.FLAT));
         PerkBuilder.stat("duplicate_map_chance_node_big", new OptScaleExactStat(8, DuplicateMapChance.getInstance(), ModType.FLAT));
+        // relic find: chance for boss relic drops to grant a bonus relic, and for dungeon chests to contain one
+        PerkBuilder.stat("relic_find_node", new OptScaleExactStat(3, RelicFind.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("relic_find_node_big", new OptScaleExactStat(8, RelicFind.getInstance(), ModType.FLAT));
         PerkBuilder.stat("prophecy_coin_find_node", new OptScaleExactStat(2, ProphecyCoinFind.getInstance(), ModType.FLAT));
         PerkBuilder.stat("prophecy_coin_find_node_big", new OptScaleExactStat(5, ProphecyCoinFind.getInstance(), ModType.FLAT));
         PerkBuilder.stat("watcher_eye_find_node", new OptScaleExactStat(3, WatcherEyeFind.getInstance(), ModType.FLAT));
@@ -156,6 +159,7 @@ public class AtlasPassivePerks {
 
     private static void entry(Perk perk) {
         perk.is_entry = true;
+        perk.one_kind = "atlas_start";
     }
 
     // mutual-exclusivity marker only - does NOT make the perk an entry (must still be reached via the tree).

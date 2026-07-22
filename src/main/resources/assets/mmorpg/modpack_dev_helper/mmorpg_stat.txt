@@ -683,6 +683,7 @@ rejuvenate_cast_time
 rejuvenate_cdr
 rejuvenate_spell_dmg
 rejuvenate_spell_dmg_taken
+relic_find
 rune_find
 salvaging_core_drop_bonus
 salvaging_double_drop

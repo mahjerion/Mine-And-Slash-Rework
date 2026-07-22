@@ -572,6 +572,8 @@ refined_taste
 refresh
 rejuv_totem
 rejuvenation
+relic_find_node
+relic_find_node_big
 resonance
 return_summons
 ritardando

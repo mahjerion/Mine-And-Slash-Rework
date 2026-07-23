@@ -5,12 +5,14 @@ import com.robertx22.dungeon_realm.client.DungeonStatsStore;
 import com.robertx22.dungeon_realm.item.DungeonItemMapData;
 import com.robertx22.dungeon_realm.item.DungeonItemNbt;
 import com.robertx22.dungeon_realm.main.DungeonEntries;
+import com.robertx22.dungeon_realm.main.DungeonWords;
 import com.robertx22.library_of_exile.utils.GuiUtils;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.IAlertScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -18,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen {
@@ -30,11 +33,20 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
     // needed here to size/center the mimicked panel the same way the HUD does
     private static final int STATS_PANEL_PADDING = 10;
 
+    // vertical gap between a panel/button and whatever is stacked below it
+    private static final int PANEL_GAP = 8;
+
+    // center of the stats panel (mimics DungeonStatsOverlay's HUD placement)
+    private static final int STATS_PANEL_CENTER_X = 187;
+    private static final int STATS_PANEL_CENTER_Y = 90;
+
     // map item icon, drawn manually so its hover tooltip can be scaled to fit the window.
     // offsets keep the old ItemButton placement (button at +56/+58, item drawn at button +1).
     private static final int ICON_X_OFFSET = 57;
     private static final int ICON_Y_OFFSET = 59;
     private static final int ICON_SIZE = 16;
+    private static final int ICON_CENTER_X = ICON_X_OFFSET + ICON_SIZE / 2;
+    private static final int ICON_BOTTOM_Y = ICON_Y_OFFSET + ICON_SIZE;
 
     Minecraft mc = Minecraft.getInstance();
 
@@ -67,7 +79,9 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
             publicAddButton(new MapBarButton(guiLeft + 11, guiTop + 207));
 
             if (DungeonStatsStore.isBossTeleportUnlocked()) {
-                publicAddButton(new TeleportToBossButton(guiLeft + 64 - TeleportToBossButton.WIDTH / 2, guiTop + 120));
+                int buttonX = guiLeft + STATS_PANEL_CENTER_X - TeleportToBossButton.WIDTH / 2;
+                int buttonY = statsPanelBottomY() + PANEL_GAP;
+                publicAddButton(new TeleportToBossButton(buttonX, buttonY));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,6 +114,7 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
                     mc.getWindow().getGuiScaledHeight() / 2 - sizeY / 2, 0, 0, sizeX, sizeY);
 
             renderStatsPanel(gui);
+            renderLeagueContentPanel(gui);
 
             ItemStack mapStack = resolveMapStack();
             int iconX = guiLeft + ICON_X_OFFSET;
@@ -142,8 +157,20 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
         gui.pose().popPose();
     }
 
+    // fixed line count (not text-dependent), so this can be computed once in init() to place
+    // the teleport-to-boss button, as well as every frame when actually rendering the panel.
+    private int statsPanelBoxHeight() {
+        return (mc.font.lineHeight * 4) + STATS_PANEL_PADDING * 2;
+    }
+
+    // bottom Y of the stats panel, used to stack the teleport-to-boss button directly underneath.
+    private int statsPanelBottomY() {
+        int centerY = guiTop + STATS_PANEL_CENTER_Y + 10;
+        return centerY + statsPanelBoxHeight() / 2;
+    }
+
     // mimics the standard DungeonStatsOverlay HUD (rarity name + kill%/loot%), placed in the
-    // right half of the gui, roughly halfway down
+    // right half of the gui, roughly halfway down.
     private void renderStatsPanel(GuiGraphics gui) {
         var font = mc.font;
 
@@ -154,15 +181,54 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
         int maxWidth = Math.max(Math.max(font.width(mapRarityName), font.width(killCompletion)), font.width(lootCompletion));
 
         int boxW = maxWidth + STATS_PANEL_PADDING * 2;
-        int boxH = (font.lineHeight * 4) + STATS_PANEL_PADDING * 2;
+        int boxH = statsPanelBoxHeight();
 
-        int centerX = guiLeft + 187;
-        int centerY = guiTop + 120;
+        int centerX = guiLeft + STATS_PANEL_CENTER_X;
+        int centerY = guiTop + STATS_PANEL_CENTER_Y + 10;
 
         int x = centerX - boxW / 2;
         int y = centerY - boxH / 2;
 
         DungeonStatsOverlay.renderAt(gui, x, y, boxW, boxH, mapRarityName, killCompletion, lootCompletion);
+    }
+
+    // below the cached map icon: names of league content (bonus encounters) rolled for this
+    // map instance. Sourced from DungeonStatsStore.getBonusContentIds(), populated once at map
+    // start via the same server->client stats packet as the stats panel. Hidden entirely when
+    // nothing was rolled for this map, rather than showing an empty/placeholder box.
+    private void renderLeagueContentPanel(GuiGraphics gui) {
+        List<String> ids = DungeonStatsStore.getBonusContentIds();
+        if (ids.isEmpty()) {
+            return;
+        }
+
+        var font = mc.font;
+
+        List<Component> lines = new ArrayList<>();
+        lines.add(DungeonWords.DUNGEON_STATS_LEAGUE_CONTENT_HEADER.get().withStyle(ChatFormatting.YELLOW));
+        for (String id : ids) {
+            lines.add(DungeonWords.LeagueContentName(id));
+        }
+
+        int maxWidth = 0;
+        for (Component line : lines) {
+            maxWidth = Math.max(maxWidth, font.width(line));
+        }
+
+        int boxW = maxWidth + STATS_PANEL_PADDING * 2;
+        int boxH = font.lineHeight * lines.size() + STATS_PANEL_PADDING * 2;
+
+        int centerX = guiLeft + ICON_CENTER_X;
+        int x = centerX - boxW / 2;
+        int topY = guiTop + ICON_BOTTOM_Y + PANEL_GAP + 4;
+
+        DungeonStatsOverlay.renderNinePatchWithFallback(gui, x, topY, boxW, boxH);
+
+        int ty = topY + STATS_PANEL_PADDING;
+        for (Component line : lines) {
+            gui.drawCenteredString(font, line, centerX, ty, 0xFFFFFFFF);
+            ty += font.lineHeight;
+        }
     }
 
     @Override

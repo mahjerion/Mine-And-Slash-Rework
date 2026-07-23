@@ -13,6 +13,10 @@ import java.util.UUID;
 
 public class ProphecyGeneration {
 
+    // base coin cost every individual offer's cost is derived from (amount and rolled modifiers'
+    // cost_multi then scale it further) - also the base the reroll cost scales from, see
+    // PlayerProphecies.getRerollCost()
+    public static final float BASE_COST = 10;
 
     public static ProphecyData generate(Player p) {
 
@@ -26,7 +30,7 @@ public class ProphecyGeneration {
 
         // GearRarity rar = ExileDB.GearRarities().getFilterWrapped(x -> x.map_tiers.isInRange(tier)).list.get(0);
 
-        float cost = 10;
+        float cost = BASE_COST;
 
         List<ProphecyModifierType> modtypes = Arrays.stream(ProphecyModifierType.values()).toList();
 

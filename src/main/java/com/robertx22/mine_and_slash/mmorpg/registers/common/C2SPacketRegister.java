@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.gui.screens.stat_gui.RequestStatCalcInfoPack
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.prophecy.AcceptProphecyAffixPacket;
 import com.robertx22.mine_and_slash.prophecy.AcceptProphecyPacket;
+import com.robertx22.mine_and_slash.prophecy.RerollProphecyPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.BackPackLootMenuPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenBackpackPacket;
@@ -37,6 +38,7 @@ public class C2SPacketRegister {
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new ToonActionPacket(ToonActionButton.Action.LOAD, 0, ""), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new AcceptProphecyPacket(""), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new AcceptProphecyAffixPacket(""), i++);
+        Packets.registerClientToServerPacket(MMORPG.NETWORK, new RerollProphecyPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new LockTogglePacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new UnsummonPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new RequestStatCalcInfoPacket(), i++);

@@ -22,6 +22,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentRes
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.DodgeRating;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.CurrencyFind;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.SkillDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.ManaRegen;
@@ -86,6 +87,9 @@ public class ModEffects implements ExileRegistryInit {
     public static EffectCtx ESSENCE_OF_FROST = new EffectCtx("essence_of_frost", "Essence of Frost", Elements.Cold, EffectType.beneficial);
 
     public static EffectCtx BLIZZARD_REDUCE_HEAL_STRENGTH = new EffectCtx("blizzard_reduce_heal_strength", "Blizzard Debuff", Elements.Cold, EffectType.negative);
+
+    // Atlas "Bountiful Aftermath" keystone - granted on successfully completing a Harvest
+    public static EffectCtx HARVEST_BOUNTY = new EffectCtx("harvest_bounty", "Bountiful Aftermath", Elements.Physical, EffectType.beneficial);
 
     public static List<EffectCtx> getCurses() {
 
@@ -390,6 +394,12 @@ public class ModEffects implements ExileRegistryInit {
                 .maxStacks(1)
                 .addTags(EffectTags.negative)
                 .stat(-30, -50, ResourceStats.HEAL_STRENGTH.get(), ModType.FLAT)
+                .build();
+
+        ExileEffectBuilder.of(HARVEST_BOUNTY)
+                .maxStacks(1)
+                .addTags(EffectTags.positive)
+                .stat(40, 40, CurrencyFind.getInstance(), ModType.FLAT)
                 .build();
 
 

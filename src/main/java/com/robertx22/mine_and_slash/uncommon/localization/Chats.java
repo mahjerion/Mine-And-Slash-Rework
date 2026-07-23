@@ -61,6 +61,9 @@ public enum Chats implements IAutoLocName {
     ALT_TO_SHOW_OTHER_SPELL("Press [Alt] to show the other Spell"),
     MUST_BE_IN_MAP_TO_ACCEPT_PROPHECY("You must be inside the same Map Dungeon to accept Prophecy Rewards"),
     NOT_ENOUGH_FAVOR_TO_BUY_PROPHECY("Not enough Prophecy Coins to claim the Prophecy. You can gain more Coins by killing map mobs while under Prophecy Curses."),
+    MUST_BE_IN_MAP_TO_REROLL_PROPHECY("You must be inside the same Map Dungeon to reroll Prophecy Reward Offers"),
+    NOT_ENOUGH_FAVOR_TO_REROLL_PROPHECY("Not enough Prophecy Coins to reroll the offers. You can gain more Coins by killing map mobs while under Prophecy Curses."),
+    NO_PROPHECY_REROLLS_LEFT("You've used all your Prophecy Reward rerolls for this Map."),
     RESISTS_TOO_LOW_FOR_MAP("You lack Resistances to Open/Enter this Map."),
     MAX_MAP_RARITY_FOR_LVL("This map is at maximum possible rarity for it's level."),
     MAX_MAP_RARITY("This map is at maximum possible rarity."),
@@ -201,7 +204,8 @@ public enum Chats implements IAutoLocName {
     GEM_SOCKETED("Gem Socketed"),
     LEVEL_UP_MESSAGE_UP("Leveled Up!"),
     LEVEL_UP_MESSAGE_DOWN("%1$s Level: %2$s > %3$s!"),
-    SHRINE_BUFF_RECEIVED("You have received the Shrine's blessing: %1$s");
+    SHRINE_BUFF_RECEIVED("You have received the Shrine's blessing: %1$s"),
+    SHRINE_BUFF_RECEIVED_TWO("You have received the Shrine's blessing: %1$s and %2$s");
 
     private String localization = "";
 

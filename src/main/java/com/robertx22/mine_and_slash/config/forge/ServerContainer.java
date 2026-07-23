@@ -114,6 +114,8 @@ public class ServerContainer {
         MOB_LEVEL_VARIANCE = b.defineInRange("MOB_LEVEL_VARIANCE", 3, 0, 100);
 
         PROPHECY_OFFERS_PER_REROLL = b.defineInRange("PROPHECY_OFFERS_PER_REROLL", 18, 1, 18);
+        PROPHECY_REROLL_COST_MULTI = b.defineInRange("PROPHECY_REROLL_COST_MULTI", 5D, 0, 1000);
+        PROPHECY_MAX_REROLLS_PER_MAP = b.defineInRange("PROPHECY_MAX_REROLLS_PER_MAP", 3, 0, 1000);
         PROPHECY_GEAR_TYPE_CHANCE = b.defineInRange("PROPHECY_GEAR_TYPE_CHANCE", 15, 0, 100);
         PROPHECY_JEWEL_RARITY_CHANCE = b.defineInRange("PROPHECY_JEWEL_RARITY_CHANCE", 75, 0, 100);
         PROPHECY_SKILL_GEM_RARITY_CHANCE = b.defineInRange("PROPHECY_SKILL_GEM_RARITY_CHANCE", 75, 0, 100);
@@ -312,6 +314,8 @@ public class ServerContainer {
     public ForgeConfigSpec.IntValue MAP_GEN_MOB_RADIUS;
 
     public ForgeConfigSpec.IntValue PROPHECY_OFFERS_PER_REROLL;
+    public ForgeConfigSpec.DoubleValue PROPHECY_REROLL_COST_MULTI;
+    public ForgeConfigSpec.IntValue PROPHECY_MAX_REROLLS_PER_MAP;
 
     public ForgeConfigSpec.IntValue BONUS_EXP_PERCENT_PER_HIGHER_LVL_CHARACTERS;
 

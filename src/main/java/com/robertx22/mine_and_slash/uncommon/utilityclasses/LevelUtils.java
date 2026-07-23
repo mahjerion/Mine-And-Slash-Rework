@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.ancient_obelisks.main.ObelisksMain;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.DimensionConfig;
@@ -11,6 +12,7 @@ import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.levels.LevelInfo;
 import com.robertx22.temp.SkillItemTier;
+import com.robertx22.the_harvest.main.HarvestMain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 
 public class LevelUtils {
@@ -66,6 +69,25 @@ public class LevelUtils {
 
     public static String OBELISK_DIM = "ancient_obelisks:obelisk";
     public static String HARVEST_DIM = "the_harvest:harvest";
+
+    @Nullable
+    private static Player getNearestPlayerInSameInstance(String dimid, Level world, BlockPos pos) {
+        List<Player> players;
+        if (dimid.equals(HARVEST_DIM)) {
+            players = HarvestMain.HARVEST_MAP_STRUCTURE.getAllPlayersInMap(world, pos);
+        } else if (dimid.equals(OBELISK_DIM)) {
+            players = ObelisksMain.OBELISK_MAP_STRUCTURE.getAllPlayersInMap(world, pos);
+        } else {
+            return null;
+        }
+
+        if (players == null || players.isEmpty()) {
+            return null;
+        }
+
+        var center = pos.getCenter();
+        return players.stream().min(Comparator.comparingDouble(x -> x.distanceToSqr(center))).orElse(null);
+    }
 
     private static int getLowestPartyMemberLevelNearby(Player nearestPlayer) {
         if (nearestPlayer == null) {
@@ -117,12 +139,26 @@ public class LevelUtils {
             if (dimid.equals(OBELISK_DIM) || dimid.equals(HARVEST_DIM)) {
                 scaletoPlayer = true;
                 ignoreEntityConfig = true;
+
+                // Harvest/Obelisk instances are tiled a few chunks apart inside ONE shared dimension
+                // (unlike dungeon_realm maps, which carry their own positional MapData), so the
+                // dimension-wide nearest player can belong to someone else's concurrently running
+                // instance. Prefer a player actually inside this instance.
+                Player instancePlayer = getNearestPlayerInSameInstance(dimid, world, pos);
+                if (instancePlayer != null) {
+                    nearestPlayer = instancePlayer;
+                }
             }
         }
 
         DimensionConfig dimConfig = ExileDB.getDimensionConfig(world);
 
-        if ((scaletoPlayer || ServerContainer.get().SCALE_MOB_LEVEL_TO_NEAREST_PLAYER.get()) && nearestPlayer != null) {
+        if (scaletoPlayer) {
+            // Harvest/Obelisk mobs must always be leveled off a real player, never the distance/dimConfig
+            // fallback below - falling through there is what produces wildly overleveled "skull" mobs.
+            int lowestLevel = nearestPlayer != null ? getLowestPartyMemberLevelNearby(nearestPlayer) : dimConfig.min_lvl;
+            info.set(LevelInfo.LevelSource.NEAREST_PLAYER_CONFIG, lowestLevel);
+        } else if (ServerContainer.get().SCALE_MOB_LEVEL_TO_NEAREST_PLAYER.get() && nearestPlayer != null) {
             // Use the lowest party member level within PARTY_RADIUS
             int lowestLevel = getLowestPartyMemberLevelNearby(nearestPlayer);
             info.set(LevelInfo.LevelSource.NEAREST_PLAYER_CONFIG, lowestLevel);

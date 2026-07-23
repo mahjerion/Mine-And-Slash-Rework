@@ -13,6 +13,8 @@ import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.omen.OmenBlueprint;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.StrongboxExtraDrops;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.StrongboxGuardianToughness;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.StrongboxUniqueChance;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.MasterLootGen;
@@ -35,6 +37,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -52,12 +57,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 // A locked "strongbox" bonus-map encounter, placed by the MapContent system (MnsMapContents.STRONGBOX).
 // Right-clicking it releases a guardian pack drawn from the current dungeon's own mob pool; the box
 // stays sealed until every guardian is dead, then spills a richer-than-normal loot reward and consumes
 // itself. Lives in the dungeon-realm glue package so it can use the dungeon mob pool directly.
 public class StrongboxBlock extends BaseEntityBlock {
+
+    private static final UUID GUARDIAN_TOUGHNESS_HP_MOD = UUID.fromString("6f2b6a5e-9d3a-4b3a-9f0a-1c2b3d4e5f6a");
+    private static final UUID GUARDIAN_TOUGHNESS_DMG_MOD = UUID.fromString("7a3c7b6f-ae4b-4c4b-a01b-2d3c4e5f6a7b");
 
     public StrongboxBlock() {
         super(BlockBehaviour.Properties.copy(Blocks.CHEST).noOcclusion().lightLevel(x -> 10));
@@ -115,6 +125,8 @@ public class StrongboxBlock extends BaseEntityBlock {
         RandomSource random = level.random;
         int spawned = 0;
         int guardianCount = DungeonConfig.get().STRONGBOX_GUARDIAN_COUNT.get();
+        // Atlas "Unique Windfall" - guardians hit harder and have more health, without changing rarity
+        float toughnessBonus = Load.Unit(p).getUnit().getCalculatedStat(StrongboxGuardianToughness.getInstance()).getValue();
         for (int i = 0; i < guardianCount; i++) {
             EntityType<?> type = mobList != null ? mobList.getRandomMob().getType() : EntityType.ZOMBIE;
             Entity entity = type.create(level);
@@ -127,6 +139,7 @@ public class StrongboxBlock extends BaseEntityBlock {
             mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
             mob.setPersistenceRequired();
             mob.setTarget(p);
+            applyGuardianToughness(mob, toughnessBonus);
             level.addFreshEntity(mob);
             // count guardians toward map completion: flag as a dungeon mob so their deaths register
             // as mobKills (see DungeonEvents), and add them to mobSpawnCount below (the denominator).
@@ -145,6 +158,25 @@ public class StrongboxBlock extends BaseEntityBlock {
             x.mobSpawnCount += finalSpawned;
             x.updateMapCompletionRarity(level, pos);
         });
+    }
+
+    private void applyGuardianToughness(Mob mob, float toughnessBonus) {
+        if (toughnessBonus <= 0) {
+            return;
+        }
+        AttributeInstance maxHealthAttribute = mob.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealthAttribute != null) {
+            maxHealthAttribute.addPermanentModifier(new AttributeModifier(
+                    GUARDIAN_TOUGHNESS_HP_MOD, "Strongbox guardian toughness",
+                    toughnessBonus / 100F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            mob.setHealth((float) maxHealthAttribute.getValue());
+        }
+        AttributeInstance attackDamageAttribute = mob.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (attackDamageAttribute != null) {
+            attackDamageAttribute.addPermanentModifier(new AttributeModifier(
+                    GUARDIAN_TOUGHNESS_DMG_MOD, "Strongbox guardian toughness",
+                    toughnessBonus / 100F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        }
     }
 
     @Nullable
@@ -190,8 +222,15 @@ public class StrongboxBlock extends BaseEntityBlock {
             // Atlas "Strongbox Extra Drops" - scales the guaranteed category-item count
             float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxExtraDrops.getInstance()).getMultiplier();
             categoryItemCount = Math.round(categoryItemCount * extraDropsMulti);
+            // Atlas "Unique Windfall" - scales the UNIQUE category's odds within the weighted roll
+            float uniqueChanceBonus = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxUniqueChance.getInstance()).getValue();
+            List<ScaledCategory> weightedCategories = Arrays.stream(LootCategory.values())
+                    .map(c -> new ScaledCategory(c, c == LootCategory.UNIQUE
+                            ? Math.round(c.Weight() * (1F + uniqueChanceBonus / 100F))
+                            : c.Weight()))
+                    .collect(Collectors.toList());
             for (int i = 0; i < categoryItemCount; i++) {
-                LootCategory category = RandomUtils.weightedRandom(Arrays.asList(LootCategory.values()));
+                LootCategory category = RandomUtils.weightedRandom(weightedCategories).category;
                 ItemStack categoryItem = generateCategoryItem(category, LootInfo.ofChestLoot(recipient, pos));
                 if (!categoryItem.isEmpty()) {
                     Block.popResource(level, pos, categoryItem);
@@ -224,6 +263,23 @@ public class StrongboxBlock extends BaseEntityBlock {
         @Override
         public int Weight() {
             return weightSupplier.getAsInt();
+        }
+    }
+
+    // wraps a LootCategory with a per-roll-scaled weight (Atlas "Unique Windfall"), so the UNIQUE
+    // category's odds can be boosted for a specific opener without touching the enum's base weights
+    private static class ScaledCategory implements IWeighted {
+        final LootCategory category;
+        final int weight;
+
+        ScaledCategory(LootCategory category, int weight) {
+            this.category = category;
+            this.weight = weight;
+        }
+
+        @Override
+        public int Weight() {
+            return weight;
         }
     }
 

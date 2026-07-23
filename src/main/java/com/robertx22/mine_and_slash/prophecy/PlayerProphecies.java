@@ -38,6 +38,10 @@ public class PlayerProphecies implements IStatCtx {
 
     public int numMobAffixesCanAdd = 0;
 
+    public int rerollsUsed = 0;
+
+    public boolean usedFreeRoll = false;
+
 
     public void clearIfNewMap(MapItemData map) {
 
@@ -48,6 +52,9 @@ public class PlayerProphecies implements IStatCtx {
 
         affixOffers.clear();
         rewardOffers.clear();
+
+        rerollsUsed = 0;
+        usedFreeRoll = false;
     }
 
 
@@ -75,6 +82,48 @@ public class PlayerProphecies implements IStatCtx {
             rewardOffers.add(ProphecyGeneration.generate(p));
         }
 
+    }
+
+    // flat cost to reroll, independent of whatever happens to be on offer - scales the same base
+    // cost individual offers scale from (ProphecyGeneration.BASE_COST), but through a server-configured
+    // multiplier instead of the random amount/modifier cost_multi rolls, so it stays constant reroll
+    // to reroll
+    public int getRerollCost() {
+        return (int) (ProphecyGeneration.BASE_COST * ServerContainer.get().PROPHECY_REROLL_COST_MULTI.get());
+    }
+
+    public void tryReroll(Player p) {
+
+        var map = Load.mapAt(p.level(), p.blockPosition());
+
+        if (map == null) {
+            p.sendSystemMessage(Chats.MUST_BE_IN_MAP_TO_REROLL_PROPHECY.locName().withStyle(ChatFormatting.RED));
+            return;
+        }
+        if (!WorldUtils.isMapWorldClass(p.level(), p.blockPosition()) || !map.map.uuid.equals(this.mapid)) {
+            p.sendSystemMessage(Chats.MUST_BE_IN_MAP_TO_REROLL_PROPHECY.locName().withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        if (rerollsUsed >= ServerContainer.get().PROPHECY_MAX_REROLLS_PER_MAP.get()) {
+            p.sendSystemMessage(Chats.NO_PROPHECY_REROLLS_LEFT.locName().withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        int cost = getRerollCost();
+
+        if (Coin.PROPHECY.getTotalFromInventory(p) < cost) {
+            p.sendSystemMessage(Chats.NOT_ENOUGH_FAVOR_TO_REROLL_PROPHECY.locName().withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        Coin.PROPHECY.spend(p, cost);
+
+        regenerateNewOffers(p);
+
+        rerollsUsed++;
+
+        SoundUtils.playSound(p, SoundEvents.EXPERIENCE_ORB_PICKUP);
     }
 
 

@@ -1,9 +1,11 @@
 package com.robertx22.addons.ancient_obelisks;
 
 import com.robertx22.ancient_obelisks.api.GetObeliskChestBonusEvent;
+import com.robertx22.ancient_obelisks.api.GetObeliskMobToughnessEvent;
 import com.robertx22.ancient_obelisks.api.ObeliskExileEvents;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskExtraDrops;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ObeliskMobToughness;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.world.entity.player.Player;
 
@@ -20,6 +22,20 @@ public class ObeliskAddonEvents {
                 float max = 0;
                 for (Player p : event.players) {
                     float value = Load.Unit(p).getUnit().getCalculatedStat(ObeliskExtraDrops.getInstance()).getValue();
+                    if (value > max) {
+                        max = value;
+                    }
+                }
+                event.bonusPercent = max;
+            }
+        });
+
+        ObeliskExileEvents.GET_MOB_TOUGHNESS_BONUS.register(new EventConsumer<GetObeliskMobToughnessEvent>() {
+            @Override
+            public void accept(GetObeliskMobToughnessEvent event) {
+                float max = 0;
+                for (Player p : event.players) {
+                    float value = Load.Unit(p).getUnit().getCalculatedStat(ObeliskMobToughness.getInstance()).getValue();
                     if (value > max) {
                         max = value;
                     }

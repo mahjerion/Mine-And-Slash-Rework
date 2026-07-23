@@ -174,6 +174,14 @@ public class StatsRegister implements ExileRegistryInit {
                     add(HarvestExtraDrops.getInstance());
                     add(ObeliskExtraDrops.getInstance());
 
+                    add(StrongboxUniqueChance.getInstance());
+                    add(StrongboxGuardianToughness.getInstance());
+                    add(ProphecyDoubleCurse.getInstance());
+                    add(ShrineDoubleBuff.getInstance());
+                    add(ImprisonedMonsterDoubleSpawn.getInstance());
+                    add(ObeliskMobToughness.getInstance());
+                    add(HarvestCompletionBounty.getInstance());
+
                     add(new BonusAttackDamage(Elements.Physical));
                     add(new ElementalResist(Elements.Physical));
                     add(new ElementalPenetration(Elements.Physical));

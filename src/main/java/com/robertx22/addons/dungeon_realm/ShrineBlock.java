@@ -5,7 +5,9 @@ import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.shrine.ShrineBuff;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ShrineDoubleBuff;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.ExilePotionEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.GiveOrTake2;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -83,8 +85,12 @@ public class ShrineBlock extends Block {
         }
     }
 
+    // Atlas "Twin Blessing" - duration multiplier applied to both buffs when a player has the perk
+    private static final float TWIN_BLESSING_DURATION_MULTI = 0.75F;
+
     // pick a weighted-random buff from the datapack-driven ShrineBuff registry and apply it to every
-    // player currently within range of the shrine.
+    // player currently within range of the shrine. Players with the "Twin Blessing" Atlas perk get a
+    // second, independently-rolled buff on top, with both durations shortened.
     private void grantBuff(ServerLevel level, BlockPos pos) {
         if (ExileDB.ShrineBuffs().isEmpty()) {
             return;
@@ -100,9 +106,32 @@ public class ShrineBlock extends Block {
         AABB area = new AABB(pos).inflate(DungeonConfig.get().SHRINE_BUFF_RADIUS.get());
         List<Player> players = level.getEntitiesOfClass(Player.class, area);
         for (Player pl : players) {
+            boolean twinBlessing = Load.Unit(pl).getUnit().getCalculatedStat(ShrineDoubleBuff.getInstance()).getValue() > 0;
+
+            if (!twinBlessing) {
+                new ExilePotionEvent(CalculatedSpellData.NO_SPELL_RELATED, 1, effect, GiveOrTake2.give,
+                        pl, pl, buff.duration_ticks, false).Activate();
+                pl.sendSystemMessage(Chats.SHRINE_BUFF_RECEIVED.locName(effect.locName()));
+                continue;
+            }
+
+            ShrineBuff secondBuff = ExileDB.ShrineBuffs().random();
+            // avoid rolling the exact same buff twice, when there's another option available
+            if (secondBuff != null && secondBuff.GUID().equals(buff.GUID()) && ExileDB.ShrineBuffs().getAll().size() > 1) {
+                secondBuff = ExileDB.ShrineBuffs().random();
+            }
+            ExileEffect secondEffect = secondBuff != null ? ExileDB.ExileEffects().get(secondBuff.effect_id) : null;
+
             new ExilePotionEvent(CalculatedSpellData.NO_SPELL_RELATED, 1, effect, GiveOrTake2.give,
-                    pl, pl, buff.duration_ticks, false).Activate();
-            pl.sendSystemMessage(Chats.SHRINE_BUFF_RECEIVED.locName(effect.locName()));
+                    pl, pl, Math.round(buff.duration_ticks * TWIN_BLESSING_DURATION_MULTI), false).Activate();
+
+            if (secondEffect != null) {
+                new ExilePotionEvent(CalculatedSpellData.NO_SPELL_RELATED, 1, secondEffect, GiveOrTake2.give,
+                        pl, pl, Math.round(secondBuff.duration_ticks * TWIN_BLESSING_DURATION_MULTI), false).Activate();
+                pl.sendSystemMessage(Chats.SHRINE_BUFF_RECEIVED_TWO.locName(effect.locName(), secondEffect.locName()));
+            } else {
+                pl.sendSystemMessage(Chats.SHRINE_BUFF_RECEIVED.locName(effect.locName()));
+            }
         }
     }
 }

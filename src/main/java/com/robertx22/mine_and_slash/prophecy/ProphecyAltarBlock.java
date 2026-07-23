@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.library_of_exile.utils.geometry.Circle2d;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.stats.types.loot.ProphecyDoubleCurse;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -56,11 +57,23 @@ public class ProphecyAltarBlock extends Block {
                 return InteractionResult.SUCCESS;
             }
 
-            Load.player(p).prophecy.numMobAffixesCanAdd++;
+            var prophecy = Load.player(p).prophecy;
 
-            Load.player(p).prophecy.regenerateNewOffers(p);
+            // Atlas "Twin Curse" - forces 2 curse picks per altar instead of 1 (the altar already
+            // refuses reuse while numMobAffixesCanAdd > 0, so this alone is enough to require both
+            // be spent before the next altar)
+            boolean doubleCurse = Load.Unit(p).getUnit().getCalculatedStat(ProphecyDoubleCurse.getInstance()).getValue() > 0;
+            prophecy.numMobAffixesCanAdd += doubleCurse ? 2 : 1;
 
-            Load.player(p).prophecy.regenAffixOffers();
+            // the first altar touched in a map "initiates" the prophecy event, granting a free look
+            // at reward offers - every altar after that (and every reroll from then on) only grants
+            // a curse; further reward rolls have to go through the paid GUI reroll
+            if (!prophecy.usedFreeRoll) {
+                prophecy.usedFreeRoll = true;
+                prophecy.regenerateNewOffers(p);
+            }
+
+            prophecy.regenAffixOffers();
 
             p.sendSystemMessage(Chats.PROPHECY_ALTAR_MSG.locName().withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD));
 

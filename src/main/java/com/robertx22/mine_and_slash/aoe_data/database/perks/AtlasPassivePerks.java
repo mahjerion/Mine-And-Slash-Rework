@@ -20,14 +20,14 @@ public class AtlasPassivePerks {
 
         //dedicated connector perks for traversing between clusters on the tree
         PerkBuilder.stat("map_find", new OptScaleExactStat(1, MapFind.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("map_rarity_bias", new OptScaleExactStat(2, MapRarityBias.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("mob_modifier_density", new OptScaleExactStat(2, MobModifierDensity.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("map_rarity_bias", new OptScaleExactStat(1, MapRarityBias.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("mob_modifier_density", new OptScaleExactStat(1, MobModifierDensity.getInstance(), ModType.FLAT));
 
         //generic mob modifiers
-        PerkBuilder.stat("pack_size_node", new OptScaleExactStat(4, PackSize.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("pack_size_node_big", new OptScaleExactStat(10, PackSize.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("mob_modifier_density_node", new OptScaleExactStat(3, MobModifierDensity.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("mob_modifier_density_node_big", new OptScaleExactStat(8, MobModifierDensity.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("pack_size_node", new OptScaleExactStat(3, PackSize.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("pack_size_node_big", new OptScaleExactStat(8, PackSize.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("mob_modifier_density_node", new OptScaleExactStat(2, MobModifierDensity.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("mob_modifier_density_node_big", new OptScaleExactStat(5, MobModifierDensity.getInstance(), ModType.FLAT));
 
         // per-rarity monster chance nodes: bias the mob rarity roll toward one specific rarity (OnMobSpawn).
         // Higher rarities use larger multipliers since their base spawn weight is much lower. First-pass values.
@@ -110,28 +110,28 @@ public class AtlasPassivePerks {
 
         // reward-quantity nodes for the Cluster 7 bonus-map encounters (distinct from the event-chance
         // nodes above, which only affect whether the encounter spawns - not what it pays out)
-        PerkBuilder.stat("strongbox_extra_drops_node", new OptScaleExactStat(5, StrongboxExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("strongbox_extra_drops_node_big", new OptScaleExactStat(12, StrongboxExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("imprisoned_monster_extra_drops_node", new OptScaleExactStat(5, ImprisonedMonsterExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("imprisoned_monster_extra_drops_node_big", new OptScaleExactStat(12, ImprisonedMonsterExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("strongbox_extra_drops_node", new OptScaleExactStat(4, StrongboxExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("strongbox_extra_drops_node_big", new OptScaleExactStat(10, StrongboxExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("imprisoned_monster_extra_drops_node", new OptScaleExactStat(4, ImprisonedMonsterExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("imprisoned_monster_extra_drops_node_big", new OptScaleExactStat(10, ImprisonedMonsterExtraDrops.getInstance(), ModType.FLAT));
         // reuses the generic per-EffectTag "effectiveness of X buffs on you" stat family
         // (EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG) via the new `shrine` EffectTag
         PerkBuilder.stat("shrine_buff_effectiveness_node",
-                new OptScaleExactStat(8, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
+                new OptScaleExactStat(6, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
         PerkBuilder.stat("shrine_buff_effectiveness_node_big",
-                new OptScaleExactStat(20, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
+                new OptScaleExactStat(15, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
         // Harvest/Obelisk in-encounter reward quantity (distinct from harvest_event_chance/obelisk_event_chance
         // above, which only affect encounter spawn odds) - player-stat parallel to Obelisk's
         // TRIPLE_CHEST_REWARD_CHANCE relic stat
-        PerkBuilder.stat("harvest_extra_drops_node", new OptScaleExactStat(5, HarvestExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("harvest_extra_drops_node_big", new OptScaleExactStat(12, HarvestExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("obelisk_extra_drops_node", new OptScaleExactStat(5, ObeliskExtraDrops.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("obelisk_extra_drops_node_big", new OptScaleExactStat(12, ObeliskExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("harvest_extra_drops_node", new OptScaleExactStat(4, HarvestExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("harvest_extra_drops_node_big", new OptScaleExactStat(10, HarvestExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("obelisk_extra_drops_node", new OptScaleExactStat(4, ObeliskExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("obelisk_extra_drops_node_big", new OptScaleExactStat(10, ObeliskExtraDrops.getInstance(), ModType.FLAT));
 
         // additional event chance: player-stat parallel to the BONUS_CONTENT_CHANCE relic stat -
         // rolls for one more bonus event (league encounter) when a map starts.
-        PerkBuilder.stat("double_event_chance_node", new OptScaleExactStat(3, DoubleEventChance.getInstance(), ModType.FLAT));
-        PerkBuilder.stat("double_event_chance_node_big", new OptScaleExactStat(8, DoubleEventChance.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("double_event_chance_node", new OptScaleExactStat(2, DoubleEventChance.getInstance(), ModType.FLAT));
+        PerkBuilder.stat("double_event_chance_node_big", new OptScaleExactStat(5, DoubleEventChance.getInstance(), ModType.FLAT));
 
         // Singular Focus: mutually exclusive (one_kind) map-event focus nodes. Each grants +100% to its
         // own event's chance AND +50% EventFocusPenalty (which the weight listener subtracts from EVERY
@@ -155,6 +155,24 @@ public class AtlasPassivePerks {
         oneOfAKind(PerkBuilder.stat("singular_focus_shrine",
                 new OptScaleExactStat(50, ShrineEventChance.getInstance(), ModType.FLAT),
                 new OptScaleExactStat(25, EventFocusPenalty.getInstance(), ModType.FLAT)), "singular_focus");
+
+        // Cluster 9 - Atlas keystones: one drawback/upside "gamechanger" perk per Cluster-7 bonus
+        // encounter, plus one for Harvest. First use of PerkBuilder.gameChanger.
+        PerkBuilder.gameChanger("keystone_strongbox_unique_windfall", "Windfall",
+                new OptScaleExactStat(100, StrongboxUniqueChance.getInstance(), ModType.FLAT),
+                new OptScaleExactStat(30, StrongboxGuardianToughness.getInstance(), ModType.FLAT));
+        PerkBuilder.gameChanger("keystone_prophecy_twin_curse", "Twin Curse",
+                new OptScaleExactStat(1, ProphecyDoubleCurse.getInstance(), ModType.FLAT),
+                new OptScaleExactStat(30, ProphecyCoinFind.getInstance(), ModType.FLAT));
+        PerkBuilder.gameChanger("keystone_shrine_twin_blessing", "Villager's Blessing",
+                new OptScaleExactStat(1, ShrineDoubleBuff.getInstance(), ModType.FLAT));
+        PerkBuilder.gameChanger("keystone_imprisoned_monster_twin_captives", "Gem",
+                new OptScaleExactStat(1, ImprisonedMonsterDoubleSpawn.getInstance(), ModType.FLAT));
+        PerkBuilder.gameChanger("keystone_obelisk_greater_trial", "Doppelgangers",
+                new OptScaleExactStat(25, ObeliskMobToughness.getInstance(), ModType.FLAT),
+                new OptScaleExactStat(30, ObeliskExtraDrops.getInstance(), ModType.FLAT));
+        PerkBuilder.gameChanger("keystone_harvest_bountiful_aftermath", "Bountiful Aftermath",
+                new OptScaleExactStat(1, HarvestCompletionBounty.getInstance(), ModType.FLAT));
     }
 
     private static void entry(Perk perk) {

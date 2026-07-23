@@ -14,6 +14,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProphecyScreen extends BaseScreen implements INamedScreen {
     private static final ResourceLocation BACKGROUND = new ResourceLocation(SlashRef.MODID, "textures/gui/prophecy/prophecy.png");
 
@@ -21,6 +24,10 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
     static int sizeY = 180;
 
     Minecraft mc = Minecraft.getInstance();
+
+    // tracks which offers were showing when the widgets were built, so we know to rebuild them
+    // once a reroll changes data.rewardOffers server-side and syncs back to the client
+    private List<String> lastOfferIds = new ArrayList<>();
 
 
     public ProphecyScreen() {
@@ -48,6 +55,8 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
 
             var data = Load.player(mc.player).prophecy;
 
+            lastOfferIds = data.rewardOffers.stream().map(x -> x.uuid).toList();
+
             int i = 0;
             int yc = 0;
 
@@ -65,6 +74,8 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
                     yc++;
                 }
             }
+
+            this.addRenderableWidget(new RerollProphecyButton(this.guiLeft + sizeX + 2, this.guiTop + 2));
 
             i = 0;
 /*
@@ -101,6 +112,20 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        try {
+            var data = Load.player(mc.player).prophecy;
+            List<String> currentOfferIds = data.rewardOffers.stream().map(x -> x.uuid).toList();
+            if (!currentOfferIds.equals(lastOfferIds)) {
+                this.init();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

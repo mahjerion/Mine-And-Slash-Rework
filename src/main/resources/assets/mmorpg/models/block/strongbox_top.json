@@ -1,0 +1,10 @@
+{
+  "comment": "Purely-decorative topper stacked on strongbox to make it 2-tall - reuses the same placeholder textures for a continuous pillar look. Swap alongside strongbox.json when it gets a real model/texture.",
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "block/gold_block",
+    "bottom": "block/gold_block",
+    "side": "block/chiseled_stone_bricks",
+    "particle": "block/gold_block"
+  }
+}

@@ -76,11 +76,13 @@ public class StrongboxBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        level.addParticle(ParticleTypes.ANGRY_VILLAGER,
-                pos.getX() + 0.2 + random.nextDouble() * 0.6,
-                pos.getY() + 0.8 + random.nextDouble() * 0.4,
-                pos.getZ() + 0.2 + random.nextDouble() * 0.6,
-                0, 0.02, 0);
+        for (int i = 0; i < 4; i++) {
+            level.addParticle(ParticleTypes.ANGRY_VILLAGER,
+                    pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getY() + 0.8 + random.nextDouble() * 0.4,
+                    pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    0, 0.02, 0);
+        }
     }
 
     @Override

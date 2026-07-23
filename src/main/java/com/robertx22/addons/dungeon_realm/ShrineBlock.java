@@ -33,8 +33,8 @@ import java.util.List;
 // glue package for consistency with the other bonus encounters.
 public class ShrineBlock extends Block {
 
-    // how far apart (blocks) particles are spaced along the wave ring's circumference.
-    private static final double WAVE_POINT_SPACING = 1.0;
+    // roughly how many burst particles to spawn per block of buff radius.
+    private static final int BURST_POINTS_PER_RADIUS = 12;
 
     public ShrineBlock() {
         super(BlockBehaviour.Properties.copy(Blocks.LODESTONE).noOcclusion().lightLevel(x -> 10));
@@ -42,11 +42,13 @@ public class ShrineBlock extends Block {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        level.addParticle(ParticleTypes.ENCHANT,
-                pos.getX() + 0.2 + random.nextDouble() * 0.6,
-                pos.getY() + 1.0 + random.nextDouble() * 0.5,
-                pos.getZ() + 0.2 + random.nextDouble() * 0.6,
-                0, 0.03, 0);
+        for (int i = 0; i < 4; i++) {
+            level.addParticle(ParticleTypes.WITCH,
+                    pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getY() + 1.0 + random.nextDouble() * 0.5,
+                    pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    0, 0.03, 0);
+        }
     }
 
     @Override
@@ -62,19 +64,22 @@ public class ShrineBlock extends Block {
         return InteractionResult.SUCCESS;
     }
 
-    // bursts a single particle ring out at BUFF_RADIUS, so players can see exactly how far the
-    // shrine's buff reaches.
+    // bursts particles scattered across the buff area (mimics ParticleShape.CIRCLE_2D's random-disc
+    // sampling) instead of an evenly-spaced ring, so players get a sense of the shrine's buff reach.
     private void spawnBuffWave(ServerLevel level, BlockPos pos) {
         double buffRadius = DungeonConfig.get().SHRINE_BUFF_RADIUS.get();
         double centerX = pos.getX() + 0.5;
         double centerY = pos.getY() + 0.3;
         double centerZ = pos.getZ() + 0.5;
-        int points = Math.max(8, (int) Math.ceil(2 * Math.PI * buffRadius / WAVE_POINT_SPACING));
+        int points = Math.max(8, (int) (buffRadius * BURST_POINTS_PER_RADIUS));
         for (int i = 0; i < points; i++) {
-            double angle = 2 * Math.PI * i / points;
-            double x = centerX + Math.cos(angle) * buffRadius;
-            double z = centerZ + Math.sin(angle) * buffRadius;
-            level.sendParticles(ParticleTypes.ENCHANT, x, centerY, z, 1, 0, 0.05, 0, 0);
+            double u = Math.random();
+            double v = Math.random();
+            double theta = 2 * Math.PI * u;
+            double phi = Math.acos(2.0 * v - 1.0);
+            double x = centerX + buffRadius * Math.sin(phi) * Math.cos(theta);
+            double z = centerZ + buffRadius * Math.cos(phi);
+            level.sendParticles(ParticleTypes.WITCH, x, centerY, z, 1, 0, 0.05, 0, 0);
         }
     }
 

@@ -1,0 +1,10 @@
+{
+  "comment": "Purely-decorative topper stacked on imprisoned_monster to make it 2-tall - reuses the same placeholder textures for a continuous pillar look. Swap alongside imprisoned_monster.json when it gets a real model/texture.",
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "block/crying_obsidian",
+    "bottom": "block/crying_obsidian",
+    "side": "block/iron_bars",
+    "particle": "block/crying_obsidian"
+  }
+}

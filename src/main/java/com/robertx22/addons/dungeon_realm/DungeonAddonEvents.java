@@ -248,28 +248,51 @@ public class DungeonAddonEvents {
                 // to the matching Atlas "event chance" stat. String literals so we don't compile-depend on
                 // the harvest/obelisk mods; if a league mod is absent its content isn't registered anyway.
                 Stat stat;
+                int minLevel;
                 switch (event.contentId) {
                     case "prophecy":
                         stat = ProphecyEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_PROPHECY_IN_MAPS.get();
                         break;
                     case "obelisk":
                         stat = ObeliskEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_OBELISK_IN_MAPS.get();
                         break;
                     case "the_harvest":
                         stat = HarvestEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_HARVEST_IN_MAPS.get();
                         break;
                     case "strongbox":
                         stat = StrongboxEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_STRONGBOX_IN_MAPS.get();
                         break;
                     case "imprisoned_monster":
                         stat = ImprisonedMonsterEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_IMPRISONED_MONSTER_IN_MAPS.get();
                         break;
                     case "shrine":
                         stat = ShrineEventChance.getInstance();
+                        minLevel = ServerContainer.get().MIN_LEVEL_SHRINE_IN_MAPS.get();
                         break;
                     default:
                         return;
                 }
+
+                // below the configured min level, this league mechanic can't spawn in maps at all -
+                // regular overworld Harvest/Obelisk blocks and their own maps are untouched by this,
+                // it only gates them showing up as bonus content inside a dungeon map run.
+                int highestLevel = 0;
+                for (Player p : event.players) {
+                    int lvl = Load.Unit(p).getLevel();
+                    if (lvl > highestLevel) {
+                        highestLevel = lvl;
+                    }
+                }
+                if (highestLevel < minLevel) {
+                    event.blocked = true;
+                    return;
+                }
+
                 // per content: (its event-chance stat) - (the shared EventFocusPenalty). A Singular
                 // Focus node boosts one event's chance by the same amount as the penalty, so the focused
                 // event nets to unpenalized while every other event is reduced. True per-player max (NOT

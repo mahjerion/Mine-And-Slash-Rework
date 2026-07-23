@@ -126,6 +126,20 @@ public class ServerContainer {
 
         UNARMED_ENERGY_COST = b.defineInRange("UNARMED_ENERGY_COST", 10D, 0D, 100D);
 
+        b.comment("Minimum player level for each league mechanic to be eligible as bonus content inside a dungeon map.")
+                .comment("Lets mapping itself start early while league mechanics (Harvest, Obelisks, Prophecy, Shrines, Strongbox, Imprisoned Monster) only start showing up once the player is higher level, so new players aren't overwhelmed.")
+                .comment("This only gates them spawning inside maps - regular Harvest/Obelisk blocks in the overworld, and Harvest/Obelisk maps themselves, are unaffected and remain available at any level.")
+                .push("league_mechanic_min_level_in_maps");
+
+        MIN_LEVEL_HARVEST_IN_MAPS = b.defineInRange("harvest", 60, 0, Integer.MAX_VALUE);
+        MIN_LEVEL_OBELISK_IN_MAPS = b.defineInRange("obelisk", 60, 0, Integer.MAX_VALUE);
+        MIN_LEVEL_PROPHECY_IN_MAPS = b.defineInRange("prophecy", 60, 0, Integer.MAX_VALUE);
+        MIN_LEVEL_SHRINE_IN_MAPS = b.defineInRange("shrine", 60, 0, Integer.MAX_VALUE);
+        MIN_LEVEL_STRONGBOX_IN_MAPS = b.defineInRange("strongbox", 60, 0, Integer.MAX_VALUE);
+        MIN_LEVEL_IMPRISONED_MONSTER_IN_MAPS = b.defineInRange("imprisoned_monster", 60, 0, Integer.MAX_VALUE);
+
+        b.pop();
+
         List<String> list = new ArrayList<>();
 
         list.add("minecraft:iron_sword:sword");
@@ -304,5 +318,12 @@ public class ServerContainer {
     public ForgeConfigSpec.IntValue MAX_CHARACTERS;
     public ForgeConfigSpec.IntValue ITEM_LEVEL_VARIANCE;
     public ForgeConfigSpec.IntValue MOB_LEVEL_VARIANCE;
+
+    public ForgeConfigSpec.IntValue MIN_LEVEL_HARVEST_IN_MAPS;
+    public ForgeConfigSpec.IntValue MIN_LEVEL_OBELISK_IN_MAPS;
+    public ForgeConfigSpec.IntValue MIN_LEVEL_PROPHECY_IN_MAPS;
+    public ForgeConfigSpec.IntValue MIN_LEVEL_SHRINE_IN_MAPS;
+    public ForgeConfigSpec.IntValue MIN_LEVEL_STRONGBOX_IN_MAPS;
+    public ForgeConfigSpec.IntValue MIN_LEVEL_IMPRISONED_MONSTER_IN_MAPS;
 
 }

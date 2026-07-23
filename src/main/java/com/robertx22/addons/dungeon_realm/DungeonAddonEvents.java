@@ -14,6 +14,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
+import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
@@ -49,6 +50,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -296,6 +298,21 @@ public class DungeonAddonEvents {
         DungeonExileEvents.ON_MAP_FULLY_CLEARED.register(new EventConsumer<OnMapFullyClearedEvent>() {
             @Override
             public void accept(OnMapFullyClearedEvent event) {
+                // vanilla stats-screen tracking - everyone in the map instance gets credit (event.players
+                // is every player in this specific instance, not just the killer), same "who was there"
+                // semantics as the rest of this event. Pinnacle is the exception: a low-level party member
+                // could get carried into someone else's pinnacle map without having unlocked pinnacle
+                // themselves, so that one still requires the player's own atlas.pinnacleUnlocked
+                for (Player p : event.players) {
+                    p.awardStat(Stats.CUSTOM.get(PlayerStats.DUNGEONS_COMPLETED));
+                    if (event.uber) {
+                        p.awardStat(Stats.CUSTOM.get(PlayerStats.UBER_DUNGEONS_COMPLETED));
+                    }
+                    if (event.pinnacle && Load.player(p).atlas.pinnacleUnlocked) {
+                        p.awardStat(Stats.CUSTOM.get(PlayerStats.PINNACLE_DUNGEONS_COMPLETED));
+                    }
+                }
+
                 // resolve this specific run's rolled tier/rarity the same way CAN_ENTER_MAP does,
                 // so each Atlas node for this dungeon can be gated on its own requirement
                 MapData runMap = WorldData.get(event.level).map.getData(DungeonMain.MAIN_DUNGEON_STRUCTURE, event.pos);

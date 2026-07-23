@@ -24,6 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerStats {
     public static final ResourceLocation LEVELS_GAINED = new ResourceLocation(SlashRef.MODID, "levels_gained");
+    public static final ResourceLocation DUNGEONS_COMPLETED = new ResourceLocation(SlashRef.MODID, "dungeons_completed");
+    public static final ResourceLocation UBER_DUNGEONS_COMPLETED = new ResourceLocation(SlashRef.MODID, "uber_dungeons_completed");
+    public static final ResourceLocation PINNACLE_DUNGEONS_COMPLETED = new ResourceLocation(SlashRef.MODID, "pinnacle_dungeons_completed");
     public static final HashMap<String, ResourceLocation> REGISTERED_STATS = new HashMap<>();
 
     private static class Registrations {
@@ -71,6 +74,9 @@ public class PlayerStats {
          */
 
         registerCustomStat(LEVELS_GAINED);
+        registerCustomStat(DUNGEONS_COMPLETED);
+        registerCustomStat(UBER_DUNGEONS_COMPLETED);
+        registerCustomStat(PINNACLE_DUNGEONS_COMPLETED);
         for (ResourceLocation rl : REGISTERED_STATS.values())
             registerCustomStat(rl);
     }

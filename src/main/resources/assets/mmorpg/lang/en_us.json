@@ -151,6 +151,9 @@
 "item.mmorpg.skill_gems.aura.str": "Augment",
 
 "stat.mmorpg.levels_gained": "M&S Level",
+"stat.mmorpg.dungeons_completed": "Maps Completed",
+"stat.mmorpg.uber_dungeons_completed": "Uber Maps Completed",
+"stat.mmorpg.pinnacle_dungeons_completed": "Pinnacle Maps Completed",
 "stat.mmorpg.mana": "M&S Max Mana",
 "stat.mmorpg.health": "M&S Max Health",
 "stat.mmorpg.magic_shield": "M&S Max Magic Shield",

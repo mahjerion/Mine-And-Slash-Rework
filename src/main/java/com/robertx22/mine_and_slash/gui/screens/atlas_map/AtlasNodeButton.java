@@ -91,22 +91,35 @@ public class AtlasNodeButton extends AbstractWidget {
         // name already renders as a persistent label below the node (AtlasMapScreen.renderLabels), so the
         // tooltip is used for the atlas point reward instead - only relevant for available, uncompleted nodes
         if ((state == AtlasMapScreen.NodeState.UNLOCKED || state == AtlasMapScreen.NodeState.LOCKED) && isInside(zx, zy)) {
-            MutableComponent reward = Component.literal(node.atlas_points_reward
-                    + " Atlas Point" + (node.atlas_points_reward == 1 ? "" : "s") + " Available");
+            MutableComponent reward = Component.literal("");
+            boolean hasLine = false;
+            if (node.atlas_points_reward > 0) {
+                reward.append(Component.literal(node.atlas_points_reward
+                        + " Atlas Point" + (node.atlas_points_reward == 1 ? "" : "s") + " Available"));
+                hasLine = true;
+            }
             if (node.is_pinnacle_unlock) {
-                reward.append("\n").append(Component.literal("+1 Pinnacle Progress").withStyle(ChatFormatting.DARK_RED));
+                if (hasLine) {
+                    reward.append("\n");
+                }
+                reward.append(Component.literal("+1 Pinnacle Progress").withStyle(ChatFormatting.DARK_RED));
+                hasLine = true;
             }
             Component req = describeRequirement(node);
             if (req != null) {
-                reward.append("\n").append(req);
+                if (hasLine) {
+                    reward.append("\n");
+                }
+                reward.append(req);
+                hasLine = true;
             }
             // orthogonal to describeRequirement (a node can both require e.g. an Uber map AND
             // count toward the Pinnacle unlock), so it's appended separately rather than folded
             // into that if/else-if chain
-            setTooltip(Tooltip.create(reward));
+            setTooltip(hasLine ? Tooltip.create(reward) : null);
 
             Screen mcScreen = Minecraft.getInstance().screen;
-            if (mcScreen != null) {
+            if (mcScreen != null && hasLine) {
                 mcScreen.setTooltipForNextRenderPass(this.getTooltip(), this.createTooltipPositioner(), true);
             }
         } else {

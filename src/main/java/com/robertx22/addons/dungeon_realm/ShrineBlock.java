@@ -34,7 +34,7 @@ import java.util.List;
 public class ShrineBlock extends Block {
 
     // roughly how many burst particles to spawn per block of buff radius.
-    private static final int BURST_POINTS_PER_RADIUS = 12;
+    private static final int BURST_POINTS_PER_RADIUS = 24;
 
     public ShrineBlock() {
         super(BlockBehaviour.Properties.copy(Blocks.LODESTONE).noOcclusion().lightLevel(x -> 10));
@@ -42,11 +42,11 @@ public class ShrineBlock extends Block {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 6; i++) {
             level.addParticle(ParticleTypes.WITCH,
-                    pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getX() + 0.6 + (random.nextDouble() - 0.5) * 1.6,
                     pos.getY() + 1.0 + random.nextDouble() * 0.5,
-                    pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getZ() + 0.6 + (random.nextDouble() - 0.5) * 1.6,
                     0, 0.03, 0);
         }
     }
@@ -71,7 +71,7 @@ public class ShrineBlock extends Block {
         double centerX = pos.getX() + 0.5;
         double centerY = pos.getY() + 0.3;
         double centerZ = pos.getZ() + 0.5;
-        int points = Math.max(8, (int) (buffRadius * BURST_POINTS_PER_RADIUS));
+        int points = Math.max(16, (int) (buffRadius * BURST_POINTS_PER_RADIUS));
         for (int i = 0; i < points; i++) {
             double u = Math.random();
             double v = Math.random();

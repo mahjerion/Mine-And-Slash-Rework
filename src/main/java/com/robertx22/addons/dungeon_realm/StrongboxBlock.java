@@ -60,7 +60,7 @@ import java.util.List;
 public class StrongboxBlock extends BaseEntityBlock {
 
     public StrongboxBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.CHEST).noOcclusion().lightLevel(x -> 7));
+        super(BlockBehaviour.Properties.copy(Blocks.CHEST).noOcclusion().lightLevel(x -> 10));
     }
 
     @Nullable
@@ -76,11 +76,11 @@ public class StrongboxBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 6; i++) {
             level.addParticle(ParticleTypes.ANGRY_VILLAGER,
-                    pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
-                    pos.getY() + 0.8 + random.nextDouble() * 0.4,
-                    pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getX() + 0.6 + (random.nextDouble() - 0.5) * 1.6,
+                    pos.getY() + 1.0 + random.nextDouble() * 0.5,
+                    pos.getZ() + 0.6 + (random.nextDouble() - 0.5) * 1.6,
                     0, 0.02, 0);
         }
     }

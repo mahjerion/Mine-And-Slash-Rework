@@ -3,9 +3,8 @@ package com.robertx22.mine_and_slash.vanilla_mc.commands.report;
 import com.mojang.brigadier.CommandDispatcher;
 import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.dungeon_realm.structure.DungeonMapData;
-import com.robertx22.dungeon_realm.structure.DungeonMapStructure;
+import com.robertx22.library_of_exile.dimension.structure.dungeon.BuiltDungeon;
 import com.robertx22.library_of_exile.dimension.structure.dungeon.BuiltRoom;
-import com.robertx22.library_of_exile.dimension.structure.dungeon.DungeonBuilder;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -44,9 +43,13 @@ public class ReportMapIssue {
                     return 1;
                 }
 
-                DungeonBuilder builder = new DungeonBuilder(DungeonMapStructure.dungeonSettings(p.chunkPosition(), dungeonMapData.get().dungeon));
-                builder.build();
-                BuiltRoom room = builder.builtDungeon.getRoomForChunk(DungeonMain.MAIN_DUNGEON_STRUCTURE, p.chunkPosition());
+                // reproduce the real generated layout: seed from the dungeon's start chunk (not the
+                // player's current chunk) and reuse the shared built grid, so the reported room matches
+                // what's actually placed - including rooms larger than one chunk.
+                var struc = DungeonMain.MAIN_DUNGEON_STRUCTURE;
+                var start = struc.getStartChunkPos(p.chunkPosition());
+                BuiltDungeon built = struc.getBuiltDungeon(start);
+                BuiltRoom room = built.getRoomForChunk(struc, p.chunkPosition());
 
                 text += room.room.loc.toString();
 

@@ -29,13 +29,16 @@ public class BuilderToolCommands {
             PlayerWrapper enarg = new PlayerWrapper();
             var RADIUS = new IntWrapper("radius");
             var HEIGHT = new IntWrapper("height");
+            var ROOM_SIZE = new IntWrapper("room_size");
 
             b.addLiteral("builder_tool_warning", PermWrapper.OP);
             b.addLiteral("generate_structure_blocks_per_chunk", PermWrapper.OP);
             b.addArg(RADIUS);
             b.addArg(HEIGHT);
-
             b.addArg(enarg);
+            // blocks per side of each structure block; must be a multiple of 16. 16 = one per chunk
+            // (old behaviour), 32 spaces them 2 chunks apart at 32x32, etc.
+            b.addArg(ROOM_SIZE);
 
             b.action(e -> {
 
@@ -50,19 +53,27 @@ public class BuilderToolCommands {
                 BlockPos pos = p.blockPosition();
                 int radius = RADIUS.get(e);
                 int height = HEIGHT.get(e);
+                int roomSize = ROOM_SIZE.get(e);
                 ChunkPos cp = new ChunkPos(pos);
 
-                for (int x = 0; x < radius; x++) {
-                    for (int z = 0; z < radius; z++) {
+                if (roomSize < 16 || roomSize % 16 != 0) {
+                    p.sendSystemMessage(Component.literal("room_size must be a multiple of 16 (16, 32, 48, 64...)."));
+                    return;
+                }
+                int step = roomSize / 16;
+
+                // radius is in chunks; step by the room's chunk width so blocks tile edge-to-edge
+                for (int x = 0; x < radius; x += step) {
+                    for (int z = 0; z < radius; z += step) {
                         var cpos = new ChunkPos(cp.x + x, cp.z + z);
                         var fpos = cpos.getBlockAt(0, pos.getY(), 0);
                         //world.setBlock(fpos, Blocks.STRUCTURE_BLOCK.defaultBlockState(), 2);
-                        StructureUtils.createNewEmptyStructureBlock(x + "_" + z, fpos, new BlockPos(16, height, 16), Rotation.NONE, world);
+                        StructureUtils.createNewEmptyStructureBlock(x + "_" + z, fpos, new BlockPos(roomSize, height, roomSize), Rotation.NONE, world);
                     }
                 }
             });
 
-        }, "Gens structure blocks in radius for every chunk");
+        }, "Gens structure blocks in radius, sized room_size (blocks) and spaced to tile edge-to-edge");
 
         CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper enarg = new PlayerWrapper();
@@ -88,13 +99,16 @@ public class BuilderToolCommands {
                 Dungeon dungeon = DUNGEON.getFromRegistry(e);
                 ChunkPos cp = new ChunkPos(pos);
 
+                // space pieces by the dungeon's own footprint (+ a gap) so bigger rooms don't overlap
+                int spacing = dungeon.getDungeonData().room_size + 4;
+
                 int i = 0;
                 int z = 0;
                 for (RoomType type : RoomType.values()) {
                     z = 0;
                     for (String room : dungeon.data.getRoomList(type)) {
                         var aroom = new DungeonRoom(dungeon.getDungeonData().folder, room, type);
-                        var roomPos = new BlockPos(cp.getMinBlockX() + (i * 20), pos.getY(), cp.getMaxBlockZ() + (z * 20));
+                        var roomPos = new BlockPos(cp.getMinBlockX() + (i * spacing), pos.getY(), cp.getMaxBlockZ() + (z * spacing));
 
                         world.setBlock(roomPos, Blocks.STRUCTURE_BLOCK.defaultBlockState(), 2);
 

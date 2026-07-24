@@ -276,6 +276,7 @@ golem_eff_dur_u_cast
 golem_spell_chance
 golem_spell_dmg
 golem_spell_dmg_taken
+harvest_completion_bounty
 harvest_event_chance
 harvest_extra_drops
 has_pet_ability_cast_time
@@ -312,6 +313,7 @@ husbandry_exp_bonus
 husbandry_triple_drop
 ignore_ele_res
 immobilizing_eff_dur_u_cast
+imprisoned_monster_double_spawn
 imprisoned_monster_event_chance
 imprisoned_monster_extra_drops
 inc_aoe
@@ -563,6 +565,7 @@ not_affected_by_cast_speed_spell_dmg
 not_affected_by_cast_speed_spell_dmg_taken
 obelisk_event_chance
 obelisk_extra_drops
+obelisk_mob_toughness
 offensive_eff_dur_u_cast
 omen_find
 on_death_ignite_explosion
@@ -672,6 +675,7 @@ projectile_nova
 projectile_spell_dmg
 projectile_spell_dmg_taken
 prophecy_coin_find
+prophecy_double_curse
 prophecy_event_chance
 ranged_cast_time
 ranged_cdr
@@ -705,6 +709,7 @@ shout_cast_time
 shout_cdr
 shout_spell_dmg
 shout_spell_dmg_taken
+shrine_double_buff
 shrine_eff_dur_u_cast
 shrine_event_chance
 skill_gem_find
@@ -733,6 +738,8 @@ str_dmg
 strength
 strongbox_event_chance
 strongbox_extra_drops
+strongbox_guardian_toughness
+strongbox_unique_chance
 summon_cast_time
 summon_cdr
 summon_damage

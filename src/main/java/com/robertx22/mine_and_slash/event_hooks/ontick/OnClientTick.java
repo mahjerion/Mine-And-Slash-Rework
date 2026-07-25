@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.event_hooks.ontick;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ChatUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.proxies.OpenGuiWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 
@@ -36,6 +37,7 @@ public class OnClientTick {
             if (player == null) {
                 return;
             }
+            OpenGuiWrapper.tryOpenPendingAtlasMap();
             if (player.tickCount < 10) {
                 return;
             }

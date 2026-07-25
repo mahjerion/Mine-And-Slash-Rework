@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.vanilla_mc.packets.proxies;
 
+import com.robertx22.library_of_exile.registry.Database;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.card_picker.CardPickScreen;
 import com.robertx22.mine_and_slash.gui.screens.atlas_map.AtlasMapScreen;
@@ -17,6 +18,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OpenGuiWrapper {
+
+    // ATLAS_NODE/ATLAS_NODE_LAYOUT are SyncTime.ON_LOGIN - a real multiplayer client only has
+    // this data once the server's login sync packets arrive, unlike singleplayer where the
+    // client and integrated server share the same in-memory registry with no sync delay. If the
+    // server sends this OpenGuiPacket before that sync completes (only realistically possible
+    // right after joining), retry each client tick instead of opening a screen with an
+    // empty/partial node list - see OnClientTick.onEndTick.
+    private static boolean pendingAtlasMap = false;
+
+    public static void tryOpenPendingAtlasMap() {
+        if (!pendingAtlasMap) {
+            return;
+        }
+        Player player = ClientOnly.getPlayer();
+        if (player == null || !Database.areDatapacksLoaded(player.level())) {
+            return;
+        }
+        pendingAtlasMap = false;
+        net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());
+    }
 
     public static void openMainHub() {
         net.minecraft.client.Minecraft.getInstance().setScreen(new MainHubScreen());
@@ -40,6 +61,11 @@ public class OpenGuiWrapper {
     }
 
     public static void openAtlasMap() {
+        Player player = ClientOnly.getPlayer();
+        if (player != null && !Database.areDatapacksLoaded(player.level())) {
+            pendingAtlasMap = true;
+            return;
+        }
         net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());
     }
 

@@ -4,6 +4,8 @@ import com.robertx22.mine_and_slash.capability.player.data.PlayerProfessionsData
 import com.robertx22.mine_and_slash.capability.player.data.RestedExpData;
 import com.robertx22.mine_and_slash.capability.player.data.StatPointsData;
 import com.robertx22.mine_and_slash.characters.CharStorageData;
+import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
+import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -65,6 +67,20 @@ public enum ResetPlayerData {
         @Override
         public void reset(Player p) {
             Load.player(p).talents = new TalentsData();
+        }
+    },
+    // atlas map progress and the atlas passive tree are one unit: the map is the only source of
+    // atlas points (PlayerPointsType.ATLAS has base_points 0 and points_per_lvl 0), so wiping the
+    // completions without also taking the points back would leave the player able to keep a fully
+    // allocated tree while re-earning every node again. A blank AtlasData covers node unlocks,
+    // completions and the pinnacle flag in one go - it re-unlocks the starting_node entries lazily
+    // on first read, exactly like a brand new player's.
+    ATLAS() {
+        @Override
+        public void reset(Player p) {
+            Load.player(p).atlas = new AtlasData();
+            PlayerPointsType.ATLAS.fullReset(p); // un-allocate the atlas passive tree
+            Load.player(p).points.get(PlayerPointsType.ATLAS).resetBonusPoints(); // take back the points it granted
         }
     };
 

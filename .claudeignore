@@ -1,0 +1,21 @@
+# --- Project Specific Modules/Folders to Ignore ---
+# Only include these if you are NOT actively editing them. 
+# If you need to edit one, temporarily delete its line from this file.
+
+changelogs/
+docs/
+libs/
+logs/
+
+# --- Standard Build & Cache Directories ---
+build/
+.gradle/
+.idea/
+gradle/
+run/
+
+# --- Sensitive or System Files ---
+modrinth_key.properties
+key.properties
+.git/
+.github/

@@ -218,12 +218,15 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                 })
                 .accept(new AdditionalBlock(() -> {
                     List<Component> additional = new ArrayList<>();
-                    // Load DungeonItemMapData and check for uber status
+                    // Load DungeonItemMapData and check for uber/pinnacle status
                     DungeonItemMapData dungeonData = DungeonItemNbt.DUNGEON_MAP.loadFrom(stack.getStack());
 
                     if (dungeonData != null) {
                         additional.add(MapTooltip.MapLayoutName(dungeonData.dungeon));
-                        if (dungeonData.uber) {
+                        // mutually exclusive upgrades, so only one indicator ever shows
+                        if (dungeonData.pinnacle) {
+                            additional.add(MapTooltip.MapHasPinnacle()); // Added Pinnacle Map indicator
+                        } else if (dungeonData.uber) {
                             additional.add(MapTooltip.MapHasUber()); // Added Uber Map indicator
                         }
                     }

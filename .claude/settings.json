@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip -p *)",
+      "Bash(unzip -l *)",
+      "Bash(./gradlew compileJava*)",
+      "Bash(./gradlew build*)",
+      "Bash(./gradlew :Library-of-Exile-Rework:compileJava*)",
+      "Bash(./gradlew :Library-of-Exile-Rework:build*)",
+      "Bash(./gradlew :dungeon_realm:compileJava*)",
+      "Bash(git -C * status*)",
+      "Bash(git -C * log *)",
+      "Bash(git -C * diff*)",
+      "Bash(git -C * show *)"
+    ]
+  }
+}

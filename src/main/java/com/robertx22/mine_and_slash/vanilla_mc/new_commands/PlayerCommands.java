@@ -16,12 +16,24 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.parts.ResetPlayerData;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenGuiPacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class PlayerCommands {
+
+    // point changes live in PlayerData, which only reaches the client when marked dirty.
+    // without this the GUIs (talent/atlas trees, character sheet) keep showing the old
+    // numbers until the player relogs, making the commands look like they did nothing.
+    private static void syncPointsChange(Player p) {
+        PlayerData data = Load.player(p);
+        data.cachedStats.ALLOCATED.setDirtyAndSync(p);
+        data.playerDataSync.setDirtyAndSync(p);
+        Load.Unit(p).setEquipsChanged(); // allocated perks feed stats, force a recalc
+        Load.Unit(p).sync.setDirtyAndSync(p);
+    }
 
     public static void init(CommandDispatcher dis) {
 
@@ -91,6 +103,8 @@ public class PlayerCommands {
 
                 var result = data.giveBonusPoints(num);
 
+                syncPointsChange(p);
+
                 if (result.answer != null) {
                     p.sendSystemMessage(result.answer);
                 }
@@ -119,6 +133,8 @@ public class PlayerCommands {
 
                 var result = data.giveCheatPoints(num);
 
+                syncPointsChange(p);
+
                 if (result.answer != null) {
                     p.sendSystemMessage(result.answer);
                 }
@@ -145,10 +161,36 @@ public class PlayerCommands {
 
                 data.resetBonusPoints();
 
+                syncPointsChange(p);
+
                 p.sendSystemMessage(Chats.RESET_POINTS.locName(type.word().locName()));
             });
 
-        }, "Resets bonus points of player");
+        }, "Resets bonus points of player. Does not un-learn anything, use 'points full_reset' for that");
+
+
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
+            PlayerWrapper PLAYER = new PlayerWrapper();
+            StringWrapper POINT_TYPE = new StringWrapper("point_type", () -> Arrays.stream(PlayerPointsType.values()).map(e -> e.name()).collect(Collectors.toList()));
+
+            x.addLiteral("points", PermWrapper.OP);
+            x.addLiteral("full_reset", PermWrapper.OP);
+
+            x.addArg(PLAYER);
+            x.addArg(POINT_TYPE);
+
+            x.action(e -> {
+                var p = PLAYER.get(e);
+                var type = PlayerPointsType.valueOf(POINT_TYPE.get(e));
+
+                type.fullReset(p);
+
+                syncPointsChange(p);
+
+                p.sendSystemMessage(Chats.RESET_POINTS.locName(type.word().locName()));
+            });
+
+        }, "Un-learns everything the player spent that point type on, refunding the points. Same as the Major Reset Potion");
 
 
         CommandBuilder.of(CommandRefs.ID, dis, x -> {

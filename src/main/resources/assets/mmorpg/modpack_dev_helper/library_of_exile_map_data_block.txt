@@ -16,5 +16,6 @@ mob
 mob_horde
 obelisk_reward
 obelisk_spawner
+player_spawn
 teleport_back_block
 uber_boss_altar

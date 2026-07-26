@@ -46,8 +46,16 @@ public class TalentsData implements IStatCtx {
     }
 
     public boolean canAllocate(TalentTree school, PointData point, EntityData data, Player player) {
+        return canAllocate(school, point, data, player, hasFreePoints(player, school.getSchool_type()));
+    }
 
-        if (!hasFreePoints(player, school.getSchool_type())) {
+    // hasFreePoints is the same for every perk in a tree, but deriving it goes through
+    // PlayerPointsType.getFreePoints, which does two GameBalanceConfig.get() Forge config reads plus
+    // several capability resolutions. The skill tree screen computes it once per frame and passes it
+    // in here rather than paying that per button. Server-side callers use the overload above.
+    public boolean canAllocate(TalentTree school, PointData point, EntityData data, Player player, boolean hasFreePoints) {
+
+        if (!hasFreePoints) {
             return false;
         }
 
@@ -148,10 +156,14 @@ public class TalentsData implements IStatCtx {
     }
 
     public PerkStatus getStatus(Player player, TalentTree school, PointData point) {
+        return getStatus(player, school, point, hasFreePoints(player, school.getSchool_type()));
+    }
+
+    public PerkStatus getStatus(Player player, TalentTree school, PointData point, boolean hasFreePoints) {
         if (isAllocated(school, point)) {
             return PerkStatus.CONNECTED;
         }
-        if (canAllocate(school, point, Load.Unit(player), player)) {
+        if (canAllocate(school, point, Load.Unit(player), player, hasFreePoints)) {
             return PerkStatus.POSSIBLE;
         } else {
             return PerkStatus.BLOCKED;

@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
 import com.robertx22.mine_and_slash.database.data.talent_tree.TalentTree;
 import com.robertx22.mine_and_slash.database.data.talent_tree.TalentTree.SchoolType;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.gui.bases.BackToHubButton;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.IAlertScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
@@ -51,6 +52,15 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
     public VertexContainer vertexContainer = new VertexContainer();
     private TipsWidget tips;
 
+    // top-left "back to the Main Hub" button. Registered for input only and drawn manually after the
+    // zoom pose is popped - see the note on SEARCH/tips for why renderable widgets can't be used here.
+    private BackToHubButton backButton;
+
+    // subclasses that already occupy the top-left corner can opt out - see AtlasPassiveTreeScreen
+    protected boolean showBackToHubButton() {
+        return true;
+    }
+
 
     private void renderConnection(GuiGraphics graphics, PerkConnectionRender renderer) {
 
@@ -59,7 +69,8 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         PerkButton button1 = pointPerkButtonMap.get(pair.data1());
         PerkButton button2 = pointPerkButtonMap.get(pair.data2());
 
-        PerkScreenContext ctx = new PerkScreenContext(this);
+        // reuse the screen's per-frame context instead of allocating one per connection per frame
+        PerkScreenContext ctx = this.ctx;
 
         double xadd = button1.perk.getType().size / 2F; // todo idk if this is the problem or
         double yadd = button1.perk.getType().size / 2F;
@@ -166,16 +177,25 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
     }
 
 
+    // Culling for perk buttons. This used to compare button coordinates (which are gui-scaled tree
+    // space) against sizeX()/sizeY(), which return RAW window pixels - on any setup with a gui scale
+    // above 1 that made the cull box several times larger than the screen, so it barely culled
+    // anything. That is the "todo this doesnt seem to work perfect" the old comment referred to, and
+    // on the talents tree (961 buttons) it meant almost every button paid full render cost every
+    // frame. Ascendancy has 212 and atlas passives 10, which is why only talents felt it.
+    //
+    // Buttons live in unzoomed tree space and the whole tree is drawn inside a pose scaled by zoom,
+    // so a button at tree-space x lands on screen at x * zoom. Cull against the real gui-scaled
+    // window with a one-node margin so partially visible nodes still draw.
+    private static final float CULL_MARGIN = 64;
+
     public boolean shouldRender(int x, int y, PerkScreenContext ctx) {
 
-        // todo this doesnt seem to work perfect but at least it stops rendering  some offscreen buttons
-        if (x >= ctx.offsetX + 10 && x < ctx.offsetX + (sizeX()) * ctx.getZoomMulti() - 10) {
-            if (y >= ctx.offsetY + 10 && y < ctx.offsetY + (sizeY()) * ctx.getZoomMulti() - 10) {
-                return true;
-            }
-        }
-        return false;
+        float sx = x * ctx.zoom;
+        float sy = y * ctx.zoom;
 
+        return sx >= -CULL_MARGIN && sx <= mc.getWindow().getGuiScaledWidth() + CULL_MARGIN
+                && sy >= -CULL_MARGIN && sy <= mc.getWindow().getGuiScaledHeight() + CULL_MARGIN;
     }
 
     @Override
@@ -241,6 +261,11 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
             refreshButtons();
             this.tips = new TipsWidget(0, 0, 10, 10, Gui.TALENT_SCREEN_SEARCH_TIPS.locName(Gui.TALENT_SCREEN_SEARCH_KEYWORD_ALL.locName().withStyle(ChatFormatting.GOLD), Gui.TALENT_SCREEN_SEARCH_KEYWORD_GAME_CHANGER.locName().withStyle(ChatFormatting.GOLD)));
             addWidget(tips);
+
+            if (showBackToHubButton()) {
+                this.backButton = new BackToHubButton(4, 4);
+                addWidget(this.backButton);
+            }
 
             goToCenter();
         } catch (Exception e) {
@@ -424,6 +449,23 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
     public PerkScreenContext ctx = new PerkScreenContext(this);
 
+    // Recomputed once per frame in render() and read by every PerkButton. Both values are identical
+    // for every perk on the screen, but they used to be derived per button inside
+    // TalentsData.canAllocate -> hasFreePoints -> PlayerPointsType.getFreePoints, which calls
+    // GameBalanceConfig.get() twice (each a Forge config read) plus several capability resolutions.
+    // On the talents tree that was ~2000 Forge config reads per frame to produce one number.
+    public boolean cachedHasFreePoints = false;
+    public int cachedAllocatedPoints = 0;
+
+    private void refreshPerFrameCache() {
+        try {
+            this.cachedHasFreePoints = this.schoolType.getPointType().getFreePoints(mc.player) > 0;
+            this.cachedAllocatedPoints = this.playerData.talents.getAllocatedPoints(this.schoolType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void render(GuiGraphics gui, int x, int y, float ticks) {
@@ -432,6 +474,7 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
 
         ctx = new PerkScreenContext(this);
+        refreshPerFrameCache();
 
         // String searchTerm = SkillTreeScreen.SEARCH.getValue();
 
@@ -490,6 +533,11 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
         // first just meant the tree's nodes and connection lines painted straight over the search box.
         renderPanels(gui);
         tips.render(gui, x, y, ticks);
+
+        // real mouse coords so ImageButton picks up its hover frame
+        if (backButton != null) {
+            backButton.render(gui, x, y, ticks);
+        }
 
         this.msstring = watch.getPrint();
 

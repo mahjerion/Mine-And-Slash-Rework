@@ -178,7 +178,8 @@ public class PerkButton extends ImageButton {
         gui.pose().scale(scale, scale, 1.0f);
 
 
-        PerkStatus status = playerData.talents.getStatus(Minecraft.getInstance().player, school, point);
+        // screen.cachedHasFreePoints is refreshed once per frame - see SkillTreeScreen.refreshPerFrameCache
+        PerkStatus status = playerData.talents.getStatus(Minecraft.getInstance().player, school, point, screen.cachedHasFreePoints);
 
         float offset = perk.getType().getOffset();
 
@@ -213,7 +214,8 @@ public class PerkButton extends ImageButton {
         }
 
         // if newbie in this specific school, show only the starter perks he can pick
-        if (playerData.talents.getAllocatedPoints(school.getSchool_type()) < 1) {
+        // (cached per frame - identical for every perk on the screen)
+        if (screen.cachedAllocatedPoints < 1) {
             opacity = this.perk.is_entry ? 1 : 0.2F;
         }
 

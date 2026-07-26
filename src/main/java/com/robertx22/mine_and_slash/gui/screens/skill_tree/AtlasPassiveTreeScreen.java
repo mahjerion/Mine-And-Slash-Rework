@@ -18,6 +18,13 @@ public class AtlasPassiveTreeScreen extends SkillTreeScreen {
         super(TalentTree.SchoolType.ATLAS);
     }
 
+    // this screen already puts its atlas-map nav button in the top-left corner, and it's reached from
+    // the Atlas map rather than the Main Hub, so it doesn't take the base class's back button
+    @Override
+    protected boolean showBackToHubButton() {
+        return false;
+    }
+
     @Override
     protected void init() {
         super.init();

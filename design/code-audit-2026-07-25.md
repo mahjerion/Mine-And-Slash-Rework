@@ -30,6 +30,8 @@ A second round followed from four bugs observed in playtesting. Findings 13–16
 | 14 | Talent/ascendancy tree draw order decided by hash iteration order | High | Fixed — needs playtest (pre-existing; likely made visible by 15b) |
 | 15 | Search bar drawn under the tree | Medium | Fixed — needs playtest |
 | 16 | Atlas node not credited on map completion (server only) | High | Fixed — needs playtest |
+| 17 | Culling disabled by a raw-pixel/gui-scaled unit mismatch, plus per-button recomputation of screen-invariant values | High | Fixed (real bugs, but not the cause of the reported lag) |
+| 18 | **Talent tree lag actual cause: FancyMenu per-widget overhead × 961 widgets** | — | Resolved by disabling FancyMenu layouts on the tree screens; native back button added to replace what they provided |
 
 ---
 
@@ -358,6 +360,96 @@ one is worth explicitly re-testing on a dedicated server with a fresh client.
   it is a permanent per-second sound for an encounter with no timer.
 - **Shrine's duplicate-buff avoidance retries only once**, so "Twin Blessing" can still roll the
   same buff twice.
+
+## 17. Talent tree lag, actual root cause — broken culling + per-button invariant recomputation — High
+
+Findings 13 and 14 were real bugs and are worth keeping, but **fixing them did not fix the lag**.
+The decisive new data point from testing: the lag is on the **talents tree only** — not ascendancy.
+
+That rules out finding 13. Ascendancy has essentially the same number of distinct textures as talents
+(116 vs 121), so anything scaling with *texture* count would hit both. What differs is **button
+count**: 961 vs 212. So the cost scales with buttons, and there were two causes.
+
+**a) Culling was effectively disabled.**
+
+```java
+if (x >= ctx.offsetX + 10 && x < ctx.offsetX + (sizeX()) * ctx.getZoomMulti() - 10) {
+```
+
+`x` is a gui-scaled tree-space coordinate, but `sizeX()`/`sizeY()` return
+`Minecraft.getWindow().getWidth()/getHeight()` — **raw window pixels** — while
+`PerkScreenContext.setupOffsets()` builds `offsetX` from `getGuiScaledWidth()`. Mixing the two makes
+the cull box several times wider than the screen at any gui scale above 1, so nearly every button
+passed and paid full render cost every frame. The old `// todo this doesnt seem to work perfect`
+comment was pointing straight at this.
+
+Replaced with a check in the coordinate space that actually matters: buttons live in unzoomed tree
+space and the tree is drawn inside a pose scaled by `zoom`, so a button at tree-space `x` lands on
+screen at `x * zoom`. Cull against the gui-scaled window with a one-node margin.
+
+**b) Screen-invariant values were recomputed once per button, per frame.**
+
+`PerkButton.render` → `TalentsData.getStatus` → `canAllocate` → `hasFreePoints` →
+`PlayerPointsType.getFreePoints`, which calls `GameBalanceConfig.get()` **twice** (each one a
+`CompatConfig.get()` Forge config read plus two registry lookups) and resolves the player capability
+several times.
+
+`getFreePoints` returns the same number for every perk on the screen. On the talents tree that was
+~2000 Forge config reads per frame to produce one integer. The same applied to
+`getAllocatedPoints(school.getSchool_type())` in the newbie-dimming branch.
+
+Both are now computed once per frame in `SkillTreeScreen.refreshPerFrameCache()` and read from
+`screen.cachedHasFreePoints` / `screen.cachedAllocatedPoints`. `TalentsData` gained
+`getStatus(..., boolean hasFreePoints)` and `canAllocate(..., boolean hasFreePoints)` overloads; the
+original signatures still exist and still derive the value themselves, so server-side validation is
+unchanged.
+
+**c)** `renderConnection` also allocated a `PerkScreenContext` per connection per frame; it now
+reuses the screen's existing per-frame `ctx`.
+
+> Corrected attribution: 13/14 are pre-existing upstream bugs and so is this one. Nothing in the
+> Atlas push caused the talent tree lag. What the push *did* change is `PerkButton`'s dimming branch
+> (15b), which is the only in-window change affecting the tree and the likely reason the ordering
+> bug became visible when it did.
+
+## 18. Resolution of the talent tree lag: FancyMenu, not mod code — Resolved
+
+Playtesting settled it. Removing FancyMenu made the lag disappear entirely; the fix adopted was to
+**disable FancyMenu layouts on the tree screens**, keeping FancyMenu everywhere else.
+
+The evidence triangulates cleanly — all four cases run the exact same screen class:
+
+| case | registered widgets | result |
+|------|--------------------|--------|
+| talents, FancyMenu on | 961 | laggy |
+| ascendancy, FancyMenu on | 212 | fine |
+| atlas passives, FancyMenu on | 10 | fine |
+| talents, FancyMenu removed | 961 | fine |
+
+So the cost is FancyMenu's per-widget overhead × widget count, and only the talents tree registers
+enough widgets to cross the threshold. **No Mine and Slash commit caused this** — findings 13, 14 and
+17 are all pre-existing upstream issues, and 17's culling/caching fixes reduce per-frame cost but
+cannot help here, because vanilla and FancyMenu still walk all 961 widgets regardless of whether the
+mod skips drawing them.
+
+A mod-side refactor (keeping perk buttons out of the widget tree so `children()` holds ~3 instead of
+~961) was designed and **deliberately not implemented** — the FancyMenu-side fix resolved it with no
+code risk. That refactor remains the option if this resurfaces for other users, since it would make
+the tree immune to any per-widget hook.
+
+### Follow-on: native back button
+
+The only thing the disabled FancyMenu layouts provided was a back button from the talent/ascendancy
+screens to the Main Hub, so the mod now provides one natively:
+
+- `gui/bases/BackToHubButton.java` — an `ImageButton` over
+  `textures/gui/back_button.png` (256x256 sheet, 26x16 sprite at (0,0), hover frame at (0,16), the
+  same 2-frame convention `AtlasNavButton` and `MainHubButton` use). Tooltip reuses `Words.Character`,
+  so no new localization entry was needed.
+- `SkillTreeScreen` places it at (4,4), registered with `addWidget` (input only) and drawn manually
+  after the zoom pose is popped, matching how `SEARCH` and `tips` are handled.
+- `AtlasPassiveTreeScreen` overrides `showBackToHubButton()` to `false` — it already has its
+  atlas-map nav button in that corner, and it is reached from the Atlas map rather than the hub.
 
 ## Skill tree — remaining known costs (not addressed)
 

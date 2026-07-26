@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.gui.screens.skill_tree.buttons;
 
-import com.google.common.collect.HashMultimap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
@@ -10,6 +9,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
 import com.robertx22.mine_and_slash.database.data.talent_tree.TalentTree;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.BufferInfo;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.SkillTreeScreen;
+import com.robertx22.mine_and_slash.gui.screens.skill_tree.VertexContainer;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
@@ -225,13 +225,14 @@ public class PerkButton extends ImageButton {
 
         //gui.setColor(1.0F, 1.0F, 1.0F, opacity);
 
-        HashMultimap<ResourceLocation, BufferInfo> container = screen.vertexContainer.map;
+        VertexContainer container = screen.vertexContainer;
 
-        //BlitOffset indicate the distance to the camera.
-        //bigger = closer
-        container.put(perk.getType().getColorTexture(status), BufferInfo.of(xPos(offcolor, posMulti), yPos(offcolor, posMulti),20, 20, -3, 0.0f, 0, 20, 20, 20, 20, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
+        // The z passed to BufferInfo is not what orders these - the skill tree render type draws
+        // blended quads without depth write, so the layer argument is what actually decides what
+        // ends up on top. Colour behind border behind icon.
+        container.put(VertexContainer.LAYER_PERK_COLOR, perk.getType().getColorTexture(status), BufferInfo.of(xPos(offcolor, posMulti), yPos(offcolor, posMulti),20, 20, -3, 0.0f, 0, 20, 20, 20, 20, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
 
-        container.put(perk.getType().getBorderTexture(status), BufferInfo.of(xPos(0, posMulti), yPos(0, posMulti), -2, 0, 0, this.width, this.height, this.width, this.height, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
+        container.put(VertexContainer.LAYER_PERK_BORDER, perk.getType().getBorderTexture(status), BufferInfo.of(xPos(0, posMulti), yPos(0, posMulti), -2, 0, 0, this.width, this.height, this.width, this.height, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
 
 
 
@@ -242,7 +243,7 @@ public class PerkButton extends ImageButton {
 
         //gui.setColor(1.0F, 1.0F, 1.0F, MathHelper.clamp(opacity, 0, 1));
 
-        container.put(perk.getIcon(), BufferInfo.of(xPos(offset, posMulti), yPos(offset, posMulti), -1, 0, 0, type.iconSize, type.iconSize, type.iconSize, type.iconSize, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
+        container.put(VertexContainer.LAYER_PERK_ICON, perk.getIcon(), BufferInfo.of(xPos(offset, posMulti), yPos(offset, posMulti), -1, 0, 0, type.iconSize, type.iconSize, type.iconSize, type.iconSize, gui.pose().last().pose()).withRenderInfo(new BufferInfo.RenderInfo(opacity)));
 
 
 

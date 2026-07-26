@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.database.data.atlas.parser.AtlasGrid;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
 
@@ -30,6 +31,19 @@ public class AtlasNodeLayout implements JsonExileRegistry<AtlasNodeLayout>, IAut
     public String nodes = "";
 
     public transient CalcData calcData = new CalcData();
+
+    // The Atlas map is a single-entry registry, but that entry is hand-authored (shouldGenerateJson()
+    // is false below), so a datapack that shadows or omits mmorpg_atlas_layout/atlas_map.json leaves
+    // the registry empty. Every caller goes through here and gets EMPTY's blank CalcData - an empty
+    // Atlas map renders as "nothing unlocked" instead of throwing IndexOutOfBounds, which on the
+    // map-completion path would otherwise fire for every player on every cleared map.
+    public static CalcData mainCalcData() {
+        var list = ExileDB.AtlasNodeLayouts().getList();
+        if (list.isEmpty()) {
+            return EMPTY.calcData;
+        }
+        return list.get(0).calcData;
+    }
 
     @Override
     public Class<AtlasNodeLayout> getClassForSerialization() {

@@ -140,7 +140,10 @@ public class PlayerProphecies implements IStatCtx {
             p.sendSystemMessage(Chats.MUST_BE_IN_MAP_TO_ACCEPT_PROPHECY.locName().withStyle(ChatFormatting.RED));
             return;
         }
-        ProphecyData data = rewardOffers.stream().filter(x -> x.uuid.equals(uuid)).findAny().get();
+        // orElse(null), not get(): rerolling (tryReroll -> regenerateNewOffers) replaces rewardOffers
+        // wholesale, so a client whose screen still shows the pre-reroll offers will send a uuid the
+        // server no longer holds. get() would throw NoSuchElementException inside the packet handler.
+        ProphecyData data = rewardOffers.stream().filter(x -> x.uuid.equals(uuid)).findAny().orElse(null);
 
         if (data != null) {
 

@@ -27,15 +27,39 @@ public class OpenGuiWrapper {
     // empty/partial node list - see OnClientTick.onEndTick.
     private static boolean pendingAtlasMap = false;
 
+    // how long the request stays queued. Without it the flag is sticky: a player who leaves the world
+    // (or whose sync never completes) keeps it set, and the atlas would then hijack whatever screen
+    // they have open the moment some later world finishes loading its datapacks.
+    private static final int PENDING_ATLAS_MAP_TIMEOUT_TICKS = 20 * 10;
+    private static int pendingAtlasMapTicks = 0;
+
+    public static void clearPendingAtlasMap() {
+        pendingAtlasMap = false;
+        pendingAtlasMapTicks = 0;
+    }
+
     public static void tryOpenPendingAtlasMap() {
         if (!pendingAtlasMap) {
             return;
         }
         Player player = ClientOnly.getPlayer();
-        if (player == null || !Database.areDatapacksLoaded(player.level())) {
+        if (player == null) {
+            clearPendingAtlasMap();
             return;
         }
-        pendingAtlasMap = false;
+        if (++pendingAtlasMapTicks > PENDING_ATLAS_MAP_TIMEOUT_TICKS) {
+            clearPendingAtlasMap();
+            return;
+        }
+        if (!Database.areDatapacksLoaded(player.level())) {
+            return;
+        }
+        // the player opened something else in the meantime - honour that rather than yanking them
+        // into the atlas for a request they made seconds ago
+        if (net.minecraft.client.Minecraft.getInstance().screen != null) {
+            return;
+        }
+        clearPendingAtlasMap();
         net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());
     }
 
@@ -64,6 +88,7 @@ public class OpenGuiWrapper {
         Player player = ClientOnly.getPlayer();
         if (player != null && !Database.areDatapacksLoaded(player.level())) {
             pendingAtlasMap = true;
+            pendingAtlasMapTicks = 0;
             return;
         }
         net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());

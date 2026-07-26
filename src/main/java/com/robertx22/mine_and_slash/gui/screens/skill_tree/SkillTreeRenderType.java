@@ -10,6 +10,9 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class SkillTreeRenderType extends RenderStateShard {
 
@@ -19,7 +22,19 @@ public class SkillTreeRenderType extends RenderStateShard {
 
 
 
+    // One RenderType per texture, created once and reused. This used to build a fresh
+    // CompositeState + TextureStateShard + TransparencyStateShard on every call, and
+    // VertexContainer.draw() calls it once per distinct texture *every frame* - on the talents tree
+    // that is ~300 allocations per frame. Worse, a new RenderType instance also compares unequal to
+    // the previous one, so MultiBufferSource had to flush its buffer on every single group instead of
+    // batching, which is what made the draw order depend on hash iteration order.
+    private static final Map<ResourceLocation, RenderType> CACHE = new HashMap<>();
+
     public static RenderType getSkillTreeRenderType(String name, ResourceLocation texture) {
+        return CACHE.computeIfAbsent(texture, tex -> build(name, tex));
+    }
+
+    private static RenderType build(String name, ResourceLocation texture) {
         RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
                 .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                 .setTextureState(new TextureStateShard(texture, false, false))

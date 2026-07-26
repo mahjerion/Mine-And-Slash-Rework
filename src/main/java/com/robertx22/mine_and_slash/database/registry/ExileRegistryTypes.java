@@ -75,7 +75,11 @@ public class ExileRegistryTypes {
     public static ExileRegistryType SPELL = ExileRegistryType.register(SlashRef.MODID, "spells", 17, Spell.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType PERK = ExileRegistryType.register(SlashRef.MODID, "perk", 18, Perk.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType TALENT_TREE = ExileRegistryType.register(SlashRef.MODID, "talent_tree", 19, TalentTree.SERIALIZER, SyncTime.ON_LOGIN);
-    public static ExileRegistryType ATLAS_NODE_LAYOUT = ExileRegistryType.register(SlashRef.MODID, "atlas_layout", 20, AtlasNodeLayout.SERIALIZER, SyncTime.ON_LOGIN);
+    // order 53: MUST stay above dungeon_realm's ATLAS_NODE (52). Parsing this layout's grid resolves
+    // each cell against the AtlasNode registry (see AtlasGridPoint), so the nodes have to be loaded
+    // first or every cell is classified as "not a node" and the map comes out empty. Both the server
+    // datapack load and the client login sync walk registries in this order.
+    public static ExileRegistryType ATLAS_NODE_LAYOUT = ExileRegistryType.register(SlashRef.MODID, "atlas_layout", 53, AtlasNodeLayout.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType BASE_STATS = ExileRegistryType.register(SlashRef.MODID, "base_stats", 22, BaseStatsConfig.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType VALUE_CALC = ExileRegistryType.register(SlashRef.MODID, "value_calc", 40, ValueCalculation.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType STAT_EFFECT = ExileRegistryType.register(SlashRef.MODID, "stat_effect", 32, StatEffect.SERIALIZER, SyncTime.ON_LOGIN);

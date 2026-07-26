@@ -2,7 +2,7 @@ package com.robertx22.mine_and_slash.saveclasses.atlas;
 
 import com.robertx22.dungeon_realm.database.DungeonDatabase;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,8 +21,18 @@ public class AtlasData {
         if (initialized) {
             return;
         }
+        var nodes = DungeonDatabase.AtlasNodes().getList();
+        // Do NOT latch on an empty registry. `initialized` is transient, so on a dedicated server it
+        // starts false after this capability is deserialized on login - and login can run before the
+        // atlas node registry is populated. Latching there left the player with zero unlocked nodes
+        // for the whole session, so ON_MAP_FULLY_CLEARED's `if (!isUnlocked(node.id)) continue` gate
+        // silently skipped every node and completing a map credited nothing. Singleplayer never hit
+        // this because the integrated server already has the registry loaded.
+        if (nodes.isEmpty()) {
+            return;
+        }
         initialized = true;
-        for (AtlasNode node : DungeonDatabase.AtlasNodes().getList()) {
+        for (AtlasNode node : nodes) {
             if (node.starting_node) {
                 unlockedNodes.add(node.id);
             }
@@ -45,7 +55,7 @@ public class AtlasData {
             return false;
         }
         unlockedNodes.add(node.id);
-        unlockedNodes.addAll(ExileDB.AtlasNodeLayouts().getList().get(0).calcData.getConnectedIds(node.id));
+        unlockedNodes.addAll(AtlasNodeLayout.mainCalcData().getConnectedIds(node.id));
         return true;
     }
 }

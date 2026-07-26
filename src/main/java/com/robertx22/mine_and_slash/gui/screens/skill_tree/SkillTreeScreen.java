@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.gui.screens.skill_tree;
 
-import com.google.common.collect.HashMultimap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import com.robertx22.library_of_exile.utils.Watch;
@@ -92,8 +91,9 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
             off = (6 + 5);
         }
 
-        HashMultimap<ResourceLocation, BufferInfo> map = this.vertexContainer.map;
-        map.put(SlashRef.id("textures/gui/skill_tree/skill_connection.png"), BufferInfo.of(0, -3, length, 6, -5, (float) 0, off, length, 6, 50, 16, graphics.pose().last().pose()));
+        this.vertexContainer.put(VertexContainer.LAYER_CONNECTION,
+                SlashRef.id("textures/gui/skill_tree/skill_connection.png"),
+                BufferInfo.of(0, -3, length, 6, -5, (float) 0, off, length, 6, 50, 16, graphics.pose().last().pose()));
 
 
         //graphics.blit(CON, 0, -3, length, 6, 0, off, length, 6, 50, 16);
@@ -440,8 +440,6 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         renderBackgroundDirt(gui, this, 0);
         zoom = Mth.lerp(ClientConfigs.getConfig().SKILL_TREE_ZOOM_SPEED.get().floatValue(), zoom, targetZoom);
-        renderPanels(gui);
-        tips.render(gui, x, y, ticks);
         gui.pose().scale(zoom, zoom, zoom);
 
         try {
@@ -487,6 +485,11 @@ public abstract class SkillTreeScreen extends BaseScreen implements INamedScreen
 
         gui.pose().scale(1F / zoom, 1F / zoom, 1F / zoom);
 
+        // header chrome (bar, point counts, search box, tips) is drawn AFTER the tree, not before.
+        // Everything above renders into the same GUI layer with no depth write, so drawing the bar
+        // first just meant the tree's nodes and connection lines painted straight over the search box.
+        renderPanels(gui);
+        tips.render(gui, x, y, ticks);
 
         this.msstring = watch.getPrint();
 

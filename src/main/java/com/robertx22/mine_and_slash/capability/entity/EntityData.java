@@ -173,10 +173,22 @@ public class EntityData implements ICap, INeededForClient {
     // the resolved EntityConfig is constant for a given entity type, but resolving it (ExileDB.getEntityConfig)
     // does a registry key lookup + string allocations - cache it per entity since it's read on hot paths (per damage hit)
     private transient EntityConfig cachedEntityConfig;
+    private transient int cachedEntityConfigGen = -1;
+
+    // Bumped by DatabaseCaches.resetCaches() on every datapack (re)load. The config is constant per
+    // entity *type*, but a /reload swaps out the registry entries - without this, every already-loaded
+    // entity would keep serving the EntityConfig object from the previous database forever. Comparing
+    // a generation int re-resolves lazily instead of needing to walk every live entity.
+    public static int ENTITY_CONFIG_CACHE_GEN = 0;
+
+    public static void invalidateEntityConfigCaches() {
+        ENTITY_CONFIG_CACHE_GEN++;
+    }
 
     public EntityConfig getEntityConfig() {
-        if (cachedEntityConfig == null) {
+        if (cachedEntityConfig == null || cachedEntityConfigGen != ENTITY_CONFIG_CACHE_GEN) {
             cachedEntityConfig = ExileDB.getEntityConfig(entity, this);
+            cachedEntityConfigGen = ENTITY_CONFIG_CACHE_GEN;
         }
         return cachedEntityConfig;
     }

@@ -44,7 +44,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.UUID;
 
 // An "imprisoned monster" bonus-map encounter (PoE Essence-style), placed by the MapContent system
 // (MnsMapContents.IMPRISONED_MONSTER). Right-clicking it releases a single caged Boss-rarity mob drawn
@@ -91,14 +90,20 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             // already released - the reward only comes once the monster is slain
             return InteractionResult.SUCCESS;
         }
-        spawnMonster((ServerLevel) level, pos, p, be);
+        // only arm the encounter if a captive actually came out. Arming it on a failed spawn would
+        // leave monstersRemaining at 0, and the ticker would hand out the guaranteed reward on its
+        // very next pass without the player fighting anything.
+        if (spawnMonster((ServerLevel) level, pos, p, be) < 1) {
+            return InteractionResult.SUCCESS;
+        }
         be.activated = true;
         be.setChanged();
         SoundUtils.playSound(level, pos, SoundEvents.WITHER_SPAWN);
         return InteractionResult.SUCCESS;
     }
 
-    private void spawnMonster(ServerLevel level, BlockPos pos, Player p, ImprisonedMonsterBE be) {
+    // returns how many captives were actually released
+    private int spawnMonster(ServerLevel level, BlockPos pos, Player p, ImprisonedMonsterBE be) {
         MobList mobList = null;
         try {
             mobList = DungeonMain.DUNGEON_MOB_SPAWNS.getPredeterminedRandom(level, pos);
@@ -130,6 +135,10 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             // re-roll affixes for the forced rarity - createMobRarityEdit runs after the mob's automatic
             // first spawn pass, which already rolled (and skipped-on-override) affixes for a random rarity
             Load.Unit(mob).getAffixData().randomizeAffixes(bossRarity);
+            // randomizeAffixes only swaps the affix id list; the stat pass inside createMobRarityEdit
+            // already ran above, so without this the captive keeps Boss stats with none of the affixes
+            // it just rolled actually applied
+            Load.Unit(mob).recalcStats_DONT_CALL();
 
             mob.setPersistenceRequired();
             mob.setTarget(p);
@@ -137,8 +146,16 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             // count toward map completion as a mini-boss (deaths -> miniBossKills; miniBossSpawnCount
             // below is the denominator). Mini-boss weight (see DungeonConfig.MINI_BOSS_COMPLETION_WEIGHT)
             // makes it a meaningful chunk of progress, matching the harder fight.
-            DungeonEntityCapability.get(mob).data.isMiniBossMob = true;
-            be.monsters.add(mob.getUUID());
+            var entityData = DungeonEntityCapability.get(mob).data;
+            entityData.isMiniBossMob = true;
+            // tag the captive so a LivingDeathEvent hook (DungeonAddonEvents) can decrement this
+            // block's monstersRemaining on death - see ImprisonedMonsterBE for why this replaced
+            // polling level.getEntity(uuid)
+            entityData.isImprisonedMonster = true;
+            entityData.imprisonedMonsterPos = pos.asLong();
+
+            be.monstersRemaining++;
+            be.spawnedCount++;
             spawned++;
         }
 
@@ -147,6 +164,8 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             x.miniBossSpawnCount += finalSpawned;
             x.updateMapCompletionRarity(level, pos);
         });
+
+        return spawned;
     }
 
     @Nullable
@@ -157,47 +176,39 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
         }
         return (lvl, pos, st, be) -> {
             if (be instanceof ImprisonedMonsterBE mbe && mbe.activated) {
-                if (mbe.tick++ % 20 == 0 && monsterDead((ServerLevel) lvl, mbe)) {
+                if (mbe.tick++ % 20 == 0 && mbe.monstersRemaining <= 0) {
                     reward((ServerLevel) lvl, pos, mbe);
                 }
             }
         };
     }
 
-    private static boolean monsterDead(ServerLevel level, ImprisonedMonsterBE be) {
-        if (be.monsters.isEmpty()) {
-            return true;
-        }
-        for (UUID id : be.monsters) {
-            Entity e = level.getEntity(id);
-            if (e != null && e.isAlive()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void reward(ServerLevel level, BlockPos pos, ImprisonedMonsterBE be) {
         Player recipient = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 48, false);
-        if (recipient != null) {
-            LootInfo info = LootInfo.ofChestLoot(recipient, pos);
-            CurrencyLootGen gen = new CurrencyLootGen(info);
-            // Atlas "Imprisoned Monster Extra Drops" - scales the guaranteed currency count
-            float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(ImprisonedMonsterExtraDrops.getInstance()).getMultiplier();
-            // "Twin Captives" already doubled how many monsters were caged - scale the combined
-            // payout by that same count so 2 captives pay out 2x total, not a separate full reward each
-            int monsterCount = Math.max(1, be.monsters.size());
-            int rewardCount = Math.round(DungeonConfig.get().IMPRISONED_MONSTER_CURRENCY_REWARD.get() * extraDropsMulti * monsterCount);
-            for (int i = 0; i < rewardCount; i++) {
-                ItemStack currency = gen.generateOne();
-                if (currency != null && !currency.isEmpty()) {
-                    Block.popResource(level, pos, currency);
-                }
-            }
-            for (int i = 0; i < monsterCount; i++) {
-                dropPotentialSeed(level, pos, info.level);
+        if (recipient == null) {
+            // nobody in range to reward - leave the block standing and retry on a later tick rather
+            // than consuming the encounter and destroying its guaranteed payout
+            return;
+        }
+
+        LootInfo info = LootInfo.ofChestLoot(recipient, pos);
+        CurrencyLootGen gen = new CurrencyLootGen(info);
+        // Atlas "Imprisoned Monster Extra Drops" - scales the guaranteed currency count
+        float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(ImprisonedMonsterExtraDrops.getInstance()).getMultiplier();
+        // "Twin Captives" already doubled how many monsters were caged - scale the combined
+        // payout by that same count so 2 captives pay out 2x total, not a separate full reward each
+        int monsterCount = Math.max(1, be.spawnedCount);
+        int rewardCount = Math.round(DungeonConfig.get().IMPRISONED_MONSTER_CURRENCY_REWARD.get() * extraDropsMulti * monsterCount);
+        for (int i = 0; i < rewardCount; i++) {
+            ItemStack currency = gen.generateOne();
+            if (currency != null && !currency.isEmpty()) {
+                Block.popResource(level, pos, currency);
             }
         }
+        for (int i = 0; i < monsterCount; i++) {
+            dropPotentialSeed(level, pos, info.level);
+        }
+
         SoundUtils.playSound(level, pos, SoundEvents.PLAYER_LEVELUP);
         level.removeBlock(pos, false);
     }

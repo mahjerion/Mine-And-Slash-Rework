@@ -68,21 +68,19 @@ public class ShrineBlock extends Block {
 
     // bursts particles scattered across the buff area (mimics ParticleShape.CIRCLE_2D's random-disc
     // sampling) instead of an evenly-spaced ring, so players get a sense of the shrine's buff reach.
+    //
+    // Sent as a single sendParticles call with an xyz *spread* rather than one call per point: each
+    // call is its own packet to every tracking player, and at a typical radius the per-point version
+    // was firing ~200 packets per activation. Vanilla scatters `count` particles over a gaussian of
+    // the given spread, which reads the same as the old random-disc sampling from the player's side.
     private void spawnBuffWave(ServerLevel level, BlockPos pos) {
         double buffRadius = DungeonConfig.get().SHRINE_BUFF_RADIUS.get();
-        double centerX = pos.getX() + 0.5;
-        double centerY = pos.getY() + 0.3;
-        double centerZ = pos.getZ() + 0.5;
         int points = Math.max(16, (int) (buffRadius * BURST_POINTS_PER_RADIUS));
-        for (int i = 0; i < points; i++) {
-            double u = Math.random();
-            double v = Math.random();
-            double theta = 2 * Math.PI * u;
-            double phi = Math.acos(2.0 * v - 1.0);
-            double x = centerX + buffRadius * Math.sin(phi) * Math.cos(theta);
-            double z = centerZ + buffRadius * Math.cos(phi);
-            level.sendParticles(ParticleTypes.WITCH, x, centerY, z, 1, 0, 0.05, 0, 0);
-        }
+        // /3 so ~99.7% of the gaussian spread lands inside the actual buff radius
+        double spread = buffRadius / 3D;
+        level.sendParticles(ParticleTypes.WITCH,
+                pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5,
+                points, spread, 0.1D, spread, 0.05D);
     }
 
     // Atlas "Twin Blessing" - duration multiplier applied to both buffs when a player has the perk

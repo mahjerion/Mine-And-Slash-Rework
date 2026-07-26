@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AttributeStat;
@@ -42,6 +43,8 @@ public class DatabaseCaches {
         setupMaxSpellCharges();
         ErrorChecks.getAll().forEach(x -> x.check());
         GearSlot.CACHED = new HashMap<>();
+        // per-entity EntityConfig caches point at objects from the database we just replaced
+        EntityData.invalidateEntityConfigCaches();
     }
 
     private static void setupMaxSpellCharges() {

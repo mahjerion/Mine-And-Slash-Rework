@@ -6,6 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 // Block entity backing the locked Strongbox (see StrongboxBlock). Tracks how many guardians
 // released when the box was opened are still alive; the block's ticker unlocks and rewards once
 // the count hits zero. guardiansRemaining is decremented by a LivingDeathEvent hook (see
@@ -17,6 +20,12 @@ public class StrongboxBE extends BlockEntity {
     public int guardiansRemaining = 0;
     public int tick = 0;
 
+    // who opened the box. Guardian toughness is rolled from this player's stats at spawn time, so
+    // the payout resolves back to them first too - otherwise, in a party, the encounter could be
+    // scaled by one player's Atlas stats and paid out using another's.
+    @Nullable
+    public UUID activatorId = null;
+
     public StrongboxBE(BlockPos pos, BlockState state) {
         super(SlashBlockEntities.STRONGBOX.get(), pos, state);
     }
@@ -26,6 +35,9 @@ public class StrongboxBE extends BlockEntity {
         super.saveAdditional(tag);
         tag.putBoolean("activated", activated);
         tag.putInt("guardiansRemaining", guardiansRemaining);
+        if (activatorId != null) {
+            tag.putUUID("activatorId", activatorId);
+        }
     }
 
     @Override
@@ -33,5 +45,6 @@ public class StrongboxBE extends BlockEntity {
         super.load(tag);
         activated = tag.getBoolean("activated");
         guardiansRemaining = tag.getInt("guardiansRemaining");
+        activatorId = tag.hasUUID("activatorId") ? tag.getUUID("activatorId") : null;
     }
 }

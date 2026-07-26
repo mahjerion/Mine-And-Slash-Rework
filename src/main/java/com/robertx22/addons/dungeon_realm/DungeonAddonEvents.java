@@ -8,6 +8,7 @@ import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.library_of_exile.dimension.MapDimensions;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.main.ApiForgeEvents;
 import com.robertx22.library_of_exile.main.Packets;
@@ -17,6 +18,7 @@ import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.AdditionalBossChance;
@@ -70,11 +72,25 @@ public class DungeonAddonEvents {
             if (mob.level().isClientSide) {
                 return;
             }
+            // this fires for every death in every dimension, so bail out before touching the
+            // capability - DungeonEntityCapability.get() ends in .orElse(new DungeonEntityCapability(..)),
+            // which allocates a throwaway capability + data object on every miss. Both encounters
+            // only ever exist inside a dungeon map.
+            if (!MapDimensions.isMap(mob.level())) {
+                return;
+            }
             DungeonEntityData data = DungeonEntityCapability.get(mob).data;
             if (data.isStrongboxGuardian) {
                 BlockPos boxPos = BlockPos.of(data.strongboxPos);
                 if (mob.level().getBlockEntity(boxPos) instanceof StrongboxBE be) {
                     be.guardiansRemaining = Math.max(0, be.guardiansRemaining - 1);
+                    be.setChanged();
+                }
+            }
+            if (data.isImprisonedMonster) {
+                BlockPos cagePos = BlockPos.of(data.imprisonedMonsterPos);
+                if (mob.level().getBlockEntity(cagePos) instanceof ImprisonedMonsterBE be) {
+                    be.monstersRemaining = Math.max(0, be.monstersRemaining - 1);
                     be.setChanged();
                 }
             }
@@ -362,7 +378,7 @@ public class DungeonAddonEvents {
                                 // only pinnacle nodes actually placed on the atlas map layout count -
                                 // the registry holds many generated nodes that aren't on the grid, and
                                 // an unplaced one would otherwise make Pinnacle impossible to unlock
-                                java.util.Set<String> placed = ExileDB.AtlasNodeLayouts().getList().get(0).calcData.pointOf.keySet();
+                                java.util.Set<String> placed = AtlasNodeLayout.mainCalcData().pointOf.keySet();
                                 var placedPinnacle = DungeonDatabase.AtlasNodes().getList().stream()
                                         .filter(n -> n.is_pinnacle_unlock)
                                         .filter(n -> placed.contains(n.id))
@@ -423,8 +439,14 @@ public class DungeonAddonEvents {
         if (node.min_tier > 0 && tier < node.min_tier) {
             return false;
         }
-        if (!node.min_rarity.isEmpty() && tier < ExileDB.GearRarities().get(node.min_rarity).map_tiers.min) {
-            return false;
+        if (!node.min_rarity.isEmpty()) {
+            // a node can name a rarity that isn't registered (typo, or a datapack that removed it) -
+            // treat an unresolvable rarity as "no rarity requirement" rather than NPEing on the
+            // map-completion path, which runs for every player on every cleared map
+            var rarity = ExileDB.GearRarities().get(node.min_rarity);
+            if (rarity != null && tier < rarity.map_tiers.min) {
+                return false;
+            }
         }
         return true;
     }

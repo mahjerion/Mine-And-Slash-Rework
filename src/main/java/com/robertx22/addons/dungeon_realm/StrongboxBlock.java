@@ -109,6 +109,7 @@ public class StrongboxBlock extends BaseEntityBlock {
         }
         spawnGuardians((ServerLevel) level, pos, p, be);
         be.activated = true;
+        be.activatorId = p.getUUID();
         be.setChanged();
         SoundUtils.playSound(level, pos, SoundEvents.CHEST_OPEN);
         return InteractionResult.SUCCESS;
@@ -200,43 +201,62 @@ public class StrongboxBlock extends BaseEntityBlock {
         };
     }
 
-    private void unlock(ServerLevel level, BlockPos pos, StrongboxBE be) {
-        // reward whoever is present (the party member who cleared the guards)
-        Player recipient = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 48, false);
-        if (recipient != null) {
-            int lootRolls = DungeonConfig.get().STRONGBOX_LOOT_ROLLS.get();
-            for (int i = 0; i < lootRolls; i++) {
-                LootInfo info = LootInfo.ofChestLoot(recipient, pos);
-                List<ItemStack> items = MasterLootGen.generateLoot(info);
-                for (ItemStack stack : items) {
-                    Block.popResource(level, pos, stack);
-                }
-            }
-
-            // on top of the normal chest rolls, a strongbox always pays out a handful of items each
-            // independently rolled from a weighted category - this is what makes it feel distinct
-            // from a bigger normal chest
-            int categoryItemCount = RandomUtils.RandomRange(
-                    DungeonConfig.get().STRONGBOX_CATEGORY_ITEM_MIN.get(),
-                    DungeonConfig.get().STRONGBOX_CATEGORY_ITEM_MAX.get());
-            // Atlas "Strongbox Extra Drops" - scales the guaranteed category-item count
-            float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxExtraDrops.getInstance()).getMultiplier();
-            categoryItemCount = Math.round(categoryItemCount * extraDropsMulti);
-            // Atlas "Unique Windfall" - scales the UNIQUE category's odds within the weighted roll
-            float uniqueChanceBonus = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxUniqueChance.getInstance()).getValue();
-            List<ScaledCategory> weightedCategories = Arrays.stream(LootCategory.values())
-                    .map(c -> new ScaledCategory(c, c == LootCategory.UNIQUE
-                            ? Math.round(c.Weight() * (1F + uniqueChanceBonus / 100F))
-                            : c.Weight()))
-                    .collect(Collectors.toList());
-            for (int i = 0; i < categoryItemCount; i++) {
-                LootCategory category = RandomUtils.weightedRandom(weightedCategories).category;
-                ItemStack categoryItem = generateCategoryItem(category, LootInfo.ofChestLoot(recipient, pos));
-                if (!categoryItem.isEmpty()) {
-                    Block.popResource(level, pos, categoryItem);
-                }
+    // the player whose stats the payout rolls against: the opener if they're still here, otherwise
+    // whoever is present (the party member who cleared the guards). Guardian toughness was rolled
+    // from the opener's stats at spawn time, so preferring them keeps the difficulty and the reward
+    // scaled by the same player.
+    @Nullable
+    private static Player resolveRecipient(ServerLevel level, BlockPos pos, StrongboxBE be) {
+        double range = 48;
+        if (be.activatorId != null) {
+            Player opener = level.getPlayerByUUID(be.activatorId);
+            if (opener != null && opener.isAlive() && opener.blockPosition().closerThan(pos, range)) {
+                return opener;
             }
         }
+        return level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, range, false);
+    }
+
+    private void unlock(ServerLevel level, BlockPos pos, StrongboxBE be) {
+        Player recipient = resolveRecipient(level, pos, be);
+        if (recipient == null) {
+            // nobody in range to reward - leave the box standing and retry on a later tick rather
+            // than consuming it and silently destroying the whole payout
+            return;
+        }
+        int lootRolls = DungeonConfig.get().STRONGBOX_LOOT_ROLLS.get();
+        for (int i = 0; i < lootRolls; i++) {
+            LootInfo info = LootInfo.ofChestLoot(recipient, pos);
+            List<ItemStack> items = MasterLootGen.generateLoot(info);
+            for (ItemStack stack : items) {
+                Block.popResource(level, pos, stack);
+            }
+        }
+
+        // on top of the normal chest rolls, a strongbox always pays out a handful of items each
+        // independently rolled from a weighted category - this is what makes it feel distinct
+        // from a bigger normal chest
+        int categoryItemCount = RandomUtils.RandomRange(
+                DungeonConfig.get().STRONGBOX_CATEGORY_ITEM_MIN.get(),
+                DungeonConfig.get().STRONGBOX_CATEGORY_ITEM_MAX.get());
+        // Atlas "Strongbox Extra Drops" - scales the guaranteed category-item count
+        float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxExtraDrops.getInstance()).getMultiplier();
+        categoryItemCount = Math.round(categoryItemCount * extraDropsMulti);
+        // Atlas "Unique Windfall" - scales the UNIQUE category's odds within the weighted roll
+        float uniqueChanceBonus = Load.Unit(recipient).getUnit().getCalculatedStat(StrongboxUniqueChance.getInstance()).getValue();
+        List<ScaledCategory> weightedCategories = Arrays.stream(LootCategory.values())
+                .map(c -> new ScaledCategory(c, c == LootCategory.UNIQUE
+                        ? Math.round(c.Weight() * (1F + uniqueChanceBonus / 100F))
+                        : c.Weight()))
+                .collect(Collectors.toList());
+        for (int i = 0; i < categoryItemCount; i++) {
+            LootCategory category = RandomUtils.weightedRandom(weightedCategories).category;
+            ItemStack categoryItem = generateCategoryItem(category, LootInfo.ofChestLoot(recipient, pos));
+            if (!categoryItem.isEmpty()) {
+                Block.popResource(level, pos, categoryItem);
+            }
+        }
+
         SoundUtils.playSound(level, pos, SoundEvents.PLAYER_LEVELUP);
         level.removeBlock(pos, false);
     }

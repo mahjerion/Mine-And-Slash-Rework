@@ -7,7 +7,6 @@ import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.main.DungeonWords;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.AtlasPassiveTreeScreen;
@@ -88,7 +87,7 @@ public class AtlasMapScreen extends BaseScreen implements INamedScreen {
         scrollY = 0;
 
         AtlasData atlas = Load.player(ClientOnly.getPlayer()).atlas;
-        layout = ExileDB.AtlasNodeLayouts().getList().get(0).calcData;
+        layout = AtlasNodeLayout.mainCalcData();
 
         // only count pinnacle nodes actually placed on this layout, not every registered one
         var placed = layout.pointOf.keySet();

@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.loot.generators.util;
 
 import com.google.common.base.Preconditions;
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.stats.types.loot.StatRollQuality;
 import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
@@ -63,6 +64,10 @@ public class GearCreationUtils {
 
         } else {
             if (rarity.is_unique_item) {
+                // UniqueGearPart found no unique legal for this context (rarity/tier/level/league).
+                // Downgrading beats handing out an illegal unique, but it means a player got a common
+                // where a unique was rolled - worth a log line if a datapack filtered the pool empty.
+                ExileLog.get().warn("Unique rarity rolled but no unique gear was eligible - downgrading to common.");
                 gear.rar = IRarity.COMMON_ID;
             }
         }

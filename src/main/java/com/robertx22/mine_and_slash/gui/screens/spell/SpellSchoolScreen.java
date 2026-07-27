@@ -39,13 +39,19 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
     }
 
     public void setCurrent(SpellSchool sc) {
+        if (setCurrentIndexOf(sc)) {
+            init();
+        }
+    }
+
+    private boolean setCurrentIndexOf(SpellSchool sc) {
         for (int i = 0; i < schoolsInOrder.size(); i++) {
             if (sc.GUID().equals(schoolsInOrder.get(i).GUID())) {
                 this.currentIndex = i;
-                init();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public SpellSchoolScreen() {
@@ -67,6 +73,9 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
     SchoolButton LEFT_SCHOOL;
     SchoolButton RIGHT_SCHOOL;
 
+    // init() also runs on resize and on every school switch, the default school is only picked once
+    private boolean pickDefaultSchool = true;
+
     @Override
     public void init() {
         super.init();
@@ -74,7 +83,19 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
 
         try {
 
-            var all = Load.player(mc.player).ascClass.school().stream().map(x -> ExileDB.SpellSchools().get(x)).collect(Collectors.toList());
+            // in allocation order, so the first class the player picked always stays on the left
+            var all = Load.player(mc.player).ascClass.allocatedSchoolsInOrder().stream()
+                    .filter(x -> ExileDB.SpellSchools().isRegistered(x))
+                    .map(x -> ExileDB.SpellSchools().get(x))
+                    .collect(Collectors.toList());
+
+            if (pickDefaultSchool) {
+                pickDefaultSchool = false;
+                if (!all.isEmpty()) {
+                    // open on the player's own class instead of whatever is first in the database
+                    setCurrentIndexOf(all.get(0));
+                }
+            }
 
             LEFT_SCHOOL = new SchoolButton(this, guiLeft + 41, guiTop + 13);
             RIGHT_SCHOOL = new SchoolButton(this, guiLeft + 185, guiTop + 13);

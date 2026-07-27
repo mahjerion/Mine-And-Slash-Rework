@@ -8,6 +8,7 @@ import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.library_of_exile.database.league.League;
 import com.robertx22.library_of_exile.dimension.MapDimensions;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.main.ApiForgeEvents;
@@ -37,6 +38,8 @@ import com.robertx22.mine_and_slash.database.data.stats.types.loot.UberFragmentF
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.MapBlueprint;
+import com.robertx22.mine_and_slash.loot.league.LootLeagueResolver;
+import com.robertx22.mine_and_slash.loot.league.LootLeagueResolvers;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
@@ -93,6 +96,56 @@ public class DungeonAddonEvents {
                     be.monstersRemaining = Math.max(0, be.monstersRemaining - 1);
                     be.setChanged();
                 }
+            }
+        });
+
+        // Tell the loot system which league a dungeon-side kill belongs to, so UniqueGear tagged
+        // "uber"/"pinnacle"/"strongbox"/"imprisoned_monster" drops from those encounters and nowhere
+        // else. None of these leagues has spatial bounds, so LootInfo's position lookup can't find them.
+        // Deliberately never returns PROPHECY: prophecy is a curse on the whole map, and its uniques
+        // come only from the prophecy reward roll (GearProphecy), never from cursed mobs.
+        LootLeagueResolvers.register(new LootLeagueResolver() {
+            @Override
+            public int priority() {
+                return LootLeagueResolver.MOB_TAG;
+            }
+
+            @Override
+            public League resolve(LootInfo info) {
+                if (info.mobKilled == null) {
+                    return null;
+                }
+                // rarity first: no capability lookup, and it's how WatcherEyeLootGen/PinnacleGemLootGen
+                // already identify these bosses
+                if (info.mobData != null) {
+                    String rarity = info.mobData.getMobRarity().GUID();
+                    if (IRarity.PINNACLE.equals(rarity)) {
+                        return MnsLeagues.INSTANCE.PINNACLE.get();
+                    }
+                    if (IRarity.UBER.equals(rarity)) {
+                        return MnsLeagues.INSTANCE.UBER.get();
+                    }
+                }
+                // same reason as the LivingDeathEvent hook above: DungeonEntityCapability.get() ends in
+                // .orElse(new ..) and allocates on every miss, and this runs for every mob killed in
+                // every dimension. All of these only exist inside a dungeon map.
+                if (!MapDimensions.isMap(info.mobKilled.level())) {
+                    return null;
+                }
+                DungeonEntityData data = DungeonEntityCapability.get(info.mobKilled).data;
+                if (data.isImprisonedMonster) {
+                    return MnsLeagues.INSTANCE.IMPRISONED_MONSTER.get();
+                }
+                if (data.isStrongboxGuardian) {
+                    return MnsLeagues.INSTANCE.STRONGBOX.get();
+                }
+                if (data.isPinnacleBoss) {
+                    return MnsLeagues.INSTANCE.PINNACLE.get();
+                }
+                if (data.isUberBoss) {
+                    return MnsLeagues.INSTANCE.UBER.get();
+                }
+                return null;
             }
         });
 

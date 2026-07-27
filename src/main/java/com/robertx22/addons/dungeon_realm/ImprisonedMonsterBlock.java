@@ -192,6 +192,12 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
         }
 
         LootInfo info = LootInfo.ofChestLoot(recipient, pos);
+        // gather position-derived multipliers before retagging - see StrongboxBlock.strongboxLoot for why.
+        // This payout is currency + seeds only, so the league tag doesn't gate any unique here; it's for
+        // the DropRequirement filters (and any future imprisoned-monster-locked currency). The captive's
+        // own death loot is what drops "imprisoned_monster" uniques, via the DungeonAddonEvents resolver.
+        info.gatherLootMultipliers();
+        info.league = MnsLeagues.INSTANCE.IMPRISONED_MONSTER.get();
         CurrencyLootGen gen = new CurrencyLootGen(info);
         // Atlas "Imprisoned Monster Extra Drops" - scales the guaranteed currency count
         float extraDropsMulti = Load.Unit(recipient).getUnit().getCalculatedStat(ImprisonedMonsterExtraDrops.getInstance()).getMultiplier();

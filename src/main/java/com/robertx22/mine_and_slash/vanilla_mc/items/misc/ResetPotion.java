@@ -64,8 +64,15 @@ public class ResetPotion extends AutoItem implements IShapedRecipe {
                 PlayerData data = Load.player(p);
                 if (reset == ResetType.FULL_RESET) {
                     this.pointsType.fullReset(p);
-                    Load.player(p).spellCastingData.resetSpells();
-                    data.getSkillGemInventory().removeSupportGemsIfTooMany(p);
+
+                    if (pointsType == PlayerPointsType.SPELLS) {
+                        // clear the cached spell levels right away, otherwise the player can still cast
+                        // what they just unlearned until the stat recalc catches up next tick.
+                        // don't check support gems here: this leaves the cache empty, so every skill
+                        // reports 0 max links and pops all of its supports. EntityData does that check
+                        // next tick, after calcSpellLevels has refilled the cache.
+                        data.spellCastingData.resetSpells();
+                    }
                 } else {
                     this.pointsType.addResetPoints(p, 10);
                 }

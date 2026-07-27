@@ -217,6 +217,18 @@ public class StrongboxBlock extends BaseEntityBlock {
         return level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, range, false);
     }
 
+    // the payout counts as strongbox-league loot, so UniqueGear tagged "strongbox" can come out of it
+    // (and out of the guardians, via the resolver in DungeonAddonEvents).
+    private static LootInfo strongboxLoot(Player recipient, BlockPos pos) {
+        LootInfo info = LootInfo.ofChestLoot(recipient, pos);
+        // gather the position-derived multipliers BEFORE retagging: gatherLootMultipliers is lazy and
+        // cached, and one of its branches compares the league against DungeonLeagues.REWARD_ROOM. Retag
+        // first and a box standing in a reward room would silently lose the completion-rarity bonus.
+        info.gatherLootMultipliers();
+        info.league = MnsLeagues.INSTANCE.STRONGBOX.get();
+        return info;
+    }
+
     private void unlock(ServerLevel level, BlockPos pos, StrongboxBE be) {
         Player recipient = resolveRecipient(level, pos, be);
         if (recipient == null) {
@@ -226,7 +238,7 @@ public class StrongboxBlock extends BaseEntityBlock {
         }
         int lootRolls = DungeonConfig.get().STRONGBOX_LOOT_ROLLS.get();
         for (int i = 0; i < lootRolls; i++) {
-            LootInfo info = LootInfo.ofChestLoot(recipient, pos);
+            LootInfo info = strongboxLoot(recipient, pos);
             List<ItemStack> items = MasterLootGen.generateLoot(info);
             for (ItemStack stack : items) {
                 Block.popResource(level, pos, stack);
@@ -251,7 +263,7 @@ public class StrongboxBlock extends BaseEntityBlock {
                 .collect(Collectors.toList());
         for (int i = 0; i < categoryItemCount; i++) {
             LootCategory category = RandomUtils.weightedRandom(weightedCategories).category;
-            ItemStack categoryItem = generateCategoryItem(category, LootInfo.ofChestLoot(recipient, pos));
+            ItemStack categoryItem = generateCategoryItem(category, strongboxLoot(recipient, pos));
             if (!categoryItem.isEmpty()) {
                 Block.popResource(level, pos, categoryItem);
             }

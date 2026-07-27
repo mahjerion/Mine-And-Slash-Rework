@@ -13,16 +13,14 @@ public class CurrencyLeagueFilter extends GroupFilterEntry {
         this.league = league;
     }
 
+    // Only currency actually locked to this league. Previously this passed anything WITHOUT a league
+    // requirement too, so every league's button listed nearly the whole currency list and the filter
+    // group was noise. Matches how UniqueLeagueFilter behaves, and lets GroupFilterType's
+    // getEntriesWithAtLeastOneResult hide the leagues that own no currency at all.
     @Override
     public boolean isValid(BestiaryEntry e) {
         var ext = ExtendedOrb.from(e.obj);
-
-        if (ext != null) {
-            if (ext.drop_req.hasLeague() && !ext.drop_req.getLeague().GUID().equals(league.GUID())) {
-                return false;
-            }
-        }
-        return true;
+        return ext != null && ext.drop_req.isFromLeague(league);
     }
 
     @Override

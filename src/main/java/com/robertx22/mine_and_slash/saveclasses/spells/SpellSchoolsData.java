@@ -25,6 +25,10 @@ public class SpellSchoolsData implements IStatCtx {
 
     public HashMap<String, Integer> allocated_lvls = new HashMap<>();
 
+    // the order the player allocated their classes in. allocated_lvls and school() are both unordered,
+    // so without this the gui shuffles the class shortcuts around when a second class is picked up
+    public List<String> school_order = new ArrayList<>();
+
 
     public Set<String> school() {
         Set<String> list = new HashSet<>();
@@ -39,13 +43,56 @@ public class SpellSchoolsData implements IStatCtx {
         return list;
     }
 
-    public void removeUnlearnedPerks(Player player) {
-        for (var entry : this.allocated_lvls.entrySet()) {
-            if (entry.getValue() < 1) {
-                MineAndSlashEvents.PERK_UNLEARNED_AND_REMOVED.callEvents(new MineAndSlashEvents.OnPerkUnlearnedAndRemoved(player, entry.getKey()));
-                this.allocated_lvls.remove(entry.getKey());
+    /**
+     * The player's classes in the order they were first allocated. The first entry is the class the
+     * gui should show on the left and open on by default.
+     */
+    public List<String> allocatedSchoolsInOrder() {
+
+        var current = school();
+
+        List<String> list = new ArrayList<>();
+
+        for (String id : school_order) {
+            if (current.contains(id) && !list.contains(id)) {
+                list.add(id);
             }
         }
+        // saves from before the order was tracked have none of this recorded
+        for (String id : current) {
+            if (!list.contains(id)) {
+                list.add(id);
+            }
+        }
+
+        return list;
+    }
+
+    private void rememberSchoolOrder(SpellSchool school) {
+        // seed the order of classes allocated before this was tracked, so they don't shift around later
+        for (String id : school()) {
+            if (!school_order.contains(id)) {
+                school_order.add(id);
+            }
+        }
+        if (!school_order.contains(school.GUID())) {
+            school_order.add(school.GUID());
+        }
+    }
+
+    public void removeUnlearnedPerks(Player player) {
+        var iterator = this.allocated_lvls.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            if (entry.getValue() < 1) {
+                MineAndSlashEvents.PERK_UNLEARNED_AND_REMOVED.callEvents(new MineAndSlashEvents.OnPerkUnlearnedAndRemoved(player, entry.getKey()));
+                iterator.remove();
+            }
+        }
+
+        // a fully unlearned class shouldn't keep holding its gui slot
+        var current = school();
+        school_order.removeIf(x -> !current.contains(x));
     }
 
     public List<Perk> getAllPerks() {
@@ -154,17 +201,12 @@ public class SpellSchoolsData implements IStatCtx {
 
 
     public void learn(Perk perk, SpellSchool school) {
-        if (!this.school().contains(school.GUID())) {
-            this.school().add(school.GUID());
-        }
+        rememberSchoolOrder(school);
         int current = allocated_lvls.getOrDefault(perk.GUID(), 0);
         allocated_lvls.put(perk.GUID(), current + 1);
     }
 
     public void unlearn(Player player, Perk perk, SpellSchool school) {
-        if (!this.school().contains(school.GUID())) {
-            this.school().add(school.GUID());
-        }
         int current = allocated_lvls.getOrDefault(perk.GUID(), 0);
         if (current > 0) {
             perk.getPointType().getGeneralType().reduceResetPoints(player, 1);

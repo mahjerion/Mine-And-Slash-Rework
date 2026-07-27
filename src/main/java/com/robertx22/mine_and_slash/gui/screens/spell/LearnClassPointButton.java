@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
@@ -58,7 +59,8 @@ public class LearnClassPointButton extends ImageButton {
             if (bl) {
                 this.playDownSound(Minecraft.getInstance().getSoundManager());
                 if (button == 0) {
-                    Packets.sendToServer(new AllocateClassPointPacket(screen.currentSchool(), perk, AllocateClassPointPacket.ACTION.ALLOCATE));
+                    int amount = Screen.hasShiftDown() ? AllocateClassPointPacket.MAX_ALLOCATE_AT_ONCE : 1;
+                    Packets.sendToServer(new AllocateClassPointPacket(screen.currentSchool(), perk, AllocateClassPointPacket.ACTION.ALLOCATE, amount));
                 }
                 if (button == 1) {
                     Packets.sendToServer(new AllocateClassPointPacket(screen.currentSchool(), perk, AllocateClassPointPacket.ACTION.REMOVE));

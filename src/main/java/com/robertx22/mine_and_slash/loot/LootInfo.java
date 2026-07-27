@@ -16,6 +16,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.misc.ExtraMobDrops
 import com.robertx22.mine_and_slash.database.holders.MnsRelicStats;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.generators.BaseLootGen;
+import com.robertx22.mine_and_slash.loot.league.LootLeagueResolvers;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
@@ -146,9 +147,21 @@ public class LootInfo {
         setWorld();
         setTier();
         setLevel();
+        setLeagueFromResolvers();
 
         if (player != null) {
             playerEntityData = Load.Unit(player);
+        }
+    }
+
+    // encounter/boss leagues that have no spatial bounds (strongbox guardians, uber bosses...) can't
+    // be found by setWorld's position lookup, so they get a say here and override it. Runs once per
+    // LootInfo, not once per loot generator. Anything set explicitly by the caller after the factory
+    // returns (GearProphecy, StrongboxBlock) still wins, since that happens after this.
+    private void setLeagueFromResolvers() {
+        League resolved = LootLeagueResolvers.resolve(this);
+        if (resolved != null) {
+            this.league = resolved;
         }
     }
 

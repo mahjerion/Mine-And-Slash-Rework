@@ -26,6 +26,6 @@ public class BackToHubButton extends ImageButton {
                 b -> Minecraft.getInstance().setScreen(new MainHubScreen()));
         // Words.Character is what MainHubScreen.screenName() returns, so this needs no new
         // localization entry
-        setTooltip(Tooltip.create(Words.Character.locName()));
+        setTooltip(Tooltip.create(Words.Main_Hub.locName()));
     }
 }

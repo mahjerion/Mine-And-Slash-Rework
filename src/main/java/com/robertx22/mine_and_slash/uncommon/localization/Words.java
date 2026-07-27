@@ -362,6 +362,7 @@ public enum Words implements IAutoLocName {
     ProphecyPlayerAffixTaken("Currently Taken Debuff:"),
     ProphecyPlayerAffixInfo("Your rate of Prophecy Coins gain will increase."),
 
+    Main_Hub("Main Hub"),
     Character("Character"),
     Characters("Characters"),
     Stats("Stats"),

@@ -31,16 +31,18 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
     public List<SpellSchool> schoolsInOrder = ExileDB.SpellSchools()
             .getList();
     public int currentIndex = 0;
-    public int maxIndex = ExileDB.SpellSchools()
-            .getSize() - 1;
+    public int maxIndex = schoolsInOrder.size() - 1;
 
     public SpellSchool currentSchool() {
+        if (schoolsInOrder.isEmpty()) {
+            return null;
+        }
         return schoolsInOrder.get(currentIndex);
     }
 
     public void setCurrent(SpellSchool sc) {
         if (setCurrentIndexOf(sc)) {
-            init();
+            rebuildWidgets();
         }
     }
 
@@ -81,53 +83,57 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         super.init();
         this.clearWidgets();
 
-        try {
+        if (schoolsInOrder.isEmpty()) {
+            return;
+        }
 
-            // in allocation order, so the first class the player picked always stays on the left
-            var all = Load.player(mc.player).ascClass.allocatedSchoolsInOrder().stream()
-                    .filter(x -> ExileDB.SpellSchools().isRegistered(x))
-                    .map(x -> ExileDB.SpellSchools().get(x))
-                    .collect(Collectors.toList());
+        // in allocation order, so the first class the player picked always stays on the left
+        var all = Load.player(mc.player).ascClass.allocatedSchoolsInOrder().stream()
+                .filter(x -> ExileDB.SpellSchools().isRegistered(x))
+                .map(x -> ExileDB.SpellSchools().get(x))
+                .collect(Collectors.toList());
 
-            if (pickDefaultSchool) {
-                pickDefaultSchool = false;
-                if (!all.isEmpty()) {
-                    // open on the player's own class instead of whatever is first in the database
-                    setCurrentIndexOf(all.get(0));
-                }
+        if (pickDefaultSchool) {
+            pickDefaultSchool = false;
+            if (!all.isEmpty()) {
+                // open on the player's own class instead of whatever is first in the database
+                setCurrentIndexOf(all.get(0));
             }
+        }
 
-            LEFT_SCHOOL = new SchoolButton(this, guiLeft + 41, guiTop + 13);
-            RIGHT_SCHOOL = new SchoolButton(this, guiLeft + 185, guiTop + 13);
+        LEFT_SCHOOL = new SchoolButton(this, guiLeft + 41, guiTop + 13);
+        RIGHT_SCHOOL = new SchoolButton(this, guiLeft + 185, guiTop + 13);
 
-            this.publicAddButton(LEFT_SCHOOL);
-            this.publicAddButton(RIGHT_SCHOOL);
+        this.publicAddButton(LEFT_SCHOOL);
+        this.publicAddButton(RIGHT_SCHOOL);
 
-            if (all.size() > 0) {
-                LEFT_SCHOOL.school = all.get(0);
-            }
-            if (all.size() > 1) {
-                RIGHT_SCHOOL.school = all.get(1);
-            }
-
-
-            addRenderableWidget(new BigSchoolButton(this, guiLeft + 107, guiTop + 8));
+        if (all.size() > 0) {
+            LEFT_SCHOOL.school = all.get(0);
+        }
+        if (all.size() > 1) {
+            RIGHT_SCHOOL.school = all.get(1);
+        }
 
 
-            addRenderableWidget(new LeftRightButton(this, guiLeft + 100 - LeftRightButton.xSize - 5, guiTop + 25 - LeftRightButton.ySize / 2, true));
-            addRenderableWidget(new LeftRightButton(this, guiLeft + 150 + 5, guiTop + 25 - LeftRightButton.ySize / 2, false));
+        addRenderableWidget(new BigSchoolButton(this, guiLeft + 107, guiTop + 8));
 
-            addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 8, guiTop + 206));
-            addRenderableWidget(new PointsDisplayButton(PlayerPointsType.PASSIVES, guiLeft + 148, guiTop + 206));
 
-            currentSchool().perks.entrySet()
-                    .forEach(e -> {
+        addRenderableWidget(new LeftRightButton(this, guiLeft + 100 - LeftRightButton.xSize - 5, guiTop + 25 - LeftRightButton.ySize / 2, true));
+        addRenderableWidget(new LeftRightButton(this, guiLeft + 150 + 5, guiTop + 25 - LeftRightButton.ySize / 2, false));
 
-                        PointData point = e.getValue();
+        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 8, guiTop + 206));
+        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.PASSIVES, guiLeft + 148, guiTop + 206));
+
+        currentSchool().perks.entrySet()
+                .forEach(e -> {
+
+                    PointData point = e.getValue();
+
+                    // checked first, get() logs a registry error for unknown guids
+                    if (ExileDB.Perks().isRegistered(e.getKey())) {
                         Perk perk = ExileDB.Perks().get(e.getKey());
 
-
-                        if (perk != null && ExileDB.Perks().isRegistered(e.getKey())) {
+                        if (perk != null) {
                             int x = this.guiLeft + 12 + (point.x * SLOT_SPACING);
                             int y = this.guiTop + 178 - (point.y * SLOT_SPACING);
 
@@ -135,12 +141,8 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
 
                             // todo add a differently shaped button for passive stats
                         }
-                    });
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                    }
+                });
 
     }
 
@@ -162,33 +164,33 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
     @Override
     public void render(GuiGraphics gui, int x, int y, float ticks) {
 
-        try {
-            mnsRenderBG(gui);
+        mnsRenderBG(gui);
 
+        SpellSchool school = currentSchool();
+
+        if (school != null) {
             gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            // gui.blit(currentSchool().getIconLoc(), guiLeft + 107, guiTop + 8, 36, 36, 36, 36, 36, 36);
+            // gui.blit(school.getIconLoc(), guiLeft + 107, guiTop + 8, 36, 36, 36, 36, 36, 36);
 
             // background
             gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-            gui.blit(currentSchool().getBackgroundLoc(), guiLeft + 7, guiTop + 8, 93, 36, 93, 36, 93, 36);
-            gui.blit(currentSchool().getBackgroundLoc(), guiLeft + 150, guiTop + 8, 93, 36, 93, 36, 93, 36);
-
-            super.render(gui, x, y, ticks);
-
-
-            /*
-            String txt = Gui.SPELL_POINTS.locName().append(String.valueOf(PlayerPointsType.SPELLS.getFreePoints(mc.player))).getString();
-            GuiUtils.renderScaledText(gui, guiLeft + 50, guiTop + 215, 1, txt, ChatFormatting.WHITE);
-
-            String tx2 = Gui.PASSIVE_POINTS.locName().append(String.valueOf(PlayerPointsType.PASSIVES.getFreePoints(mc.player))).getString();
-            GuiUtils.renderScaledText(gui, guiLeft + 195, guiTop + 215, 1, tx2, ChatFormatting.WHITE);
-
-             */
-            //buttons.forEach(b -> b.renderToolTip(matrix, x, y));
-        } catch (Exception e) {
-            e.printStackTrace();
+            gui.blit(school.getBackgroundLoc(), guiLeft + 7, guiTop + 8, 93, 36, 93, 36, 93, 36);
+            gui.blit(school.getBackgroundLoc(), guiLeft + 150, guiTop + 8, 93, 36, 93, 36, 93, 36);
         }
+
+        super.render(gui, x, y, ticks);
+
+
+        /*
+        String txt = Gui.SPELL_POINTS.locName().append(String.valueOf(PlayerPointsType.SPELLS.getFreePoints(mc.player))).getString();
+        GuiUtils.renderScaledText(gui, guiLeft + 50, guiTop + 215, 1, txt, ChatFormatting.WHITE);
+
+        String tx2 = Gui.PASSIVE_POINTS.locName().append(String.valueOf(PlayerPointsType.PASSIVES.getFreePoints(mc.player))).getString();
+        GuiUtils.renderScaledText(gui, guiLeft + 195, guiTop + 215, 1, tx2, ChatFormatting.WHITE);
+
+         */
+        //buttons.forEach(b -> b.renderToolTip(matrix, x, y));
 
     }
 
@@ -198,7 +200,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         if (currentIndex < 0) {
             currentIndex = maxIndex;
         }
-        init();
+        rebuildWidgets();
     }
 
     @Override
@@ -207,7 +209,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         if (currentIndex > maxIndex) {
             currentIndex = 0;
         }
-        init();
+        rebuildWidgets();
     }
 
     @Override

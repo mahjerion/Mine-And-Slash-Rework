@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ToonList extends ObjectSelectionList<ToonEntry> {
@@ -21,12 +22,14 @@ public class ToonList extends ObjectSelectionList<ToonEntry> {
         this.screen = screen;
 
 
-        reloadAllEntries();
+        forceFilter("");
 
         this.setRenderBackground(false);
     }
 
     private List<ToonData> all = new ArrayList<>();
+
+    private String filter = "donutuse";
 
 
     private void reloadAllEntries() {
@@ -34,10 +37,36 @@ public class ToonList extends ObjectSelectionList<ToonEntry> {
         this.all = new ArrayList<>();
 
         for (Map.Entry<Integer, CharacterData> en : Load.player(ClientOnly.getPlayer()).characters.map.entrySet()) {
-            var data = new ToonData(en.getValue(), en.getKey());
-            all.add(data);
-            addEntry(new ToonEntry(this, data));
+            all.add(new ToonData(en.getValue(), en.getKey()));
         }
+    }
+
+    public void tryFilter(String pFilter) {
+        if (!pFilter.equals(this.filter)) {
+            this.forceFilter(pFilter);
+        }
+        this.filter = pFilter;
+    }
+
+    public void forceFilter(String cFilter) {
+        this.clearEntries();
+        reloadAllEntries();
+
+        String search = cFilter.toLowerCase(Locale.ROOT);
+
+        for (ToonData data : this.all) {
+            if (matchesSearch(data, search)) {
+                addEntry(new ToonEntry(this, data));
+            }
+        }
+        this.filter = cFilter;
+    }
+
+    private boolean matchesSearch(ToonData data, String search) {
+        if (search.isEmpty()) {
+            return true;
+        }
+        return data.data.name != null && data.data.name.toLowerCase(Locale.ROOT).contains(search);
     }
 
 

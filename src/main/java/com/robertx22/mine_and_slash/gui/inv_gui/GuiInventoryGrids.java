@@ -43,7 +43,8 @@ public class GuiInventoryGrids {
     public static InvGuiGrid ofSalvageConfig() {
         GuiAction.regenActionMap(); //  todo find better way of ensuring
 
-        HashMap<ToggleAutoSalvageRarity.SalvageType, List<GuiItemData>> map = new HashMap<>();
+        // linked, enum hash codes are identity based so a HashMap would shuffle the rows every launch
+        Map<ToggleAutoSalvageRarity.SalvageType, List<GuiItemData>> map = new LinkedHashMap<>();
 
         var rarities = ExileDB.GearRarities().getList();
         rarities.sort(Comparator.comparingInt(x -> x.item_tier));

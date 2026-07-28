@@ -73,18 +73,20 @@ public class ToonScreen extends Screen implements INamedScreen {
 
         refreshFilterButtons();
 
-        this.searchBox = new EditBox(this.font, this.width / 2 - 100, 22, 200, 20, this.searchBox, Component.translatable("selectWorld.search"));
-        this.searchBox.setResponder((p_232980_) -> {
-
-        });
-
         this.list = new ToonList(this, this.minecraft, this.width, this.height, 48, this.height - 64, 36);
+
+        this.searchBox = new EditBox(this.font, this.width / 2 - 100, 22, 200, 20, this.searchBox, Component.translatable("selectWorld.search"));
+        this.searchBox.setResponder((text) -> {
+            this.list.tryFilter(text);
+        });
 
 
         this.addWidget(this.searchBox);
 
         this.addWidget(this.list);
 
+        // the edit box keeps its text across inits, the list has to be filtered by it
+        this.list.forceFilter(this.searchBox.getValue());
 
     }
 
@@ -100,7 +102,11 @@ public class ToonScreen extends Screen implements INamedScreen {
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        this.searchBox.setFocused(true);
+        // whatever is focused gets first say, typing only falls through to the search box
+        if (super.charTyped(pCodePoint, pModifiers)) {
+            return true;
+        }
+        this.setFocused(this.searchBox);
         return this.searchBox.charTyped(pCodePoint, pModifiers);
     }
 

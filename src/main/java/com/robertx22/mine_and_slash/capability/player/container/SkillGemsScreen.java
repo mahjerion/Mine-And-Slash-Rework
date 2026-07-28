@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player.container;
 
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
-import com.robertx22.mine_and_slash.saveclasses.skill_gem.MaxLinks;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,12 +22,16 @@ public class SkillGemsScreen extends AbstractContainerScreen<SkillGemsMenu> {
     int auraX = 0;
     int auraY = 0;
 
+    int remainingSpirit = 0;
+
     @Override
     protected void init() {
         super.init();
 
         auraX = getGuiLeft() + 201;
         auraY = getGuiTop() + 153;
+
+        refreshRemainingSpirit();
 
         int x = getGuiLeft() + 16;
         int y = getGuiTop() + 16;
@@ -42,19 +45,23 @@ public class SkillGemsScreen extends AbstractContainerScreen<SkillGemsMenu> {
             this.addRenderableWidget(spellb);
 
             for (int s = 0; s < 5; s++) {
-                boolean can = false;
-
-                MaxLinks suppslots = null;
-
-                if (spellb.getSpell() != null) {
-                    int num = s + 1;
-                    suppslots = spellb.getSpell().getMaxLinks(menu.player);
-                    can = suppslots.links >= num;
-                }
-
-                addRenderableWidget(new SuppGemOverlayButton(can, suppslots, x + (i * 25) + xadd - 2, y + 20 + (s * 18)));
+                // the button reads the link state itself, it changes while the screen is open
+                addRenderableWidget(new SuppGemOverlayButton(i, s, x + (i * 25) + xadd - 2, y + 20 + (s * 18)));
             }
 
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        refreshRemainingSpirit();
+    }
+
+    // recalculates stats, so it's kept off the render path
+    private void refreshRemainingSpirit() {
+        if (minecraft != null && minecraft.player != null) {
+            this.remainingSpirit = Load.player(minecraft.player).getSkillGemInventory().getRemainingSpirit(minecraft.player);
         }
     }
 
@@ -67,7 +74,7 @@ public class SkillGemsScreen extends AbstractContainerScreen<SkillGemsMenu> {
     @Override
     protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
 
-        String left = "" + Load.player(minecraft.player).getSkillGemInventory().getRemainingSpirit(minecraft.player);
+        String left = "" + remainingSpirit;
 
         pGuiGraphics.drawString(this.font, left, 201, 153, ChatFormatting.LIGHT_PURPLE.getColor(), true);
     }

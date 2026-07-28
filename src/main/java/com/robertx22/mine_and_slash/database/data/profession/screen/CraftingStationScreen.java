@@ -15,6 +15,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -85,10 +86,24 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
             this.addRenderableWidget(new PrimaryMatInfoButton(primaryRar, leftPos + 35, topPos + 75));
         }
 
+        // init also runs on resize, which wipes every widget. the cache has to be dropped or the
+        // recipe buttons get skipped as "unchanged" and never come back
+        this.possible = "";
         this.refreshPossibleRecipes();
 
         refreshRequiredMats();
 
+    }
+
+    // removeWidget also clears the narratables list, doing removeIf on children()/renderables leaks into it
+    private void removeWidgets(Class<?> type) {
+        List<GuiEventListener> toRemove = new ArrayList<>();
+        for (GuiEventListener widget : this.children()) {
+            if (type.isInstance(widget)) {
+                toRemove.add(widget);
+            }
+        }
+        toRemove.forEach(this::removeWidget);
     }
 
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -111,15 +126,22 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
     public void refreshRequiredMats(ProfessionRecipe recipe) {
 
 
-        this.children().removeIf(x -> x instanceof ItemButton);
-        this.renderables.removeIf(x -> x instanceof ItemButton);
+        removeWidgets(ItemButton.class);
 
         int xoff = 0;
         int yoff = 0;
 
         int spacing = 18;
+        int perRow = 6; // 6 * 18 is all the room there is between x 64 and the right edge of the gui
+
+        int index = 0;
 
         for (ItemStack stack : recipe.getMaterials()) {
+            if (index > 0 && index % perRow == 0) {
+                xoff = 0;
+                yoff += spacing;
+            }
+
             var button = new ItemButton(stack, leftPos + 64 + xoff, topPos + 75 + yoff);
 
             List<Component> tip = new ArrayList<>();
@@ -129,6 +151,7 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
 
             this.addRenderableWidget(button);
             xoff += spacing;
+            index++;
         }
 
     }
@@ -138,16 +161,16 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
 
         var all = getPossibleRecipes();
 
-        String str = "";
-        for (String s : all.stream().sorted(Comparator.comparing(x -> x.GUID())).map(x -> x.GUID()).collect(Collectors.toList())) {
-            str += s;
+        StringBuilder builder = new StringBuilder();
+        for (ProfessionRecipe recipe : all) {
+            builder.append(recipe.GUID());
         }
+        String str = builder.toString();
 
         if (!possible.equals(str)) {
             possible = str;
 
-            this.children().removeIf(x -> x instanceof RecipeButton);
-            this.renderables.removeIf(x -> x instanceof RecipeButton);
+            removeWidgets(RecipeButton.class);
 
             int xoff = 0;
             int yoff = 0;
@@ -193,7 +216,9 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
             recipes = new HashSet<>();
         }
         recipes.addAll(ExileDB.Recipes().getFilterWrapped(x -> x.profession.equals(prof.GUID()) && x.canCraft(menu.getItems()).can).list);
-        return recipes.stream().toList();
+        // sorted because the button layout order comes straight from this, and a HashSet iterates by
+        // identity hash, which reshuffles the recipe grid on every launch
+        return recipes.stream().sorted(Comparator.comparing(ProfessionRecipe::GUID)).collect(Collectors.toList());
 
     }
 

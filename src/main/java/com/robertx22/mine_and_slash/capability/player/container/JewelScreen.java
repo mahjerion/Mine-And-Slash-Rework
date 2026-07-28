@@ -22,6 +22,10 @@ public class JewelScreen extends AbstractContainerScreen<JewelsMenu> {
 
     public JewelScreen(JewelsMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
+        // has to match the background and the slot layout in JewelsMenu, otherwise the gui is drawn
+        // off center and clicks below the default 166px height count as "outside" and drop the held item
+        this.imageWidth = 176;
+        this.imageHeight = 204;
     }
 
     @Override

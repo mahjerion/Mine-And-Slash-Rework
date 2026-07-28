@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
 import com.robertx22.mine_and_slash.mixin_ducks.MouseHandlerDuck;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -21,8 +23,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
 
     public static final ResourceLocation BACKGROUND_LOCATION = new ResourceLocation(SlashRef.MODID, "textures/gui/master_bag.png");
 
-    public static double iMouseX = (double)(Minecraft.getInstance().getWindow().getScreenWidth() / 2);
-    public static double iMouseY = (double)(Minecraft.getInstance().getWindow().getHeight() / 2);
+    // mouse handler positions are in window coordinates, both of these have to come from the same space
+    public static double iMouseX = defaultMouseX();
+    public static double iMouseY = defaultMouseY();
+
+    private static double defaultMouseX() {
+        return Minecraft.getInstance().getWindow().getScreenWidth() / 2D;
+    }
+
+    private static double defaultMouseY() {
+        return Minecraft.getInstance().getWindow().getScreenHeight() / 2D;
+    }
 
     private static final int TEXTURE_TOP_Y = 0;
     private static final int TEXTURE_TOP_HEIGHT = 17;
@@ -36,6 +47,9 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
     private static final int ROW_START_Y = 16;
 
     protected int rows;
+
+    // init also runs on resize, the cursor may only be moved when the screen first opens
+    private boolean restoredMousePos = false;
 
     public BackpackScreen(BackpackMenu pMenu, Inventory pPlayerInventory, Component txt) {
         super(pMenu, pPlayerInventory, Component.literal(""));
@@ -57,12 +71,16 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             y += 18;
         }
 
-        MouseHandlerDuck mouseHandler = (MouseHandlerDuck) Minecraft.getInstance().mouseHandler;
-        //init() will be invoked when this screen be set to Minecraft.screen after the releaseMouse(), see setScreen();
-        mouseHandler.setXPos(iMouseX);
-        mouseHandler.setYPos(iMouseY);
-        //from MouseHandler.class releaseMouse()
-        InputConstants.grabOrReleaseMouse(this.minecraft.getWindow().getWindow(), 212993, iMouseX, iMouseY);
+        if (!restoredMousePos) {
+            restoredMousePos = true;
+
+            MouseHandlerDuck mouseHandler = (MouseHandlerDuck) Minecraft.getInstance().mouseHandler;
+            //init() will be invoked when this screen be set to Minecraft.screen after the releaseMouse(), see setScreen();
+            mouseHandler.setXPos(iMouseX);
+            mouseHandler.setYPos(iMouseY);
+            //from MouseHandler.class releaseMouse()
+            InputConstants.grabOrReleaseMouse(this.minecraft.getWindow().getWindow(), 212993, iMouseX, iMouseY);
+        }
     }
 
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -76,8 +94,8 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
     public void onClose() {
         super.onClose();
         //reset position
-        iMouseX = (double)(Minecraft.getInstance().getWindow().getScreenWidth() / 2);
-        iMouseY = (double)(Minecraft.getInstance().getWindow().getHeight() / 2);
+        iMouseX = defaultMouseX();
+        iMouseY = defaultMouseY();
     }
 
 
@@ -109,15 +127,40 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
         pGuiGraphics.blit(BACKGROUND_LOCATION, x, tabsY, 0, TEXTURE_TABS_Y, this.imageWidth, TEXTURE_TABS_HEIGHT);
     }
 
+    // copy of AbstractContainerScreen#renderSlot, the only change is that the stack count is drawn by
+    // drawStackSize so big counts can be scaled down. keep the quick craft branch in sync with vanilla
     @Override
     protected void renderSlot(GuiGraphics guiGraphics, Slot slot) {
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getItem();
-        boolean isDragging = slot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
+        boolean highlight = false;
+        boolean skipItem = slot == this.clickedSlot && !this.draggingItem.isEmpty() && !this.isSplittingStack;
+        ItemStack carried = this.menu.getCarried();
+        String countOverride = null;
 
         if (slot == this.clickedSlot && !this.draggingItem.isEmpty() && this.isSplittingStack && !stack.isEmpty()) {
-            stack = stack.copyWithCount(stack.getCount() - Math.min(stack.getCount(), stack.getMaxStackSize()) / 2);
+            stack = stack.copyWithCount(stack.getCount() / 2);
+        } else if (this.isQuickCrafting && this.quickCraftSlots.contains(slot) && !carried.isEmpty()) {
+            if (this.quickCraftSlots.size() == 1) {
+                return;
+            }
+
+            if (AbstractContainerMenu.canItemQuickReplace(slot, carried, true) && this.menu.canDragTo(slot)) {
+                highlight = true;
+                int max = Math.min(carried.getMaxStackSize(), slot.getMaxStackSize(carried));
+                int inSlot = slot.getItem().isEmpty() ? 0 : slot.getItem().getCount();
+                int placed = AbstractContainerMenu.getQuickCraftPlaceCount(this.quickCraftSlots, this.quickCraftingType, carried) + inSlot;
+                if (placed > max) {
+                    placed = max;
+                    countOverride = ChatFormatting.YELLOW.toString() + max;
+                }
+
+                stack = carried.copyWithCount(placed);
+            } else {
+                this.quickCraftSlots.remove(slot);
+                this.recalculateQuickCraftRemaining();
+            }
         }
 
 		PoseStack pose = guiGraphics.pose();
@@ -129,14 +172,17 @@ public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
             if (icon != null) {
                 TextureAtlasSprite sprite = (TextureAtlasSprite)this.minecraft.getTextureAtlas((ResourceLocation)icon.getFirst()).apply((ResourceLocation)icon.getSecond());
                 guiGraphics.blit(x, y, 0, 16, 16, sprite);
-                isDragging = true;
+                skipItem = true;
             }
         }
 
-        if (!isDragging && !stack.isEmpty()) {
+        if (!skipItem && !stack.isEmpty()) {
+            if (highlight) {
+                guiGraphics.fill(x, y, x + 16, y + 16, this.getSlotColor(slot.index));
+            }
             guiGraphics.renderItem(stack, x, y, slot.x + slot.y * this.imageWidth);
-            guiGraphics.renderItemDecorations(this.font, stack, x, y, "");
-            if (stack.getCount() != 1) {
+            guiGraphics.renderItemDecorations(this.font, stack, x, y, countOverride == null ? "" : countOverride);
+            if (countOverride == null && stack.getCount() != 1) {
                 drawStackSize(guiGraphics, formatStackSize(stack), x, y);
             }
         }

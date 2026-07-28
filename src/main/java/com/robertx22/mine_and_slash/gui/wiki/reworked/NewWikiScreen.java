@@ -48,15 +48,14 @@ public class NewWikiScreen extends Screen implements INamedScreen {
         this.group = g;
         this.filter = new HashMap<>();
 
-        init();
-
-        this.list.forceFilter("");
+        // rebuildWidgets instead of init, it also drops the focus on the widgets that are about to be thrown away
+        rebuildWidgets();
     }
 
 
     public void setFilterGroup(GroupFilterType type, GroupFilterEntry f) {
         this.filter.put(type, f);
-        this.list.forceFilter("");
+        this.list.forceFilter(this.searchBox.getValue());
     }
 
     private void refreshFilterButtons() {
@@ -83,6 +82,9 @@ public class NewWikiScreen extends Screen implements INamedScreen {
 
     public Checkbox searchTooltipsCheckbox;
 
+    // the checkbox itself is recreated on every init, this is what actually holds the setting
+    public boolean searchTooltips = false;
+
     // gotta call add filter button first or it cant be clicked for some reason
     protected void init() {
 
@@ -98,15 +100,12 @@ public class NewWikiScreen extends Screen implements INamedScreen {
             this.list.tryFilter(p_232980_);
         });
 
-        this.searchTooltipsCheckbox = new Checkbox(searchBox.getX() + searchBox.getWidth() + 5, searchBox.getY(), 20, 20, Component.literal("Search Tooltips"), false) {
+        this.searchTooltipsCheckbox = new Checkbox(searchBox.getX() + searchBox.getWidth() + 5, searchBox.getY(), 20, 20, Component.literal("Search Tooltips"), searchTooltips) {
             @Override
             public void onPress() {
                 super.onPress();
-                String old = searchBox.getValue();
-
-                searchBox.setValue(old + " "); // this is dumb but it works
-                searchBox.setValue(old);
-
+                searchTooltips = this.selected();
+                list.forceFilter(searchBox.getValue());
             }
         };
         this.addRenderableWidget(searchTooltipsCheckbox);
@@ -122,6 +121,9 @@ public class NewWikiScreen extends Screen implements INamedScreen {
 
         this.setupGroupButtons();
 
+        // the edit box keeps its text across inits, the list has to be filtered by it
+        this.list.forceFilter(this.searchBox.getValue());
+
     }
 
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
@@ -133,7 +135,11 @@ public class NewWikiScreen extends Screen implements INamedScreen {
     }
 
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        this.searchBox.setFocused(true);
+        // whatever is focused gets first say, typing only falls through to the search box
+        if (super.charTyped(pCodePoint, pModifiers)) {
+            return true;
+        }
+        this.setFocused(this.searchBox);
         return this.searchBox.charTyped(pCodePoint, pModifiers);
     }
 
@@ -151,10 +157,7 @@ public class NewWikiScreen extends Screen implements INamedScreen {
 
         int spacing = (int) (NewGroupButton.SIZE * 1.25F);
 
-        int total = 0;
-        for (BestiaryGroup g : BestiaryGroup.getAll()) {
-            total += spacing;
-        }
+        int total = BestiaryGroup.getAll().size() * spacing;
 
         int gx = this.width / 2 - (total / 2);
         int gy = this.height - 35;

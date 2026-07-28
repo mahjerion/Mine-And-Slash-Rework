@@ -43,6 +43,8 @@ public class WikiEntryList extends ObjectSelectionList<WikiEntry> {
     public void forceFilter(String cFilter) {
         this.clearEntries();
         reloadAllEntries();
+        // has to be recorded or tryFilter thinks the text typed next is already applied
+        this.filter = cFilter;
         cFilter = cFilter.toLowerCase(Locale.ROOT);
 
         for (BestiaryEntry cur : this.currentlyDisplayedLevels) {
@@ -63,7 +65,7 @@ public class WikiEntryList extends ObjectSelectionList<WikiEntry> {
             return true;
         }
 
-        if (screen.searchTooltipsCheckbox.selected()) {
+        if (screen.searchTooltips) {
 
             List<String> list = new ArrayList<>();
             for (Component o : en.getTooltip()) {

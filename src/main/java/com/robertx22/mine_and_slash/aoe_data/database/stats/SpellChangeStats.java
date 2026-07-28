@@ -262,7 +262,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.SET_BOOLEAN.get(EventData.NOVA))
-            .setLocName(x -> "Projectiles Nova")
+            .setLocName(x -> "Projectile Nova")
             .setLocDesc(x -> "")
             .modifyAfterDone(x -> {
                 x.is_perc = false;

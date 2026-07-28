@@ -101,6 +101,7 @@ public class EntityData implements ICap, INeededForClient {
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+
         if (cap == INSTANCE) {
             return supp.cast();
         }
@@ -163,6 +164,11 @@ public class EntityData implements ICap, INeededForClient {
 
 
     public int immuneTicks = 0;
+
+    // how many damage events are currently suppressing knockback on this entity. target.hurt() can
+    // spawn nested damage events on the same entity (on hit procs, ailments), and the inner one must
+    // not take the modifier off while the outer one still needs it. see DamageEvent.activate()
+    public transient int noKnockbackDepth = 0;
 
     public UnsavedMaxEffectStacksData maxCharges = new UnsavedMaxEffectStacksData();
 
@@ -388,7 +394,7 @@ public class EntityData implements ICap, INeededForClient {
         didStatCalcThisTickForPlayer = true; // temp fix, somehow the stat calc is being called before everything is set to dirty even on login?
         if (entity instanceof Player p) {
             Load.player(p).cachedStats.setAllDirty();
-            Load.player(p).playerDataSync.setDirty();
+            Load.player(p).forceNextSync(); // client side cap is blank at this point, always resend
         }
 
         //this.recalcStats_DONT_CALL();

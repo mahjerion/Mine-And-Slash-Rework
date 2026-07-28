@@ -93,6 +93,14 @@ public class DamageEvent extends EffectEvent {
             this.cancelDamage();
         }
 
+        // config blacklisted entities never take mns damage, they only take plain vanilla damage.
+        // don't use cancelDamage() here, it zeroes attackInfo's amount and would eat the vanilla damage too
+        if (target != null && ServerContainer.get().isMnsDamageBlacklisted(target)) {
+            this.data.getNumber(EventData.NUMBER).number = 0;
+            this.data.setBoolean(EventData.DISABLE_KNOCKBACK, true);
+            this.data.setBoolean(EventData.CANCELED, true);
+        }
+
     }
 
     @Override
@@ -600,8 +608,9 @@ public class DamageEvent extends EffectEvent {
 
         this.targetData.lastDamageTaken = this;
 
-        DmgByElement info = calculateAllBonusElementalDamage();
-
+        // this has to be checked before the bonus element damage is calculated. every bonus element
+        // builds a whole extra DamageEvent and sweeps every stat of both entities, and an avoided
+        // hit throws all of that work away.
         if (data.isHitAvoided()) {
             if (attackInfo != null) {
                 attackInfo.setCanceled(true);
@@ -609,12 +618,14 @@ public class DamageEvent extends EffectEvent {
             cancelDamage();
             if (source instanceof ServerPlayer) {
                 InteractionNotifier.notifyClient(getAttackType().isAttack() ? IParticleSpawnMaterial.Type.DODGE : IParticleSpawnMaterial.Type.RESIST, (ServerPlayer) source, target);
-            }  //sendDamageParticle(info);
+            }
 
             //move this sound to InteractionResultHandler.
             //SoundUtils.playSound(target, SoundEvents.SHIELD_BLOCK, 1, 1.5F);
             return;
         }
+
+        DmgByElement info = calculateAllBonusElementalDamage();
 
         float dmg = info.totalDmg;
 
@@ -644,72 +655,94 @@ public class DamageEvent extends EffectEvent {
 
         AttributeInstance attri = target.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
 
-        if (data.getBoolean(EventData.DISABLE_KNOCKBACK) || this.getAttackType() == AttackType.dot) {
+        boolean suppressKnockback = attri != null
+                && (data.getBoolean(EventData.DISABLE_KNOCKBACK) || this.getAttackType() == AttackType.dot);
+
+        if (suppressKnockback) {
             if (!attri.hasModifier(NO_KNOCKBACK)) {
-                attri.addPermanentModifier(NO_KNOCKBACK);
+                // transient and not permanent on purpose: this is added and removed inside this
+                // method, and a permanent modifier is written into the entity's nbt, so failing to
+                // remove it once would leave the mob knockback immune across restarts
+                attri.addTransientModifier(NO_KNOCKBACK);
             }
+            targetData.noKnockbackDepth++;
         }
 
-        DamageSource dmgsource = new DamageSource(source.level().registryAccess().registry(Registries.DAMAGE_TYPE).get().getHolderOrThrow(DAMAGE_TYPE), source, source, source.position());
+        try {
+            DamageSource dmgsource = new DamageSource(source.level().registryAccess().registry(Registries.DAMAGE_TYPE).get().getHolderOrThrow(DAMAGE_TYPE), source, source, source.position());
 
 
-        if (this.data.isSpellEffect()) {
-            if (!data.getBoolean(EventData.DISABLE_KNOCKBACK) && dmg > 0 && !data.isHitAvoided()) {
-                // if magic shield absorbed the damage, still do knockback
-                DashUtils.knockback(source, target);
+            if (this.data.isSpellEffect()) {
+                if (!data.getBoolean(EventData.DISABLE_KNOCKBACK) && dmg > 0 && !data.isHitAvoided()) {
+                    // if magic shield absorbed the damage, still do knockback
+                    DashUtils.knockback(source, target);
+                }
+                // play spell hurt sounds or else spells will feel like they do nothing
+                LivingEntityAccesor duck = (LivingEntityAccesor) target;
+                SoundEvent sound = SoundEvents.GENERIC_HURT;
+                float volume = duck.myGetHurtVolume();
+                float pitch = duck.myGetHurtPitch();
+                SoundUtils.playSound(target, sound, volume, pitch);
             }
-            // play spell hurt sounds or else spells will feel like they do nothing
-            LivingEntityAccesor duck = (LivingEntityAccesor) target;
-            SoundEvent sound = SoundEvents.GENERIC_HURT;
-            float volume = duck.myGetHurtVolume();
-            float pitch = duck.myGetHurtPitch();
-            SoundUtils.playSound(target, sound, volume, pitch);
-        }
 
 
-        var config = Load.Unit(target).getEntityConfig();
+            var config = Load.Unit(target).getEntityConfig();
 
-        if (target instanceof Player == false && config != null && config.set_health_damage_override) {
-            float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth() + 1);
-            target.setHealth(hp);
-            // todo this might create bugs but its probably better that damage actually works..
-            if (target.getHealth() <= 0) {
-                ExileEvents.DAMAGE_BEFORE_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
-                ExileEvents.DAMAGE_AFTER_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
-                target.die(target.damageSources().mobAttack(this.source));
-            }
-            if (attackInfo != null) {
-                attackInfo.setAmount(0.000001F);
-            }
-        } else {
-
-            if (attackInfo != null && CompatConfig.get().damageSystem().overridesDamage) {
-                DamageSourceDuck duck = (DamageSourceDuck) attackInfo.getSource();
-                duck.setMnsDamage(vanillaDamage);
-                duck.tryOverrideDmgWithMns(attackInfo);
-                attackInfo.setAmount(vanillaDamage);
+            if (target instanceof Player == false && config != null && config.set_health_damage_override) {
+                float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth() + 1);
+                target.setHealth(hp);
+                // todo this might create bugs but its probably better that damage actually works..
+                if (target.getHealth() <= 0) {
+                    ExileEvents.DAMAGE_BEFORE_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
+                    ExileEvents.DAMAGE_AFTER_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));
+                    target.die(target.damageSources().mobAttack(this.source));
+                }
+                if (attackInfo != null) {
+                    attackInfo.setAmount(0.000001F);
+                }
             } else {
 
-                DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
-                duck.setMnsDamage(vanillaDamage);
-
-                if (target instanceof Player == false) {
-                    int inv = target.invulnerableTime;
-                    target.invulnerableTime = 0;
-                    target.hurt(dmgsource, vanillaDamage);
-                    target.invulnerableTime = inv;
+                if (attackInfo != null && CompatConfig.get().damageSystem().overridesDamage) {
+                    DamageSourceDuck duck = (DamageSourceDuck) attackInfo.getSource();
+                    duck.setMnsDamage(vanillaDamage);
+                    duck.tryOverrideDmgWithMns(attackInfo);
+                    attackInfo.setAmount(vanillaDamage);
                 } else {
-                    target.hurt(dmgsource, vanillaDamage);
+
+                    DamageSourceDuck duck = (DamageSourceDuck) dmgsource;
+                    duck.setMnsDamage(vanillaDamage);
+
+                    if (target instanceof Player == false) {
+                        int inv = target.invulnerableTime;
+                        target.invulnerableTime = 0;
+                        target.hurt(dmgsource, vanillaDamage);
+                        target.invulnerableTime = inv;
+                    } else {
+                        target.hurt(dmgsource, vanillaDamage);
+                    }
                 }
             }
-        }
-
-        if (attri.getValue() >= 1.0) {
-            target.hurtMarked = false;
-        }
-
-        if (attri.hasModifier(NO_KNOCKBACK)) {
-            attri.removeModifier(NO_KNOCKBACK);
+        } finally {
+            // target.hurt() runs foreign code (other mods, death handling). if it throws, the
+            // exception is swallowed further up in LivingHurtUtils.onAttack, so without this the
+            // modifier would stay on the mob for good.
+            if (attri != null) {
+                if (attri.getValue() >= 1.0) {
+                    target.hurtMarked = false;
+                }
+                if (suppressKnockback) {
+                    targetData.noKnockbackDepth--;
+                }
+                // remove once no nested event still needs it. this stays unconditional so it also
+                // strips a modifier left stuck on the entity by an older version, which used to
+                // clean itself up here on the next hit.
+                if (targetData.noKnockbackDepth <= 0) {
+                    targetData.noKnockbackDepth = 0;
+                    if (attri.hasModifier(NO_KNOCKBACK)) {
+                        attri.removeModifier(NO_KNOCKBACK);
+                    }
+                }
+            }
         }
 
         if (dmg > 0) {

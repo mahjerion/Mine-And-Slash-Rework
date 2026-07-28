@@ -232,6 +232,16 @@ public class CommonEvents {
             }
         });
 
+        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerChangedDimensionEvent.class, event ->
+
+        {
+            if (event.getEntity() instanceof ServerPlayer p) {
+                // the client rebuilds the player entity and its capabilities on a dimension change,
+                // so the client's PlayerData is blank until we push it again
+                Load.player(p).forceNextSync();
+            }
+        });
+
         ForgeEvents.registerForgeEvent(LivingEvent.LivingTickEvent.class, event ->
 
         {

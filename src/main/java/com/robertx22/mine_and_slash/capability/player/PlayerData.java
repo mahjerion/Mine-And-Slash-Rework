@@ -227,8 +227,38 @@ public class PlayerData implements ICap {
 
     }
 
+    // the last tag we actually sent to the client, so unchanged data isn't resent.
+    private transient CompoundTag lastSyncedNbt = null;
+
     private void syncData() {
-        Packets.sendToClient(player, new SyncPlayerCapToClient(player, this.getCapIdForSyncing()));
+
+        CompoundTag nbt = this.serializeNBT();
+
+        // OnServerTick marks this dirty every 3 seconds no matter what, and most of the explicit
+        // setDirty() callers fire far more often than the data actually changes. serializing is
+        // unavoidable to know whether anything changed, but skipping the send saves the packet and
+        // the client side deserializeNBT, which rebuilds every sub object and all of the gem, aura
+        // and jewel inventory stacks.
+        if (nbt.equals(lastSyncedNbt)) {
+            return;
+        }
+        lastSyncedNbt = nbt;
+
+        // build the packet from the tag we already have instead of using the (Player, String)
+        // constructor, which would serialize the whole capability a second time
+        SyncPlayerCapToClient packet = new SyncPlayerCapToClient();
+        packet.capid = this.getCapIdForSyncing();
+        packet.nbt = nbt;
+
+        Packets.sendToClient(player, packet);
+    }
+
+    // the client's copy of this capability is built from scratch on login, respawn and dimension
+    // change, so it has nothing regardless of what the server last sent. call this whenever the
+    // client side entity is replaced, or the check above will skip the resend it needs.
+    public void forceNextSync() {
+        this.lastSyncedNbt = null;
+        this.playerDataSync.setDirty();
     }
 
     transient HashMap<String, Unit> spellUnits = new HashMap<>();

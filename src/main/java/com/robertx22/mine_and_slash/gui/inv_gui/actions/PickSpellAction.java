@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.ModRange;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenContainerPacket;
 import com.robertx22.library_of_exile.main.Packets;
 import net.minecraft.network.FriendlyByteBuf;
@@ -55,6 +56,8 @@ public class PickSpellAction extends GuiAction {
 
     @Override
     public void clientAction(Player p, Object obj) {
+        // keep the cursor where it is, see GuiMousePosition
+        GuiMousePosition.save();
         Packets.sendToServer(new OpenContainerPacket(OpenContainerPacket.GuiType.SKILL_GEMS));
     }
 

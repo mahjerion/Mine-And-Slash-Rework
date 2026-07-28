@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -158,6 +159,7 @@ public class EntityFinder {
 
             list.removeIf(x -> !x.isAlive());
             list.removeIf(x -> excluded.contains(x));
+            list.removeIf(x -> ServerContainer.get().isMnsDamageBlacklisted(x));
             list.removeIf(x -> !pred.test(x));
 
             return list;

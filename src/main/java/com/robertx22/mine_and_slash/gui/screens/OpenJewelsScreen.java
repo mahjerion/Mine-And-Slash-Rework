@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.screens;
 
+import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.gui.bases.IAlertScreen;
 import com.robertx22.mine_and_slash.gui.bases.IContainerNamedScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -14,6 +15,10 @@ public class OpenJewelsScreen implements IContainerNamedScreen, IAlertScreen {
 
     @Override
     public void openContainer() {
+
+        // the server closes the currently open container before it opens this one, which warps the
+        // cursor to the middle of the window. JewelScreen.init() puts it back where it was.
+        GuiMousePosition.save();
 
         Packets.sendToServer(new OpenJewelsPacket());
     }

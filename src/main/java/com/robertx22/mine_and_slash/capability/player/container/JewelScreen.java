@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.capability.player.container;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import net.minecraft.ChatFormatting;
@@ -31,6 +32,10 @@ public class JewelScreen extends AbstractContainerScreen<JewelsMenu> {
     @Override
     protected void init() {
         super.init();
+
+        // runs after setScreen() warped the cursor to the middle of the window. no-op if nothing
+        // was saved, and it consumes the saved position so a resize can't move the cursor again
+        GuiMousePosition.restore();
     }
 
     @Override

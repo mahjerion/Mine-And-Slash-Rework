@@ -173,6 +173,14 @@ public class ServerContainer {
                         // Add default blacklisted entities here
                 ));
 
+        MNS_DAMAGE_ENTITY_BLACKLIST = b.comment("Entities that Mine and Slash damage should never apply to. " +
+                        "They take plain vanilla damage instead, and are ignored by spell targeting, projectiles and summons. " +
+                        "Blacklist uses entity IDs, not their display names.")
+                .defineList("MNS_DAMAGE_ENTITY_BLACKLIST", Arrays.asList(
+                        "minecraft:villager",
+                        "minecraft:wandering_trader"
+                ), x -> x instanceof String);
+
         b.comment("These are just default values for the Mine and slash Hub > features").push("Default Feature Configs");
 
         for (PlayerConfigData.Config value : PlayerConfigData.Config.values()) {
@@ -229,9 +237,34 @@ public class ServerContainer {
         return ENTITY_SUMMON_BLACKLIST.get().stream().anyMatch(x -> x.equals(id));
     }
 
+    private static List<? extends String> cachedDmgBlacklistSource = null;
+    private static Set<String> cachedDmgBlacklist = Collections.emptySet();
+
+    // this is called for every entity of every aoe spell tick, so it has to be cached
+    public boolean isMnsDamageBlacklisted(LivingEntity entity) {
+        if (entity == null) {
+            return false;
+        }
+        try {
+            var current = MNS_DAMAGE_ENTITY_BLACKLIST.get();
+            if (current != cachedDmgBlacklistSource) { // forge hands back a new list instance on config reload
+                cachedDmgBlacklistSource = current;
+                cachedDmgBlacklist = new HashSet<>(current);
+            }
+            if (cachedDmgBlacklist.isEmpty()) {
+                return false;
+            }
+            ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+            return id != null && cachedDmgBlacklist.contains(id.toString());
+        } catch (Exception e) {
+            return false; // config not loaded yet, act as if the list is empty
+        }
+    }
+
     public ForgeConfigSpec.ConfigValue<List<? extends String>> GEAR_COMPATS;
     public ForgeConfigSpec.ConfigValue<List<? extends String>> SOUL_CLEANER_ITEM_BLACKLIST;
     public ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_SUMMON_BLACKLIST;
+    public ForgeConfigSpec.ConfigValue<List<? extends String>> MNS_DAMAGE_ENTITY_BLACKLIST;
 
     //public ForgeConfigSpec.BooleanValue DO_NOT_DESPAWN_MAP_MOBS;
     public ForgeConfigSpec.BooleanValue GET_STARTER_ITEMS;

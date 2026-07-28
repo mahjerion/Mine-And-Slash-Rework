@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.library_of_exile.utils.geometry.MyPosition;
 import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.AoeSelector;
@@ -445,6 +446,12 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
                         .inflate(1D), (e) -> {
                     return !e.isSpectator() && e.isPickable() && e instanceof Entity && e != this.getCaster() && e != this.ignoreEntity;
                 });
+
+        if (res != null && res.getEntity() instanceof LivingEntity le) {
+            if (ServerContainer.get().isMnsDamageBlacklisted(le)) {
+                return null; // blacklisted entities are invisible to spells, let the projectile fly through
+            }
+        }
 
         if (!this.entityData.get(HIT_ALLIES)) {
             if (res != null && getCaster() != null && res.getEntity() instanceof LivingEntity) {

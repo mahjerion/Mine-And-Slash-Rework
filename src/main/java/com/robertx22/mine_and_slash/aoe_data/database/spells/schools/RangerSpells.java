@@ -69,6 +69,7 @@ public class RangerSpells implements ExileRegistryInit {
                 .onCast(PartBuilder.justAction(SpellAction.SUMMON_AT_SIGHT.create(SlashEntities.SIMPLE_PROJECTILE.get(), 1D, 0D)))
                 .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(SlashBlocks.PROJECTILE_TOTEM.get(), 20D * 7.5D)
                         .put(MapField.ENTITY_NAME, "block")
+                        .put(MapField.SUMMON_LIMIT_GROUP, BlockSummonLimitGroup.TOTEM.id)
                         .put(MapField.BLOCK_FALL_SPEED, 0D)
                         .put(MapField.FIND_NEAREST_SURFACE, false)
                         .put(MapField.IS_BLOCK_FALLING, false)))

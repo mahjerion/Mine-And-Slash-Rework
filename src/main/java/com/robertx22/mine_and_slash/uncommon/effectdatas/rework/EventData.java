@@ -23,6 +23,8 @@ public class EventData {
     public static String IS_BONUS_ELEMENT_DAMAGE = "is_bonus_element_damage";
     //public static String BONUS_MAX_SUMMONS = "bonus_max_summons";
     public static String BONUS_TOTAL_SUMMONS = "bonus_total_summons";
+    public static String MAX_TOTEMS = "max_totems";
+    public static String MAX_BANNERS = "max_banners";
     public static String SUMMON_TYPE = "summon_type";
     public static String CANCELED = "canceled";
     public static String DMG_EFFECTIVENESS = "dmg_effectiveness";

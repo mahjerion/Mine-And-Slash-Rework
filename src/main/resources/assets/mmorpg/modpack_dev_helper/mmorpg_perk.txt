@@ -73,6 +73,12 @@ aura_effect_big
 awaken_mana
 axe_damage
 axe_damage_big
+banner_cdr
+banner_cdr_big
+banner_damage
+banner_damage_big
+banner_duration
+banner_duration_big
 battlemage_class
 battlemage_class_0
 battlemage_class_1
@@ -434,6 +440,7 @@ map_rarity_bias
 map_rarity_bias_node
 map_rarity_bias_node_big
 masochism
+max_totems
 meteor
 meteor_arrow
 minion_catapult

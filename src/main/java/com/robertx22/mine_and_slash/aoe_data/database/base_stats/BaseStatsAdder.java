@@ -71,6 +71,8 @@ public class BaseStatsAdder implements ExileRegistryInit {
         c.scaled(EnergyRegen.getInstance(), 5);
 
         c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
+        c.nonScaled(SpellChangeStats.MAX_TOTEM_CAPACITY.get(), 3);
+        c.nonScaled(SpellChangeStats.MAX_BANNER_CAPACITY.get(), 1);
 
         c.nonScaled(DefenseStats.NO_SELF_DAMAGE_STATS.get(), 1);
 
@@ -109,6 +111,8 @@ public class BaseStatsAdder implements ExileRegistryInit {
         c.nonScaled(DefenseStats.NO_SELF_DAMAGE_STATS.get(), 1);
 
         c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
+        c.nonScaled(SpellChangeStats.MAX_TOTEM_CAPACITY.get(), 3);
+        c.nonScaled(SpellChangeStats.MAX_BANNER_CAPACITY.get(), 1);
 
         // why did i add this again? I think its a must
         c.nonScaled(OffenseStats.CRIT_CHANCE.get(), 1);

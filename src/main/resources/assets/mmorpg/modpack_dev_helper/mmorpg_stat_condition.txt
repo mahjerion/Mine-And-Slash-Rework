@@ -92,6 +92,8 @@ spell_has_tag_area
 spell_has_tag_area_is_false
 spell_has_tag_arrow
 spell_has_tag_arrow_is_false
+spell_has_tag_banner
+spell_has_tag_banner_is_false
 spell_has_tag_beast
 spell_has_tag_beast_is_false
 spell_has_tag_buff

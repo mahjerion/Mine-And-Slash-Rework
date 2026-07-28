@@ -14,10 +14,24 @@ Use the Gradle wrapper (`./gradlew` / `gradlew.bat`). The dev environment expect
 - `./gradlew runClient` — launch a dev Minecraft client.
 - `./gradlew runClient2` — second client (username `Dev2`) for multiplayer/sync testing.
 - `./gradlew runServer` — dedicated server.
-- `./gradlew runData` — **data generation.** Regenerates `src/generated/resources`. Datapack JSON for content (stats, spells, gear, etc.) is generated from Java code, not hand-written — see below.
 - `./gradlew publishMods` — publishes to CurseForge/Modrinth (needs `key.properties` / `modrinth_key.properties`).
 
 There is no separate lint or unit-test suite; correctness is validated at mod init via error-check passes and by running the game.
+
+### Data generation — do NOT use `./gradlew runData`
+
+Datapack JSON for content (stats, spells, gear, etc.) is generated from Java code, not hand-written, but **`runData` is not how you generate it.** Data gen runs *in-game*:
+
+1. Set `MMORPG.RUN_DEV_TOOLS = true` (`MMORPG.java`).
+2. `./gradlew runClient` and join any world. It must be a **client** — the lang file is written under `DistExecutor.safeRunWhenOn(Dist.CLIENT, ...)`, so `runServer` won't produce it.
+3. Two `PlayerLoggedInEvent` hooks fire and write into `src/generated/resources`:
+   - `CommonInit` (Library of Exile) runs `new LibDataGen().run(...)` — every `ExileRegistryType`'s datapack generator, i.e. the content JSON for all four mods. It also prints "WARNING: Dev tools ON!" in chat.
+   - `LifeCycleEvents` runs `DataGeneration.generateAll()` — the `mmorpg` lang file, `DataGenHook`, the `modpack_dev_helper` txt dumps, curio JSONs, and item models.
+4. Set `RUN_DEV_TOOLS` back to `false`.
+
+`runData` registers the same providers via `GatherDataEvent`, but Forge datagen never fires `FMLCommonSetupEvent` — which is where `ExileEvents.EXILE_REGISTRY_GATHER` populates the content DB — so every provider emits **zero** files. Worse, its `HashCache` then treats the existing output as stale and **deletes all of `src/generated/resources`**.
+
+`src/generated` is gitignored and untracked (dropped from git in `b75833f5`, Dec 2023), so `git status` will *not* warn you if that happens. The files are purely local build artifacts; the only recovery is the in-game regeneration above. `build.gradle` adds `src/generated/resources` as a `sourceSets.main.resources` dir, so they must exist before `./gradlew build` produces a complete jar.
 
 ## Multi-module / submodule layout (important)
 
@@ -49,7 +63,7 @@ The main mod **and** each addon follow the same skeleton, so once you know one y
 - registers an `OrderedModConstructor` subclass (`MnsConstructor`, `DungeonModConstructor`, `HarvestModConstructor`, `ObeliskModConstructor`) on the mod event bus;
 - exposes `public static boolean RUN_DEV_TOOLS` (data-gen + registry recording; **false in shipped builds**), a `ModRequiredRegisterInfo REGISTER_INFO`, its own `SimpleChannel NETWORK`, and an `id(String)` helper;
 - groups its pieces into parallel `*Entries` (deferred registers), `*Words` (localization), `*Commands`, `*LootTables`, `*Client`, `ComponentInit` (capability attach), and `*Database` (content) classes;
-- runs data generation only when its `RUN_DEV_TOOLS` is on.
+- runs data generation only when its `RUN_DEV_TOOLS` is on (on player login, not via `runData`).
 
 ### The three content addons
 Each is an instanced-map league built on the framework above (its own dimension, structures, entity + map/world capabilities, mob validator, config, and content database):
@@ -69,7 +83,7 @@ Content types (stats, spells, gear types, affixes, gems, runes, rarities, maps, 
 
 - Query the database through `database/registry/ExileDB.java` — the central accessor for every registered content type (`ExileDB.Spells()`, `ExileDB.GearRarities()`, etc.). `ExileRegistryTypes` / `ExileRegistryType` define the registry types and their load order & sync timing.
 - **Content definitions live in `aoe_data/database/**`** (one subpackage per type). These build the registry entries in Java. Per `aoe_data/package-info.java`, this package is intended to run **only in the dev environment** — it emits datapack JSON via data-gen, which is what actually ships. Treat `aoe_data` as "the source that generates data," and `database/data/**` as the runtime classes those entries instantiate.
-- Because content is datapack-driven, **after changing anything in `aoe_data`, run `./gradlew runData`** to regenerate `src/generated/resources`.
+- Because content is datapack-driven, **after changing anything in `aoe_data`, regenerate `src/generated/resources`** by logging into a dev client with `RUN_DEV_TOOLS = true` — see "Data generation" above. Not `runData`.
 
 ### Entity/player data (capabilities)
 Per-entity RPG state is stored in Forge capabilities built on Exile's `ICap`:
@@ -96,5 +110,5 @@ Vanilla patches are in `mixins/` (config: `src/main/resources/mmorpg.mixins.json
 ## Conventions
 
 - Prefix for most registries/registered objects and many classes is `Slash*` or `Exile*`; the runtime mod id string everywhere is `mmorpg`.
-- Don't hand-edit generated datapack JSON under `src/generated/resources` or the generated lang file — change the Java source in `aoe_data` and re-run data-gen. `MMORPG.createMnsLangFile()` / `CreateLangFile` build the lang file.
+- Don't hand-edit generated datapack JSON under `src/generated/resources` or the generated lang file — change the Java source in `aoe_data` and re-run data-gen (in-game, see "Data generation"). `MMORPG.createMnsLangFile()` / `CreateLangFile` build the lang file.
 - The `src/main/resources/assets/mmorpg/modpack_dev_helper/*.txt` files are human-readable dumps of registered content (affixes, stats, currency, etc.) for modpack devs — they are outputs, not inputs.

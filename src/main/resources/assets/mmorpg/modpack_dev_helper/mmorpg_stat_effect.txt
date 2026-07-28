@@ -8,6 +8,8 @@ _dot_dmg_multi_number_add_stat_data
 _double_damage_number_add_stat_data
 _flat_damage_number_add_stat_data
 _flat_damage_number_add_stat_percent
+add_max_banners
+add_max_totems
 add_stat_data_to_num
 add_total_summons
 apply_cd_as_cast_time

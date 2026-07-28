@@ -14,11 +14,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class SummonBlockAction extends SpellAction {
@@ -28,7 +29,8 @@ public class SummonBlockAction extends SpellAction {
     }
 
     static int SEARCH = 10;
-    static double SAME_NAME_RADIUS = 10D;
+    // same radius SummonPetAction uses to find a player's existing summons
+    static double LIMIT_SEARCH_RADIUS = 100D;
 
 
     static boolean isSolid(Level level, BlockPos pos) {
@@ -101,10 +103,7 @@ public class SummonBlockAction extends SpellAction {
 
 
         if (found) {
-            if (data.getOrDefault(MapField.DELETE_SAME_NAME, false)) {
-                String entityName = data.getOrDefault(MapField.ENTITY_NAME, Spell.DEFAULT_EN_NAME);
-                removeDuplicateNamedBlocks(ctx.world, pos, entityName);
-            }
+            enforceSummonLimit(ctx, data);
 
             StationaryFallingBlockEntity be = new StationaryFallingBlockEntity(ctx.world, pos.asBlockPos(), block.defaultBlockState());
             be.getEntityData().set(StationaryFallingBlockEntity.IS_FALLING, data.getOrDefault(MapField.IS_BLOCK_FALLING, false));
@@ -116,24 +115,28 @@ public class SummonBlockAction extends SpellAction {
 
     }
 
-    static void removeDuplicateNamedBlocks(Level level, MyPosition pos, String entityName) {
-        if (entityName == null || entityName.isEmpty()) {
+    // removes the caster's oldest blocks of this limit group until there's room for one more.
+    // called before the new block is spawned, so the cap is on the group as a whole, not per spell.
+    static void enforceSummonLimit(SpellCtx ctx, MapHolder data) {
+        BlockSummonLimitGroup group = BlockSummonLimitGroup.fromId(data.getOrDefault(MapField.SUMMON_LIMIT_GROUP, ""));
+
+        if (group == null || !(ctx.caster instanceof Player)) {
             return;
         }
 
-        AABB area = new AABB(
-                pos.x() - SAME_NAME_RADIUS, pos.y() - SAME_NAME_RADIUS, pos.z() - SAME_NAME_RADIUS,
-                pos.x() + SAME_NAME_RADIUS, pos.y() + SAME_NAME_RADIUS, pos.z() + SAME_NAME_RADIUS
-        );
+        int max = Math.max(1, (int) ctx.calculatedSpellData.data.getNumber(group.eventDataKey, 0).number);
+        String casterUuid = ctx.caster.getStringUUID();
 
-        List<StationaryFallingBlockEntity> nearby = level.getEntitiesOfClass(
+        List<StationaryFallingBlockEntity> existing = ctx.world.getEntitiesOfClass(
                 StationaryFallingBlockEntity.class,
-                area,
-                e -> entityName.equals(e.getEntityName())
+                ctx.caster.getBoundingBox().inflate(LIMIT_SEARCH_RADIUS),
+                e -> group.id.equals(e.getLimitGroup()) && casterUuid.equals(e.getCasterUuid())
         );
 
-        for (StationaryFallingBlockEntity old : nearby) {
-            old.remove(Entity.RemovalReason.DISCARDED);
+        existing.sort(Comparator.comparingInt(e -> -e.tickCount)); // oldest first
+
+        for (int i = 0; i < existing.size() - (max - 1); i++) {
+            existing.get(i).remove(Entity.RemovalReason.DISCARDED);
         }
     }
 

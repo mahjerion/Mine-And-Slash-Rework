@@ -28,6 +28,7 @@ public class SpellTags {
     public static SpellTag golem = SpellTag.of("golem");
     public static SpellTag area = SpellTag.of("area");
     public static SpellTag totem = SpellTag.of("totem");
+    public static SpellTag banner = SpellTag.of("banner");
     public static SpellTag ranged = SpellTag.of("ranged");
     public static SpellTag FIRE = SpellTag.of("fire");
     public static SpellTag PHYSICAL = SpellTag.of("physical");

@@ -11,6 +11,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.builders.DamageBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.builders.ParticleBuilder;
 import com.robertx22.mine_and_slash.database.data.spells.components.SpellConfiguration;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.BlockSummonLimitGroup;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.vanity.ParticleShape;
 import com.robertx22.mine_and_slash.database.data.spells.components.conditions.EffectCondition;
@@ -143,6 +144,7 @@ public class WaterSpells implements ExileRegistryInit {
                 .onCast(PartBuilder.justAction(SpellAction.SUMMON_AT_SIGHT.create(SlashEntities.SIMPLE_PROJECTILE.get(), 1D, 0D)))
                 .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(SlashBlocks.FROST_FLOWER.get(), 20D * 8)
                         .put(MapField.ENTITY_NAME, "block")
+                        .put(MapField.SUMMON_LIMIT_GROUP, BlockSummonLimitGroup.TOTEM.id)
                         .put(MapField.BLOCK_FALL_SPEED, 0D)
                         .put(MapField.FIND_NEAREST_SURFACE, true)
                         .put(MapField.IS_BLOCK_FALLING, false)))

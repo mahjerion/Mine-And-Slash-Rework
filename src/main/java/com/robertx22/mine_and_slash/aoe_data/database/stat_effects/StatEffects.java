@@ -157,6 +157,8 @@ public class StatEffects implements ExileRegistryInit {
     public static StatEffect ADD_STAT_DATA_TO_NUMBER = new AddToNumberEffect("add_stat_data_to_num", EventData.NUMBER, NumberProvider.ofStatData());
     //public static StatEffect ADD_TO_MAX_SUMMONS = new AddToNumberEffect("add_max_summons", EventData.BONUS_MAX_SUMMONS, NumberProvider.ofStatData());
     public static StatEffect ADD_TOTAL_SUMMONS = new AddToNumberEffect("add_total_summons", EventData.BONUS_TOTAL_SUMMONS, NumberProvider.ofStatData());
+    public static StatEffect ADD_MAX_TOTEMS = new AddToNumberEffect("add_max_totems", EventData.MAX_TOTEMS, NumberProvider.ofStatData());
+    public static StatEffect ADD_MAX_BANNERS = new AddToNumberEffect("add_max_banners", EventData.MAX_BANNERS, NumberProvider.ofStatData());
 
     public static StatEffect DECREASE_COOLDOWN = new DecreaseNumberByPercentEffect(EventData.COOLDOWN_TICKS);
     public static StatEffect DECREASE_CHARGE_CD = new DecreaseNumberByPercentEffect(EventData.CHARGE_COOLDOWN_TICKS);

@@ -50,6 +50,11 @@ arrow_spell_dmg_taken
 attack_damage
 aura_effect
 axe_damage
+banner_cast_time
+banner_cdr
+banner_duration
+banner_spell_dmg
+banner_spell_dmg_taken
 battlemage_user
 beast_cast_time
 beast_cdr
@@ -512,6 +517,7 @@ manasteal
 map_find
 map_rarity_bias
 max_all_resist
+max_banners
 max_chaos_resist
 max_charm_charges
 max_elemental_resist
@@ -523,6 +529,7 @@ max_lightning_resist_per_1_max_fire_resist
 max_physical_resist
 max_power_charge_charges
 max_total_summons
+max_totems
 max_water_resist
 max_water_resist_per_1_max_fire_resist
 melee_cast_time
@@ -608,6 +615,7 @@ piercing_projectiles
 plus_lvl_all_spells
 plus_lvl_area_spells
 plus_lvl_arrow_spells
+plus_lvl_banner_spells
 plus_lvl_beast_spells
 plus_lvl_buff_spells
 plus_lvl_cast_speed_to_cooldown_spells

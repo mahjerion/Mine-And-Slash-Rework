@@ -48,6 +48,38 @@ public class SpellChangeStats {
                 x.max = 10;
             }).
             build();
+    public static DataPackStatAccessor MAX_TOTEM_CAPACITY = DatapackStatBuilder
+            .ofSingle("max_totems", Elements.ALL)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addEffect(StatEffects.ADD_MAX_TOTEMS)
+            .setLocName(x -> "Maximum Totems")
+            .setLocDesc(x -> "You can have more totems active at once.")
+            .modifyAfterDone(x ->
+            {
+                x.is_perc = false;
+                x.base = 0;
+                x.min = 0;
+                x.max = 10;
+            }).
+            build();
+    public static DataPackStatAccessor MAX_BANNER_CAPACITY = DatapackStatBuilder
+            .ofSingle("max_banners", Elements.ALL)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addEffect(StatEffects.ADD_MAX_BANNERS)
+            .setLocName(x -> "Maximum Banners")
+            .setLocDesc(x -> "You can have more banners planted at once.")
+            .modifyAfterDone(x ->
+            {
+                x.is_perc = false;
+                x.base = 0;
+                x.min = 0;
+                x.max = 5;
+            }).
+            build();
     public static DataPackStatAccessor<EmptyAccessor> MANA_COST = DatapackStatBuilder
             .ofSingle("mana_cost", Elements.Physical)
             .worksWithEvent(SpellStatsCalculationEvent.ID)
@@ -262,6 +294,21 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.totem))
             .addEffect(StatEffects.DURATION_INCREASE)
             .setLocName(x -> "Totem Duration")
+            .setLocDesc(x -> "")
+            .modifyAfterDone(x -> {
+                x.is_perc = true;
+                x.format = ChatFormatting.GREEN.getName();
+            })
+
+            .build();
+    public static DataPackStatAccessor<EmptyAccessor> BANNER_DURATION = DatapackStatBuilder
+            .ofSingle("banner_duration", Elements.Physical)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.banner))
+            .addEffect(StatEffects.DURATION_INCREASE)
+            .setLocName(x -> "Banner Duration")
             .setLocDesc(x -> "")
             .modifyAfterDone(x -> {
                 x.is_perc = true;

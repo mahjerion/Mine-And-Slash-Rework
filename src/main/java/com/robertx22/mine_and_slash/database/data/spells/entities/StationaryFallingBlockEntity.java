@@ -69,6 +69,7 @@ public class StationaryFallingBlockEntity extends FallingBlockEntity implements 
     private static final EntityDataAccessor<CompoundTag> SPELL_DATA = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<String> ENTITY_NAME = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> BLOCK = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> LIMIT_GROUP = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Boolean> IS_FALLING = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Float> FALL_SPEED = SynchedEntityData.defineId(StationaryFallingBlockEntity.class, EntityDataSerializers.FLOAT);
 
@@ -184,6 +185,7 @@ public class StationaryFallingBlockEntity extends FallingBlockEntity implements 
         this.entityData.define(SPELL_DATA, new CompoundTag());
         this.entityData.define(ENTITY_NAME, "");
         this.entityData.define(BLOCK, "");
+        this.entityData.define(LIMIT_GROUP, "");
         this.entityData.define(IS_FALLING, false);
         this.entityData.define(FALL_SPEED, -0.04F);
         super.defineSynchedData();
@@ -195,6 +197,14 @@ public class StationaryFallingBlockEntity extends FallingBlockEntity implements 
 
     public String getEntityName() {
         return entityData.get(ENTITY_NAME);
+    }
+
+    public String getLimitGroup() {
+        return entityData.get(LIMIT_GROUP);
+    }
+
+    public String getCasterUuid() {
+        return getSpellData() != null ? getSpellData().caster_uuid : "";
     }
 
     @Override
@@ -213,6 +223,7 @@ public class StationaryFallingBlockEntity extends FallingBlockEntity implements 
         entityData.set(SPELL_DATA, nbt);
         entityData.set(ENTITY_NAME, holder.get(MapField.ENTITY_NAME));
         entityData.set(BLOCK, holder.get(MapField.BLOCK));
+        entityData.set(LIMIT_GROUP, holder.getOrDefault(MapField.SUMMON_LIMIT_GROUP, ""));
         entityData.set(FALL_SPEED, holder.getOrDefault(MapField.BLOCK_FALL_SPEED, -0.04D)
                 .floatValue());
 

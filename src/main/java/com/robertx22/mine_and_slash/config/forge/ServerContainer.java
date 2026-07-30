@@ -100,6 +100,15 @@ public class ServerContainer {
         OMEN_DROPRATE = b.defineInRange("OMEN_DROPRATE", 0.1D, 0, 1000);
         MAP_DROPRATE = b.defineInRange("MAP_DROPRATE", 1D, 0, 1000);
 
+        MAP_TIER_DROP_FALLOFF = b.comment("Maps dropped inside a map can't roll lower than the run's tier minus this.")
+                .defineInRange("MAP_TIER_DROP_FALLOFF", 5, 0, 100);
+        MAP_TIER_DROP_RISE = b.comment("How far above the run's tier a dropped map's floor can reach.")
+                .defineInRange("MAP_TIER_DROP_RISE", 1, 0, 100);
+        MAP_BOSS_TIER_FALLOFF = b.comment("Same as MAP_TIER_DROP_FALLOFF, for the map boss's reward map. 0 means never below the run's tier.")
+                .defineInRange("MAP_BOSS_TIER_FALLOFF", 0, 0, 100);
+        MAP_BOSS_TIER_RISE = b.comment("How far above the run's tier the map boss's reward map can reach. This is the main tier progression rate.")
+                .defineInRange("MAP_BOSS_TIER_RISE", 3, 0, 100);
+
 
         BLOCK_COST = b.defineInRange("block_cost", 0.25D, 0, 1000);
 
@@ -330,6 +339,11 @@ public class ServerContainer {
     public ForgeConfigSpec.DoubleValue PROPHECY_COIN_DROPRATE;
     public ForgeConfigSpec.DoubleValue OMEN_DROPRATE;
     public ForgeConfigSpec.DoubleValue MAP_DROPRATE;
+
+    public ForgeConfigSpec.IntValue MAP_TIER_DROP_FALLOFF;
+    public ForgeConfigSpec.IntValue MAP_TIER_DROP_RISE;
+    public ForgeConfigSpec.IntValue MAP_BOSS_TIER_FALLOFF;
+    public ForgeConfigSpec.IntValue MAP_BOSS_TIER_RISE;
 
     public ForgeConfigSpec.IntValue PROPHECY_GEAR_TYPE_CHANCE;
     public ForgeConfigSpec.IntValue PROPHECY_JEWEL_RARITY_CHANCE;

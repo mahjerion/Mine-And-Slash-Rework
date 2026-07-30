@@ -156,6 +156,10 @@ public class DungeonAddonEvents {
                 // fall back to the dummy level-1 context when there's no player to roll for.
                 LootInfo info = event.player != null ? LootInfo.ofPlayer(event.player) : LootInfo.ofLevel(1);
                 MapBlueprint b = new MapBlueprint(info);
+                // this runs on a fresh blueprint, so the caller's intent only reaches createData()
+                // through the settings object. Defaults to no inheritance if nobody opted in.
+                b.inheritMapTier = event.settings.inheritMapTier;
+                b.fromMapBoss = event.settings.fromMapBoss;
                 StackSaving.MAP.saveTo(event.mapStack, b.createData());
             }
         });

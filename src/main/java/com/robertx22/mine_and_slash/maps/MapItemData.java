@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -26,6 +27,7 @@ import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRequirem
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
@@ -70,12 +72,54 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
 
         this.rar = rar.GUID();
 
-        // todo make it so only affixes that are added or removed are changed
-        MapBlueprint.genAffixes(this, rar);
+        // only the affixes that need adding or removing change - upgrading a Rare map with three
+        // affixes you liked used to hand back an Epic with four completely different ones.
+        MapBlueprint.reconcileAffixes(this, rar);
 
-        tier = getRarity().map_tiers.random();
+        // rarity bands are contiguous and an upgrade always moves up a band, so the new roll is
+        // already >= the old tier. max() only guards datapacks that define overlapping bands.
+        tier = Math.max(tier, getRarity().map_tiers.random());
         uuid = UUID.randomUUID().toString();
 
+    }
+
+    // The highest tier any map can reach. No explicit cap exists - 100 is emergent from the top
+    // rarity's band - so derive it, and a datapack that extends the rarity ladder extends the ceiling.
+    public static int maxMapTier() {
+        return ExileDB.GearRarities().getFilterWrapped(x -> x.type == GearRarityType.NORMAL).list
+                .stream()
+                .mapToInt(x -> x.map_tiers.max)
+                .max()
+                .orElse(100);
+    }
+
+    // The rarity whose band contains this tier. Must filter to NORMAL - the same predicate
+    // GearRarityPart uses for maps - because Unique and Runeword keep the default 0-100 map_tiers
+    // and would otherwise match every tier.
+    public static GearRarity rarityForTier(int tier) {
+
+        GearRarity best = null;
+
+        for (GearRarity r : ExileDB.GearRarities().getFilterWrapped(x -> x.type == GearRarityType.NORMAL).list) {
+            if (r.map_tiers.min > tier) {
+                continue;
+            }
+            if (best == null || r.map_tiers.min > best.map_tiers.min
+                    || (r.map_tiers.min == best.map_tiers.min && r.item_tier > best.item_tier)) {
+                best = r;
+            }
+        }
+
+        return best == null ? ExileDB.GearRarities().get(IRarity.COMMON_ID) : best;
+    }
+
+    // Tier is the primary axis; rarity is re-derived from it. Everything that reads getRarity()
+    // (resist req, xp multi, affix count, omen difficulty, salvage) stays consistent with the tier.
+    // Deliberately does not touch uuid - that identifies the active run for the prophecy system.
+    public void setTier(int tier) {
+        this.tier = MathHelper.clamp(tier, 0, maxMapTier());
+        this.rar = rarityForTier(this.tier).GUID();
+        MapBlueprint.reconcileAffixes(this, getRarity());
     }
 
 

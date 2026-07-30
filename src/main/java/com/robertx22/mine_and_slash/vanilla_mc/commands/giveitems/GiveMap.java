@@ -33,12 +33,19 @@ public class GiveMap {
                                                         "rarity", StringArgumentType.string()).suggests(new GearRaritySuggestions())
                                                         .then(argument("amount", IntegerArgumentType.integer(1, 5000)).executes(e -> execute(
                                                                 e.getSource(), EntityArgument.getPlayer(e, "target"), IntegerArgumentType.getInteger(e, "level"), StringArgumentType.getString(e, "rarity"),
-                                                                IntegerArgumentType.getInteger(e, "amount")
-                                                        )))))))));
+                                                                IntegerArgumentType.getInteger(e, "amount"), -1
+                                                        ))
+                                                                // optional trailing tier: the only way to get a specific high tier
+                                                                // for testing, since tier is otherwise rolled. Overrides the rarity
+                                                                // argument, because rarity is derived from tier.
+                                                                .then(argument("tier", IntegerArgumentType.integer(0, 100)).executes(e -> execute(
+                                                                        e.getSource(), EntityArgument.getPlayer(e, "target"), IntegerArgumentType.getInteger(e, "level"), StringArgumentType.getString(e, "rarity"),
+                                                                        IntegerArgumentType.getInteger(e, "amount"), IntegerArgumentType.getInteger(e, "tier")
+                                                                ))))))))));
     }
 
     private static int execute(CommandSourceStack commandSource, Player player, int lvl,
-                               String rarity, int amount) {
+                               String rarity, int amount, int tier) {
 
 
         if (Objects.isNull(player)) {
@@ -62,7 +69,13 @@ public class GiveMap {
                         .get(rarity));
             }
 
-            StackSaving.MAP.saveTo(mapStack, b.createData());
+            var data = b.createData();
+
+            if (tier >= 0) {
+                data.setTier(tier);
+            }
+
+            StackSaving.MAP.saveTo(mapStack, data);
             PlayerUtils.giveItem(mapStack, player);
         }
 

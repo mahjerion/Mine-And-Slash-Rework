@@ -56,6 +56,9 @@ public class MapCreator extends AutoItem implements IShapedRecipe {
             SoundUtils.playSound(p, SoundEvents.ITEM_PICKUP);
 
             MapBlueprint map = new MapBlueprint(LootInfo.ofPlayer(p));
+            // a crafted item must not buy you tier - otherwise you'd right-click these inside a T90
+            // map to mint T80+ maps on demand.
+            map.inheritMapTier = false;
             map.level.set(Load.Unit(p).getLevel());
             var stack = map.createStack();
             PlayerUtils.giveItem(stack, p);

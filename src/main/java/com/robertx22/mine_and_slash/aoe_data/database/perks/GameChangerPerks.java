@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.perks;
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
@@ -15,6 +16,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.Bl
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.HealthRestorationToBlood;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
+import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.ChaosDoesntBypassMagicShield;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShield;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldHeal;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
@@ -30,12 +32,13 @@ public class GameChangerPerks implements ExileRegistryInit {
 
 
         PerkBuilder.gameChanger("summoner", "Summoner",
-                new OptScaleExactStat(3, SpellChangeStats.MAX_SUMMON_CAPACITY.get(), ModType.FLAT),
+                new OptScaleExactStat(3, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.UNDEAD), ModType.FLAT),
                 new OptScaleExactStat(50, OffenseStats.SUMMON_DAMAGE.get(), ModType.MORE),
                 new OptScaleExactStat(-25, OffenseStats.TOTAL_DAMAGE.get(), ModType.MORE)
         );
 
         PerkBuilder.gameChanger("ms_all_in", "Stare of Abyss",
+                new OptScaleExactStat(1, ChaosDoesntBypassMagicShield.getInstance(), ModType.FLAT),
                 new OptScaleExactStat(-100, Health.getInstance(), ModType.MORE),
                 new OptScaleExactStat(30, MagicShield.getInstance(), ModType.MORE),
                 new OptScaleExactStat(50, new ElementalResist(Elements.Shadow), ModType.MORE)

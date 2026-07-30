@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.EffectStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.data.StatMod;
@@ -59,7 +60,7 @@ public class ImplicitAffixes implements ExileRegistryInit {
         new Builder(SlotTags.CLOTH_HELMET).build(x -> {
             x.add("lunaris_circlet", "Lunaris Circlet", 200, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Cold).mod(3, 6));
             x.add("mind_cage", "Mind Cage", Mana.getInstance().mod(10, 20));
-            x.add("necro_helmet", "Necromancer Helm", 100, SpellChangeStats.MAX_SUMMON_CAPACITY.get().mod(1, 1));
+            x.add("necro_helmet", "Necromancer Helm", 100, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.UNDEAD).mod(1, 1));
             x.add("bone_helm", "Bone Circlet", OffenseStats.SUMMON_DAMAGE.get().mod(3, 6));
             x.add("golden_crown", "Golden Crown", new ElementalResist(Elements.Physical).mod(2, 4));
         });

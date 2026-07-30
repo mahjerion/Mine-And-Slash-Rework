@@ -55,15 +55,20 @@ public class MagicShield extends Stat {
     }
 
 
-    public static float modifyEntityDamage(DamageEvent effect, float dmg) {
+    // half of chaos damage ignores magic shield and is dealt straight to health. poison is a chaos
+    // ailment so it bypasses too. ChaosDoesntBypassMagicShield turns this off for the target.
+    public static float CHAOS_BYPASS_PERCENT = 50;
+
+    public static float modifyEntityDamage(DamageEvent effect, DamageEvent.DmgByElement info, float dmg) {
 
 
         float current = effect.targetData.getResources().getMagicShield();
 
         if (current > 0) {
 
+            float bypassing = getChaosDamageBypassingShield(effect, info, dmg);
 
-            float dmgReduced = Mth.clamp(dmg, 0, current);
+            float dmgReduced = Mth.clamp(dmg - bypassing, 0, current);
 
             if (dmgReduced > 0) {
 
@@ -85,6 +90,30 @@ public class MagicShield extends Stat {
 
         }
         return dmg;
+    }
+
+    // the shield is applied to the combined damage of every element at once, so the chaos part has to
+    // be pulled back out of it. dmg can already be lower than the event's total (mana absorb runs
+    // first), so scale by the chaos share of the total instead of using the raw chaos number.
+    private static float getChaosDamageBypassingShield(DamageEvent effect, DamageEvent.DmgByElement info, float dmg) {
+
+        if (CHAOS_BYPASS_PERCENT <= 0 || dmg <= 0 || info == null || info.totalDmg <= 0) {
+            return 0;
+        }
+
+        if (effect.targetData.getUnit()
+                .getCalculatedStat(ChaosDoesntBypassMagicShield.getInstance())
+                .getValue() > 0) {
+            return 0;
+        }
+
+        float chaos = info.getDmgmap().getOrDefault(Elements.Shadow, 0F);
+
+        if (chaos <= 0) {
+            return 0;
+        }
+
+        return dmg * (chaos / info.totalDmg) * (CHAOS_BYPASS_PERCENT / 100F);
     }
 
     private static class SingletonHolder {

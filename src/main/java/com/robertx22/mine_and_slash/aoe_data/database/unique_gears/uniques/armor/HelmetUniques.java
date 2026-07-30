@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.unique_gears.uniques.armo
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.base_gear_types.BaseGearTypes;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.SpellChangeStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.aoe_data.database.unique_gears.UniqueGearBuilder;
@@ -68,7 +69,7 @@ public class HelmetUniques implements ExileRegistryInit {
                         new StatMod(10, 25, AuraCapacity.getInstance(), ModType.FLAT),
                         new StatMod(10, 10, AuraEffect.getInstance(), ModType.FLAT),
                         new StatMod(5, 15, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.beast), ModType.FLAT),
-                        new StatMod(1, 1, SpellChangeStats.MAX_SUMMON_CAPACITY.get(), ModType.FLAT)
+                        new StatMod(1, 1, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.BEAST), ModType.FLAT)
                 ))
                 .build();
 

@@ -118,7 +118,7 @@ public class SummonSpells implements ExileRegistryInit {
 
         SpellBuilder.of(SUMMON_SPIDER, PlayStyle.INT, SpellConfiguration.Builder.instant(15, 1)
                                 .setSummonBasicAttack(PetSpells.SPIDER)
-                                .setChargesAndRegen("spider", 3, 20 * 15).setSummonType(SummonType.UNDEAD)
+                                .setChargesAndRegen("spider", 3, 20 * 15).setSummonType(SummonType.SPIDER)
                                 .setSummonAggroRadius(15), "Summon Spider",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.has_pet_ability, SpellTags.CHAOS))
                 .manualDesc("Summon a fast moving spider to aid you in combat.")
@@ -138,7 +138,8 @@ public class SummonSpells implements ExileRegistryInit {
                 .manualDesc("Summon Skeleton to fight for you using ranged attacks.")
                 .animations(SpellAnimations.STAFF_CAST_WAVE_LOOP, SpellAnimations.CAST_FINISH)
 
-                .summons(SlashEntities.SKELETON.get(), 20 * 60 * 3, 1, SummonType.UNDEAD)
+                // undead, but a burst summon limited by duration and cooldown instead of the undead cap
+                .summons(SlashEntities.SKELETON.get(), 20 * 60 * 3, 1, SummonType.UNDEAD, false)
                 .levelReq(30)
                 .addStat(OffenseStats.SUMMON_DAMAGE.get().mod(10, 150))
                 .addStat(new SummonHealth().mod(10, 100))

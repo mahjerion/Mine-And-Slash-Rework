@@ -106,8 +106,9 @@ public class MapField<T> implements IGUID {
     public static MapField<Boolean> IGNORE_Y = make("ignore_y");
     public static MapField<Boolean> TRACKS_ENEMIES = make("tracks_enemies");
     public static MapField<Boolean> DISABLE_KNOCKBACK = make("disable_knockback");
-    public static MapField<Boolean> COUNTS_TOWARDS_MAX_SUMMONS = make("counts_towards_max_summons");
     public static MapField<Boolean> ALLOW_SELF_DAMAGE = make("allow_self_damage");
+    // a summon can keep its summon type without occupying one of that type's cap slots
+    public static MapField<Boolean> COUNTS_TOWARDS_MAX_SUMMONS = make("counts_towards_max_summons");
 
     public static MapField<List<String>> ENTITY_PREDICATES = make("entity_predicates");
 

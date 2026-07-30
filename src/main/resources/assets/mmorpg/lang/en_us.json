@@ -1131,6 +1131,7 @@
 	"mmorpg.stat.chaos_damage_aura_cost": "\u00A77Chaos Damage Augment Cost",
 	"mmorpg.stat.chaos_dmg_reduction": "Chaos Damage Reduction",
 	"mmorpg.stat.chaos_dmg_when_target_low_hp": "\u00A77Execute targets below 30% health, dealing \u00A7a[VAL1]%\u00A77 increased  \u00A75\u2600 Chaos\u00A77",
+	"mmorpg.stat.chaos_doesnt_bypass_magic_shield": "\u00A77\u00A75\u2600 Chaos\u00A77 Damage no longer bypasses \u00A7d\u2764 Magic Shield\u00A77",
 	"mmorpg.stat.chaos_dot_damage": "Chaos Damage Over Time",
 	"mmorpg.stat.chaos_health_leech": "\u00A77Leech \u00A7a[VAL1]%\u00A77 of your \u00A75\u2600 Chaos\u00A77 Damage as Health",
 	"mmorpg.stat.chaos_mana_leech": "\u00A77Leech \u00A7a[VAL1]%\u00A77 of your \u00A75\u2600 Chaos\u00A77 Damage as Mana",
@@ -1537,18 +1538,21 @@
 	"mmorpg.stat.map_rarity_bias": "Map Rarity",
 	"mmorpg.stat.max_all_resist": "Max  Resistance",
 	"mmorpg.stat.max_banners": "Maximum Banners",
+	"mmorpg.stat.max_beast_summons": "Maximum Beast Summons",
 	"mmorpg.stat.max_chaos_resist": "Max Chaos Resistance",
 	"mmorpg.stat.max_charm_charges": "Maximum Charm Stacks",
 	"mmorpg.stat.max_elemental_resist": "Max Elemental Resistance",
 	"mmorpg.stat.max_endurance_charge_charges": "Maximum Endurance Charge Stacks",
 	"mmorpg.stat.max_fire_resist": "Max Fire Resistance",
 	"mmorpg.stat.max_frenzy_charge_charges": "Maximum Frenzy Charge Stacks",
+	"mmorpg.stat.max_golem_summons": "Maximum Golem Summons",
 	"mmorpg.stat.max_lightning_resist": "Max Lightning Resistance",
 	"mmorpg.stat.max_lightning_resist_per_1_max_fire_resist": "\u00A7a[VAL1] \u00A7e\u2600 Max Lightning Resistance\u00A77 per 1 \u00A7c\u2600 Max Fire Resistance\u00A77",
 	"mmorpg.stat.max_physical_resist": "Max Physical Resistance",
 	"mmorpg.stat.max_power_charge_charges": "Maximum Power Charge Stacks",
-	"mmorpg.stat.max_total_summons": "Maximum Summons",
+	"mmorpg.stat.max_spider_summons": "Maximum Spider Summons",
 	"mmorpg.stat.max_totems": "Maximum Totems",
+	"mmorpg.stat.max_undead_summons": "Maximum Undead Summons",
 	"mmorpg.stat.max_water_resist": "Max Cold Resistance",
 	"mmorpg.stat.max_water_resist_per_1_max_fire_resist": "\u00A7a[VAL1] \u00A7b\u2600 Max Cold Resistance\u00A77 per 1 \u00A7c\u2600 Max Fire Resistance\u00A77",
 	"mmorpg.stat.melee_cast_time": "Melee Cast Time",
@@ -1947,22 +1951,6 @@
 "_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
-	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
-	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
-	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
-	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
-	"mmorpg.stat_priority.first": "FIRST",
-	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
-	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
-
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
@@ -1977,6 +1965,22 @@
 	"item.mmorpg.weapon.staff.wood": "Staff",
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
+	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
+	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
+	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
+	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
+	"mmorpg.stat_priority.first": "FIRST",
+	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
+	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",
@@ -2930,6 +2934,7 @@
 	"mmorpg.word.shift_to_show_effect": "Press [Shift] to Show Status Effect info.",
 	"mmorpg.word.skillgem": "Skill Gem",
 	"mmorpg.word.softcapinfo": "This is the maximum possible value of this stat unless it's modified by for example Max X Resistance stat.",
+	"mmorpg.word.solo_class_bonus": "Solo Class Bonus: +%1$s%% More Damage, +%2$s%% Damage Reduction",
 	"mmorpg.word.soul": "Soul",
 	"mmorpg.word.soulless_gear": "Soul-less Gear",
 	"mmorpg.word.soulless_gear_desc": "Armor, jewelry or weapon item that does not have Mine and Slash stats yet.",
@@ -2997,18 +3002,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -3021,6 +3014,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3183,6 +3188,7 @@
 	"mmorpg.stat_desc.chaos_cast_time": "Reduces cast time of spells with this tag",
 	"mmorpg.stat_desc.chaos_cdr": "Reduces spell cooldown of spells with the tag.",
 	"mmorpg.stat_desc.chaos_dmg_when_target_low_hp": "Low hp is 30% or less.",
+	"mmorpg.stat_desc.chaos_doesnt_bypass_magic_shield": "Normally 50% of Chaos Damage ignores Magic Shield and is dealt straight to Health. Poison counts as Chaos Damage.",
 	"mmorpg.stat_desc.chaos_dot_damage": "Fire damage over time increases damage of burn, for example.",
 	"mmorpg.stat_desc.chaos_spell_dmg": "Increases damage of spells with this tag. Totem Damage increases dmg of totems, etc.",
 	"mmorpg.stat_desc.cold_cast_time": "Reduces cast time of spells with this tag",
@@ -3379,13 +3385,16 @@
 	"mmorpg.stat_desc.map_find": "Increases chance to find Maps.",
 	"mmorpg.stat_desc.map_rarity_bias": "Increases the chance for dropped Maps to be of a higher rarity.",
 	"mmorpg.stat_desc.max_banners": "You can have more banners planted at once.",
+	"mmorpg.stat_desc.max_beast_summons": "You can have more Beast minions active at once.",
 	"mmorpg.stat_desc.max_charm_charges": "Increases the amount of charges or stacks an effect can have.",
 	"mmorpg.stat_desc.max_ele_resist": "Adds element resist above the 75% cap (max 90%)",
 	"mmorpg.stat_desc.max_endurance_charge_charges": "Increases the amount of charges or stacks an effect can have.",
 	"mmorpg.stat_desc.max_frenzy_charge_charges": "Increases the amount of charges or stacks an effect can have.",
+	"mmorpg.stat_desc.max_golem_summons": "You can have more Golem minions active at once.",
 	"mmorpg.stat_desc.max_power_charge_charges": "Increases the amount of charges or stacks an effect can have.",
-	"mmorpg.stat_desc.max_total_summons": "You can summon more minions.",
+	"mmorpg.stat_desc.max_spider_summons": "You can have more Spider minions active at once.",
 	"mmorpg.stat_desc.max_totems": "You can have more totems active at once.",
+	"mmorpg.stat_desc.max_undead_summons": "You can have more Undead minions active at once.",
 	"mmorpg.stat_desc.melee_cast_time": "Reduces cast time of spells with this tag",
 	"mmorpg.stat_desc.melee_cdr": "Reduces spell cooldown of spells with the tag.",
 	"mmorpg.stat_desc.melee_spell_dmg": "Increases damage of spells with this tag. Totem Damage increases dmg of totems, etc.",

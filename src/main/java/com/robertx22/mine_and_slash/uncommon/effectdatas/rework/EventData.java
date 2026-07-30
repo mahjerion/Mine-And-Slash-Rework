@@ -21,7 +21,7 @@ public class EventData {
     public static String ITEM_ID = "item_id";
     public static String IS_SUMMON_ATTACK = "is_summon_attack";
     public static String IS_BONUS_ELEMENT_DAMAGE = "is_bonus_element_damage";
-    //public static String BONUS_MAX_SUMMONS = "bonus_max_summons";
+    // the max summon cap of the SUMMON_TYPE of the spell being cast, every max_x_summons stat adds into this
     public static String BONUS_TOTAL_SUMMONS = "bonus_total_summons";
     public static String MAX_TOTEMS = "max_totems";
     public static String MAX_BANNERS = "max_banners";

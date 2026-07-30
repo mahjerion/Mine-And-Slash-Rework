@@ -84,7 +84,7 @@ public class DefenseStats {
                 x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.Misc;
                 x.min = -500;
-                x.max = 50;
+                x.max = 75;
             })
             .build();
 
@@ -101,7 +101,7 @@ public class DefenseStats {
                 x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.Misc;
                 x.min = -500;
-                x.max = 50;
+                x.max = 75;
             })
             .build();
 

@@ -636,7 +636,7 @@ public class DamageEvent extends EffectEvent {
         if (target instanceof Player p) { // todo this code sucks
             // a getter should not modify anything
             dmg = DamageAbsorbedByMana.modifyEntityDamage(this, dmg);
-            dmg = MagicShield.modifyEntityDamage(this, dmg);
+            dmg = MagicShield.modifyEntityDamage(this, info, dmg);
         }
 
         float vanillaDamage = HealthUtils.realToVanilla(target, dmg);

@@ -73,8 +73,10 @@ public class SummonPetAction extends SpellAction {
             ctx.world.addFreshEntity(en);
         }
 
-        int totalSummons = (int) ctx.calculatedSpellData.data.getNumber(EventData.BONUS_TOTAL_SUMMONS, 0).number;
-        updatePlayerSummons(ctx.caster, totalSummons, ctx.calculatedSpellData.spell_id);
+        // BONUS_TOTAL_SUMMONS is the cap of this spell's summon type, the max_x_summons stats are
+        // conditioned on EventData.SUMMON_TYPE so only the matching type's stats added into it
+        int typeCap = (int) ctx.calculatedSpellData.data.getNumber(EventData.BONUS_TOTAL_SUMMONS, 0).number;
+        updatePlayerSummons(ctx.caster, ctx.calculatedSpellData.getSpell().config.summonType, typeCap);
     }
 
     private static int getDuration(SpellCtx ctx, MapHolder data) {
@@ -86,9 +88,9 @@ public class SummonPetAction extends SpellAction {
         return (int) (duration * ctx.calculatedSpellData.data.getNumber(EventData.DURATION_MULTI, 1).number);
     }
 
-    public static void updatePlayerSummons(LivingEntity caster, int totalSummons, String currentSummonSpell) {
+    public static void updatePlayerSummons(LivingEntity caster, SummonType cappedType, int typeCap) {
         ArrayList<NearbySummon> summonsNearby = new ArrayList<>();
-        int summonsTowardsMax = 0;
+        ArrayList<NearbySummon> ofCappedType = new ArrayList<>();
 
         for (SummonEntity en : EntityFinder.start(caster, SummonEntity.class, caster.blockPosition()).searchFor(AllyOrEnemy.all).radius(100).build()) {
             if (en.getOwner() != caster) {
@@ -96,40 +98,43 @@ public class SummonPetAction extends SpellAction {
             }
 
             var data = Load.Unit(en).summonedPetData;
+            var nearby = new NearbySummon(en, data);
 
-            if (data.counts_towards_max_summons) {
-                summonsTowardsMax++;
+            summonsNearby.add(nearby);
+
+            // a summon can be of the capped type but exempt from it, ie burst summons
+            // limited by their duration and cooldown instead of by a cap slot
+            if (data.counts_towards_max_summons && data.getSummonType() == cappedType) {
+                ofCappedType.add(nearby);
             }
-
-            summonsNearby.add(new NearbySummon(en, data));
         }
 
-        summonsNearby.sort(Comparator.comparingInt(x -> -x.summon.tickCount)); // todo this needs to be from highest to lowest age
+        Set<String> spellsOfDiscarded = new HashSet<>();
 
-        int excess = summonsTowardsMax - totalSummons;
-        for (int i = 0; excess > 0 && i < summonsNearby.size(); i++) {
-            NearbySummon summonToRemove = summonsNearby.get(i);
-            if (!summonToRemove.data.counts_towards_max_summons) {
-                continue;
+        if (cappedType != SummonType.NONE) { // summons without a type are uncapped
+            ofCappedType.sort(Comparator.comparingInt(x -> -x.summon.tickCount)); // oldest first
+
+            int excess = ofCappedType.size() - typeCap;
+            for (int i = 0; i < excess && i < ofCappedType.size(); i++) {
+                NearbySummon summonToRemove = ofCappedType.get(i);
+                spellsOfDiscarded.add(summonToRemove.data.spell);
+                summonToRemove.data.discard(summonToRemove.summon);
+                summonsNearby.remove(summonToRemove);
             }
-            summonToRemove.data.discard(summonToRemove.summon);
-            summonsNearby.remove(i);
-            excess--;
-            i--;
         }
-        summonsNearby.trimToSize();
 
         HashMap<String, List<UUID>> summonedTypes = new HashMap<>();
-        for (int i = 0; i < summonsNearby.size(); i++) {
-            var summonToRemove = summonsNearby.get(i);
-            if (!summonedTypes.containsKey(summonToRemove.data.spell)) {
-                summonedTypes.put(summonToRemove.data.spell, new ArrayList<>());
-            }
-            summonedTypes.get(summonToRemove.data.spell).add(summonToRemove.summon.getUUID());
+        for (NearbySummon summon : summonsNearby) {
+            summonedTypes.computeIfAbsent(summon.data.spell, x -> new ArrayList<>()).add(summon.summon.getUUID());
         }
 
         if (!(caster instanceof Player player)) {
             return;
+        }
+
+        // a spell whose last summon was just discarded has no survivors left to rebuild its entry from
+        for (String spell : spellsOfDiscarded) {
+            summonedTypes.putIfAbsent(spell, new ArrayList<>());
         }
 
         summonedTypes.forEach((spell, summons) -> Load.player(player).setSummons(spell, summons));
@@ -137,7 +142,7 @@ public class SummonPetAction extends SpellAction {
 
     public MapHolder create(EntityType type, int lifespan, int amount, SummonType st, boolean counts) {
         MapHolder c = new MapHolder();
-        c.put(MapField.SUMMON_TYPE, st.name());
+        c.put(MapField.SUMMON_TYPE, st.id);
         c.put(MapField.SUMMONED_PET_ID, EntityType.getKey(type).toString());
         c.put(MapField.ENTITY_NAME, Spell.DEFAULT_EN_NAME);
         c.put(MapField.LIFESPAN_TICKS, (double) lifespan);

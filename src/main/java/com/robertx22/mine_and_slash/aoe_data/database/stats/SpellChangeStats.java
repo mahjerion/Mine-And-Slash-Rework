@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.stats;
 
 import com.robertx22.mine_and_slash.aoe_data.database.stat_conditions.StatConditions;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_effects.StatEffects;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.DatapackStatBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EmptyAccessor;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGems;
@@ -32,20 +33,22 @@ public class SpellChangeStats {
                 x.minus_is_good = true;
             })
             .build();
-    public static DataPackStatAccessor MAX_SUMMON_CAPACITY = DatapackStatBuilder
-            .ofSingle("max_total_summons", Elements.ALL)
+    public static DataPackStatAccessor<SummonType> MAX_SUMMONS_PER_TYPE = DatapackStatBuilder
+            .<SummonType>of(x -> "max_" + x.id + "_summons", x -> Elements.ALL)
+            .addAllOfType(SummonType.getCapped())
             .worksWithEvent(SpellStatsCalculationEvent.ID)
             .setPriority(StatPriority.Spell.FIRST)
             .setSide(EffectSides.Source)
+            .addCondition(x -> StatConditions.IS_SUMMON_TYPE.get(x))
             .addEffect(StatEffects.ADD_TOTAL_SUMMONS)
-            .setLocName(x -> "Maximum Summons")
-            .setLocDesc(x -> "You can summon more minions.")
+            .setLocName(x -> "Maximum " + x.name + " Summons")
+            .setLocDesc(x -> "You can have more " + x.name + " minions active at once.")
             .modifyAfterDone(x ->
             {
                 x.is_perc = false;
                 x.base = 0;
                 x.min = 0;
-                x.max = 10;
+                x.max = 20;
             }).
             build();
     public static DataPackStatAccessor MAX_TOTEM_CAPACITY = DatapackStatBuilder

@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.event_hooks.ontick;
 
 import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
+import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.omen.OmenData;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -47,6 +48,19 @@ public class UnequipGear {
         // player.onEquipItem(slot, old, copy); // todo will this fix modded items leaving effects?
     }
 
+    // armor/jewelry just carried in a hand isn't equipped and gives no stats, so don't drop it
+    static boolean isEquippedInSlot(GearItemData gear, EquipmentSlot slot) {
+        if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) {
+            return true;
+        }
+        BaseGearType type = gear.GetBaseGearType();
+
+        if (slot == EquipmentSlot.OFFHAND) {
+            return type.isWeapon() || type.isOffhand();
+        }
+        return type.isWeapon();
+    }
+
     static void drop(Player player, ICurioStacksHandler handler, int number, ItemStack stack, MutableComponent txt) {
         ItemStack copy = stack.copy();
         handler.getStacks().setStackInSlot(number, ItemStack.EMPTY);
@@ -62,7 +76,7 @@ public class UnequipGear {
 
             GearItemData gear = StackSaving.GEARS.loadFrom(stack);
 
-            if (gear != null) {
+            if (gear != null && isEquippedInSlot(gear, slot)) {
                 if (!gear.canPlayerWear(Load.Unit(player))) {
                     drop(player, slot, stack, Chats.GEAR_DROP.locName().withStyle(ChatFormatting.RED));
                 }

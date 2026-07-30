@@ -85,7 +85,7 @@ public class MapHolder {
     }
 
     public SummonType getSummonType() {
-        return SummonType.valueOf(get(MapField.SUMMON_TYPE));
+        return SummonType.fromId(get(MapField.SUMMON_TYPE));
     }
 
     public DashUtils.Way getPushWay() {

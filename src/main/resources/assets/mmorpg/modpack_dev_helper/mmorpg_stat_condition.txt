@@ -165,7 +165,6 @@ summon_type_is_beast
 summon_type_is_golem
 summon_type_is_none
 summon_type_is_spider
-summon_type_is_total
 summon_type_is_undead
 threat_gen_type_is_deal_dmg
 threat_gen_type_is_heal

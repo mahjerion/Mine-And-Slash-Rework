@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.screens.spell;
 
+import com.robertx22.library_of_exile.utils.GuiUtils;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
@@ -10,9 +11,11 @@ import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.gui.screens.ILeftRight;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -121,8 +124,8 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         addRenderableWidget(new LeftRightButton(this, guiLeft + 100 - LeftRightButton.xSize - 5, guiTop + 25 - LeftRightButton.ySize / 2, true));
         addRenderableWidget(new LeftRightButton(this, guiLeft + 150 + 5, guiTop + 25 - LeftRightButton.ySize / 2, false));
 
-        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 8, guiTop + 206));
-        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.PASSIVES, guiLeft + 148, guiTop + 206));
+        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 9, guiTop + 208));
+        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.PASSIVES, guiLeft + 148, guiTop + 208));
 
         currentSchool().perks.entrySet()
                 .forEach(e -> {
@@ -181,6 +184,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
 
         super.render(gui, x, y, ticks);
 
+        renderSoloClassBonus(gui);
 
         /*
         String txt = Gui.SPELL_POINTS.locName().append(String.valueOf(PlayerPointsType.SPELLS.getFreePoints(mc.player))).getString();
@@ -192,6 +196,19 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
          */
         //buttons.forEach(b -> b.renderToolTip(matrix, x, y));
 
+    }
+
+    // sits above the window, points can be spent while the screen is open so this is checked every frame
+    private void renderSoloClassBonus(GuiGraphics gui) {
+        if (!Load.player(mc.player).ascClass.isSoloClass()) {
+            return;
+        }
+        String txt = Words.SOLO_CLASS_BONUS.locName(
+                (int) SpellSchoolsData.SOLO_CLASS_MORE_DAMAGE,
+                (int) SpellSchoolsData.SOLO_CLASS_DAMAGE_REDUCTION
+        ).getString();
+
+        GuiUtils.renderScaledText(gui, guiLeft + sizeX / 2, guiTop - 20, 1, txt, ChatFormatting.GOLD);
     }
 
     @Override

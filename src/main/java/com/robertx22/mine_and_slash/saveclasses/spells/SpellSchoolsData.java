@@ -1,6 +1,8 @@
 package com.robertx22.mine_and_slash.saveclasses.spells;
 
 import com.robertx22.library_of_exile.util.ExplainedResult;
+import com.robertx22.mine_and_slash.aoe_data.database.stats.DefenseStats;
+import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.perks.Perk;
@@ -9,10 +11,12 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.events.MineAndSlashEvents;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.IStatCtx;
+import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.MiscStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +26,10 @@ import java.util.*;
 
 
 public class SpellSchoolsData implements IStatCtx {
+
+    // what a player gets for committing to a single class instead of taking a second one
+    public static final float SOLO_CLASS_MORE_DAMAGE = 10;
+    public static final float SOLO_CLASS_DAMAGE_REDUCTION = 5;
 
     public HashMap<String, Integer> allocated_lvls = new HashMap<>();
 
@@ -41,6 +49,28 @@ public class SpellSchoolsData implements IStatCtx {
             }
         }
         return list;
+    }
+
+    /**
+     * True while the player has points in exactly one class. Unlike school() this doesn't touch
+     * allocated_lvls and stops at the second class found, so it's cheap enough to call while rendering.
+     */
+    public boolean isSoloClass() {
+        Set<String> schools = new HashSet<>();
+
+        for (Map.Entry<String, Integer> en : allocated_lvls.entrySet()) {
+            if (en.getValue() < 1 || !ExileDB.Perks().isRegistered(en.getKey())) {
+                continue;
+            }
+            var sc = ExileDB.Perks().get(en.getKey()).getSpellSchool();
+            if (sc.isPresent()) {
+                schools.add(sc.get().GUID());
+                if (schools.size() > 1) {
+                    return false;
+                }
+            }
+        }
+        return schools.size() == 1;
     }
 
     /**
@@ -230,7 +260,18 @@ public class SpellSchoolsData implements IStatCtx {
                 }
             }
         }
-        return Arrays.asList(new SimpleStatCtx(StatContext.StatCtxType.PASSIVES, stats));
+        List<StatContext> ctx = new ArrayList<>();
+        ctx.add(new SimpleStatCtx(StatContext.StatCtxType.PASSIVES, stats));
+
+        // kept out of the PASSIVES ctx so nothing that scales passive stats picks it up
+        if (isSoloClass()) {
+            ctx.add(new MiscStatCtx(Arrays.asList(
+                    ExactStatData.noScaling(SOLO_CLASS_MORE_DAMAGE, ModType.MORE, OffenseStats.TOTAL_DAMAGE.get().GUID()),
+                    ExactStatData.noScaling(SOLO_CLASS_DAMAGE_REDUCTION, ModType.FLAT, DefenseStats.DAMAGE_REDUCTION.get().GUID())
+            )));
+        }
+
+        return ctx;
     }
 
 }

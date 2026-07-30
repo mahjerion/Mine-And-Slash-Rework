@@ -35,6 +35,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.E
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.EnergyRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
+import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.ChaosDoesntBypassMagicShield;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShield;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldHeal;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.MagicShieldRegen;
@@ -130,6 +131,7 @@ public class StatsRegister implements ExileRegistryInit {
                     add(MagicShield.getInstance());
                     add(MagicShieldRegen.getInstance());
                     add(MagicShieldHeal.getInstance());
+                    add(ChaosDoesntBypassMagicShield.getInstance());
 
                     add(SpellDodge.getInstance());
 

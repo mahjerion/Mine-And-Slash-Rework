@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.perks;
 
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
 import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEffects;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.*;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectAndCondition;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.LeechInfo;
@@ -142,7 +143,7 @@ public class AscendancyPerks {
                     new OptScaleExactStat(25, new AilmentDamage(Ailments.ELECTRIFY), ModType.MORE)
             );
             x.createPerk(3, "Army of Stone",
-                    new OptScaleExactStat(1, SpellChangeStats.MAX_SUMMON_CAPACITY.get(), ModType.FLAT),
+                    new OptScaleExactStat(1, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.GOLEM), ModType.FLAT),
                     new OptScaleExactStat(25, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.golem), ModType.FLAT)
             );
             x.createPerk(4, "Guidance of Stone",
@@ -246,7 +247,7 @@ public class AscendancyPerks {
             );
 
             x.createPerk(2, "Infinite Army",
-                    new OptScaleExactStat(3, SpellChangeStats.MAX_SUMMON_CAPACITY.get(), ModType.FLAT)
+                    new OptScaleExactStat(3, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.UNDEAD), ModType.FLAT)
             );
 
             x.createPerk(3, "Swift Death",

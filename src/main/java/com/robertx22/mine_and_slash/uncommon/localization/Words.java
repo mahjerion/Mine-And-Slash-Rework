@@ -27,6 +27,8 @@ public enum Words implements IAutoLocName {
     PICK_SLOT("Pick Slot"),
     ANY_ITEM("Any Matching Item"),
 
+    SOLO_CLASS_BONUS("Solo Class Bonus: +%1$s%% More Damage, +%2$s%% Damage Reduction"),
+
     TELEPORT_TO_BOSS("Enter Boss Arena!"),
     MAP_UPGRADE("Map Upgrading"),
 

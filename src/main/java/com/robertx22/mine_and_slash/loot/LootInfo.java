@@ -93,8 +93,12 @@ public class LootInfo {
 
     public static LootInfo ofPlayer(Player player) {
         LootInfo info = new LootInfo(LootOrigin.PLAYER);
+        info.player = player;
         info.world = player.level();
         info.pos = player.blockPosition();
+        // must be set before setupAllFields - that's what resolves playerEntityData from player,
+        // and without it every player-side stat on this path (map_rarity_bias in MapBlueprint,
+        // TreasureQuantity in gatherLootMultipliers) silently reads as zero.
         info.setupAllFields();
         return info;
     }

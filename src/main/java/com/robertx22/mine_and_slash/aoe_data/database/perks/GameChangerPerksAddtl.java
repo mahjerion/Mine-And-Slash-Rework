@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.aoe_data.database.perks;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
 import com.robertx22.mine_and_slash.aoe_data.database.ailments.Ailments;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.*;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.OptScaleExactStat;
@@ -61,7 +62,7 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
                 new OptScaleExactStat(50, SummonHealth.getInstance(), ModType.MORE),
                 new OptScaleExactStat(50, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.golem), ModType.MORE),
                 new OptScaleExactStat(25, GolemSpellChance.getInstance(), ModType.FLAT),
-                new OptScaleExactStat(-2, SpellChangeStats.MAX_SUMMON_CAPACITY.get(), ModType.FLAT)
+                new OptScaleExactStat(-2, SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(SummonType.UNDEAD), ModType.FLAT)
         );
 
         PerkBuilder.gameChanger("energy_claws", "Energy Claws",

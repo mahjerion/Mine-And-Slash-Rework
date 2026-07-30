@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.aoe_data.database.base_stats;
 
 import com.robertx22.library_of_exile.registry.ExileRegistryInit;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.DefenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.OffenseStats;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.ResourceStats;
@@ -70,7 +71,9 @@ public class BaseStatsAdder implements ExileRegistryInit {
         c.scaled(ManaRegen.getInstance(), 3);
         c.scaled(EnergyRegen.getInstance(), 5);
 
-        c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
+        for (SummonType t : SummonType.getCapped()) {
+            c.nonScaled(SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(t), t.maxSummons);
+        }
         c.nonScaled(SpellChangeStats.MAX_TOTEM_CAPACITY.get(), 3);
         c.nonScaled(SpellChangeStats.MAX_BANNER_CAPACITY.get(), 1);
 
@@ -110,7 +113,9 @@ public class BaseStatsAdder implements ExileRegistryInit {
         
         c.nonScaled(DefenseStats.NO_SELF_DAMAGE_STATS.get(), 1);
 
-        c.nonScaled(SpellChangeStats.MAX_SUMMON_CAPACITY.get(), 3);
+        for (SummonType t : SummonType.getCapped()) {
+            c.nonScaled(SpellChangeStats.MAX_SUMMONS_PER_TYPE.get(t), t.maxSummons);
+        }
         c.nonScaled(SpellChangeStats.MAX_TOTEM_CAPACITY.get(), 3);
         c.nonScaled(SpellChangeStats.MAX_BANNER_CAPACITY.get(), 1);
 

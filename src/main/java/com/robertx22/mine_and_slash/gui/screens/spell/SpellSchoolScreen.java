@@ -208,7 +208,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
                 (int) SpellSchoolsData.SOLO_CLASS_DAMAGE_REDUCTION
         ).getString();
 
-        GuiUtils.renderScaledText(gui, guiLeft + sizeX / 2, guiTop - 30, 1, txt, ChatFormatting.GOLD);
+        GuiUtils.renderScaledText(gui, guiLeft + sizeX / 2, guiTop - 32, 1, txt, ChatFormatting.GOLD);
     }
 
     @Override

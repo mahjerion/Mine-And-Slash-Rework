@@ -43,7 +43,7 @@ public class ChaosDoesntBypassMagicShield extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return ChatFormatting.GRAY + Elements.Shadow.getIconNameDmg() + " no longer bypasses " + MagicShield.getInstance()
+        return ChatFormatting.GRAY + Elements.Shadow.getIconNameDmg() + " taken no longer bypasses " + MagicShield.getInstance()
                 .getIconNameFormat();
     }
 

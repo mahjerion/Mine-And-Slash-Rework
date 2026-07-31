@@ -768,14 +768,15 @@ public class DamageEvent extends EffectEvent {
 
                 sourceData.getCooldowns().setOnCooldown(CooldownsData.IN_COMBAT, 20 * 10);
                 if (target instanceof Mob) {
-                    if (petEntity instanceof LivingEntity && Load.Unit(petEntity).isSummon()) {
-                        GenerateThreatEvent threatEvent = new GenerateThreatEvent(petEntity, (Mob) target, ThreatGenType.deal_dmg, dmg);
-                        threatEvent.Activate();
-                    } else {
-                        GenerateThreatEvent threatEvent = new GenerateThreatEvent((Player) source, (Mob) target, ThreatGenType.deal_dmg, dmg);
-                        threatEvent.Activate();
-                    }
+                    // the player is the source in both cases so the threat scales off the same unit that
+                    // scaled the damage - for a minion that's the owner's pet spell unit, which routes
+                    // support gems back to the summon spell. only the aggro credit goes to the summon.
+                    GenerateThreatEvent threatEvent = new GenerateThreatEvent(p, (Mob) target, ThreatGenType.deal_dmg, dmg, getSpellOrNull());
 
+                    if (petEntity instanceof LivingEntity && Load.Unit(petEntity).isSummon()) {
+                        threatEvent.threatOwner = petEntity;
+                    }
+                    threatEvent.Activate();
                 }
                 InteractionNotifier.notifyClient(IParticleSpawnMaterial.DamageInformation.fromDmgByElement(info, data.isCrit()), (ServerPlayer) source, target);
 

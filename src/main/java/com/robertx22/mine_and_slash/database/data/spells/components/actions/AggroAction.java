@@ -39,7 +39,7 @@ public class AggroAction extends SpellAction {
                     Mob mob = (Mob) x;
 
                     if (aggro == Type.AGGRO) {
-                        GenerateThreatEvent event = new GenerateThreatEvent((Player) ctx.caster, mob, ThreatGenType.spell, num);
+                        GenerateThreatEvent event = new GenerateThreatEvent((Player) ctx.caster, mob, ThreatGenType.spell, num, ctx.calculatedSpellData.getSpell());
                         event.Activate();
 
                     } else {

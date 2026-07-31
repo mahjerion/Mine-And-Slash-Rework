@@ -124,7 +124,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         addRenderableWidget(new LeftRightButton(this, guiLeft + 100 - LeftRightButton.xSize - 5, guiTop + 25 - LeftRightButton.ySize / 2, true));
         addRenderableWidget(new LeftRightButton(this, guiLeft + 150 + 5, guiTop + 25 - LeftRightButton.ySize / 2, false));
 
-        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 9, guiTop + 208));
+        addRenderableWidget(new PointsDisplayButton(PlayerPointsType.SPELLS, guiLeft + 10, guiTop + 208));
         addRenderableWidget(new PointsDisplayButton(PlayerPointsType.PASSIVES, guiLeft + 148, guiTop + 208));
 
         currentSchool().perks.entrySet()
@@ -208,7 +208,7 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
                 (int) SpellSchoolsData.SOLO_CLASS_DAMAGE_REDUCTION
         ).getString();
 
-        GuiUtils.renderScaledText(gui, guiLeft + sizeX / 2, guiTop - 20, 1, txt, ChatFormatting.GOLD);
+        GuiUtils.renderScaledText(gui, guiLeft + sizeX / 2, guiTop - 30, 1, txt, ChatFormatting.GOLD);
     }
 
     @Override

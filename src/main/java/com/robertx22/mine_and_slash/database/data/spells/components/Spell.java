@@ -29,7 +29,6 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.ISkillGem;
-import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
@@ -487,10 +486,8 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         int lvl = 0;
 
         if (en instanceof Player p) {
-            Optional<SpellCastingData.InsertedSpell> opt = Load.player(p).spellCastingData.getAllHotbarSpells().stream().filter(x -> x.id.equals(GUID())).findAny();
-            if (opt.isPresent()) {
-                lvl = opt.get().rank;
-            }
+            // learned spells, not just hotbar ones. otherwise an unslotted spell reads as lvl 0
+            lvl = Load.player(p).spellCastingData.getSpellData(GUID()).rank;
         }
         if (lvl < default_lvl) {
             lvl = default_lvl;

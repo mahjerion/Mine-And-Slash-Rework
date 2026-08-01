@@ -21,6 +21,8 @@ public class ExileEffectInstanceData {
     public int stacks = 0;
     public float str_multi = 1;
     public int ticks_left = 0;
+    // ticks this effect was applied for. removing a stack refreshes ticks_left back to this
+    public int full_duration = 0;
 
     public boolean isSpellNoLongerAllocated(LivingEntity en) {
         if (self_cast) {

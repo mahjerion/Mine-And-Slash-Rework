@@ -55,25 +55,40 @@ public class ExilePotionEvent extends EffectEvent {
         GiveOrTake2 action = data.getGiveOrTake();
         ExileEffect effect = data.getExileEffect();
 
+        if (action == GiveOrTake2.take) {
+            // taking only changes the stack count. the duration and the caster/spell that applied
+            // the effect belong to the original application and must survive a partial removal.
+            if (!Load.Unit(target).getStatusEffectsData().has(effect)) {
+                return;
+            }
+
+            ExileEffectInstanceData extraData = Load.Unit(target).getStatusEffectsData().get(effect);
+
+            extraData.stacks -= stacks;
+            extraData.stacks = Mth.clamp(extraData.stacks, 0, effect.getMaxCharges(this.targetData));
+
+            // consuming a stack refreshes the shared timer of whatever stacks are left
+            if (stacks > 0 && extraData.stacks >= 1 && !extraData.is_infinite && extraData.full_duration > 0) {
+                extraData.ticks_left = extraData.full_duration;
+            }
+
+            if (extraData.stacks < 1) {
+                // the tick loop calls onRemove when it drops an expired effect, so removing it
+                // here has to do the same or vanilla attribute modifiers leak
+                effect.onRemove(target);
+                Load.Unit(target).getStatusEffectsData().delete(effect);
+            }
+
+            Load.Unit(target).equipmentCache.STATUS.setDirty();
+            return;
+        }
+
         ExileEffectInstanceData extraData = Load.Unit(target).getStatusEffectsData().getOrCreate(effect);
 
         boolean applied = extraData.stacks == 0;
 
-
-        if (action == GiveOrTake2.take) {
-
-            extraData.stacks -= stacks;
-            extraData.stacks = Mth.clamp(extraData.stacks, 0, effect.getMaxCharges(this.targetData));
-            extraData.str_multi = data.getNumber();
-
-            Load.Unit(target).equipmentCache.STATUS.setDirty();
-        } else {
-
-
-            extraData.stacks += stacks;
-            extraData.stacks = Mth.clamp(extraData.stacks, 1, effect.getMaxCharges(this.targetData));
-
-        }
+        extraData.stacks += stacks;
+        extraData.stacks = Mth.clamp(extraData.stacks, 1, effect.getMaxCharges(this.targetData));
 
         extraData.self_cast = source == target;
         extraData.caster_uuid = source.getStringUUID();
@@ -81,11 +96,8 @@ public class ExilePotionEvent extends EffectEvent {
         extraData.str_multi = data.getNumber();
         extraData.calcSpell = this.calc;
         extraData.ticks_left = (int) data.getNumber(EventData.EFFECT_DURATION_TICKS).number;
+        extraData.full_duration = extraData.ticks_left;
         extraData.is_infinite = data.getBoolean(EventData.EFFECT_IS_INFINITE);
-
-        if (extraData.stacks < 1) {
-            Load.Unit(target).getStatusEffectsData().delete(effect);
-        }
 
         if (applied) {
             effect.onApply(target);

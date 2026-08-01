@@ -30,6 +30,8 @@ public class RemoveExileEffectAction extends StatEffect {
 
     @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
+        // the 1/false here are the duration ticks and infinite flag, not the stack count.
+        // they are unused on the take path, which never touches the effect's duration.
         ExilePotionEvent potionEvent = EventBuilder.ofEffect(CalculatedSpellData.NO_SPELL_RELATED, event.getSide(statSource), event.getSide(remove_from), Load.Unit(event.getSide(statSource))
                         .getLevel(), ExileDB.ExileEffects()
                         .get(effect), GiveOrTake2.take, 1, false)

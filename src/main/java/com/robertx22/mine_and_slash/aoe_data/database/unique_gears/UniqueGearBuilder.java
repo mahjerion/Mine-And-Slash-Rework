@@ -75,6 +75,13 @@ public class UniqueGearBuilder {
         return this;
     }
 
+    // for retired uniques: keeps the entry registered so existing items don't break, but stops listing
+    // it in the wiki. pair it with weight(0) so it stops dropping too
+    public UniqueGearBuilder hideFromWiki() {
+        this.uniq.hide_from_wiki = true;
+        return this;
+    }
+
     public UniqueGearBuilder leagueOnly(String comment) {
         this.uniq.league = comment;
         return this;

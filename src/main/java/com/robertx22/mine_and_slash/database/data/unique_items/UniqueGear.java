@@ -36,8 +36,17 @@ public class UniqueGear implements JsonExileRegistry<UniqueGear>, IAutoLocName, 
     public String base_gear = "";
     public String league = "";
     public boolean runable = false;
+    // nullable on purpose: gson skips null fields, so uniques that don't set it serialize exactly as
+    // before and old datapack jsons still pass compareLoadedJsonAndFinalClass
+    public Boolean hide_from_wiki = null;
 
     public transient String langName;
+
+    // retired uniques stay registered so items already in inventories still resolve, they just don't
+    // get listed in the wiki anymore
+    public boolean isHiddenFromWiki() {
+        return hide_from_wiki != null && hide_from_wiki;
+    }
 
 
     public boolean canSpawnInLeague(League league) {

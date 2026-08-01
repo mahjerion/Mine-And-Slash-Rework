@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class DBItemEntry<T> extends BestiaryGroup<T> {
 
@@ -18,6 +19,9 @@ public class DBItemEntry<T> extends BestiaryGroup<T> {
     String id;
     public Function<T, BestiaryEntry> maker;
 
+    // optional, null means every registry entry is listed
+    private Predicate<T> visibleIf = null;
+
     public DBItemEntry(ExileRegistryType type, Words word, String id, Function<T, BestiaryEntry> maker) {
         this.type = type;
         this.word = word;
@@ -25,11 +29,19 @@ public class DBItemEntry<T> extends BestiaryGroup<T> {
         this.maker = maker;
     }
 
+    public DBItemEntry<T> visibleIf(Predicate<T> pred) {
+        this.visibleIf = pred;
+        return this;
+    }
+
     @Override
     public List<BestiaryEntry> getAll(int lvl) {
         List<BestiaryEntry> list = new ArrayList<>();
         for (Object o : Database.getRegistry(type).getList()) {
             T t = (T) o;
+            if (visibleIf != null && !visibleIf.test(t)) {
+                continue;
+            }
             list.add(maker.apply(t));
         }
         return list;

@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.ISkillGem;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuraGem implements JsonExileRegistry<SupportGem>, ISkillGem, IAutoGson<AuraGem> {
+public class AuraGem implements JsonExileRegistry<SupportGem>, ISkillGem, IAutoGson<AuraGem>, IWikiHideable {
 
     public static AuraGem SERIALIZER = new AuraGem(AuraGems.summon_dmg, PlayStyle.STR, 0, Arrays.asList());
 
@@ -32,7 +33,14 @@ public class AuraGem implements JsonExileRegistry<SupportGem>, ISkillGem, IAutoG
 
     public List<StatMod> stats = new ArrayList<>();
 
+    public Boolean hide_from_wiki = null;
+
     transient String name;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     public AuraGem(AuraGems.AuraInfo info, PlayStyle style, float reservation, List<StatMod> stats) {
         this.id = info.id;

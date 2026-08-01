@@ -7,6 +7,7 @@ import com.robertx22.library_of_exile.vanilla_util.main.VanillaUTIL;
 import com.robertx22.mine_and_slash.database.data.BaseGem;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.List;
 
-public class Gem extends BaseGem implements IAutoGson<Gem>, JsonExileRegistry<Gem>, IRarity {
+public class Gem extends BaseGem implements IAutoGson<Gem>, JsonExileRegistry<Gem>, IRarity, IWikiHideable {
 
     public static Gem SERIALIZER = new Gem();
 
@@ -24,6 +25,13 @@ public class Gem extends BaseGem implements IAutoGson<Gem>, JsonExileRegistry<Ge
     public String rar = IRarity.COMMON_ID;
 
     public int perc_upgrade_chance = 0;
+
+    public Boolean hide_from_wiki = null;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     public ChatFormatting getFormat() {
         try {

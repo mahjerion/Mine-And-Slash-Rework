@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.ISkillGem;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SupportGem implements ISkillGem, JsonExileRegistry<SupportGem>, IAutoGson<SupportGem> {
+public class SupportGem implements ISkillGem, JsonExileRegistry<SupportGem>, IAutoGson<SupportGem>, IWikiHideable {
 
     public static SupportGem SER = new SupportGem("", "", PlayStyle.STR, 0, Arrays.asList());
     public String id = "";
@@ -35,6 +36,13 @@ public class SupportGem implements ISkillGem, JsonExileRegistry<SupportGem>, IAu
     public int weight = 1000;
 
     public String one_of_a_kind = "";
+
+    public Boolean hide_from_wiki = null;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     public SupportGem(String id, String name, PlayStyle style, float manaMulti, List<StatMod> stats) {
         this.id = id;

@@ -14,13 +14,14 @@ import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UniqueGear implements JsonExileRegistry<UniqueGear>, IAutoLocName, IAutoLocDesc, IAutoGson<UniqueGear>, ISerializable<UniqueGear> {
+public class UniqueGear implements JsonExileRegistry<UniqueGear>, IAutoLocName, IAutoLocDesc, IAutoGson<UniqueGear>, ISerializable<UniqueGear>, IWikiHideable {
 
     public static UniqueGear SERIALIZER = new UniqueGear();
 
@@ -42,10 +43,9 @@ public class UniqueGear implements JsonExileRegistry<UniqueGear>, IAutoLocName, 
 
     public transient String langName;
 
-    // retired uniques stay registered so items already in inventories still resolve, they just don't
-    // get listed in the wiki anymore
-    public boolean isHiddenFromWiki() {
-        return hide_from_wiki != null && hide_from_wiki;
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
     }
 
 

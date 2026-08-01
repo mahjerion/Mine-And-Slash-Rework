@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.SocketData;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -17,7 +18,7 @@ import net.minecraft.world.item.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rune implements IAutoGson<Rune>, JsonExileRegistry<Rune> {
+public class Rune implements IAutoGson<Rune>, JsonExileRegistry<Rune>, IWikiHideable {
 
     public static Rune SERIALIZER = new Rune();
 
@@ -39,6 +40,13 @@ public class Rune implements IAutoGson<Rune>, JsonExileRegistry<Rune> {
     public float min_lvl_multi = 0;
 
     public boolean uses_unlucky_ran = true;
+
+    public Boolean hide_from_wiki = null;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     public int getReqLevelToDrop() {
         return (int) (GameBalanceConfig.get().MAX_LEVEL * min_lvl_multi);

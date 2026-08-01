@@ -7,12 +7,13 @@ import com.robertx22.mine_and_slash.database.data.requirements.Requirements;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Affix implements IWeighted, IGUID, IAutoLocName, IhasRequirements,
-        JsonExileRegistry<Affix>, IAutoGson<Affix> {
+        JsonExileRegistry<Affix>, IAutoGson<Affix>, IWikiHideable {
 
     // where the affix goes, is it a gear prefix, a jewel affix, a gear corruption affix?
     public enum AffixSlot {
@@ -47,6 +48,13 @@ public class Affix implements IWeighted, IGUID, IAutoLocName, IhasRequirements,
     public AffixSlot type;
 
     public List<StatMod> stats = new ArrayList<>();
+
+    public Boolean hide_from_wiki = null;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     public List<String> getAllTagReq() {
         List<String> list = new ArrayList<>();

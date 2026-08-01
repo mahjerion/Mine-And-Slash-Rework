@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable;
 import com.robertx22.mine_and_slash.vanilla_mc.items.gemrunes.RuneItem;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RuneWord implements IAutoGson<RuneWord>, JsonExileRegistry<RuneWord>, IAutoLocName {
+public class RuneWord implements IAutoGson<RuneWord>, JsonExileRegistry<RuneWord>, IAutoLocName, IWikiHideable {
     public static RuneWord SERIALIZER = new RuneWord();
 
     public String id = "";
@@ -26,6 +27,12 @@ public class RuneWord implements IAutoGson<RuneWord>, JsonExileRegistry<RuneWord
     public List<StatMod> stats = new ArrayList<>();
     public List<String> runes = new ArrayList<>();
     public List<String> slots = new ArrayList<>();
+    public Boolean hide_from_wiki = null;
+
+    @Override
+    public Boolean getHideFromWiki() {
+        return hide_from_wiki;
+    }
 
     @Override
     public ExileRegistryType getExileRegistryType() {

@@ -126,7 +126,7 @@ public abstract class BestiaryGroup<T> {
         b.rarity.set(ExileDB.GearRarities().get(IRarity.UNIQUE_ID));
         b.gearItemSlot.set(x.getBaseGear());
         return new BestiaryEntry.NamedItem(x, b.createStack(), CLOC.translate(x.locName()));
-    }).visibleIf(x -> !x.isHiddenFromWiki());
+    });
 
 
     public static BestiaryGroup<?> SPELL = new DBItemEntry<Spell>(ExileRegistryTypes.SPELL, Words.SPELL, "spell", x -> {

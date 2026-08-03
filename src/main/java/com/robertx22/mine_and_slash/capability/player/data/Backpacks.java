@@ -117,7 +117,7 @@ public class Backpacks {
 
     public boolean tryAutoPickup(Player p, ItemStack stack, boolean shouldPlaySound) {
 
-        if (p.getInventory().countItem(SlashItems.MASTER_BAG.get()) < 1 && !hasCuriosBackpack(p)) {
+        if (!hasBackpack(p)) {
             return false;
         }
         boolean result = false;
@@ -139,7 +139,12 @@ public class Backpacks {
 
     }
 
-    private boolean hasCuriosBackpack(Player p) {
+    // the backpack can only be used while the item is carried, either in the inventory or the curio slot
+    public static boolean hasBackpack(Player p) {
+        return p.getInventory().countItem(SlashItems.MASTER_BAG.get()) > 0 || hasCuriosBackpack(p);
+    }
+
+    private static boolean hasCuriosBackpack(Player p) {
         var backpackItem = MyCuriosUtils.get(CuriosSlots.MASTER_BAG.name, p, 0);
         return !backpackItem.isEmpty();
     }
@@ -151,6 +156,9 @@ public class Backpacks {
 
     public void openBackpack(BackpackType type, Player p) {
         if (!p.level().isClientSide) {
+            if (!hasBackpack(p)) {
+                return;
+            }
             BackpackInventory inv = getInv(type);
             p.openMenu(new SimpleMenuProvider((i, playerInventory, playerEntity) -> {
                 return new BackpackMenu(type, i, playerEntity, playerInventory, inv);

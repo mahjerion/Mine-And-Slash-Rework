@@ -228,9 +228,10 @@ public class BackpackMenu extends AbstractContainerMenu {
         }
     }
 
+    // closes the screen if the backpack item is dropped/given away while it's open
     @Override
     public boolean stillValid(Player pPlayer) {
-        return true;
+        return Backpacks.hasBackpack(pPlayer);
     }
 
     @Override

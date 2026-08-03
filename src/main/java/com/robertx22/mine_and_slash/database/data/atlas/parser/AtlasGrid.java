@@ -9,7 +9,10 @@ import java.util.*;
 // deliberate difference (node classification by registry membership, not id length)
 public class AtlasGrid {
 
-    AtlasNodeLayout layout;
+    // built into a caller-owned CalcData rather than into layout.calcData directly, so the layout
+    // only publishes the cache once the whole grid parsed successfully - a half-built CalcData must
+    // never become visible to another thread. See AtlasNodeLayout.getCalcData().
+    AtlasNodeLayout.CalcData calc;
 
     List<List<AtlasGridPoint>> grid = new ArrayList<>();
 
@@ -17,8 +20,8 @@ public class AtlasGrid {
         return grid.get(x).get(y);
     }
 
-    public AtlasGrid(AtlasNodeLayout layout, String str) {
-        this.layout = layout;
+    public AtlasGrid(AtlasNodeLayout.CalcData calc, String str) {
+        this.calc = calc;
 
         int y = 0;
         for (String line : str.split("\n")) {
@@ -46,23 +49,23 @@ public class AtlasGrid {
         for (List<AtlasGridPoint> list : grid) {
             for (AtlasGridPoint point : list) {
                 if (point.isNode) {
-                    layout.calcData.addNode(point.getPoint(), point.getId());
+                    calc.addNode(point.getPoint(), point.getId());
                     nodes.add(point);
                 } else if (point.isCenter) {
-                    layout.calcData.center = point.getPoint();
+                    calc.center = point.getPoint();
                 }
             }
         }
 
-        Objects.requireNonNull(layout.calcData.center, "Atlas layout needs a [CENTER]!");
+        Objects.requireNonNull(calc.center, "Atlas layout needs a [CENTER]!");
 
         nodes.forEach(one -> {
             Set<String> connectorTypes = getConnectorTypes(one);
             nodes.forEach(two -> {
-                if (!layout.calcData.isConnected(one.getPoint(), two.getPoint())) {
+                if (!calc.isConnected(one.getPoint(), two.getPoint())) {
                     if (one.isInDistanceOf(two)) {
                         if (hasPath(one, two, connectorTypes)) {
-                            layout.calcData.addConnection(one.getPoint(), two.getPoint());
+                            calc.addConnection(one.getPoint(), two.getPoint());
                         }
                     }
                 }

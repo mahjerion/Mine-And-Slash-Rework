@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.atlas;
 
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
@@ -30,7 +31,8 @@ public class AtlasNodeLayout implements JsonExileRegistry<AtlasNodeLayout>, IAut
     // 2d grid with whitespace - see TalentTree.perks for the format
     public String nodes = "";
 
-    public transient CalcData calcData = new CalcData();
+    // Built lazily by getCalcData(), NOT at json-load time - see onLoadedFromJson() below.
+    private transient CalcData calcData = null;
 
     // The Atlas map is a single-entry registry, but that entry is hand-authored (shouldGenerateJson()
     // is false below), so a datapack that shadows or omits mmorpg_atlas_layout/atlas_map.json leaves
@@ -40,9 +42,46 @@ public class AtlasNodeLayout implements JsonExileRegistry<AtlasNodeLayout>, IAut
     public static CalcData mainCalcData() {
         var list = ExileDB.AtlasNodeLayouts().getList();
         if (list.isEmpty()) {
-            return EMPTY.calcData;
+            return EMPTY.getCalcData();
         }
-        return list.get(0).calcData;
+        return list.get(0).getCalcData();
+    }
+
+    // Parsing the grid resolves every cell against the AtlasNode registry (see AtlasGridPoint), so it
+    // can only run once that registry is fully populated. Doing it here, on first use, is the only
+    // way to guarantee that on a client: the old eager parse in onLoadedFromJson() ran on the netty
+    // decode thread while EfficientRegistryPacket was still decoding, whereas the AtlasNode entries
+    // are only put into the registry by that packet's onReceived, which is deferred to the main
+    // thread via enqueueWork. Cells that lost that race were never classified as nodes and the bad
+    // result was cached for the session, so players saw a partly populated Atlas map until they
+    // relogged (the client registry survives a disconnect, so the second parse succeeded).
+    // Registry `order` cannot fix this - it orders the packet *sends*, not parse-vs-register.
+    // synchronized because in singleplayer the client and integrated-server threads share this object.
+    public synchronized CalcData getCalcData() {
+        if (calcData != null) {
+            return calcData;
+        }
+        CalcData built = new CalcData();
+        if (!nodes.isBlank()) {
+            try {
+                new AtlasGrid(built, nodes).loadIntoTree();
+            } catch (Exception e) {
+                // cache the blank result rather than rethrowing - mainCalcData() is on the
+                // map-completion path, so a broken layout must fail once and loudly instead of
+                // throwing for every player on every cleared map
+                ExileLog.get().warn("Failed to parse atlas layout '" + identifier + "', Atlas map will be empty.");
+                e.printStackTrace();
+                built = new CalcData();
+            }
+        }
+        calcData = built;
+        return calcData;
+    }
+
+    // called when the AtlasNode registry may have changed under us (datapack reload on the server,
+    // login sync on the client) - see DatabaseCaches.resetCaches()
+    public synchronized void invalidateCalcData() {
+        this.calcData = null;
     }
 
     @Override
@@ -67,7 +106,9 @@ public class AtlasNodeLayout implements JsonExileRegistry<AtlasNodeLayout>, IAut
 
     @Override
     public void onLoadedFromJson() {
-        new AtlasGrid(this, nodes).loadIntoTree();
+        // deliberately does NOT parse the grid - this runs on the netty decode thread on clients,
+        // before the AtlasNode registry it depends on is populated. getCalcData() does the parse.
+        invalidateCalcData();
     }
 
     @Override

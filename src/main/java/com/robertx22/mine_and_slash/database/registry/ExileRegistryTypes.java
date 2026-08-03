@@ -77,8 +77,13 @@ public class ExileRegistryTypes {
     public static ExileRegistryType TALENT_TREE = ExileRegistryType.register(SlashRef.MODID, "talent_tree", 19, TalentTree.SERIALIZER, SyncTime.ON_LOGIN);
     // order 53: MUST stay above dungeon_realm's ATLAS_NODE (52). Parsing this layout's grid resolves
     // each cell against the AtlasNode registry (see AtlasGridPoint), so the nodes have to be loaded
-    // first or every cell is classified as "not a node" and the map comes out empty. Both the server
-    // datapack load and the client login sync walk registries in this order.
+    // first or every cell is classified as "not a node" and the map comes out empty - which on the
+    // server meant completing a map unlocked no neighbours.
+    // This ordering is what the SERVER's datapack load relies on: ExileRegistryType.registerJsonListeners
+    // adds each type's loader as a reload listener in `order`, and those run sequentially.
+    // The CLIENT does not depend on it - `order` only orders the login packet *sends*, and the client
+    // parses a packet on the netty thread while entries are registered later on the main thread. That
+    // is why the layout parse is deferred to first use instead (AtlasNodeLayout.getCalcData()).
     public static ExileRegistryType ATLAS_NODE_LAYOUT = ExileRegistryType.register(SlashRef.MODID, "atlas_layout", 53, AtlasNodeLayout.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType BASE_STATS = ExileRegistryType.register(SlashRef.MODID, "base_stats", 22, BaseStatsConfig.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType VALUE_CALC = ExileRegistryType.register(SlashRef.MODID, "value_calc", 40, ValueCalculation.SERIALIZER, SyncTime.ON_LOGIN);

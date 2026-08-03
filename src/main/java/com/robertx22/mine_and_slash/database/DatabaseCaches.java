@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
+import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AttributeStat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -45,6 +46,11 @@ public class DatabaseCaches {
         GearSlot.CACHED = new HashMap<>();
         // per-entity EntityConfig caches point at objects from the database we just replaced
         EntityData.invalidateEntityConfigCaches();
+        // the parsed Atlas grid resolves cells against the AtlasNode registry, which we may have just
+        // replaced. On the client this runs from TellClientResetCaches, which is sent on
+        // PlayerLoggedInEvent - after every registry sync packet - so the next read reparses against
+        // the completed registry.
+        ExileDB.AtlasNodeLayouts().getList().forEach(AtlasNodeLayout::invalidateCalcData);
     }
 
     private static void setupMaxSpellCharges() {

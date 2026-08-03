@@ -25,6 +25,9 @@ public class EventData {
     public static String BONUS_TOTAL_SUMMONS = "bonus_total_summons";
     public static String MAX_TOTEMS = "max_totems";
     public static String MAX_BANNERS = "max_banners";
+    // how many extra blocks of the limit group a single cast places at once, capped by the max above
+    public static String EXTRA_TOTEMS = "extra_totems";
+    public static String EXTRA_BANNERS = "extra_banners";
     public static String SUMMON_TYPE = "summon_type";
     public static String CANCELED = "canceled";
     public static String DMG_EFFECTIVENESS = "dmg_effectiveness";

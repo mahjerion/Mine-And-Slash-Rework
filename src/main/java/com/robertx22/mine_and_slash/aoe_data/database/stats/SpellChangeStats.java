@@ -67,6 +67,22 @@ public class SpellChangeStats {
                 x.max = 10;
             }).
             build();
+    public static DataPackStatAccessor TOTEM_COUNT = DatapackStatBuilder
+            .ofSingle("totem_count", Elements.ALL)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addEffect(StatEffects.ADD_TOTEM_COUNT)
+            .setLocName(x -> "Totems Per Cast")
+            .setLocDesc(x -> "Each totem spell places extra totems at once, up to your Maximum Totems.")
+            .modifyAfterDone(x ->
+            {
+                x.is_perc = false;
+                x.base = 0;
+                x.min = 0;
+                x.max = 10;
+            }).
+            build();
     public static DataPackStatAccessor MAX_BANNER_CAPACITY = DatapackStatBuilder
             .ofSingle("max_banners", Elements.ALL)
             .worksWithEvent(SpellStatsCalculationEvent.ID)

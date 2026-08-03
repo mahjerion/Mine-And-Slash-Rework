@@ -12,6 +12,7 @@ add_max_banners
 add_max_totems
 add_stat_data_to_num
 add_total_summons
+add_totem_count
 apply_cd_as_cast_time
 bonus_chains
 cancel_event

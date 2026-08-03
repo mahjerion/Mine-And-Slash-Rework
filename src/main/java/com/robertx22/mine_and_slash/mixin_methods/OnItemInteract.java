@@ -18,12 +18,11 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
+import com.robertx22.orbs_of_crafting.misc.ClickContext;
 import com.robertx22.orbs_of_crafting.misc.LocReqContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemStackedOnOtherEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -51,7 +50,7 @@ public class OnItemInteract {
     }
 
     private abstract static class ClickFeature {
-        public abstract Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot);
+        public abstract Result tryApply(ClickContext ctx);
     }
 
     static List<ClickFeature> CLICKS = new ArrayList<>();
@@ -62,21 +61,24 @@ public class OnItemInteract {
 
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
+            public Result tryApply(ClickContext ctx) {
 
-                if (StackSaving.JEWEL.has(craftedStack)) {
-                    var data = StackSaving.JEWEL.loadFrom(craftedStack);
+                if (StackSaving.JEWEL.has(ctx.target)) {
+                    ItemStack jewel = ctx.target.copy();
+                    var data = StackSaving.JEWEL.loadFrom(jewel);
 
                     if (data.uniq.isCraftableUnique()) {
                         ItemStack cost = data.uniq.getStackNeededForUpgrade();
 
-                        if (cost.getItem() == currency.getItem()) {
-                            if (currency.getCount() >= cost.getCount()) {
+                        if (cost.getItem() == ctx.currency.getItem()) {
+                            if (ctx.currency.getCount() >= cost.getCount()) {
                                 if (data.uniq.getCraftedTier().canUpgradeMore()) {
                                     data.uniq.upgradeUnique(data);
 
-                                    StackSaving.JEWEL.saveTo(craftedStack, data);
-                                    currency.shrink(cost.getCount());
+                                    StackSaving.JEWEL.saveTo(jewel, data);
+
+                                    ctx.consumeCurrency(cost.getCount());
+                                    ctx.updateTarget(jewel);
 
                                     return new Result(true).ding();
                                 }
@@ -93,23 +95,25 @@ public class OnItemInteract {
         // todo replace repair stones with datapack currencies
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (craftedStack.isDamaged() && currency.getItem() instanceof RarityStoneItem) {
+            public Result tryApply(ClickContext ctx) {
+                if (ctx.target.isDamaged() && ctx.currency.getItem() instanceof RarityStoneItem) {
 
-                    if (!StackSaving.GEARS.has(craftedStack) && !StackSaving.OMEN.has(craftedStack)) {
-                        player.sendSystemMessage(Chats.NOT_GEAR_OR_LACKS_SOUL.locName().withStyle(ChatFormatting.RED));
+                    if (!StackSaving.GEARS.has(ctx.target) && !StackSaving.OMEN.has(ctx.target)) {
+                        ctx.player.sendSystemMessage(Chats.NOT_GEAR_OR_LACKS_SOUL.locName().withStyle(ChatFormatting.RED));
                         return new Result(false);
                     }
 
-                    RarityStoneItem essence = (RarityStoneItem) currency.getItem();
+                    RarityStoneItem essence = (RarityStoneItem) ctx.currency.getItem();
 
-                    SoundUtils.playSound(player, SoundEvents.ANVIL_USE, 1, 1);
+                    SoundUtils.playSound(ctx.player, SoundEvents.ANVIL_USE, 1, 1);
 
                     int repair = essence.getTotalRepair();
 
-                    craftedStack.setDamageValue(craftedStack.getDamageValue() - repair);
+                    ItemStack repaired = ctx.target.copy();
+                    repaired.setDamageValue(repaired.getDamageValue() - repair);
 
-                    currency.shrink(1);
+                    ctx.consumeCurrency(1);
+                    ctx.updateTarget(repaired);
                     return new Result(true).ding();
                 }
                 return new Result(false);
@@ -118,26 +122,25 @@ public class OnItemInteract {
 
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (currency.getItem() instanceof StatSoulItem || currency.getItem() instanceof CraftedSoulItem) {
-                    StatSoulData data = StackSaving.STAT_SOULS.loadFrom(currency);
-                    if (currency.getItem() instanceof CraftedSoulItem cs) {
-                        data = cs.getSoul(currency);
+            public Result tryApply(ClickContext ctx) {
+                if (ctx.currency.getItem() instanceof StatSoulItem || ctx.currency.getItem() instanceof CraftedSoulItem) {
+                    StatSoulData data = StackSaving.STAT_SOULS.loadFrom(ctx.currency);
+                    if (ctx.currency.getItem() instanceof CraftedSoulItem cs) {
+                        data = cs.getSoul(ctx.currency);
                     }
                     if (data != null) {
-                        var res = data.canInsertIntoStack(craftedStack);
+                        var res = data.canInsertIntoStack(ctx.target);
 
                         if (res.can) {
-                            if (craftedStack.getCount() == 1) {
-                                ItemStack result = data.insertAsUnidentifiedOn(craftedStack, player);
-                                craftedStack.shrink(1);
-                                slot.set(result);
-                                currency.shrink(1);
+                            if (ctx.target.getCount() == 1) {
+                                ItemStack result = data.insertAsUnidentifiedOn(ctx.target.copy(), ctx.player);
+                                ctx.consumeCurrency(1);
+                                ctx.replaceTarget(result);
                                 return new Result(true).ding();
                             }
                         } else {
                             if (res.answer != null) {
-                                player.sendSystemMessage(res.answer);
+                                ctx.player.sendSystemMessage(res.answer);
                             }
                         }
                     }
@@ -150,24 +153,20 @@ public class OnItemInteract {
 
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (currency.getItem() instanceof IItemAsCurrency) {
-                    LocReqContext ctx = new LocReqContext(player, craftedStack, currency);
+            public Result tryApply(ClickContext ctx) {
+                if (ctx.currency.getItem() instanceof IItemAsCurrency c) {
+                    if (!ctx.target.isEmpty()) {
+                        LocReqContext req = new LocReqContext(ctx.player, ctx.target.copy(), ctx.currency);
 
-                    if (!craftedStack.isEmpty()) {
-                        if (ctx.Currency.getItem() instanceof IItemAsCurrency c) {
-                            var effect = c.currencyEffect(ctx.Currency);
-                            var can = effect.canItemBeModified(ctx);
-                            if (can.can) {
-                                ItemStack result = effect.modifyItem(ctx).stack.copy();
-                                craftedStack.shrink(1); // seems the currency creates a copy of a new item, so we delete the old one
-                                currency.shrink(1);
-                                // PlayerUtils.giveItem(result, player);
-                                slot.set(result);
-                                return new Result(true);
-                            } else {
-                                player.sendSystemMessage(can.answer);
-                            }
+                        var effect = c.currencyEffect(ctx.currency);
+                        var can = effect.canItemBeModified(req);
+                        if (can.can) {
+                            ItemStack result = effect.modifyItem(req).stack.copy();
+                            ctx.consumeCurrency(1);
+                            ctx.replaceTarget(result); // the currency builds a new item, so the old one goes away
+                            return new Result(true);
+                        } else {
+                            ctx.player.sendSystemMessage(can.answer);
                         }
                     }
                 }
@@ -178,10 +177,10 @@ public class OnItemInteract {
 
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (currency.getItem() instanceof SoulExtractorItem se) {
+            public Result tryApply(ClickContext ctx) {
+                if (ctx.currency.getItem() instanceof SoulExtractorItem se) {
 
-                    GearItemData gear = StackSaving.GEARS.loadFrom(craftedStack);
+                    GearItemData gear = StackSaving.GEARS.loadFrom(ctx.target);
 
                     if (gear != null) {
                         try {
@@ -189,7 +188,7 @@ public class OnItemInteract {
                             if (se.canExtract(gear.getRarity())) {
                                 StatSoulData soul = new StatSoulData();
                                 soul.slot = gear.GetBaseGearType().getGearSlot().GUID();
-                                var ex = ExileStack.of(craftedStack);
+                                var ex = ExileStack.of(ctx.target);
 
                                 soul.rar = gear.rar;
 
@@ -197,11 +196,11 @@ public class OnItemInteract {
 
                                 ItemStack soulstack = soul.toStack();
 
-                                SoundUtils.playSound(player, SoundEvents.EXPERIENCE_ORB_PICKUP);
+                                SoundUtils.playSound(ctx.player, SoundEvents.EXPERIENCE_ORB_PICKUP);
 
-                                craftedStack.shrink(1);
-                                currency.shrink(1);
-                                PlayerUtils.giveItem(soulstack, player);
+                                ctx.consumeCurrency(1);
+                                ctx.consumeTarget(1);
+                                PlayerUtils.giveItem(soulstack, ctx.player);
                                 return new Result(true).ding();
                             }
 
@@ -216,15 +215,18 @@ public class OnItemInteract {
         });
         CLICKS.add(new ClickFeature() {
             @Override
-            public Result tryApply(Player player, ItemStack craftedStack, ItemStack currency, Slot slot) {
-                if (currency.is(SlashItems.SOUL_CLEANER.get())) {
+            public Result tryApply(ClickContext ctx) {
+                if (ctx.currency.is(SlashItems.SOUL_CLEANER.get())) {
 
-                    GearItemData gear = StackSaving.GEARS.loadFrom(craftedStack);
+                    GearItemData gear = StackSaving.GEARS.loadFrom(ctx.target);
 
-                    if (gear != null && !ServerContainer.get().isSoulCleanBanned(craftedStack.getItem())) {
+                    if (gear != null && !ServerContainer.get().isSoulCleanBanned(ctx.target.getItem())) {
                         try {
-                            craftedStack.getOrCreateTag().remove(StackSaving.GEARS.GUID());
-                            currency.shrink(1);
+                            ItemStack cleaned = ctx.target.copy();
+                            cleaned.getOrCreateTag().remove(StackSaving.GEARS.GUID());
+
+                            ctx.consumeCurrency(1);
+                            ctx.updateTarget(cleaned);
                             return new Result(true).ding();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -237,7 +239,7 @@ public class OnItemInteract {
 
 
         ForgeEvents.registerForgeEvent(ItemStackedOnOtherEvent.class, x -> {
-            Player player = x.getPlayer();
+            var player = x.getPlayer();
 
             if (player.level().isClientSide) {
                 return;
@@ -246,12 +248,14 @@ public class OnItemInteract {
                 // return;
             }
 
-            ItemStack currency = x.getStackedOnItem();
-            ItemStack craftedStack = x.getCarriedItem();
+            ClickContext ctx = ClickContext.of(x);
 
+            if (!ctx.isValid()) {
+                return;
+            }
 
             for (ClickFeature click : CLICKS) {
-                var result = click.tryApply(player, craftedStack, currency, x.getSlot());
+                var result = click.tryApply(ctx);
 
                 if (result.doDing) {
                     SoundUtils.ding(player.level(), player.blockPosition());
@@ -263,8 +267,6 @@ public class OnItemInteract {
                     break;
                 }
             }
-
-
         });
 
         ForgeEvents.registerForgeEvent(PlayerEvent.ItemCraftedEvent.class, x -> {

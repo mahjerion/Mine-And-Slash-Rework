@@ -769,6 +769,7 @@ threat_generated
 total_damage
 totem_cast_time
 totem_cdr
+totem_count
 totem_duration
 totem_resto
 totem_spell_dmg

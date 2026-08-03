@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class SummonBlockAction extends SpellAction {
 
@@ -31,6 +33,8 @@ public class SummonBlockAction extends SpellAction {
     static int SEARCH = 10;
     // same radius SummonPetAction uses to find a player's existing summons
     static double LIMIT_SEARCH_RADIUS = 100D;
+    // minimum blocks kept between two blocks placed by the same cast
+    static double RING_SPACING = 2D;
 
 
     static boolean isSolid(Level level, BlockPos pos) {
@@ -54,77 +58,125 @@ public class SummonBlockAction extends SpellAction {
             return;
         }
 
-        //HitResult ray = ctx.caster.rayTrace(5D, 0.0F, false);
-        MyPosition pos = new MyPosition(ctx.getBlockPos());
-
-        float yoff = getRandomOffset(data, MapField.RANDOM_Y_OFFSET);
-        float xoff = getRandomOffset(data, MapField.RANDOM_X_OFFSET);
-        float zoff = getRandomOffset(data, MapField.RANDOM_Z_OFFSET);
-
-
-        pos = new MyPosition(pos.x() + xoff,
-                pos.y() + data.getOrDefault(MapField.HEIGHT, 0D).intValue() + yoff,
-                pos.z() + zoff);
-
-        boolean found = true;
-
-
-        if (data.getOrDefault(MapField.FIND_NEAREST_SURFACE, true)) {
-
-            found = false;
-
-            int times = 0;
-
-            int minHeight = ctx.world.getMinBuildHeight();
-
-            while (!found && pos.y() > minHeight && SEARCH > times) {
-                times++;
-                if (!isSolid(ctx.world, pos.asBlockPos()) && isSolid(ctx.world, pos.asBlockPos().below())) {
-                    found = true;
-                } else {
-                    pos = new MyPosition(pos.x, pos.y - 1, pos.z);
-                }
-            }
-            if (!found) {
-                pos = new MyPosition(ctx.getBlockPos());
-                times = 0;
-                while (!found && pos.y() < ctx.world.getMaxBuildHeight() && SEARCH > times) {
-                    times++;
-                    if (!isSolid(ctx.world, pos.asBlockPos()) && isSolid(ctx.world, pos.asBlockPos().below())) {
-                        found = true;
-                    } else {
-                        pos = new MyPosition(pos.x, pos.y + 1, pos.z);
-                    }
-                }
-            }
-        }
         Block block = data.getBlock();
         Objects.requireNonNull(block);
 
+        BlockSummonLimitGroup group = BlockSummonLimitGroup.fromId(data.getOrDefault(MapField.SUMMON_LIMIT_GROUP, ""));
 
-        if (found) {
-            enforceSummonLimit(ctx, data);
+        int count = getSummonCount(ctx, group);
 
-            StationaryFallingBlockEntity be = new StationaryFallingBlockEntity(ctx.world, pos.asBlockPos(), block.defaultBlockState());
+        Set<BlockPos> positions = findPositions(ctx, data, count);
+
+        if (positions.isEmpty()) {
+            return;
+        }
+
+        enforceSummonLimit(ctx, group, positions.size());
+
+        for (BlockPos pos : positions) {
+            StationaryFallingBlockEntity be = new StationaryFallingBlockEntity(ctx.world, pos, block.defaultBlockState());
             be.getEntityData().set(StationaryFallingBlockEntity.IS_FALLING, data.getOrDefault(MapField.IS_BLOCK_FALLING, false));
             SpellUtils.initSpellEntity(be, ctx.caster, ctx.calculatedSpellData, data);
 
             ctx.world.addFreshEntity(be);
         }
-
-
     }
 
-    // removes the caster's oldest blocks of this limit group until there's room for one more.
-    // called before the new block is spawned, so the cap is on the group as a whole, not per spell.
-    static void enforceSummonLimit(SpellCtx ctx, MapHolder data) {
-        BlockSummonLimitGroup group = BlockSummonLimitGroup.fromId(data.getOrDefault(MapField.SUMMON_LIMIT_GROUP, ""));
+    // one spot per block to place. a single block goes exactly where aimed, several get spread on a
+    // ring around it. spots with no ground under them are dropped, so this can return less than count.
+    static Set<BlockPos> findPositions(SpellCtx ctx, MapHolder data, int count) {
+
+        //HitResult ray = ctx.caster.rayTrace(5D, 0.0F, false);
+        MyPosition center = new MyPosition(ctx.getBlockPos());
+        center = new MyPosition(center.x(), center.y() + data.getOrDefault(MapField.HEIGHT, 0D).intValue(), center.z());
+
+        boolean snapToSurface = data.getOrDefault(MapField.FIND_NEAREST_SURFACE, true);
+
+        Set<BlockPos> positions = new LinkedHashSet<>();
+
+        for (int i = 0; i < count; i++) {
+
+            MyPosition pos = count == 1 ? center : ringPos(center, i, count, ctx.caster.getYRot());
+
+            float yoff = getRandomOffset(data, MapField.RANDOM_Y_OFFSET);
+            float xoff = getRandomOffset(data, MapField.RANDOM_X_OFFSET);
+            float zoff = getRandomOffset(data, MapField.RANDOM_Z_OFFSET);
+
+            pos = new MyPosition(pos.x() + xoff, pos.y() + yoff, pos.z() + zoff);
+
+            if (snapToSurface) {
+                pos = findSurface(ctx.world, pos);
+            }
+            if (pos != null) {
+                positions.add(pos.asBlockPos()); // a set, so terrain snapping can't stack two on one block
+            }
+        }
+        return positions;
+    }
+
+    // how many blocks a single activation places. only limit groups can go above 1, and never above
+    // the group's max, so +4 totems with a max of 3 still only places 3.
+    static int getSummonCount(SpellCtx ctx, BlockSummonLimitGroup group) {
+        if (group == null || !(ctx.caster instanceof Player)) {
+            return 1;
+        }
+        int max = getMaxSummons(ctx, group);
+        int extra = (int) ctx.calculatedSpellData.data.getNumber(group.extraCountEventDataKey, 0).number;
+
+        return Math.max(1, Math.min(1 + extra, max));
+    }
+
+    static int getMaxSummons(SpellCtx ctx, BlockSummonLimitGroup group) {
+        return Math.max(1, (int) ctx.calculatedSpellData.data.getNumber(group.maxEventDataKey, 0).number);
+    }
+
+    // spreads the blocks of one cast evenly on a circle around the target position, nothing in the
+    // middle. the radius grows with the count so neighbours always stay ~RING_SPACING apart, and the
+    // caster's yaw rotates the ring so it lines up with where they're looking.
+    static MyPosition ringPos(MyPosition center, int index, int count, float casterYaw) {
+        double radius = Math.max(RING_SPACING, (count * RING_SPACING) / (2 * Math.PI));
+        double angle = Math.toRadians(casterYaw) + index * (2 * Math.PI / count);
+
+        return new MyPosition(center.x() + Math.sin(angle) * radius, center.y(), center.z() + Math.cos(angle) * radius);
+    }
+
+    // walks down for open ground, then up if that failed. null when there's no spot to stand on.
+    static MyPosition findSurface(Level level, MyPosition start) {
+
+        MyPosition pos = start;
+        int times = 0;
+
+        while (pos.y() > level.getMinBuildHeight() && SEARCH > times) {
+            times++;
+            if (!isSolid(level, pos.asBlockPos()) && isSolid(level, pos.asBlockPos().below())) {
+                return pos;
+            }
+            pos = new MyPosition(pos.x, pos.y - 1, pos.z);
+        }
+
+        pos = start;
+        times = 0;
+
+        while (pos.y() < level.getMaxBuildHeight() && SEARCH > times) {
+            times++;
+            if (!isSolid(level, pos.asBlockPos()) && isSolid(level, pos.asBlockPos().below())) {
+                return pos;
+            }
+            pos = new MyPosition(pos.x, pos.y + 1, pos.z);
+        }
+
+        return null;
+    }
+
+    // removes the caster's oldest blocks of this limit group until there's room for `incoming` more.
+    // called before the new blocks are spawned, so the cap is on the group as a whole, not per spell.
+    static void enforceSummonLimit(SpellCtx ctx, BlockSummonLimitGroup group, int incoming) {
 
         if (group == null || !(ctx.caster instanceof Player)) {
             return;
         }
 
-        int max = Math.max(1, (int) ctx.calculatedSpellData.data.getNumber(group.eventDataKey, 0).number);
+        int max = getMaxSummons(ctx, group);
         String casterUuid = ctx.caster.getStringUUID();
 
         List<StationaryFallingBlockEntity> existing = ctx.world.getEntitiesOfClass(
@@ -135,7 +187,7 @@ public class SummonBlockAction extends SpellAction {
 
         existing.sort(Comparator.comparingInt(e -> -e.tickCount)); // oldest first
 
-        for (int i = 0; i < existing.size() - (max - 1); i++) {
+        for (int i = 0; i < existing.size() - (max - incoming); i++) {
             existing.get(i).remove(Entity.RemovalReason.DISCARDED);
         }
     }

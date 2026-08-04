@@ -17,6 +17,10 @@ import java.util.UUID;
 public class StrongboxBE extends BlockEntity {
 
     public boolean activated = false;
+    // how many guardians this box has ever released. Checked on top of `activated` before spawning:
+    // it's the one guard that can't be defeated by a failure between the spawn loop and the box being
+    // armed, which is what let a held right click pour out a fresh batch every few ticks.
+    public int spawnedCount = 0;
     public int guardiansRemaining = 0;
     public int tick = 0;
 
@@ -34,6 +38,7 @@ public class StrongboxBE extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putBoolean("activated", activated);
+        tag.putInt("spawnedCount", spawnedCount);
         tag.putInt("guardiansRemaining", guardiansRemaining);
         if (activatorId != null) {
             tag.putUUID("activatorId", activatorId);
@@ -44,6 +49,9 @@ public class StrongboxBE extends BlockEntity {
     public void load(CompoundTag tag) {
         super.load(tag);
         activated = tag.getBoolean("activated");
+        // boxes saved before spawnedCount existed read back 0, which is fine: they were either never
+        // opened, or already activated, and `activated` guards those on its own
+        spawnedCount = tag.getInt("spawnedCount");
         guardiansRemaining = tag.getInt("guardiansRemaining");
         activatorId = tag.hasUUID("activatorId") ? tag.getUUID("activatorId") : null;
     }

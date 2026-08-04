@@ -14,6 +14,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.loot.ImprisonedMon
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.generators.CurrencyLootGen;
+import com.robertx22.mine_and_slash.uncommon.UnstuckMobs;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.register.ExileCurrency;
@@ -28,6 +29,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -86,14 +89,26 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof ImprisonedMonsterBE be)) {
             return InteractionResult.SUCCESS;
         }
-        if (be.activated) {
+        // spawnedCount as well as activated: one release per block, ever. Holding right click re-fires
+        // use() server side every 4 ticks, so anything that stops the block being armed after the
+        // captive is out would otherwise keep releasing more of them - see StrongboxBlock.use.
+        if (be.activated || be.spawnedCount > 0) {
             // already released - the reward only comes once the monster is slain
             return InteractionResult.SUCCESS;
         }
+        try {
+            spawnMonster((ServerLevel) level, pos, p, be);
+        } catch (Exception e) {
+            // whatever went wrong, the captives that did come out must still be accounted for below
+            e.printStackTrace();
+        }
         // only arm the encounter if a captive actually came out. Arming it on a failed spawn would
         // leave monstersRemaining at 0, and the ticker would hand out the guaranteed reward on its
-        // very next pass without the player fighting anything.
-        if (spawnMonster((ServerLevel) level, pos, p, be) < 1) {
+        // very next pass without the player fighting anything. Read off the block entity rather than
+        // a return value, so this is right even when the spawn loop threw part way through - and read
+        // spawnedCount, not monstersRemaining, so a captive the unstuck pass had to discard still
+        // leaves an armed block that can resolve rather than a dead one nobody can ever open.
+        if (be.spawnedCount < 1) {
             return InteractionResult.SUCCESS;
         }
         be.activated = true;
@@ -123,10 +138,17 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             if (!(entity instanceof Mob mob)) {
                 continue;
             }
-            double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 2;
-            double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 2;
-            mob.moveTo(x, pos.getY() + 1, z, random.nextFloat() * 360F, 0);
+            // finds a spot the mob fits in - see DungeonAddonUtil. Must run before finalizeSpawn, which
+            // reads the mob's position.
+            DungeonAddonUtil.placeEncounterMob(level, mob, pos, random);
             mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
+            // zombies summon reinforcement zombies when hurt on Hard, and a Boss-rarity captive takes a
+            // long time to bring down. Reinforcements carry none of this encounter's tags, so they never
+            // decrement monstersRemaining and drop nothing.
+            AttributeInstance reinforcements = mob.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
+            if (reinforcements != null) {
+                reinforcements.setBaseValue(0);
+            }
             level.addFreshEntity(mob);
 
             // make it a real mini-boss: force Boss rarity (re-runs stat setup for that rarity)
@@ -143,11 +165,12 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             mob.setPersistenceRequired();
             mob.setTarget(p);
 
-            // count toward map completion as a mini-boss (deaths -> miniBossKills; miniBossSpawnCount
-            // below is the denominator). Mini-boss weight (see DungeonConfig.MINI_BOSS_COMPLETION_WEIGHT)
-            // makes it a meaningful chunk of progress, matching the harder fight.
+            // the captive is deliberately NOT flagged isMiniBossMob: this encounter is bonus content and
+            // must not move the map's exploration goal in either direction (it used to add a
+            // MINI_BOSS_COMPLETION_WEIGHT-weighted entry to the denominator the moment it was released,
+            // which dropped your completion % until you killed it). DungeonMobValidator knows about
+            // isImprisonedMonster, so it still drops loot.
             var entityData = DungeonEntityCapability.get(mob).data;
-            entityData.isMiniBossMob = true;
             // tag the captive so a LivingDeathEvent hook (DungeonAddonEvents) can decrement this
             // block's monstersRemaining on death - see ImprisonedMonsterBE for why this replaced
             // polling level.getEntity(uuid)
@@ -157,13 +180,12 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             be.monstersRemaining++;
             be.spawnedCount++;
             spawned++;
+            // last resort for a room where nothing above found space - strictly after the tagging and
+            // the counter bump, because unstuckFromWalls kills a mob it can't free, and that death has
+            // to come back through the hook and decrement this block. Tagged too late, the encounter
+            // would sit there waiting forever on a captive that no longer exists.
+            UnstuckMobs.unstuckFromWalls(mob);
         }
-
-        int finalSpawned = spawned;
-        DungeonMain.ifMapData(level, pos).ifPresent(x -> {
-            x.miniBossSpawnCount += finalSpawned;
-            x.updateMapCompletionRarity(level, pos);
-        });
 
         return spawned;
     }
@@ -175,8 +197,14 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             return null;
         }
         return (lvl, pos, st, be) -> {
-            if (be instanceof ImprisonedMonsterBE mbe && mbe.activated) {
-                if (mbe.tick++ % 20 == 0 && mbe.monstersRemaining <= 0) {
+            if (be instanceof ImprisonedMonsterBE mbe) {
+                // repair a block left unarmed with a live captive next to it (see use()) - the check
+                // below is the only thing that can ever pay it out, and it only runs on an armed block
+                if (!mbe.activated && mbe.monstersRemaining > 0) {
+                    mbe.activated = true;
+                    mbe.setChanged();
+                }
+                if (mbe.activated && mbe.tick++ % 20 == 0 && mbe.monstersRemaining <= 0) {
                     reward((ServerLevel) lvl, pos, mbe);
                 }
             }

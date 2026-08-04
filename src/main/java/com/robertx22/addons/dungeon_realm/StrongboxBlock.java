@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.loot.blueprints.RuneBlueprint;
 import com.robertx22.mine_and_slash.loot.blueprints.SkillGemBlueprint;
 import com.robertx22.mine_and_slash.loot.generators.GemLootGen;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
+import com.robertx22.mine_and_slash.uncommon.UnstuckMobs;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.core.BlockPos;
@@ -103,11 +104,29 @@ public class StrongboxBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof StrongboxBE be)) {
             return InteractionResult.SUCCESS;
         }
-        if (be.activated) {
+        // spawnedCount as well as activated: a box releases one batch of guardians in its life, full
+        // stop. Holding right click re-fires use() server side every 4 ticks, so anything that stops
+        // the box being armed after the guardians are out - an exception downstream of the spawn loop,
+        // say - used to mean another 8 guardians every 4 ticks out of a box that never opened.
+        if (be.activated || be.spawnedCount > 0) {
             // already opened - sealed until the guardians are dealt with
             return InteractionResult.SUCCESS;
         }
-        spawnGuardians((ServerLevel) level, pos, p, be);
+        try {
+            spawnGuardians((ServerLevel) level, pos, p, be);
+        } catch (Exception e) {
+            // whatever went wrong, the guardians that did come out must still be accounted for below
+            e.printStackTrace();
+        }
+        // read the count off the block entity rather than a return value: correct even when the spawn
+        // loop threw part way through. spawnedCount, not guardiansRemaining - a guardian the unstuck
+        // pass had to discard is already gone from remaining, and a box that did release its pack
+        // still has to be armed so it can resolve.
+        if (be.spawnedCount < 1) {
+            // nothing actually came out. Leave the box closed and clickable - arming it here would
+            // have the ticker hand out the whole payout on its next pass, unfought.
+            return InteractionResult.SUCCESS;
+        }
         be.activated = true;
         be.activatorId = p.getUUID();
         be.setChanged();
@@ -124,7 +143,6 @@ public class StrongboxBlock extends BaseEntityBlock {
             // not inside a dungeon map (e.g. creative placement) - fall back below
         }
         RandomSource random = level.random;
-        int spawned = 0;
         int guardianCount = DungeonConfig.get().STRONGBOX_GUARDIAN_COUNT.get();
         // Atlas "Unique Windfall" - guardians hit harder and have more health, without changing rarity
         float toughnessBonus = Load.Unit(p).getUnit().getCalculatedStat(StrongboxGuardianToughness.getInstance()).getValue();
@@ -134,34 +152,42 @@ public class StrongboxBlock extends BaseEntityBlock {
             if (!(entity instanceof Mob mob)) {
                 continue;
             }
-            double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 3;
-            double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 3;
-            mob.moveTo(x, pos.getY() + 1, z, random.nextFloat() * 360F, 0);
+            // finds a spot the mob fits in - see DungeonAddonUtil. Must run before finalizeSpawn, which
+            // reads the mob's position, and before addFreshEntity so earlier guardians are avoided.
+            DungeonAddonUtil.placeEncounterMob(level, mob, pos, random);
             mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
             mob.setPersistenceRequired();
             mob.setTarget(p);
             applyGuardianToughness(mob, toughnessBonus);
             level.addFreshEntity(mob);
-            // count guardians toward map completion: flag as a dungeon mob so their deaths register
-            // as mobKills (see DungeonEvents), and add them to mobSpawnCount below (the denominator).
+            // guardians are deliberately NOT flagged isDungeonMob: this encounter is bonus content and
+            // must not move the map's exploration goal in either direction (it used to add itself to
+            // mobSpawnCount on activation, which dropped your completion % until you cleared it).
+            // DungeonMobValidator knows about isStrongboxGuardian so they still drop loot.
             var entityData = DungeonEntityCapability.get(mob).data;
-            entityData.isDungeonMob = true;
             // tag this mob as belonging to this box so a LivingDeathEvent hook (DungeonAddonEvents)
             // can decrement guardiansRemaining on death - robust even if the guardian's chunk unloads,
             // unlike polling isAlive() by UUID.
             entityData.isStrongboxGuardian = true;
             entityData.strongboxPos = pos.asLong();
             be.guardiansRemaining++;
-            spawned++;
+            be.spawnedCount++;
+            // last resort for a room where nothing above found space - strictly after the tagging and
+            // the counter bump, because unstuckFromWalls kills a mob it can't free, and that death has
+            // to come back through the hook and decrement this box. Tagged too late, the box would sit
+            // there waiting forever on a guardian that no longer exists.
+            UnstuckMobs.unstuckFromWalls(mob);
         }
-        int finalSpawned = spawned;
-        DungeonMain.ifMapData(level, pos).ifPresent(x -> {
-            x.mobSpawnCount += finalSpawned;
-            x.updateMapCompletionRarity(level, pos);
-        });
     }
 
     private void applyGuardianToughness(Mob mob, float toughnessBonus) {
+        // zombies summon reinforcement zombies when hurt on Hard, and a guardian carrying the toughness
+        // bonus survives a great many hits. Reinforcements carry none of this encounter's tags, so they
+        // never decrement guardiansRemaining and drop nothing - just an endless trickle round the box.
+        AttributeInstance reinforcements = mob.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE);
+        if (reinforcements != null) {
+            reinforcements.setBaseValue(0);
+        }
         if (toughnessBonus <= 0) {
             return;
         }
@@ -187,14 +213,23 @@ public class StrongboxBlock extends BaseEntityBlock {
             return null;
         }
         return (lvl, pos, st, be) -> {
-            if (be instanceof StrongboxBE sbe && sbe.activated) {
-                // check for unlock once a second - click each check like a ticking timer, even
-                // though there's no actual time limit, so players get audible feedback it's "watching".
-                if (sbe.tick++ % 20 == 0) {
-                    if (sbe.guardiansRemaining <= 0) {
-                        unlock((ServerLevel) lvl, pos, sbe);
-                    } else {
-                        SoundUtils.playSound(lvl, pos, SoundEvents.LEVER_CLICK);
+            if (be instanceof StrongboxBE sbe) {
+                // repair a box that got left unarmed with live guardians standing around it (see use()).
+                // Without this it sits there forever - the check below is the only thing that can ever
+                // unlock it, and it only runs on an armed box.
+                if (!sbe.activated && sbe.guardiansRemaining > 0) {
+                    sbe.activated = true;
+                    sbe.setChanged();
+                }
+                if (sbe.activated) {
+                    // check for unlock once a second - click each check like a ticking timer, even
+                    // though there's no actual time limit, so players get audible feedback it's "watching".
+                    if (sbe.tick++ % 20 == 0) {
+                        if (sbe.guardiansRemaining <= 0) {
+                            unlock((ServerLevel) lvl, pos, sbe);
+                        } else {
+                            SoundUtils.playSound(lvl, pos, SoundEvents.LEVER_CLICK);
+                        }
                     }
                 }
             }

@@ -1,9 +1,11 @@
 package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.library_of_exile.utils.RandomUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
@@ -46,27 +48,52 @@ public class ExileEffectAction extends SpellAction {
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
 
         try {
+            String effectId = data.getOrDefault(EXILE_POTION_ID, "");
+
             ExileEffect potion = data.getExileEffect();
-            GiveOrTake action = data.getPotionAction();
-            int count = data.get(COUNT)
+            if (potion == null) {
+                // the exile_effect registry has no empty default, so an id that isn't registered
+                // (renamed/removed effect, typo in a datapack spell) comes back null and used to
+                // NPE deep inside the event with no hint of which spell caused it
+                ExileLog.get().warn("Spell action 'exile_effect' has no such exile effect: '" + effectId + "'. Spell: " + getSpellIdForLog(ctx));
+                return;
+            }
+
+            GiveOrTake action = data.has(POTION_ACTION) ? data.getPotionAction() : GiveOrTake.GIVE_STACKS;
+            if (action.getOther() == null) {
+                // REMOVE_NEGATIVE only means something for vanilla potions, it has no GiveOrTake2 pair
+                ExileLog.get().warn("Spell action 'exile_effect' can't use potion_action: " + action.name() + ". Spell: " + getSpellIdForLog(ctx));
+                return;
+            }
+
+            int count = data.getOrDefault(COUNT, 1D)
                     .intValue();
-            int duration = data.get(POTION_DURATION)
-                    .intValue();
-            boolean infinite = data.get(POTION_DURATION).equals(INFINITE_DURATION);
+            Double durationField = data.getOrDefault(POTION_DURATION, 0D);
+            int duration = durationField.intValue();
+            boolean infinite = durationField.equals(INFINITE_DURATION);
 
             float chance = data.getOrDefault(CHANCE, 100D).floatValue();
+
+            // null whenever the spell context isn't tied to a registered spell, ie an effect applied
+            // by a stat effect/shrine (CalculatedSpellData.NO_SPELL_RELATED) later ticking its own spell
+            Spell spell = ctx.calculatedSpellData.getSpell();
 
             targets.forEach(t -> {
 
                 if (RandomUtils.roll(chance)) {
-                    ExilePotionEvent potionEvent = EventBuilder.ofEffect(ctx.calculatedSpellData, ctx.caster, t, Load.Unit(ctx.caster)
+                    var builder = EventBuilder.ofEffect(ctx.calculatedSpellData, ctx.caster, t, Load.Unit(ctx.caster)
                                     .getLevel(), potion, action.getOther(), duration, infinite)
-                            .setSpell(ctx.calculatedSpellData.getSpell())
-                            .set(x -> x.data.getNumber(EventData.STACKS).number = count)
-                            .build();
+                            .set(x -> x.data.getNumber(EventData.STACKS).number = count);
 
-                    potionEvent.spellid = ctx.calculatedSpellData.getSpell()
-                            .GUID();
+                    if (spell != null) {
+                        builder.setSpell(spell);
+                    }
+
+                    ExilePotionEvent potionEvent = builder.build();
+
+                    if (spell != null) {
+                        potionEvent.spellid = spell.GUID();
+                    }
 
                     potionEvent.Activate();
                 }
@@ -76,6 +103,11 @@ public class ExileEffectAction extends SpellAction {
             e.printStackTrace();
         }
 
+    }
+
+    private static String getSpellIdForLog(SpellCtx ctx) {
+        String id = ctx.calculatedSpellData.spell_id;
+        return id == null || id.isEmpty() ? "<none, effect wasn't applied by a spell>" : id;
     }
 
     public MapHolder giveSeconds(EffectCtx ctx, int seconds) {

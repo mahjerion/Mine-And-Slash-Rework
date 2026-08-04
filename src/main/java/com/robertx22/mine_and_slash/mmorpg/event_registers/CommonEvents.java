@@ -54,14 +54,14 @@ public class CommonEvents {
     public static void register() {
 
         ForgeEvents.registerForgeEvent(EntityAttributeCreationEvent.class, x -> {
-            x.put(SlashEntities.SPIRIT_WOLF.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).build());
-            x.put(SlashEntities.SKELETON.get(), Skeleton.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).build());
-            x.put(SlashEntities.SPIDER.get(), Spider.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.5).build());
-            x.put(SlashEntities.ZOMBIE.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).build());
+            x.put(SlashEntities.SPIRIT_WOLF.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.6).add(Attributes.MAX_HEALTH, 20).build());
+            x.put(SlashEntities.SKELETON.get(), Skeleton.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).add(Attributes.MAX_HEALTH, 20).build());
+            x.put(SlashEntities.SPIDER.get(), Spider.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.5).add(Attributes.MAX_HEALTH, 20).build());
+            x.put(SlashEntities.ZOMBIE.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.MAX_HEALTH, 20).build());
 
-            x.put(SlashEntities.FIRE_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.45).build());
-            x.put(SlashEntities.COLD_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.45).build());
-            x.put(SlashEntities.LIGHTNING_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.45).build());
+            x.put(SlashEntities.FIRE_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).add(Attributes.MAX_HEALTH, 20).build());
+            x.put(SlashEntities.COLD_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).add(Attributes.MAX_HEALTH, 20).build());
+            x.put(SlashEntities.LIGHTNING_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.4).add(Attributes.MAX_HEALTH, 20).build());
 
         });
 

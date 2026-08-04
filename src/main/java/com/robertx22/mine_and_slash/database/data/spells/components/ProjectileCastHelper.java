@@ -72,10 +72,10 @@ public class ProjectileCastHelper {
 
     public void cast() {
 
-        if (data.data.getBoolean(EventData.BARRAGE)) {
-            this.castType = CastType.SPREAD_OUT_HORIZONTAL;
-        } else if (data.data.getBoolean(EventData.NOVA) || this.holder.getOrDefault(MapField.NOVA, false)) {
+        if (data.data.getBoolean(EventData.NOVA) || this.holder.getOrDefault(MapField.NOVA, false)) {
             this.castType = CastType.SPREAD_OUT_CIRCLE;
+        } else if (data.data.getBoolean(EventData.BARRAGE)) {
+            this.castType = CastType.SPREAD_OUT_HORIZONTAL;
         }
 
         Level world = caster.level();

@@ -66,6 +66,13 @@ public class DungeonAddonEvents {
 
     public static void init() {
 
+        // WorldData.map holds the MapData whose level every mob in a map (and in any side content
+        // connected to it) is spawned at. dungeon_realm's clearMapDataOnFolderWipe only knows about its
+        // own store, so this one used to survive the wipe while the instance counter restarted at 0 -
+        // a brand new map then read back a previous session's MapData under the recycled coordinates,
+        // which is how players ran into mobs far above their level.
+        DungeonMain.MAP.addOnWipeListener(server -> WorldData.get(server.overworld()).map.clearAll());
+
         // Strongbox guardian death tracking (StrongboxBlock/StrongboxBE): decrement the owning
         // box's persisted guardiansRemaining counter here, on the actual death event, rather than
         // having the box poll isAlive() by UUID - that would falsely read "dead" for a guardian

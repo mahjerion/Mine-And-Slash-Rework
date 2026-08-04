@@ -64,7 +64,9 @@ public class PlayerUtils {
     }
 
     public static Player nearestPlayer(ServerLevel world, BlockPos pos) {
-        return nearestPlayer(world, new Vec3(pos.getY(), pos.getY(), pos.getZ()));
+        // getY twice, so X was measured against the height - the "nearest" player was picked against a
+        // position that doesn't exist
+        return nearestPlayer(world, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
     }
 
     public static Player nearestPlayer(ServerLevel world, Vec3 pos) {

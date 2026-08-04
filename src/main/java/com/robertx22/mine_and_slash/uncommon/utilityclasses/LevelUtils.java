@@ -143,11 +143,11 @@ public class LevelUtils {
                 // Harvest/Obelisk instances are tiled a few chunks apart inside ONE shared dimension
                 // (unlike dungeon_realm maps, which carry their own positional MapData), so the
                 // dimension-wide nearest player can belong to someone else's concurrently running
-                // instance. Prefer a player actually inside this instance.
-                Player instancePlayer = getNearestPlayerInSameInstance(dimid, world, pos);
-                if (instancePlayer != null) {
-                    nearestPlayer = instancePlayer;
-                }
+                // instance. Only a player actually inside this instance may set the level - assigning
+                // unconditionally matters: keeping the dimension-wide player when the instance is empty
+                // is what let a level 100 player 160 blocks away in the next instance level these mobs.
+                // No one inside means no one to scale to, and min_lvl below is the safe answer.
+                nearestPlayer = getNearestPlayerInSameInstance(dimid, world, pos);
             }
         }
 

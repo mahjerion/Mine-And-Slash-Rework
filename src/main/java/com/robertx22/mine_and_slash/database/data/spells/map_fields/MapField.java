@@ -105,10 +105,14 @@ public class MapField<T> implements IGUID {
     public static MapField<Boolean> HITS_ALLIES = make("hits_allies");
     public static MapField<Boolean> IGNORE_Y = make("ignore_y");
     public static MapField<Boolean> TRACKS_ENEMIES = make("tracks_enemies");
+    // projectile re-steers toward its caster each tick, e.g. the return leg of a boomerang
+    public static MapField<Boolean> TRACKS_CASTER = make("tracks_caster");
     public static MapField<Boolean> DISABLE_KNOCKBACK = make("disable_knockback");
     public static MapField<Boolean> ALLOW_SELF_DAMAGE = make("allow_self_damage");
     // a summon can keep its summon type without occupying one of that type's cap slots
     public static MapField<Boolean> COUNTS_TOWARDS_MAX_SUMMONS = make("counts_towards_max_summons");
+    // secondary projectiles (fired on hit/expire of another projectile) shouldn't be multiplied by extra projectile stats again
+    public static MapField<Boolean> IGNORE_BONUS_PROJECTILES = make("ignore_bonus_proj");
 
     public static MapField<List<String>> ENTITY_PREDICATES = make("entity_predicates");
 

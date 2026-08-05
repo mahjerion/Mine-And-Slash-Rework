@@ -55,6 +55,7 @@ public class ProjectileCastHelper {
 
     public boolean fallDown = false;
     public boolean targetEnemy = false;
+    public boolean targetCaster = false;
 
     SpellCtx ctx;
 
@@ -81,10 +82,11 @@ public class ProjectileCastHelper {
         Level world = caster.level();
 
         LivingEntity target = null;
-        Vec3 baseDirection = null;
 
         // Find target once if targeting is enabled
-        if (targetEnemy) {
+        if (targetCaster) {
+            target = caster;
+        } else if (targetEnemy) {
             double radius = calculateRadius();
             double radiusSqr = radius * radius;
             EntityFinder.Setup<LivingEntity> finder = EntityFinder.start(caster, LivingEntity.class, pos.add(0, 0, 0))
@@ -98,11 +100,16 @@ public class ProjectileCastHelper {
             if (target == null) {
                 return;
             }
+        }
 
-            baseDirection = positionToVelocity(new MyPosition(pos), new MyPosition(target.getEyePosition()));
+        if (target != null) {
+            Vec3 baseDirection = positionToVelocity(new MyPosition(pos), new MyPosition(target.getEyePosition()));
 
-            pitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG;
-            yaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG;
+            // Vec3.normalize() returns ZERO below 1e-4 length, meaning we spawned right on top of the target
+            if (baseDirection.lengthSqr() > 0) {
+                pitch = (float) Math.asin(-baseDirection.y) * Mth.RAD_TO_DEG;
+                yaw = (float) Math.atan2(-baseDirection.x, baseDirection.z) * Mth.RAD_TO_DEG;
+            }
         }
 
         for (int i = 0; i < projectilesAmount; i++) {

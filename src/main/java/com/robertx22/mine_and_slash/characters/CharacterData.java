@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.characters;
 
 import com.robertx22.mine_and_slash.capability.player.data.RestedExpData;
 import com.robertx22.mine_and_slash.capability.player.data.StatPointsData;
+import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
@@ -28,6 +29,12 @@ public class CharacterData {
     int xp = 0;
 
     private HashMap<Integer, String> hotbar = new HashMap<>();
+
+    // the gear this character had on when it was last switched away from. transient because
+    // CharStorageData goes through LoadSave/Gson, which can't serialize an ItemStack - PlayerData
+    // writes this to the raw capability nbt instead, the same way the gem/aura/jewel inventories are
+    // handled. see CharacterEquipment for what goes in it.
+    public transient MyInventory equipment = CharacterEquipment.newStorage();
 
     RestedExpData rested = new RestedExpData();
     TalentsData talents = new TalentsData();
@@ -77,6 +84,15 @@ public class CharacterData {
         unit.setLevel(this.lvl);
         unit.setExp(this.xp);
 
+    }
+
+    // gson builds these objects, and a transient field only keeps its initializer because this class
+    // has a default constructor. don't rely on that holding - always come through here.
+    public MyInventory getEquipment() {
+        if (equipment == null) {
+            equipment = CharacterEquipment.newStorage();
+        }
+        return equipment;
     }
 
     public List<Component> getTooltip() {

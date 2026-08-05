@@ -25,7 +25,7 @@ public class SummonProjectileAction extends SpellAction {
     }
 
     public enum ShootWay {
-        FROM_PLAYER_VIEW, DOWN, FIND_ENEMY
+        FROM_PLAYER_VIEW, DOWN, FIND_ENEMY, AT_CASTER
     }
 
     @Override
@@ -44,7 +44,11 @@ public class SummonProjectileAction extends SpellAction {
         boolean silent = data.getOrDefault(MapField.IS_SILENT, false);
 
         ProjectileCastHelper builder = new ProjectileCastHelper(ctx, pos, data, ctx.caster, projectile.get(), ctx.calculatedSpellData);
-        builder.projectilesAmount = (int) (data.get(MapField.PROJECTILE_COUNT) + ctx.calculatedSpellData.data.getNumber(EventData.BONUS_PROJECTILES, 0).number);
+
+        double bonusProjectiles = data.getOrDefault(MapField.IGNORE_BONUS_PROJECTILES, false) ? 0 :
+                ctx.calculatedSpellData.data.getNumber(EventData.BONUS_PROJECTILES, 0).number;
+
+        builder.projectilesAmount = (int) (data.get(MapField.PROJECTILE_COUNT) + bonusProjectiles);
 
         builder.silent = silent;
 
@@ -64,6 +68,9 @@ public class SummonProjectileAction extends SpellAction {
         }
         if (shootWay == ShootWay.FIND_ENEMY) {
             builder.targetEnemy = true;
+        }
+        if (shootWay == ShootWay.AT_CASTER) {
+            builder.targetCaster = true;
         }
 
         builder.randomSpreadDegrees = data.getOrDefault(MapField.PROJECTILE_SPREAD_RANDOMNESS, 0D).floatValue();

@@ -98,6 +98,7 @@ public class PlayerData implements ICap {
     private static final String OMENS_FILLED = "ofi";
     private static final String SUMMONED = "summoned";
     private static final String ATLAS_DATA = "atlas";
+    private static final String CHAR_EQUIPMENT = "chareq";
 
     public DirtySync playerDataSync = new DirtySync("playerdata_sync", x -> syncData());
 
@@ -174,6 +175,18 @@ public class PlayerData implements ICap {
         LoadSave.Save(summonedData, nbt, SUMMONED);
         LoadSave.Save(atlas, nbt, ATLAS_DATA);
 
+        // stored character gear can't ride along in the CHARACTERS json - LoadSave is gson, and an
+        // ItemStack won't survive that. keyed by character slot, but it's owned by the CharacterData
+        // object, so deleting a character takes its gear with it and no orphan can be left at an index
+        // that tryAddNewCharacter later reuses.
+        CompoundTag charEquipment = new CompoundTag();
+        characters.map.forEach((num, character) -> {
+            if (character != null) {
+                charEquipment.put(String.valueOf(num), character.getEquipment().createTag());
+            }
+        });
+        nbt.put(CHAR_EQUIPMENT, charEquipment);
+
         // LoadSave.Save(ctxStats, nbt, "ctx");
 
         nbt.put(GEMS, skillGemInv.createTag());
@@ -206,6 +219,16 @@ public class PlayerData implements ICap {
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
         this.atlas = loadOrBlank(AtlasData.class, new AtlasData(), nbt, ATLAS_DATA, new AtlasData());
+
+        // must come after `characters` is assigned above - the stacks hang off those objects.
+        // on the client this tag is absent (syncData strips it), so every inventory just ends up empty.
+        CompoundTag charEquipment = nbt.getCompound(CHAR_EQUIPMENT);
+        this.characters.map.forEach((num, character) -> {
+            if (character != null) {
+                character.getEquipment().fromTag(charEquipment.getList(String.valueOf(num), 10));
+            }
+        });
+
         //generate a container with mutable size
         // this.ctxStats = loadOrBlank(SavedStatCtxList.class, new SavedStatCtxList(), nbt, "ctx", new SavedStatCtxList());
 
@@ -233,6 +256,10 @@ public class PlayerData implements ICap {
     private void syncData() {
 
         CompoundTag nbt = this.serializeNBT();
+
+        // stored character gear is server side only. the client has no use for it, and leaving it in
+        // would put every alt's full gear nbt into this packet and into the comparison below.
+        nbt.remove(CHAR_EQUIPMENT);
 
         // OnServerTick marks this dirty every 3 seconds no matter what, and most of the explicit
         // setDirty() callers fire far more often than the data actually changes. serializing is

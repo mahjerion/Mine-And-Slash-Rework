@@ -63,6 +63,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     private int ticksInGround = 0;
 
     public boolean moveTowardsEnemies = false;
+    public boolean moveTowardsCaster = false;
 
     private static final EntityDataAccessor<CompoundTag> SPELL_DATA = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<String> ENTITY_NAME = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.STRING);
@@ -413,6 +414,15 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     Entity target = null;
 
     public void tryMoveTowardsTargets() {
+
+        if (moveTowardsCaster) {
+            var speed = getDeltaMovement().length();
+            var direction = ProjectileCastHelper.positionToVelocity(new MyPosition(position()), new MyPosition(getCaster().getEyePosition()));
+            setDeltaMovement(direction.scale(speed));
+            setMotionDirty();
+            return;
+        }
+
         if (moveTowardsEnemies) {
 
             if (target == null || !target.isAlive() || this.tickCount % 20 == 0) {
@@ -766,6 +776,7 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         }
 
         this.moveTowardsEnemies = holder.getOrDefault(MapField.TRACKS_ENEMIES, false);
+        this.moveTowardsCaster = holder.getOrDefault(MapField.TRACKS_CASTER, false);
         this.speed = holder.getOrDefault(MapField.PROJECTILE_SPEED, 1D).floatValue();
 
         this.entityData.set(ACCELERATION, holder.getOrDefault(MapField.PROJECTILE_ACCELERATION, 0D).floatValue() * getSpeedMultiplier());

@@ -18,16 +18,43 @@ public class CharStorageData {
 
     public HashMap<Integer, CharacterData> map = new HashMap<>();
 
+    // switching characters also moves the worn loadout: whatever the outgoing character has equipped
+    // goes into its own CharacterData, and the incoming character's stored gear goes back on.
+    //
+    // the invariant that keeps this from duplicating items is that the *active* character's stored
+    // equipment is always empty - it lives on the player instead. every step below preserves that.
     public void load(int num, Player p) {
 
         var data = map.get(num);
 
-        if (data != null) {
-            map.put(current, CharacterData.from(p));
-            data.load(p);
-            this.current = num;
+        if (data == null) {
+            return;
+        }
+        if (num == current) {
+            // nothing to do, and going ahead would snapshot the player into the same entry we're about
+            // to restore from. ToonActionPacket already refuses this for the LOAD button, but
+            // CreateCharPacket reaches here with num == current when naming the very first character.
+            return;
         }
 
+        CharacterData snapshot = CharacterData.from(p);
+        CharacterEquipment.stashInto(p, snapshot.getEquipment());
+        map.put(current, snapshot);
+
+        int stored = CharacterEquipment.countItems(snapshot.getEquipment());
+        int restored = CharacterEquipment.countItems(data.getEquipment()); // restoreFrom empties it
+
+        data.load(p); // sets the level last, so do this before handing the gear back
+        CharacterEquipment.restoreFrom(p, data.getEquipment());
+
+        this.current = num;
+
+        CharacterEquipment.afterSwap(p);
+
+        if (stored > 0 || restored > 0) {
+            p.sendSystemMessage(Chats.CHARACTER_SWITCHED_GEAR.locName(stored, restored)
+                    .withStyle(ChatFormatting.GRAY));
+        }
     }
 
     public CharacterData getCurrent() {

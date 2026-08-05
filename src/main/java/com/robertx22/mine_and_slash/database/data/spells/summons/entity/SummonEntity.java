@@ -102,6 +102,16 @@ public abstract class SummonEntity extends TamableAnimal implements RangedAttack
         this.level().addFreshEntity(en);
     }
 
+    // cooldown between the shot and starting to draw again. vanilla's RangedBowAttackGoal always
+    // spends another 20 ticks drawing the bow before it fires, so the real cycle is this + 20 and
+    // 0 here would still cap the summon at one arrow per second
+    private static final int RANGED_ATTACK_COOLDOWN = 10;
+
+    // where the summon plants itself instead of walking closer, and the band it kites in: vanilla
+    // backs away inside half of this and re-approaches past ~0.87 of it, so 10 holds ~5-8.7 blocks.
+    // it does not gate shooting - the bow fires at any range once there's a target and line of sight
+    private static final float RANGED_ATTACK_RADIUS = 10F;
+
     public boolean usesMelee() {
         return true;
     }
@@ -118,7 +128,7 @@ public abstract class SummonEntity extends TamableAnimal implements RangedAttack
             this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
         }
         if (usesRanged()) {
-            this.goalSelector.addGoal(5, new RangedBowAttackGoal<>(this, 1.0D, 20, 15F));
+            this.goalSelector.addGoal(5, new RangedBowAttackGoal<>(this, 1.0D, RANGED_ATTACK_COOLDOWN, RANGED_ATTACK_RADIUS));
         }
 
         this.goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 1));

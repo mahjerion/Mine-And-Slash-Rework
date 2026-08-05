@@ -84,7 +84,9 @@ public enum Chats implements IAutoLocName {
     SOULLESS_GEAR_INFO("This Gear Lacks a Soul\nSouls contain Mine and Slash Stats"),
     SOULLESS_GEAR_MORE_INFO("Souls Are Crafted with MNS Professions or Drop from Mobs"),
 
-    CHARACTER_LOAD_INFO("Character Feature saves:\n- Your level and exp\n- Your spells, stats, talents, hotbar setup\n\nIt does not save your gear, gems jewels etc.\n\nEach Character starts from Level 1"),
+    CHARACTER_LOAD_INFO("Character Feature saves:\n- Your level and exp\n- Your spells, stats, talents, hotbar setup\n- Your equipped Armor, Offhand, Rings, Necklace and Omen\n\nEquipped gear is stored with the character and comes back when you load it.\n\nIt does not save your inventory, weapon, backpack, gems or jewels.\n\nEach Character starts from Level 1"),
+    CHARACTER_SWITCHED_GEAR("Stored %1$s equipped items, and equipped %2$s items belonging to this character."),
+    CHARACTER_GEAR_RETURNED("Returned %1$s items that character had equipped."),
     NO_DUPLICATE_AURA("You can't equip duplicate aura gems."),
     YOU_LACK_JEWEL_SLOTS("You lack jewel slots! You gain these typically from the Talent tree. You can use the search bar in the Talents screen to find them."),
     LACK_AURA_CAPACITY("You lack the Augment capacity to equip all these Augments."),

@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.LearnSpellStat;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.ModRange;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.tooltips.TooltipStatInfo;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.tooltips.TooltipStatWithContext;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.NumberUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -80,7 +81,7 @@ public class NormalStatTooltip implements IStatTooltipType {
         var v2 = mod.ToExactStat(max.minmax.max, lvl).getValue();
 
 
-        var mid = Component.literal((int) v1 + "" + " - " + (int) v2 + "");
+        var mid = Component.literal(NumberUtils.formatForTooltip(v1) + " - " + NumberUtils.formatForTooltip(v2));
 
         var text = Component.literal(" [").append(mid).append("]").withStyle(format);
 

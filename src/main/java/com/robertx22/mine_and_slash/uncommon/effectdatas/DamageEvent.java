@@ -84,6 +84,40 @@ public class DamageEvent extends EffectEvent {
     public float unconvertedDamagePercent = 100;
     public float unconvertedDamageTakenAsPercent = 100;
 
+    // these two are identical for this hit and for every bonus-element copy of it (same source,
+    // same target, same tick), but each costs world/map data lookups to work out. resolve them
+    // lazily once and hand the answers down to the copies in calculateAllBonusElementalDamage.
+    private Boolean sourceInMapWorld = null;
+    private static final float MAP_RES_MULTI_NOT_CALCULATED = -1;
+    private float mapResReqDmgMulti = MAP_RES_MULTI_NOT_CALCULATED;
+
+    private boolean isSourceInMapWorld() {
+        if (sourceInMapWorld == null) {
+            sourceInMapWorld = WorldUtils.isMapWorldClass(source.level(), source.blockPosition());
+        }
+        return sourceInMapWorld;
+    }
+
+    // returns 1 when there's no penalty - addMoreMulti ignores a multi of 1, and the real penalty
+    // is always clamped to at least 2, so 1 is safe to use as the "no penalty" value.
+    private float getMapResReqDmgMulti(GameBalanceConfig balance) {
+        if (mapResReqDmgMulti == MAP_RES_MULTI_NOT_CALCULATED) {
+            mapResReqDmgMulti = 1;
+
+            var map = Load.mapAt(target.level(), target.blockPosition());
+            if (map != null && map.map != null) {
+                var req = map.map.getStatReq();
+                var targetUnit = Load.Unit(target);
+
+                if (!req.meetsReq(map.map.lvl, targetUnit)) {
+                    float minusres = req.getLackingResistNumber(map.map.lvl, targetUnit);
+                    mapResReqDmgMulti = Math.max((float) (minusres * balance.MOB_DMG_MULTI_PER_MAP_RES_REQ_LACKING), 2.0f);
+                }
+            }
+        }
+        return mapResReqDmgMulti;
+    }
+
     protected DamageEvent(AttackInformation attackInfo, LivingEntity source, LivingEntity target, float dmg) {
         super(dmg, source, target);
         this.attackInfo = attackInfo;
@@ -125,7 +159,7 @@ public class DamageEvent extends EffectEvent {
 
                         if (penalty < 1) {
                             float dmgmulti = 2F - penalty;
-                            this.addMoreMulti(Words.HIGH_LVL_MOB_DMG_MULTI.locName(), EventData.NUMBER, dmgmulti);
+                            this.addMoreMulti(() -> Words.HIGH_LVL_MOB_DMG_MULTI.locName(), EventData.NUMBER, dmgmulti);
                         }
                     }
                 }
@@ -135,29 +169,22 @@ public class DamageEvent extends EffectEvent {
 
                 if (balance.MOB_DMG_POWER_SCALING != 1) {
                     float multi = (float) (balance.MOB_DMG_POWER_SCALING_BASE * (float) Math.pow(balance.MOB_DMG_POWER_SCALING, sourceData.getLevel()));
-                    this.addMoreMulti(Words.LVL_EXPONENT_MOB_DMG.locName(), EventData.NUMBER, multi);
+                    this.addMoreMulti(() -> Words.LVL_EXPONENT_MOB_DMG.locName(), EventData.NUMBER, multi);
                 }
 
                 MobRarity rar = sourceData.getMobRarity();
 
                 float enconfigmulti = (float) sourceData.getEntityConfig().dmg_multi;
 
-                this.addMoreMulti(Words.MOB_RARITY_MULTI.locName(), EventData.NUMBER, rar.DamageMultiplier());
+                this.addMoreMulti(() -> Words.MOB_RARITY_MULTI.locName(), EventData.NUMBER, rar.DamageMultiplier());
 
                 if (enconfigmulti != 1) {
-                    this.addMoreMulti(Words.MOB_CONFIG_MULTI.locName(), EventData.NUMBER, enconfigmulti);
+                    this.addMoreMulti(() -> Words.MOB_CONFIG_MULTI.locName(), EventData.NUMBER, enconfigmulti);
                 }
 
-                if (WorldUtils.isMapWorldClass(source.level(), source.blockPosition())) {
+                if (isSourceInMapWorld()) {
                     if (target instanceof Player) {
-                        var map = Load.mapAt(target.level(), target.blockPosition());
-                        if (map != null && map.map != null) {
-                            if (!map.map.getStatReq().meetsReq(map.map.lvl, Load.Unit(target))) {
-                                float minusres = map.map.getStatReq().getLackingResistNumber(map.map.lvl, Load.Unit(target));
-                                float multi = Math.max((float) (minusres * GameBalanceConfig.get().MOB_DMG_MULTI_PER_MAP_RES_REQ_LACKING), 2.0f);
-                                this.addMoreMulti(Words.MAP_RES_REQ_LACK_DMG_MULTI.locName(), EventData.NUMBER, multi);
-                            }
-                        }
+                        this.addMoreMulti(() -> Words.MAP_RES_REQ_LACK_DMG_MULTI.locName(), EventData.NUMBER, getMapResReqDmgMulti(balance));
                     }
                 }
 
@@ -166,7 +193,7 @@ public class DamageEvent extends EffectEvent {
                     if (target instanceof Player == false) {
                         float penalty = LootUtils.getLevelDistancePunishmentMulti(sourceData.getLevel(), targetData.getLevel());
                         if (penalty < 1) {
-                            this.addMoreMulti(Words.DMG_TO_HIGH_LVL_MOB_DMG_MULTI.locName(), EventData.NUMBER, penalty);
+                            this.addMoreMulti(() -> Words.DMG_TO_HIGH_LVL_MOB_DMG_MULTI.locName(), EventData.NUMBER, penalty);
                         }
                     }
                 }
@@ -363,7 +390,7 @@ public class DamageEvent extends EffectEvent {
 
                         float arrowmulti = duck.my$getDmgMulti();
 
-                        this.addMoreMulti(Words.ARROW_DRAW_AMOUNT_MULTI.locName(), EventData.NUMBER, arrowmulti);
+                        this.addMoreMulti(() -> Words.ARROW_DRAW_AMOUNT_MULTI.locName(), EventData.NUMBER, arrowmulti);
 
                         // multiply dmg by saved charge value
                     }
@@ -401,7 +428,7 @@ public class DamageEvent extends EffectEvent {
                 return false;
             }
         }
-        if (WorldUtils.isMapWorldClass(source.level(), source.blockPosition())) {
+        if (isSourceInMapWorld()) {
             // in maps, we dont want mobs to damage each other
             if (AllyOrEnemy.allies.is(source, target)) {
                 cancelDamage();
@@ -442,14 +469,14 @@ public class DamageEvent extends EffectEvent {
                     float fullswing = sourceData.getUnit().getCalculatedStat(FullSwingDamage.getInstance()).getMultiplier();
                     this.addMoreMulti(FullSwingDamage.getInstance(), EventData.NUMBER, fullswing);
                 }
-                this.addMoreMulti(Words.ATTACK_SPEED_MULTI.locName(), EventData.NUMBER, multi);
+                this.addMoreMulti(() -> Words.ATTACK_SPEED_MULTI.locName(), EventData.NUMBER, multi);
             }
             modifyIfArrowDamage();
         }
 
         // todo this should be in layers too or multis
         if (areBothPlayers()) {
-            this.addMoreMulti(Words.PVP_DMG_MULTI.locName(), EventData.NUMBER, ServerContainer.get().PVP_DMG_MULTI.get().floatValue());
+            this.addMoreMulti(() -> Words.PVP_DMG_MULTI.locName(), EventData.NUMBER, ServerContainer.get().PVP_DMG_MULTI.get().floatValue());
         }
 
 
@@ -458,7 +485,7 @@ public class DamageEvent extends EffectEvent {
                 if (!data.getBoolean(EventData.UNARMED_ATTACK)) {
                     float multi = attackInfo.weaponData.GetBaseGearType().getGearSlot().getBasicDamageMulti();
                     this.wepdmgMulti = multi;
-                    this.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, multi);
+                    this.addMoreMulti(() -> Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, multi);
                 }
             }
         }
@@ -532,7 +559,7 @@ public class DamageEvent extends EffectEvent {
 
             for (MoreMultiData multi : this.getMoreMultis()) {
                 if (multi.numberid.equals(EventData.NUMBER)) {
-                    msg.append(multi.text.append(": ").append(Component.literal("x" + MMORPG.DECIMAL_FORMAT.format(multi.multi)))).append("\n");
+                    msg.append(multi.getText().append(": ").append(Component.literal("x" + MMORPG.DECIMAL_FORMAT.format(multi.multi)))).append("\n");
                 }
             }
         }
@@ -855,6 +882,10 @@ public class DamageEvent extends EffectEvent {
                             }
                             x.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
 
+                            // same hit, same positions - don't redo the map lookups per element
+                            x.sourceInMapWorld = this.sourceInMapWorld;
+                            x.mapResReqDmgMulti = this.mapResReqDmgMulti;
+
                             x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
                             x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
                             x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
@@ -924,7 +955,9 @@ public class DamageEvent extends EffectEvent {
                 ele = Elements.Physical;
             }
 
-            float total = (dmgmap.getOrDefault(element, 0F) + dmg);
+            // read and write under the same key - reading under the raw `element` would look up a
+            // null key, miss, and overwrite Physical's running total instead of adding to it
+            float total = (dmgmap.getOrDefault(ele, 0F) + dmg);
 
             dmgmap.put(ele, total);
             eventMap.put(ele, event);

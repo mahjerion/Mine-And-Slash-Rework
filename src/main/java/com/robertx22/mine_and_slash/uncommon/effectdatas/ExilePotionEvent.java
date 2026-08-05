@@ -2,7 +2,9 @@ package com.robertx22.mine_and_slash.uncommon.effectdatas;
 
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import net.minecraft.util.Mth;
@@ -93,6 +95,13 @@ public class ExilePotionEvent extends EffectEvent {
         extraData.self_cast = source == target;
         extraData.caster_uuid = source.getStringUUID();
         extraData.spell_id = this.spellid;
+
+        // a proc (ProcSpellEffect) casts a real spell, but the caster usually never learned it, so
+        // the "spell got deallocated" cleanup must not treat the buff it grants as a respec leftover.
+        // only buffs applied while the holder actually had the spell allocated stay subject to it
+        Spell spell = ExileDB.Spells().isRegistered(this.spellid) ? ExileDB.Spells().get(this.spellid) : null;
+        extraData.ignore_spell_allocation = spell == null || spell.getLevelOf(target) < 1;
+
         extraData.str_multi = data.getNumber();
         extraData.calcSpell = this.calc;
         extraData.ticks_left = (int) data.getNumber(EventData.EFFECT_DURATION_TICKS).number;

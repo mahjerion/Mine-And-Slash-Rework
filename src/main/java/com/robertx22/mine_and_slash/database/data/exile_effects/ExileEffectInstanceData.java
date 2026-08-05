@@ -23,18 +23,22 @@ public class ExileEffectInstanceData {
     public int ticks_left = 0;
     // ticks this effect was applied for. removing a stack refreshes ticks_left back to this
     public int full_duration = 0;
+    // set at apply time when the spell that granted this self buff wasn't allocated by the holder.
+    // procs (ProcSpellEffect) cast real spells the caster never learned, those buffs have to run out
+    // on their own timer instead of being treated as leftovers from a respec
+    public boolean ignore_spell_allocation = false;
 
     public boolean isSpellNoLongerAllocated(LivingEntity en) {
-        if (self_cast) {
-            //calcSpell.equals(CalculatedSpellData.NO_SPELL_RELATED) indicate this effect is not related to a spell
-            if (calcSpell.equals(CalculatedSpellData.NO_SPELL_RELATED)) {
-                return false;
-            } else {
-                Spell spell = getSpell();
-                return spell != null && spell.getLevelOf(en) < 1;
-            }
+        if (!self_cast || ignore_spell_allocation) {
+            return false;
         }
-        return false;
+        // effects not tied to a spell (stat/shrine granted) were never allocated to begin with.
+        // checked by id instead of calcSpell identity so it survives a relog
+        if (spell_id.isEmpty()) {
+            return false;
+        }
+        Spell spell = getSpell();
+        return spell != null && spell.getLevelOf(en) < 1;
     }
 
     public boolean shouldRemove() {

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class EffectEvent implements IGUID {
     public boolean disableActivation = false;
@@ -59,10 +60,17 @@ public abstract class EffectEvent implements IGUID {
     }
 
     public void addMoreMulti(Stat stat, String number, float multi) {
-        addMoreMulti(Component.literal("Stat: ").append(stat.locName()), number, multi);
+        addMoreMulti(() -> Component.literal("Stat: ").append(stat.locName()), number, multi);
     }
 
     public void addMoreMulti(MutableComponent text, String number, float multi) {
+        addMoreMulti(() -> text, number, multi);
+    }
+
+    // the text is only ever read when building the damage message tooltip, which most players have
+    // off. building it eagerly costs several string allocs per multi per event (and every event is
+    // rebuilt once more per bonus element), so keep it as a supplier and only resolve it if shown.
+    public void addMoreMulti(Supplier<MutableComponent> text, String number, float multi) {
         if (multi != 1) {
             moreMultis.add(new MoreMultiData(text, multi, number));
         }
@@ -70,14 +78,18 @@ public abstract class EffectEvent implements IGUID {
 
     public static class MoreMultiData {
 
-        public MutableComponent text;
+        private final Supplier<MutableComponent> text;
         public float multi = 1;
         public String numberid = "";
 
-        public MoreMultiData(MutableComponent text, float multi, String numberid) {
+        public MoreMultiData(Supplier<MutableComponent> text, float multi, String numberid) {
             this.text = text;
             this.multi = multi;
             this.numberid = numberid;
+        }
+
+        public MutableComponent getText() {
+            return text.get();
         }
     }
 
@@ -327,8 +339,6 @@ public abstract class EffectEvent implements IGUID {
             }
         }
 
-        List<StatData> list = new ArrayList<>();
-
         un.getStats().stats
                 .values()
                 .forEach(data -> {
@@ -341,7 +351,6 @@ public abstract class EffectEvent implements IGUID {
                                 if (eff.worksOnEvent(this)) {
                                     if (eff.Side().equals(side)) {
                                         effects.add(new EffectWithCtx(eff, side, data));
-                                        list.add(data);
                                     }
                                 }
                             }
@@ -358,7 +367,6 @@ public abstract class EffectEvent implements IGUID {
                             }
                             if (effect != null) {
                                 effects.add(new EffectWithCtx(effect, side, data));
-                                list.add(data);
                             }
                         }
 

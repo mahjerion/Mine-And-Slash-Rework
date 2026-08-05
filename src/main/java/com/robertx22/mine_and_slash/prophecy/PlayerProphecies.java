@@ -17,10 +17,14 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +46,14 @@ public class PlayerProphecies implements IStatCtx {
 
     public boolean usedFreeRoll = false;
 
+    // the altar that granted the picks currently owed to the player. it stays standing until the
+    // last pick is spent, so closing the card screen without picking can never orphan the budget
+    // (the numMobAffixesCanAdd gate would otherwise block every other altar for the rest of the map)
+    public String altarDim = "";
+    public int altarX = 0;
+    public int altarY = 0;
+    public int altarZ = 0;
+
 
     public void clearIfNewMap(MapItemData map) {
 
@@ -55,6 +67,40 @@ public class PlayerProphecies implements IStatCtx {
 
         rerollsUsed = 0;
         usedFreeRoll = false;
+
+        clearPendingAltar();
+    }
+
+    public boolean hasPendingAltar() {
+        // null when loaded from a save written before this field existed
+        return altarDim != null && !altarDim.isEmpty();
+    }
+
+    public void setPendingAltar(Level level, BlockPos pos) {
+        this.altarDim = level.dimension().location().toString();
+        this.altarX = pos.getX();
+        this.altarY = pos.getY();
+        this.altarZ = pos.getZ();
+    }
+
+    public void clearPendingAltar() {
+        this.altarDim = "";
+        this.altarX = 0;
+        this.altarY = 0;
+        this.altarZ = 0;
+    }
+
+    // consumes the recorded altar, but only if the player is still standing in the dimension it was
+    // clicked in and the block is really still an altar - the player may have left the instance, or
+    // the block may be gone already, and we must never blow up an unrelated block at those coords
+    public void consumePendingAltar(Player p) {
+        if (hasPendingAltar() && p.level().dimension().location().toString().equals(altarDim)) {
+            BlockPos pos = new BlockPos(altarX, altarY, altarZ);
+            if (p.level().getBlockState(pos).getBlock() instanceof ProphecyAltarBlock) {
+                p.level().setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        clearPendingAltar();
     }
 
 
@@ -67,8 +113,15 @@ public class PlayerProphecies implements IStatCtx {
                     .getFilterWrapped(x ->
                             x.req.equals(MnsLeagues.INSTANCE.PROPHECY.GUID()) &&
                                     x.affected == AffectedEntities.Players &&
+                                    // a second pick from the same altar shouldn't re-offer a curse
+                                    // already taken this map
+                                    !affixesTaken.contains(x.GUID()) &&
                                     affixOffers.stream().map(a -> ExileDB.MapAffixes().get(a)).allMatch(e -> !e.prophecy_type.equals(x.prophecy_type))
                     ).random();
+            if (affix == null) {
+                // pool exhausted - random() returns null on an empty list, don't NPE on GUID()
+                break;
+            }
             affixOffers.add(affix.GUID());
         }
     }

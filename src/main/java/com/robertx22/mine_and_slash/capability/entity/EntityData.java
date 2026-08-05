@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.CLOC;
 import com.robertx22.library_of_exile.utils.LoadSave;
 import com.robertx22.library_of_exile.wrappers.ExileText;
+import com.robertx22.mine_and_slash.capability.CapNbtCache;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.bases.EntityGears;
 import com.robertx22.mine_and_slash.capability.bases.INeededForClient;
@@ -296,8 +297,22 @@ public class EntityData implements ICap, INeededForClient {
         }
     }
 
+    // expect a smaller win here than on the player caps, and that is correct rather than a shortfall.
+    // resource changes mark sync dirty (ResourcesData), and health/mana regen moves nearly every
+    // tick, so this tag genuinely differs tick to tick. what the cache does buy is collapsing the
+    // several readers within a single tick down to one build.
+    private transient final CapNbtCache nbtCache = new CapNbtCache();
+
+    public CapNbtCache getNbtCache() {
+        return nbtCache;
+    }
+
     @Override
     public CompoundTag serializeNBT() {
+        return nbtCache.get(entity, sync.getVersion(), this::buildNBT);
+    }
+
+    private CompoundTag buildNBT() {
         CompoundTag nbt = new CompoundTag();
 
         addClientNBT(nbt);
@@ -354,6 +369,9 @@ public class EntityData implements ICap, INeededForClient {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+
+        // anything cached was built before this data existed
+        nbtCache.markDirty();
 
         try {
             loadFromClientNBT(nbt);

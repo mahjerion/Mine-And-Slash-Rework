@@ -9,10 +9,27 @@ import net.minecraft.world.item.ItemStack;
 // had to override tag methods because the simplecontainer doesn't save place in inventory, just autosorts items..
 public class MyInventory extends SimpleContainer {
 
+    // lets the capability that owns this inventory drop its cached nbt when the contents move.
+    // SimpleContainer.setItem/removeItem already call setChanged(), BackpackInventory calls it when
+    // merging stacks, and the menus route slot edits through Slot.setChanged().
+    private transient Runnable onChanged = null;
 
     public MyInventory(int pSize) {
         super(pSize);
 
+    }
+
+    public MyInventory onChanged(Runnable onChanged) {
+        this.onChanged = onChanged;
+        return this;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (onChanged != null) {
+            onChanged.run();
+        }
     }
 
 

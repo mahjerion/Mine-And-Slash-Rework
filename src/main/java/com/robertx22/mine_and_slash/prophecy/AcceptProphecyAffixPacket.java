@@ -38,20 +38,40 @@ public class AcceptProphecyAffixPacket extends MyPacket<AcceptProphecyPacket> {
     @Override
     public void onReceived(ExilePacketContext ctx) {
 
-        var data = Load.player(ctx.getPlayer()).prophecy;
+        var p = ctx.getPlayer();
+        var data = Load.player(p).prophecy;
 
         if (data.affixOffers.contains(this.id)) {
             if (data.numMobAffixesCanAdd > 0 && data.affixesTaken.size() < 9) {
                 data.affixesTaken.removeIf(x -> x == null || x.isEmpty() || !ExileDB.MapAffixes().isRegistered(x));
 
                 data.affixesTaken.add(id);
-                
-                data.affixOffers = new ArrayList<>();
 
                 data.numMobAffixesCanAdd--;
+
+                // Twin Curse - roll a fresh set for the next pick and put the screen back up.
+                // without this the offers stay empty and the leftover budget blocks every altar in
+                // the map for good. getProphecyCardsScreen() needs exactly 3, so a dry pool counts
+                // as being done rather than stranding the budget.
+                if (data.numMobAffixesCanAdd > 0 && data.affixesTaken.size() < 9) {
+                    data.regenAffixOffers();
+                }
+
+                if (data.numMobAffixesCanAdd < 1 || data.affixOffers.size() < 3) {
+                    data.affixOffers = new ArrayList<>();
+                    // never strand budget on the 9 curse cap - the guard above would make every
+                    // further accept a no-op while the altar gate still saw a pending pick
+                    data.numMobAffixesCanAdd = 0;
+                    data.consumePendingAltar(p);
+                }
             }
         }
-        Load.player(ctx.getPlayer()).playerDataSync.setDirty();
+
+        if (data.numMobAffixesCanAdd > 0 && !data.affixOffers.isEmpty()) {
+            ProphecyAltarBlock.openCurseScreen(p); // syncs as well
+        } else {
+            Load.player(p).playerDataSync.setDirty();
+        }
     }
 
     @Override

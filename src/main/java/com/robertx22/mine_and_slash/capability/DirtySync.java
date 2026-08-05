@@ -9,6 +9,11 @@ public class DirtySync {
 
     private boolean dirty = false;
 
+    // monotonic, unlike the dirty flag, which clears every time we sync. CapNbtCache keys off this
+    // so the nbt cache can reuse the ~71 setDirty() call sites already maintained for client sync
+    // instead of needing a second set of invalidation hooks.
+    private long version = 0;
+
     private String id;
     private Consumer<Entity> sync;
 
@@ -17,8 +22,13 @@ public class DirtySync {
         this.id = id;
     }
 
+    public long getVersion() {
+        return version;
+    }
+
     public void setDirty() {
         this.dirty = true;
+        this.version++;
     }
 
     // should only be used when you need instant sync

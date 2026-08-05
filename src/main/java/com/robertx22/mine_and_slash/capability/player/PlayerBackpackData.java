@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.capability.player;
 
+import com.robertx22.mine_and_slash.capability.CapNbtCache;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.components.ICap;
@@ -41,18 +42,35 @@ public class PlayerBackpackData implements ICap {
     transient Player player;
     private Backpacks data;
 
+    // 5 tabs of 54 slots is 270 ItemStack.save calls, which anything reading the player's nbt was
+    // paying for every tick. backpacks are never sent to the client (see syncToClient below), so a
+    // stale tag here could only ever reach a save, and CapNbtCache.invalidate is forced before those.
+    private transient final CapNbtCache nbtCache = new CapNbtCache();
+
     public PlayerBackpackData(Player player) {
         this.player = player;
         this.data = new Backpacks(player);
+
+        for (Backpacks.BackpackType type : Backpacks.BackpackType.values()) {
+            data.getInv(type).onChanged(nbtCache::markDirty);
+        }
     }
 
     public Backpacks getBackpacks() {
         return data;
     }
 
+    public CapNbtCache getNbtCache() {
+        return nbtCache;
+    }
+
 
     @Override
     public CompoundTag serializeNBT() {
+        return nbtCache.get(player, this::buildNBT);
+    }
+
+    private CompoundTag buildNBT() {
 
         CompoundTag nbt = new CompoundTag();
 
@@ -69,6 +87,10 @@ public class PlayerBackpackData implements ICap {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+
+        // anything cached was built before this data existed. fromTag marks dirty through setChanged
+        // for every tab it actually loads, but a tab missing from the nbt never gets there.
+        nbtCache.markDirty();
 
         for (Backpacks.BackpackType type : Backpacks.BackpackType.values()) {
             try {

@@ -407,6 +407,13 @@ public class DamageEvent extends EffectEvent {
         return false;
     }
 
+    // the player is both the caster and the target. self inflicted costs should read as a resource
+    // cost, not as taking a hit, so they skip the hurt sound (and the vanilla tilt/knockback, see
+    // SelfDamageNoTiltMixin)
+    public boolean isPlayerSelfDamage() {
+        return source == target && target instanceof Player;
+    }
+
     public void cancelDamage() {
         this.data.getNumber(EventData.NUMBER).number = 0;
         this.data.setBoolean(EventData.DISABLE_KNOCKBACK, true);
@@ -705,11 +712,13 @@ public class DamageEvent extends EffectEvent {
                     DashUtils.knockback(source, target);
                 }
                 // play spell hurt sounds or else spells will feel like they do nothing
-                LivingEntityAccesor duck = (LivingEntityAccesor) target;
-                SoundEvent sound = SoundEvents.GENERIC_HURT;
-                float volume = duck.myGetHurtVolume();
-                float pitch = duck.myGetHurtPitch();
-                SoundUtils.playSound(target, sound, volume, pitch);
+                if (!isPlayerSelfDamage()) {
+                    LivingEntityAccesor duck = (LivingEntityAccesor) target;
+                    SoundEvent sound = SoundEvents.GENERIC_HURT;
+                    float volume = duck.myGetHurtVolume();
+                    float pitch = duck.myGetHurtPitch();
+                    SoundUtils.playSound(target, sound, volume, pitch);
+                }
             }
 
 

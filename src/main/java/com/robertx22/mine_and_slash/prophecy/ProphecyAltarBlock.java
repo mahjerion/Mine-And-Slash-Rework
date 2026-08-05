@@ -52,16 +52,22 @@ public class ProphecyAltarBlock extends Block {
                 return InteractionResult.FAIL;
             }
 
-            if (Load.player(p).prophecy.numMobAffixesCanAdd > 0) {
-                ExplainedResultUtil.sendErrorMessage(p, Chats.PROPHECY_ALTAR_USE_ERROR, Chats.PROPHECY_PLEASE_SPEND);
+            var prophecy = Load.player(p).prophecy;
+
+            // picks are still owed from an earlier click (the player closed the card screen, or the
+            // Twin Curse keystone gave them two). don't grant more and don't consume this altar -
+            // just put the offers back on screen. the altar that granted them is still standing too,
+            // so any altar, and the hub gui, can be used to finish picking.
+            if (prophecy.numMobAffixesCanAdd > 0) {
+                if (prophecy.affixOffers.isEmpty()) {
+                    prophecy.regenAffixOffers();
+                }
+                openCurseScreen(p);
                 return InteractionResult.SUCCESS;
             }
 
-            var prophecy = Load.player(p).prophecy;
-
-            // Atlas "Twin Curse" - forces 2 curse picks per altar instead of 1 (the altar already
-            // refuses reuse while numMobAffixesCanAdd > 0, so this alone is enough to require both
-            // be spent before the next altar)
+            // Atlas "Twin Curse" - forces 2 curse picks per altar instead of 1. the altar isn't
+            // consumed until the budget is back to 0, so both picks are always spendable.
             boolean doubleCurse = Load.Unit(p).getUnit().getCalculatedStat(ProphecyDoubleCurse.getInstance()).getValue() > 0;
             prophecy.numMobAffixesCanAdd += doubleCurse ? 2 : 1;
 
@@ -79,17 +85,13 @@ public class ProphecyAltarBlock extends Block {
 
             SoundUtils.playSound(p, SoundEvents.EXPERIENCE_ORB_PICKUP);
 
+            // the block stays until AcceptProphecyAffixPacket spends the last pick - remember which
+            // one it was so that packet can consume it
+            prophecy.setPendingAltar(level, pPos);
 
-            level.setBlock(pPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            openCurseScreen(p);
 
-
-            Load.player(p).playerDataSync.setDirty();
-            Load.player(p).playerDataSync.onTickTrySync(p);
-            // todo does this open before the player receives sync data packet?
-            Packets.sendToClient(p, new OpenGuiPacket(OpenGuiPacket.GuiType.PICK_PROPHECY_CURSE));
-
-
-            // nothing is stored in this block, instead by clicking the altar, the player gains the options
+            // nothing else is stored in this block, instead by clicking the altar, the player gains the options
 
         } else {
 
@@ -98,6 +100,15 @@ public class ProphecyAltarBlock extends Block {
         }
 
         return InteractionResult.SUCCESS;
+    }
+
+    // sync the fresh offers before telling the client to open, otherwise the screen is built from
+    // stale affixOffers and getProphecyCardsScreen() bails on the != 3 cards check
+    public static void openCurseScreen(Player p) {
+        Load.player(p).playerDataSync.setDirty();
+        Load.player(p).playerDataSync.onTickTrySync(p);
+        // todo does this open before the player receives sync data packet?
+        Packets.sendToClient(p, new OpenGuiPacket(OpenGuiPacket.GuiType.PICK_PROPHECY_CURSE));
     }
 
 }

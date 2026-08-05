@@ -6,6 +6,7 @@ import com.robertx22.library_of_exile.packets.SyncPlayerCapToClient;
 import com.robertx22.library_of_exile.utils.LoadSave;
 import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
 import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
+import com.robertx22.mine_and_slash.capability.CapNbtCache;
 import com.robertx22.mine_and_slash.capability.DirtySync;
 import com.robertx22.mine_and_slash.capability.entity.SummonedData;
 import com.robertx22.mine_and_slash.capability.player.data.*;
@@ -153,8 +154,23 @@ public class PlayerData implements ICap {
         return jewelData;
     }
 
+    // 17 gson passes plus 4 inventory createTag calls, which anything reading the player's nbt was
+    // paying for every tick. keyed off playerDataSync rather than a second set of dirty hooks - the
+    // jewel and character equipment inventories get swapped out at runtime, so listeners on them
+    // would silently detach. OnServerTick force marks playerDataSync dirty every 3 seconds anyway,
+    // so anything this misses can only be stale for that long, and saves force a rebuild outright.
+    private transient final CapNbtCache nbtCache = new CapNbtCache();
+
+    public CapNbtCache getNbtCache() {
+        return nbtCache;
+    }
+
     @Override
     public CompoundTag serializeNBT() {
+        return nbtCache.get(player, playerDataSync.getVersion(), this::buildNBT);
+    }
+
+    private CompoundTag buildNBT() {
 
         CompoundTag nbt = new CompoundTag();
 
@@ -202,6 +218,9 @@ public class PlayerData implements ICap {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+
+        // anything cached was built before this data existed
+        nbtCache.markDirty();
 
         this.team = loadOrBlank(TeamData.class, new TeamData(), nbt, TEAM_DATA, new TeamData());
         this.prophecy = loadOrBlank(PlayerProphecies.class, new PlayerProphecies(), nbt, PROPHECY, new PlayerProphecies());
@@ -255,7 +274,10 @@ public class PlayerData implements ICap {
 
     private void syncData() {
 
-        CompoundTag nbt = this.serializeNBT();
+        // serializeNBT hands out a cached instance now, so this must not edit it in place. removing
+        // CHAR_EQUIPMENT from the shared tag would strip stored character gear from the cache and
+        // then from the next save - every alt's equipment, gone silently.
+        CompoundTag nbt = this.serializeNBT().copy();
 
         // stored character gear is server side only. the client has no use for it, and leaving it in
         // would put every alt's full gear nbt into this packet and into the comparison below.

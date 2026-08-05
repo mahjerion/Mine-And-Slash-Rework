@@ -50,10 +50,12 @@ public class ImprisonedMonsterCurrencies extends ExileKeyHolderSection<ExileCurr
             PERFECTED_STRIDE_SEED, PERFECTED_SOUL_SEED, PERFECTED_BOND_SEED);
 
     private ExileKey<ExileCurrency, IdKey> seed(String id, String name, SlotTag slot, ExileKey<ItemModification, ?> restoreMod, String rarity) {
-        return ExileCurrency.Builder.of(id, name, ItemReqs.INSTANCE.IS_GEAR)
+        // the slot gate is the item type requirement rather than a plain requirement, so the tooltip
+        // names the slot in the yellow line right under the currency name instead of burying it in
+        // the requirement list. IsGearSlotTagReq is a GearRequirement, so it already implies IS_GEAR.
+        return ExileCurrency.Builder.of(id, name, ItemReqs.INSTANCE.IS_GEAR_SLOT.get(new IdKey(slot.GUID())))
                 .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
                 .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-                .addRequirement(ItemReqs.INSTANCE.IS_GEAR_SLOT.get(new IdKey(slot.GUID())))
                 .rarity(rarity)
                 .addAlwaysUseModification(restoreMod)
                 .edit(MaxUsesKey.ofUses(ItemReqs.Datas.SEED_USES.toKey()))

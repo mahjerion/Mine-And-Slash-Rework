@@ -15,7 +15,9 @@
     "LootTableMixin",
     "ObeliskMobTierStatsMixin",
     "PlayerAnimMixin",
+    "PlayerSaveInvalidateCacheMixin",
     "RecipeTest",
+    "SelfDamageNoTiltMixin",
     "StopMobDropWornGearInMapsMixin",
     "TestMixin"
   ],
@@ -27,6 +29,7 @@
     "MixinServerWorldInfo",
     "MouseHandlerMixin",
     "NeatRenderMixin",
+    "NoHurtTiltFromHealthPacketMixin",
     "StopOffhandRenderMixin",
     "TooltipMixin",
     "WorldRendererMixin"

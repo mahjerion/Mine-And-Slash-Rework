@@ -1853,6 +1853,48 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gear_type.trident": "Trident",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+	"mmorpg.gearslot.trident": "Trident",
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1910,46 +1952,20 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gear_type.trident": "Trident",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-	"mmorpg.gearslot.trident": "Trident",
+	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
+	"item.mmorpg.jewelry.necklace.gold": "Necklace",
+	"item.mmorpg.jewelry.necklace.iron": "Necklace",
+	"item.mmorpg.jewelry.ring.diamond": "Ring",
+	"item.mmorpg.jewelry.ring.gold": "Ring",
+	"item.mmorpg.jewelry.ring.iron": "Ring",
+	"item.mmorpg.omen": "Omen",
+	"item.mmorpg.weapon.staff.diamond": "Staff",
+	"item.mmorpg.weapon.staff.iron": "Staff",
+	"item.mmorpg.weapon.staff.wood": "Staff",
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
@@ -1966,22 +1982,6 @@
 	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
 
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-
-"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
-
-	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
-	"item.mmorpg.jewelry.necklace.gold": "Necklace",
-	"item.mmorpg.jewelry.necklace.iron": "Necklace",
-	"item.mmorpg.jewelry.ring.diamond": "Ring",
-	"item.mmorpg.jewelry.ring.gold": "Ring",
-	"item.mmorpg.jewelry.ring.iron": "Ring",
-	"item.mmorpg.omen": "Omen",
-	"item.mmorpg.weapon.staff.diamond": "Staff",
-	"item.mmorpg.weapon.staff.iron": "Staff",
-	"item.mmorpg.weapon.staff.wood": "Staff",
-
-"_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",
@@ -3005,18 +3005,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -3029,6 +3017,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3772,6 +3772,7 @@
 	"library_of_exile.item_modification.gear_rarity_upgrade": "%1$s, increasing Numbers and adding %2$s",
 	"library_of_exile.item_modification.implicit_affix_reroll": "Re-rolls Implicit Affix",
 	"library_of_exile.item_modification.implicit_number_reroll": "Re-rolls Implicit Numbers",
+	"library_of_exile.item_modification.increment_uses_codex_rarity_uses": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_level_up": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_omen_rarity_uses": "Increments Uses",
 	"library_of_exile.item_modification.increment_uses_random_mythic_affix": "Increments Uses",
@@ -3891,6 +3892,7 @@
 	"library_of_exile.item_requirement.lvl_not_max": "Level must be below %1$s",
 	"library_of_exile.item_requirement.map_has_higher_rar": "Map Rarity Must be lower than Mythic",
 	"library_of_exile.item_requirement.map_is_mythic": "Map Rarity Must be %1$s",
+	"library_of_exile.item_requirement.max_uses_codex_rarity_uses": "Maximum %1$s uses of: %2$s",
 	"library_of_exile.item_requirement.max_uses_level_up": "Maximum %1$s uses of: %2$s",
 	"library_of_exile.item_requirement.max_uses_omen_rarity_uses": "Maximum %1$s uses of: %2$s",
 	"library_of_exile.item_requirement.max_uses_random_mythic_affix": "Maximum %1$s uses of: %2$s",

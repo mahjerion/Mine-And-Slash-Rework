@@ -81,6 +81,7 @@ lvl_is_50
 lvl_not_max
 map_has_higher_rar
 map_is_mythic
+max_uses_codex_rarity_uses
 max_uses_level_up
 max_uses_omen_rarity_uses
 max_uses_random_mythic_affix

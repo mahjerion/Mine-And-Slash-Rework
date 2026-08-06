@@ -38,6 +38,7 @@ gear_rarity_random
 gear_rarity_upgrade
 implicit_affix_reroll
 implicit_number_reroll
+increment_uses_codex_rarity_uses
 increment_uses_level_up
 increment_uses_omen_rarity_uses
 increment_uses_random_mythic_affix

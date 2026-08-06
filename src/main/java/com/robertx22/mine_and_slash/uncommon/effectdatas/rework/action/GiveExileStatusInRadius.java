@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.ExilePotionEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.GiveOrTake2;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
@@ -50,6 +51,14 @@ public class GiveExileStatusInRadius extends StatEffect {
 
                     ExilePotionEvent potionEvent = EventBuilder.ofEffect(CalculatedSpellData.NO_SPELL_RELATED, en, x, Load.Unit(en)
                                     .getLevel(), eff, GiveOrTake2.give, seconds * 20, false)
+                            .set(y -> {
+                                // spellid too, not just the event data: it's what ends up on the
+                                // effect instance as its spell binding
+                                if (event.isSpell()) {
+                                    y.data.setString(EventData.SPELL, event.getSpell().GUID());
+                                    y.spellid = event.getSpell().GUID();
+                                }
+                            })
                             .build();
                     potionEvent.Activate();
 

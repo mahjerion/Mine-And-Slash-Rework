@@ -39,7 +39,7 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
         public static MaximumUsesReq.Data MAX_SHARPENING_STONE_USES = new MaximumUsesReq.Data("sharpening_stone", 1);
         public static MaximumUsesReq.Data MAX_RELIEF_USES = new MaximumUsesReq.Data("relief", 5);
         public static MaximumUsesReq.Data MAX_JEWEL_UPGRADE_USES = new MaximumUsesReq.Data("sure_jewel_up", 3);
-        public static MaximumUsesReq.Data MAX_OMEN_RARITY_USES = new MaximumUsesReq.Data("omen_rarity_uses", 1);
+        public static MaximumUsesReq.Data MAX_OMEN_RARITY_USES = new MaximumUsesReq.Data("codex_rarity_uses", 1);
         // shared across all 14 "Seed" potential-restore currencies (base + Perfected) so applying any
         // one of them blocks every other one from ever being applied to the same item.
         public static MaximumUsesReq.Data SEED_USES = new MaximumUsesReq.Data("seed_uses", 1);

@@ -92,21 +92,35 @@ public class ExilePotionEvent extends EffectEvent {
         extraData.stacks += stacks;
         extraData.stacks = Mth.clamp(extraData.stacks, 1, effect.getMaxCharges(this.targetData));
 
-        extraData.self_cast = source == target;
-        extraData.caster_uuid = source.getStringUUID();
-        extraData.spell_id = this.spellid;
-
-        // a proc (ProcSpellEffect) casts a real spell, but the caster usually never learned it, so
-        // the "spell got deallocated" cleanup must not treat the buff it grants as a respec leftover.
-        // only buffs applied while the holder actually had the spell allocated stay subject to it
-        Spell spell = ExileDB.Spells().isRegistered(this.spellid) ? ExileDB.Spells().get(this.spellid) : null;
-        extraData.ignore_spell_allocation = spell == null || spell.getLevelOf(target) < 1;
-
+        // duration and strength always belong to the newest application
         extraData.str_multi = data.getNumber();
-        extraData.calcSpell = this.calc;
         extraData.ticks_left = (int) data.getNumber(EventData.EFFECT_DURATION_TICKS).number;
         extraData.full_duration = extraData.ticks_left;
         extraData.is_infinite = data.getBoolean(EventData.EFFECT_IS_INFINITE);
+
+        // isRegistered rather than isEmpty: the spell registry's empty default is a real spell, so
+        // get("") would come back as black hole and read as "this application knows its spell"
+        Spell incoming = ExileDB.Spells().isRegistered(this.spellid) ? ExileDB.Spells().get(this.spellid) : null;
+        boolean existingHasSpell = ExileDB.Spells().isRegistered(extraData.spell_id);
+
+        // a top up from a stat effect or a shrine carries no spell of its own. it must not erase the
+        // spell and caster the buff was cast with: the buff's stats are interpolated by the level of
+        // that spell, so it would collapse to its min roll, and its ticking spell would stop passing
+        // the spell on to whatever it grants. only a fresh apply, or a re-apply that actually knows
+        // its spell, owns the provenance. an unbound top up over an already unbound buff is
+        // unchanged, which is every shrine/stat granted effect.
+        if (applied || incoming != null || !existingHasSpell) {
+            extraData.self_cast = source == target;
+            extraData.caster_uuid = source.getStringUUID();
+            extraData.spell_id = incoming == null ? "" : this.spellid;
+
+            // a proc (ProcSpellEffect) casts a real spell, but the caster usually never learned it, so
+            // the "spell got deallocated" cleanup must not treat the buff it grants as a respec leftover.
+            // only buffs applied while the holder actually had the spell allocated stay subject to it
+            extraData.ignore_spell_allocation = incoming == null || incoming.getLevelOf(target) < 1;
+
+            extraData.calcSpell = this.calc != CalculatedSpellData.NO_SPELL_RELATED ? this.calc : CalculatedSpellData.blank();
+        }
 
         if (applied) {
             effect.onApply(target);

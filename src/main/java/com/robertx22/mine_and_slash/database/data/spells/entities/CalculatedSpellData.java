@@ -23,7 +23,17 @@ public class CalculatedSpellData {
     public int lvl = 1;
     public int chains_did = 0;
   
+    private CalculatedSpellData() {
+    }
+
     public CalculatedSpellData(SpellStatsCalculationEvent event) {
+    }
+
+    // NO_SPELL_RELATED is a shared static, and its `data` is mutated on read by every
+    // EventData.getNumber(id, default) call site, so it must never be stored into per entity save
+    // data. anything that needs to *persist* "no spell related" gets its own instance instead.
+    public static CalculatedSpellData blank() {
+        return new CalculatedSpellData();
     }
 
 

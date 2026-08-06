@@ -140,7 +140,7 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                 return;
             }
 
-            SpellCtx ctx = SpellCtx.onTick(caster, entity, data.calcSpell);
+            SpellCtx ctx = SpellCtx.onTick(caster, entity, data.calcSpell).setSourceEffect(data);
             spell.tryActivate(Spell.DEFAULT_EN_NAME, ctx); // source is default name at all times
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,7 +260,7 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
             if (data != null) {
                 LivingEntity caster = data.getCaster(target.level());
                 if (caster != null && spell != null) {
-                    SpellCtx ctx = SpellCtx.onExpire(caster, target, data.calcSpell);
+                    SpellCtx ctx = SpellCtx.onExpire(caster, target, data.calcSpell).setSourceEffect(data);
                     spell.tryActivate(Spell.DEFAULT_EN_NAME, ctx); // source is default name at all times
                 }
             }

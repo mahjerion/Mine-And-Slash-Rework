@@ -98,7 +98,7 @@ public class EntityStatusEffectsData {
             ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
             if (eff != null) {
                 var data = e.getValue();
-                stats.addAll(eff.getExactStats(e.getValue().getCaster(en.level()), data.getSpell(), data.stacks, data.str_multi));
+                stats.addAll(eff.getExactStats(e.getValue().getCaster(en.level()), data.getSpellOrNull(), data.stacks, data.str_multi));
             }
         }
 

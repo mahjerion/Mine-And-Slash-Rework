@@ -37,7 +37,11 @@ public class GiveExileStatusEffect extends StatEffect {
                         .get(effect), GiveOrTake2.give, seconds * 20, false)
                 .set(x -> {
                     if (event.isSpell()) {
+                        // spellid too, not just the event data: it's what ends up on the effect
+                        // instance as its spell binding, and without it even a spell triggered grant
+                        // lands unbound and scales its stats off nothing
                         x.data.setString(EventData.SPELL, event.getSpell().GUID());
+                        x.spellid = event.getSpell().GUID();
                     }
                 })
                 .build();

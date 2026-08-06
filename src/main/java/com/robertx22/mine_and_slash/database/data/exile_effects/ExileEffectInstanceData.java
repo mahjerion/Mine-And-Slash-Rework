@@ -37,7 +37,7 @@ public class ExileEffectInstanceData {
         if (spell_id.isEmpty()) {
             return false;
         }
-        Spell spell = getSpell();
+        Spell spell = getSpellOrNull();
         return spell != null && spell.getLevelOf(en) < 1;
     }
 
@@ -73,6 +73,14 @@ public class ExileEffectInstanceData {
 
     public Spell getSpell() {
         return ExileDB.Spells().get(spell_id);
+    }
+
+    // the spell registry's empty default is a REAL spell (IntSpells.BLACK_HOLE), so get("") on an
+    // effect that isn't tied to a spell silently hands back black hole and everything downstream
+    // scales off the holder's level in *that* spell. null is the honest answer, and the callers
+    // that interpolate stats already treat a null spell as "don't scale".
+    public Spell getSpellOrNull() {
+        return ExileDB.Spells().isRegistered(spell_id) ? ExileDB.Spells().get(spell_id) : null;
     }
 
     public LivingEntity getCaster(Level world) {

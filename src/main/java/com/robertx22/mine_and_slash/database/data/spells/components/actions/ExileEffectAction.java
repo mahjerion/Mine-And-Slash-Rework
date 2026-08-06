@@ -76,7 +76,11 @@ public class ExileEffectAction extends SpellAction {
 
             // null whenever the spell context isn't tied to a registered spell, ie an effect applied
             // by a stat effect/shrine (CalculatedSpellData.NO_SPELL_RELATED) later ticking its own spell
-            Spell spell = ctx.calculatedSpellData.getSpell();
+            Spell ctxSpell = ctx.calculatedSpellData.getSpell();
+
+            // the effect instance still records which spell created it even when the cached
+            // CalculatedSpellData it ticks with doesn't, so whatever it grants stays bound
+            final Spell spell = ctxSpell != null || ctx.sourceEffect == null ? ctxSpell : ctx.sourceEffect.getSpellOrNull();
 
             targets.forEach(t -> {
 

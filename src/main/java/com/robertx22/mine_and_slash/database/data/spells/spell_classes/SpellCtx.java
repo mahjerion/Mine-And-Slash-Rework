@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.spells.spell_classes;
 
+import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.PositionSource;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
@@ -28,6 +29,15 @@ public class SpellCtx {
 
     public CalculatedSpellData calculatedSpellData;
 
+    // set when this ctx comes from an ExileEffect ticking/expiring. the effect instance still knows
+    // which spell created it even when its cached CalculatedSpellData doesn't, so actions can fall
+    // back to it rather than treating the effect as spell-less
+    public ExileEffectInstanceData sourceEffect = null;
+
+    public SpellCtx setSourceEffect(ExileEffectInstanceData effect) {
+        this.sourceEffect = effect;
+        return this;
+    }
 
     public SpellCtx setSourceEntity(Entity en) {
         this.sourceEntity = en;
@@ -89,7 +99,8 @@ public class SpellCtx {
     public static SpellCtx onEntityHit(SpellCtx ctx, LivingEntity target) {
         Objects.requireNonNull(ctx);
         Objects.requireNonNull(target);
-        return new SpellCtx(EntityActivation.PER_ENTITY_HIT, ctx.sourceEntity, ctx.caster, target, ctx.calculatedSpellData).setPositionSource(PositionSource.TARGET);
+        return new SpellCtx(EntityActivation.PER_ENTITY_HIT, ctx.sourceEntity, ctx.caster, target, ctx.calculatedSpellData).setSourceEffect(ctx.sourceEffect)
+                .setPositionSource(PositionSource.TARGET);
     }
 
     public static SpellCtx onEntityBasicAttacked(LivingEntity caster, CalculatedSpellData data, LivingEntity target) {

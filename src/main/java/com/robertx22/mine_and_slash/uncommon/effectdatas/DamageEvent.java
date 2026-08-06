@@ -788,7 +788,7 @@ public class DamageEvent extends EffectEvent {
                     if (!e.getValue().shouldRemove()) {
                         var data = e.getValue();
                         var sd = data.calcSpell;
-                        var ctx = SpellCtx.onEntityBasicAttacked(this.source, sd, target);
+                        var ctx = SpellCtx.onEntityBasicAttacked(this.source, sd, target).setSourceEffect(data);
                         ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
                         if (eff.spell != null) {
                             eff.spell.tryActivate(SpellCtx.ON_ENTITY_ATTACKED, ctx); // i can use this kind of as event

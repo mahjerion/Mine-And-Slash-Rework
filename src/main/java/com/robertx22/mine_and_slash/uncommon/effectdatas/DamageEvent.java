@@ -270,6 +270,9 @@ public class DamageEvent extends EffectEvent {
 
     private void calcBlock() {
 
+        if (!canAvoidHit()) {
+            return;
+        }
 
         if (targetData
                 .getResources()
@@ -412,6 +415,13 @@ public class DamageEvent extends EffectEvent {
     // SelfDamageNoTiltMixin)
     public boolean isPlayerSelfDamage() {
         return source == target && target instanceof Player;
+    }
+
+    // you can't dodge or block a hit you inflicted on yourself - self damage is a resource cost,
+    // not an incoming attack. mitigation still applies, only avoidance is skipped. mirrors
+    // NO_SELF_DAMAGE_STATS, which turns off the attacker half of the same hit.
+    public boolean canAvoidHit() {
+        return source != target;
     }
 
     public void cancelDamage() {

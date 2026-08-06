@@ -48,6 +48,9 @@ public class SpellDodgeEffect extends BaseDamageEffect {
 
     @Override
     public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
+        if (!effect.canAvoidHit()) {
+            return false;
+        }
         if (effect.isSpell() && effect.getSpell().config.tags.contains(SpellTags.magic)) {
             return true;
         }

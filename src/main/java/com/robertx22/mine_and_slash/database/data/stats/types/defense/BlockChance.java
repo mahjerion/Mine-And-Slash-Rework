@@ -82,6 +82,9 @@ public class BlockChance extends Stat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
+            if (!effect.canAvoidHit()) {
+                return false;
+            }
             return effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg && effect.target.getOffhandItem().getItem() instanceof ShieldItem;// todo ask for shield mns item
         }
     }

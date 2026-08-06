@@ -93,6 +93,9 @@ public class DodgeRating extends Stat implements IUsableStat {
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
 
+            if (!effect.canAvoidHit()) {
+                return false;
+            }
             if (effect.GetElement() != Elements.Physical) {
                 return false;
             }

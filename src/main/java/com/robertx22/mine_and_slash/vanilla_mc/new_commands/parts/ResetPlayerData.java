@@ -46,14 +46,14 @@ public enum ResetPlayerData {
             Load.player(p).rested_xp = new RestedExpData();
         }
     },
-    // characters store the gear they had equipped when switched away from, so throwing the storage away
-    // would destroy real items belonging to every alt. hand them back first - they land in the player's
-    // inventory, or on the ground when it's full.
+    // characters store the gear, gems, auras and jewels they had when switched away from, so throwing
+    // the storage away would destroy real items belonging to every alt. hand them back first - they land
+    // in the player's inventory, or on the ground when it's full.
     CHARACTERS() {
         @Override
         public void reset(Player p) {
             var chars = Load.player(p).characters;
-            chars.getAllCharacters().forEach(c -> CharacterEquipment.returnAllToPlayer(p, c.getEquipment()));
+            chars.getAllCharacters().forEach(c -> CharacterEquipment.returnEverythingToPlayer(p, c));
             Load.player(p).characters = new CharStorageData();
         }
     },

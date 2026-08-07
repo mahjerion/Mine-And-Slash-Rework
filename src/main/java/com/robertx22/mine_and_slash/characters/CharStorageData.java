@@ -18,11 +18,12 @@ public class CharStorageData {
 
     public HashMap<Integer, CharacterData> map = new HashMap<>();
 
-    // switching characters also moves the worn loadout: whatever the outgoing character has equipped
-    // goes into its own CharacterData, and the incoming character's stored gear goes back on.
+    // switching characters also moves the loadout: whatever the outgoing character has equipped and
+    // socketed goes into its own CharacterData, and the incoming character's stored items go back on.
+    // that covers worn gear, support gems, aura gems and jewels - see CharacterEquipment.
     //
-    // the invariant that keeps this from duplicating items is that the *active* character's stored
-    // equipment is always empty - it lives on the player instead. every step below preserves that.
+    // the invariant that keeps this from duplicating items is that the *active* character's storage is
+    // always empty - the items live on the player instead. every step below preserves that.
     public void load(int num, Player p) {
 
         var data = map.get(num);
@@ -39,13 +40,16 @@ public class CharStorageData {
 
         CharacterData snapshot = CharacterData.from(p);
         CharacterEquipment.stashInto(p, snapshot.getEquipment());
+        CharacterEquipment.stashGemsAndJewels(p, snapshot);
         map.put(current, snapshot);
 
-        int stored = CharacterEquipment.countItems(snapshot.getEquipment());
-        int restored = CharacterEquipment.countItems(data.getEquipment()); // restoreFrom empties it
+        int stored = CharacterEquipment.countEverything(snapshot);
+        int restored = CharacterEquipment.countEverything(data); // the restores empty it
 
-        data.load(p); // sets the level last, so do this before handing the gear back
+        data.load(p); // sets the level last, so do this before handing the items back
         CharacterEquipment.restoreFrom(p, data.getEquipment());
+        // after load(p), so the hotbar the support gems belong to is already the incoming character's
+        CharacterEquipment.restoreGemsAndJewels(p, data);
 
         this.current = num;
 

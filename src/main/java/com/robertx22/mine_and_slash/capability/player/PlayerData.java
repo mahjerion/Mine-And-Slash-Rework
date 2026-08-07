@@ -100,6 +100,9 @@ public class PlayerData implements ICap {
     private static final String SUMMONED = "summoned";
     private static final String ATLAS_DATA = "atlas";
     private static final String CHAR_EQUIPMENT = "chareq";
+    private static final String CHAR_GEMS = "chargems";
+    private static final String CHAR_AURAS = "charauras";
+    private static final String CHAR_JEWELS = "charjewels";
 
     public DirtySync playerDataSync = new DirtySync("playerdata_sync", x -> syncData());
 
@@ -191,17 +194,27 @@ public class PlayerData implements ICap {
         LoadSave.Save(summonedData, nbt, SUMMONED);
         LoadSave.Save(atlas, nbt, ATLAS_DATA);
 
-        // stored character gear can't ride along in the CHARACTERS json - LoadSave is gson, and an
-        // ItemStack won't survive that. keyed by character slot, but it's owned by the CharacterData
-        // object, so deleting a character takes its gear with it and no orphan can be left at an index
-        // that tryAddNewCharacter later reuses.
+        // a character's stored gear, gems, auras and jewels can't ride along in the CHARACTERS json -
+        // LoadSave is gson, and an ItemStack won't survive that. keyed by character slot, but they're
+        // owned by the CharacterData object, so deleting a character takes its items with it and no
+        // orphan can be left at an index that tryAddNewCharacter later reuses.
         CompoundTag charEquipment = new CompoundTag();
+        CompoundTag charGems = new CompoundTag();
+        CompoundTag charAuras = new CompoundTag();
+        CompoundTag charJewels = new CompoundTag();
         characters.map.forEach((num, character) -> {
             if (character != null) {
-                charEquipment.put(String.valueOf(num), character.getEquipment().createTag());
+                String key = String.valueOf(num);
+                charEquipment.put(key, character.getEquipment().createTag());
+                charGems.put(key, character.getGems().createTag());
+                charAuras.put(key, character.getAuras().createTag());
+                charJewels.put(key, character.getJewels().createTag());
             }
         });
         nbt.put(CHAR_EQUIPMENT, charEquipment);
+        nbt.put(CHAR_GEMS, charGems);
+        nbt.put(CHAR_AURAS, charAuras);
+        nbt.put(CHAR_JEWELS, charJewels);
 
         // LoadSave.Save(ctxStats, nbt, "ctx");
 
@@ -240,11 +253,19 @@ public class PlayerData implements ICap {
         this.atlas = loadOrBlank(AtlasData.class, new AtlasData(), nbt, ATLAS_DATA, new AtlasData());
 
         // must come after `characters` is assigned above - the stacks hang off those objects.
-        // on the client this tag is absent (syncData strips it), so every inventory just ends up empty.
+        // on the client these tags are absent (syncData strips them), so every inventory just ends up
+        // empty. same for a save written before this existed - missing key, empty compound, empty list.
         CompoundTag charEquipment = nbt.getCompound(CHAR_EQUIPMENT);
+        CompoundTag charGems = nbt.getCompound(CHAR_GEMS);
+        CompoundTag charAuras = nbt.getCompound(CHAR_AURAS);
+        CompoundTag charJewels = nbt.getCompound(CHAR_JEWELS);
         this.characters.map.forEach((num, character) -> {
             if (character != null) {
-                character.getEquipment().fromTag(charEquipment.getList(String.valueOf(num), 10));
+                String key = String.valueOf(num);
+                character.getEquipment().fromTag(charEquipment.getList(key, 10));
+                character.getGems().fromTag(charGems.getList(key, 10));
+                character.getAuras().fromTag(charAuras.getList(key, 10));
+                character.getJewels().fromTag(charJewels.getList(key, 10));
             }
         });
 
@@ -274,14 +295,18 @@ public class PlayerData implements ICap {
 
     private void syncData() {
 
-        // serializeNBT hands out a cached instance now, so this must not edit it in place. removing
-        // CHAR_EQUIPMENT from the shared tag would strip stored character gear from the cache and
-        // then from the next save - every alt's equipment, gone silently.
+        // serializeNBT hands out a cached instance now, so this must not edit it in place. removing the
+        // stored character keys from the shared tag would strip them from the cache and then from the
+        // next save - every alt's equipment, gems, auras and jewels, gone silently.
         CompoundTag nbt = this.serializeNBT().copy();
 
-        // stored character gear is server side only. the client has no use for it, and leaving it in
-        // would put every alt's full gear nbt into this packet and into the comparison below.
+        // a character's stored items are server side only. the client has no use for them, and leaving
+        // them in would put every alt's full item nbt into this packet and into the comparison below.
+        // the live GEMS/AURAS/JEWELS keys below still sync - those are what the gui renders.
         nbt.remove(CHAR_EQUIPMENT);
+        nbt.remove(CHAR_GEMS);
+        nbt.remove(CHAR_AURAS);
+        nbt.remove(CHAR_JEWELS);
 
         // OnServerTick marks this dirty every 3 seconds no matter what, and most of the explicit
         // setDirty() callers fire far more often than the data actually changes. serializing is

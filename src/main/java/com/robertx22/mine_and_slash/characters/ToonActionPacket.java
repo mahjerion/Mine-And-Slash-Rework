@@ -64,10 +64,11 @@ public class ToonActionPacket extends MyPacket<CreateCharPacket> {
                     if (this.num == current) {
                         p.sendSystemMessage(Chats.CANT_DEL_CURRENT_CHAT.locName().withStyle(ChatFormatting.RED));
                     } else {
-                        // the character's stored gear is real items. hand it back before the entry goes,
-                        // or deleting a character silently destroys everything it was wearing.
-                        int returned = CharacterEquipment.countItems(opt.getEquipment());
-                        CharacterEquipment.returnAllToPlayer(p, opt.getEquipment());
+                        // the character's stored gear, gems, auras and jewels are real items. hand them
+                        // back before the entry goes, or deleting a character silently destroys
+                        // everything it had equipped and socketed.
+                        int returned = CharacterEquipment.countEverything(opt);
+                        CharacterEquipment.returnEverythingToPlayer(p, opt);
                         chars.map.remove(num);
                         if (returned > 0) {
                             p.sendSystemMessage(Chats.CHARACTER_GEAR_RETURNED.locName(returned)

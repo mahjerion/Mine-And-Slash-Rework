@@ -36,6 +36,13 @@ public class CharacterData {
     // handled. see CharacterEquipment for what goes in it.
     public transient MyInventory equipment = CharacterEquipment.newStorage();
 
+    // the socketed loadout, stored the same way and for the same reason. these mirror the live
+    // inventories on PlayerData slot for slot, which is what keeps each support gem attached to the
+    // spell it was socketed under - that link is the hotbar index, and `hotbar` above travels with it.
+    public transient MyInventory gems = CharacterEquipment.newGemStorage();
+    public transient MyInventory auras = CharacterEquipment.newAuraStorage();
+    public transient MyInventory jewels = CharacterEquipment.newJewelStorage();
+
     RestedExpData rested = new RestedExpData();
     TalentsData talents = new TalentsData();
     StatPointsData stats = new StatPointsData();
@@ -93,6 +100,27 @@ public class CharacterData {
             equipment = CharacterEquipment.newStorage();
         }
         return equipment;
+    }
+
+    public MyInventory getGems() {
+        if (gems == null) {
+            gems = CharacterEquipment.newGemStorage();
+        }
+        return gems;
+    }
+
+    public MyInventory getAuras() {
+        if (auras == null) {
+            auras = CharacterEquipment.newAuraStorage();
+        }
+        return auras;
+    }
+
+    public MyInventory getJewels() {
+        if (jewels == null) {
+            jewels = CharacterEquipment.newJewelStorage();
+        }
+        return jewels;
     }
 
     public List<Component> getTooltip() {

@@ -51,6 +51,23 @@ public class JewelData implements IStatCtx {
         return false;
     }
 
+    // a character being switched in hands back jewels it socketed while JewelSocketStat read higher than
+    // it does right now - the stat only recomputes on the next recalc, which happens after the swap. grow
+    // far enough to take them, otherwise every switch scatters the alt's jewels into its backpack.
+    // recalc() shrinks the inventory again and spills anything the incoming character can't really wear.
+    public void growToAtLeast(int size) {
+        if (size <= this.jewelInventory.getContainerSize()) {
+            return;
+        }
+        MyInventory grown = new MyInventory(size);
+        for (int i = 0; i < this.jewelInventory.getContainerSize(); i++) {
+            grown.setItem(i, this.jewelInventory.getItem(i));
+        }
+        // the listener is registered on the instance, not the field, so a new inventory needs its own
+        grown.addListener(container -> updatePlayerData(player));
+        this.jewelInventory = grown;
+    }
+
     public void recalc(Player player) {
         //check if all jewels are wearable.
         wearingUniqueJewel.clear();

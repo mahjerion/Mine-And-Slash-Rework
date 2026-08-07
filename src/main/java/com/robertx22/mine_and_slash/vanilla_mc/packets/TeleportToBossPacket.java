@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ChunkPos;
 
 public class TeleportToBossPacket extends MyPacket<TeleportToBossPacket> {
 
@@ -62,6 +63,11 @@ public class TeleportToBossPacket extends MyPacket<TeleportToBossPacket> {
                 BlockPos pos = mapData.spawnPositions.containsKey(DungeonMain.ARENA.guid())
                         ? BlockPos.of(mapData.spawnPositions.get(DungeonMain.ARENA.guid()))
                         : TeleportUtils.getSpawnTeleportPos(DungeonMain.ARENA, p.blockPosition());
+
+                // a chunk generation failure leaves part of the arena as solid bedrock forever, because
+                // a chunk is only ever offered to the structures once. this is the last moment before
+                // the player is standing in it, and it costs nothing per tick.
+                DungeonMain.ARENA.repairMissingChunks(level, new ChunkPos(pos));
 
                 var dim = level.dimensionTypeId().location();
                 PlayerDataCapability.get(p).mapTeleports.teleportToMap(p, dim, dim, pos);

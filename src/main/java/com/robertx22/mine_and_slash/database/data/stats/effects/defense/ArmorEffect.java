@@ -29,29 +29,33 @@ public class ArmorEffect extends InCodeStatEffect<DamageEvent> {
         return EffectSides.Target;
     }
 
+    // must run even at 0 armor, otherwise leftover armor pen is silently ignored and having
+    // no armor at all ends up better than having a little
+    @Override
+    public boolean runsOnZeroStat() {
+        return true;
+    }
+
     @Override
     public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-        float pene = effect.getPenetration();
 
         IUsableStat armor = (IUsableStat) stat;
 
-        int afterPene = (int) (data.getValue() - pene);
+        float afterPene = data.getValue() - effect.getPenetration();
 
-        if (afterPene == 0) {
+        int points = Math.round(Math.abs(afterPene));
+
+        if (points == 0) {
             return effect;
         }
-        if (afterPene > 0) {
-            float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), afterPene, effect.sourceData.getLevel());
-            EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
-            float defense = EffectiveArmor * 100F;
-            effect.getLayer(StatLayers.Defensive.ARMOR_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
-        } else {
-            // so it can go in negative too if player has high armor pen
-            float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), Math.abs(afterPene), effect.sourceData.getLevel());
-            EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
-            float defense = EffectiveArmor * -100F;
-            effect.getLayer(StatLayers.Defensive.ARMOR_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
-        }
+
+        float EffectiveArmor = armor.getUsableValue(effect.targetData.getUnit(), points, effect.sourceData.getLevel());
+        EffectiveArmor = Mth.clamp(EffectiveArmor, 0, armor.getMaxMulti());
+
+        // so it can go in negative too if player has high armor pen
+        float defense = EffectiveArmor * (afterPene > 0 ? 100F : -100F);
+
+        effect.getLayer(StatLayers.Defensive.ARMOR_MITIGATION, EventData.NUMBER, Side()).reduce(defense);
 
         return effect;
     }

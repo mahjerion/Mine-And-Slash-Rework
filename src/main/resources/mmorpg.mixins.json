@@ -5,6 +5,7 @@
   "package": "com.robertx22.mine_and_slash.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AbstractArrowChunkLoadMixin",
     "ArrowShootMixin",
     "AttributeMixin",
     "DamageConflictCheckMixin",
@@ -16,6 +17,7 @@
     "ObeliskMobTierStatsMixin",
     "PlayerAnimMixin",
     "PlayerSaveInvalidateCacheMixin",
+    "ProjectileRaycastChunkLoadMixin",
     "RecipeTest",
     "SelfDamageNoTiltMixin",
     "StopMobDropWornGearInMapsMixin",

@@ -1,0 +1,10 @@
+{
+  "replace": "false",
+  "values": [
+    "mmorpg:station/cooking",
+    "mmorpg:station/salvaging",
+    "mmorpg:station/alchemy",
+    "mmorpg:station/gear_crafting",
+    "mmorpg:station/enchanting"
+  ]
+}

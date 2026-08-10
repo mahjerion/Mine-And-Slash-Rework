@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.mine_and_slash.mixin_methods.MapChunkRaycastGuard;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -108,7 +109,10 @@ public class LookUtils {
                                          double len) {
         Vec3 end = origin.add(ray.normalize()
             .scale(len));
-        HitResult pos = world.clip(new ClipContext(origin, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, e));
+        // every raycast overload funnels through here, and callers pass lengths of tens of blocks. in a
+        // map dimension a raw clip that leaves the loaded region blocks the server until the chunks
+        // generate, so route it through the guard - see MapChunkRaycastGuard.
+        HitResult pos = MapChunkRaycastGuard.clip(world, new ClipContext(origin, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, e));
         return pos;
     }
 

@@ -43,6 +43,19 @@ public class MyCuriosUtils {
         return list;
     }
 
+    // every curios slot the player has, including ones added by other mods (botania's head slot etc).
+    // getHandlers() only covers this mod's own slots.
+    public static List<ICurioStacksHandler> getAllHandlers(Player player) {
+        ICuriosItemHandler handler = CuriosApi.getCuriosHelper()
+                .getCuriosHandler(player)
+                .orElse(null);
+
+        if (handler != null) {
+            return new ArrayList<>(handler.getCurios().values());
+        }
+        return Arrays.asList();
+    }
+
     public static List<ItemStack> getAllSlots(Player player) {
         ICuriosItemHandler handler = CuriosApi.getCuriosHelper()
                 .getCuriosHandler(player)

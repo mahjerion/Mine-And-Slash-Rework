@@ -62,7 +62,7 @@ public class ArmorPenetration extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            effect.setPenetration(effect.getPenetration() + (int) data.getValue());
+            effect.setPenetration(effect.getPenetration() + data.getValue());
             return effect;
         }
 

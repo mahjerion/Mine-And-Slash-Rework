@@ -15,6 +15,9 @@ import java.util.HashMap;
 public class EventData {
     public static String AILMENT = "ailment";
     public static String AILMENT_PROCCED = "ailment_procced";
+    // set on the burst event itself. AILMENT_PROCCED above is different - that goes on the
+    // *triggering* hit and is read by datapack stats (ResourceOnAction.onAilmentProc)
+    public static String IS_AILMENT_PROC = "is_ailment_proc";
 
     public static String NUMBER = "number";
     public static String BEFORE_CONVERSION_NUMBER = "before_conversion_number";

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.spells.components.selectors;
 
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
+import com.robertx22.mine_and_slash.mixin_methods.MapChunkRaycastGuard;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
@@ -75,8 +76,13 @@ public class AoeSelector extends BaseTargetSelector {
                     ? le.getEyePosition()
                     : en.position().add(0, en.getBbHeight() * 0.6D, 0);
 
+            // MapChunkRaycastGuard, not level().clip, on every ray below: this runs once per candidate
+            // target per tick, so it is the highest frequency raycast in the mod, and a raw clip that
+            // leaves the loaded region blocks the whole server until the chunk generates. The guard
+            // reports the frontier as a block hit, so a target behind un-generated chunks correctly
+            // counts as out of sight - refusing line of sight through solid bedrock is the right answer.
             // Primary straight ray to the eye position
-            if (en.level().clip(new ClipContext(pos, eye, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getType() == HitResult.Type.MISS) {
+            if (MapChunkRaycastGuard.clip(en.level(), new ClipContext(pos, eye, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getType() == HitResult.Type.MISS) {
                 return true;
             }
 
@@ -84,7 +90,7 @@ public class AoeSelector extends BaseTargetSelector {
             // Keep attempts minimal to ensure bounded cost.
             for (int i = 1; i <= 2; i++) {
                 Vec3 alt = eye.add(0, i * 0.5D, 0);
-                if (en.level().clip(new ClipContext(pos, alt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getType() == HitResult.Type.MISS) {
+                if (MapChunkRaycastGuard.clip(en.level(), new ClipContext(pos, alt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getType() == HitResult.Type.MISS) {
                     return true;
                 }
             }
@@ -98,6 +104,8 @@ public class AoeSelector extends BaseTargetSelector {
     }
 
     // i copy pasted this from Explosion.class in case it loses it in future updates, very important to make sure spells cant be cheesed through walls with aoe etc
+    // NOTE if this is ever restored: its clip call must go through MapChunkRaycastGuard like canHit's
+    // do, or it reintroduces the server hang - and it fires dozens of rays per entity, not three.
     /*
     public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();

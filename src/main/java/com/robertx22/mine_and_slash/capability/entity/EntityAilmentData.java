@@ -62,6 +62,7 @@ public class EntityAilmentData {
                 x.calcTargetEffects = false;
                 x.setElement(ailment.element);
                 x.setisAilmentDamage(ailment);
+                x.data.setBoolean(EventData.IS_AILMENT_PROC, true);
 
                 if (spell != null) {
                     x.data.setString(EventData.WEAPON_TYPE, spell.getWeapon(caster).id);
@@ -69,8 +70,8 @@ public class EntityAilmentData {
                 }
             });
             var ev = b.build();
+            // the damage chat message is sent from inside activate(), sending it here too double posts
             ev.Activate();
-            //  ev.sendDamageMessage(ev.calculateAllBonusElementalDamage());
         }
     }
 

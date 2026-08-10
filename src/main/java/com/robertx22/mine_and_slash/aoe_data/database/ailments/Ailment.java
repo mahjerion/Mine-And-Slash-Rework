@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.StringUTIL;
 import com.robertx22.library_of_exile.registry.ExileRegistry;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
@@ -39,6 +40,12 @@ public class Ailment implements ExileRegistry<Ailment>, IAutoLocName, IAutoLocDe
 
     public int getPercentDamage() {
         return (int) (damageEffectivenessMulti * 100F);
+    }
+
+    // freeze/electrify accumulate damage that a proc stat later releases in one burst. that burst
+    // has its own player facing name - it is never called "Freeze"/"Electrify" in the ui
+    public Words procNameWord() {
+        return element == Elements.Nature ? Words.SHOCK : Words.SHATTER;
     }
 
     public Ailment(String id, Elements element, boolean isDot, boolean isStrengthEffect, float damageEffectivenessMulti, float percentLostEveryXSeconds, int durationTicks, Function<Ailment, String> desc) {

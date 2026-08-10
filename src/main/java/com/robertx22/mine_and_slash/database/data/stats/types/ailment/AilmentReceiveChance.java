@@ -33,7 +33,8 @@ public class AilmentReceiveChance extends Stat {
 
         @Override
         public StatPriority GetPriority() {
-            return StatPriority.Spell.FIRST;
+            // has to match AilmentChance: the flat damage layer isn't populated yet at Spell.FIRST
+            return StatPriority.Damage.FINAL_DAMAGE;
         }
 
         @Override
@@ -43,13 +44,28 @@ public class AilmentReceiveChance extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            float dmg = effect.data.getOriginalNumber(EventData.NUMBER).number;
+            // same base as AilmentChance - see the comment there on why the flat damage layer is added
+            float dmg = effect.data.getOriginalNumber(EventData.NUMBER).number + effect.getAppliedFlatDamage();
+
+            //if the dmg was converted, lower the base ailment damage
+            float convMulti = effect.unconvertedDamagePercent / 100F;
+            dmg *= convMulti;
+
             AilmentChance.activate(dmg, ailment, effect.source, effect.target, effect.getSpellOrNull());
             return effect;
         }
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
+            if (effect.data.getNumber() <= 0) {
+                return false;
+            }
+            if (effect.unconvertedDamagePercent <= 0) {
+                return false;
+            }
+            if (effect.data.getBoolean(EventData.IS_DODGED)) {
+                return false;
+            }
             return !effect.data.getBoolean(EventData.IS_BLOCKED) && effect.getElement() != null && effect.getElement() == ailment.element && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg) && RandomUtils.roll(data.getValue());
         }
 

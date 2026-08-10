@@ -220,15 +220,20 @@ public class DamageEvent extends EffectEvent {
             if (this.data.isBasicAttack()) {
                 return Words.BASIC_ATTACK.locName();
             }
-            if (this.data.isSpellEffect()) {
-                return getSpell().locName();
+
+            // ailment lines must name the ailment, not the spell that triggered them. both the shatter
+            // burst and the freeze application carry the triggering spell's guid, so checking the spell
+            // first made all three lines of a single cast read identically
+            var ailment = getAilment();
+            if (ailment.isPresent()) {
+                if (data.getBoolean(EventData.IS_AILMENT_PROC)) {
+                    return ailment.get().procNameWord().locName();
+                }
+                return ailment.get().locName();
             }
 
-            var id = data.getString(EventData.AILMENT);
-
-            if (ExileDB.Ailments().isRegistered(id)) {
-                var ailment = ExileDB.Ailments().get(id);
-                return ailment.locName();
+            if (this.data.isSpellEffect()) {
+                return getSpell().locName();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -522,8 +527,10 @@ public class DamageEvent extends EffectEvent {
 
         Words word = Words.DAMAGE_MESSAGE;
 
-        if (disableActivation && getAilment().isPresent()) {
-            word = Words.AILMENT_PROC_MESSAGE;
+        var ailment = getAilment();
+        if (disableActivation && ailment.isPresent()) {
+            // this event never deals its damage, it only feeds the dot or the shatter/shock pool
+            word = ailment.get().isDot ? Words.AILMENT_PROC_MESSAGE : Words.AILMENT_ACCUMULATE_MESSAGE;
         }
 
         return word.locName(
@@ -549,7 +556,11 @@ public class DamageEvent extends EffectEvent {
         if (this.data.isBasicAttack()) {
             msg.append(Words.DAMAGE_TYPE_BASIC_ATTACK.locName().withStyle(ChatFormatting.RED));
         }
-        if (this.data.getAttackType() == AttackType.dot) {
+        // the shatter/shock burst is sent as AttackType.dot so it doesn't knock back, but it's a one
+        // time hit, not damage over time - don't label it as such
+        if (this.data.getBoolean(EventData.IS_AILMENT_PROC)) {
+            msg.append(Words.DAMAGE_TYPE_AILMENT_PROC.locName(getDamageName()).withStyle(ChatFormatting.RED));
+        } else if (this.data.getAttackType() == AttackType.dot) {
             msg.append(Words.DAMAGE_TYPE_AILMENT.locName().withStyle(ChatFormatting.RED));
         }
 
@@ -605,7 +616,9 @@ public class DamageEvent extends EffectEvent {
             msg.append(Words.TOTAL_COMBINE_DAMAGE.locName((int) info.totalDmg).withStyle(ChatFormatting.GOLD));
         }
 
-        if (getAilment().isPresent()) {
+        // only the application event shows damage it never deals. the shatter/shock burst and the dot
+        // ticks are hurting the enemy right now, so the note would contradict what the player sees
+        if (disableActivation && getAilment().isPresent()) {
             msg.append(Words.AILMENT_DAMAGE_NOTE.locName().withStyle(ChatFormatting.BLUE));
         }
 

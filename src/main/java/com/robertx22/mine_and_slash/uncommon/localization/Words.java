@@ -19,6 +19,7 @@ public enum Words implements IAutoLocName {
     ELEMENTAL_DAMAGE("\n%1$s: \n"),
     AILMENT_DAMAGE("Ailment: "),
     DAMAGE_TYPE_AILMENT("Damage Over Time\n"),
+    DAMAGE_TYPE_AILMENT_PROC("Ailment Proc: %1$s\n"),
     DAMAGE_TYPE_BASIC_ATTACK("Basic Attack\n"),
     DAMAGE_TYPE_SPELL("Spell: %1$s\n"),
     UNKNOWN_DAMAGE("[Error, dmg isn't a basic attack, spell or ailment]"),
@@ -122,6 +123,10 @@ public enum Words implements IAutoLocName {
 
     DAMAGE_MESSAGE("[%1$s] dealt %2$s %3$s with %4$s"),
     AILMENT_PROC_MESSAGE("[%1$s] applied %2$s %3$s with %4$s"),
+    AILMENT_ACCUMULATE_MESSAGE("[%1$s] accumulated %2$s %3$s with %4$s"),
+
+    SHATTER("Shatter"),
+    SHOCK("Shock"),
 
     LOOT_MODIFIERS_INFO("Modifiers:"),
 

@@ -14,6 +14,14 @@ public interface IStatEffect {
 
     public abstract StatPriority GetPriority();
 
+    /**
+     * effects that must run even when the entity's stat value is 0 (e.g. armor, so leftover
+     * armor penetration still applies to an unarmored target)
+     */
+    public default boolean runsOnZeroStat() {
+        return false;
+    }
+
     public abstract void TryModifyEffect(EffectEvent effect, EffectSides statSource, StatData data, Stat stat);
 
 }

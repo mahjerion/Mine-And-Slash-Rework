@@ -72,7 +72,11 @@ public class AilmentChance extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            float dmg = effect.data.getOriginalNumber(EventData.NUMBER).number;
+            // flat added damage of the hit's own element goes into the FLAT_DAMAGE layer instead of the
+            // base number, so the base alone doesn't see it. added damage of any *other* element becomes
+            // its own bonus element event, whose base does contain it - that's why a converted hit
+            // counted the gem's flat damage and a same element hit didn't.
+            float dmg = effect.data.getOriginalNumber(EventData.NUMBER).number + effect.getAppliedFlatDamage();
 
             //if the dmg was converted, lower the base ailment damage
             float convMulti = effect.unconvertedDamagePercent / 100F;

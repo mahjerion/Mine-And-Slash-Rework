@@ -9,8 +9,10 @@ import com.robertx22.mine_and_slash.database.data.stats.datapacks.test.DataPackS
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.test.DatapackStat;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayer;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayerData;
+import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
@@ -54,6 +56,17 @@ public abstract class EffectEvent implements IGUID {
     private HashMap<String, StatLayerData> layers = new HashMap<>(); // todo use this later
 
     private List<MoreMultiData> moreMultis = new ArrayList<>(); // todo use this later
+
+    private float appliedFlatDamage = 0;
+
+    // flat added damage of the hit's own element never reaches the original number, it's added to the
+    // main number through the FLAT_DAMAGE layer. anything that wants the *base* damage of the hit
+    // (ailments) has to add this back on top. snapshotted while the layers are applied on purpose:
+    // layers that run later can still push into FLAT_DAMAGE after it was already applied, where it
+    // does nothing to the damage and so must count for nothing here either.
+    public float getAppliedFlatDamage() {
+        return appliedFlatDamage;
+    }
 
     public List<MoreMultiData> getMoreMultis() {
         return moreMultis;
@@ -208,7 +221,12 @@ public abstract class EffectEvent implements IGUID {
             List<StatLayerData> all = getSortedLayers();
 
             for (StatLayerData layer : all) {
-                layer.getLayer().action.apply(this, layer, layer.numberID);
+                StatLayer statLayer = layer.getLayer();
+                statLayer.action.apply(this, layer, layer.numberID);
+
+                if (layer.numberID.equals(EventData.NUMBER) && statLayer.GUID().equals(StatLayers.Offensive.FLAT_DAMAGE.GUID())) {
+                    this.appliedFlatDamage = layer.getNumber();
+                }
             }
         }
         if (!this.moreMultis.isEmpty()) {
@@ -246,7 +264,7 @@ public abstract class EffectEvent implements IGUID {
             testEffectsAreOrderedCorrectly(effectsWithCtx);
 
             for (EffectWithCtx item : effectsWithCtx) {
-                if (item.stat.isNotZero()) {
+                if (item.stat.isNotZero() || item.effect.runsOnZeroStat()) {
                     item.effect.TryModifyEffect(this, item.statSource, item.stat, item.stat.GetStat());
                 } else {
                     System.out.print("ERORR cant be zero! ");
@@ -374,6 +392,19 @@ public abstract class EffectEvent implements IGUID {
                     }
                 });
 
+        if (side == EffectSides.Target) {
+            // the loop above skips stats with a value of 0, but armor still needs to run at 0 so
+            // leftover armor penetration applies to unarmored targets instead of being ignored
+            StatData armorData = un.getCalculatedStat(Armor.GUID);
+
+            if (!armorData.isNotZero()) {
+                IStatEffect armorEffect = Armor.getInstance().statEffect;
+
+                if (armorEffect.Side().equals(side) && armorEffect.worksOnEvent(this)) {
+                    effects.add(new EffectWithCtx(armorEffect, side, armorData));
+                }
+            }
+        }
 
         return effects;
     }

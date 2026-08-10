@@ -64,11 +64,7 @@ public class AilmentProcStat extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        String name = "Shatter";
-        if (getElement() == Elements.Nature) {
-            name = "Shock";
-        }// todo if i ever add more, but will be easy to spot
-        return name + " Chance";
+        return ailment.procNameWord().locNameForLangFile() + " Chance";
     }
 
 

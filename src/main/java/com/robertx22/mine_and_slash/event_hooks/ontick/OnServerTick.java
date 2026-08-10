@@ -82,6 +82,7 @@ public class OnServerTick {
 
                 if (age % 20 == 0) {
                     StatCompat.onTick(player);
+                    EnforceAutoItems.check(player);
                 }
                 if (age % 200 == 0) {
                     TenSecondPlayerTickEvent event = new TenSecondPlayerTickEvent(player, player);

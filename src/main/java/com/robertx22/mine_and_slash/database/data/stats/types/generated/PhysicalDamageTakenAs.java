@@ -83,7 +83,11 @@ public class PhysicalDamageTakenAs extends ElementalStat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.GetElement() == Elements.Physical && effect.getAttackType().equals(AttackType.hit);
+            // see PhysicalToElement - added flat physical damage from a non physical attack arrives as
+            // its own bonus_dmg event, so gating on hit alone let it bypass this mitigation entirely
+            return effect.GetElement() == Elements.Physical
+                    && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg)
+                    && effect.conversionDepth < DamageEvent.MAX_CONVERSION_DEPTH;
         }
     }
 

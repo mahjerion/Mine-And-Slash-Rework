@@ -4,14 +4,19 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.robertx22.library_of_exile.database.league.LibLeagues;
+import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.GearBlueprint;
+import com.robertx22.mine_and_slash.loot.blueprints.bases.UniqueGearPart;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.CommandRefs;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.suggestions.DatabaseSuggestions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Objects;
@@ -55,31 +60,49 @@ public class GiveExactUnique {
             }
         }
 
+        boolean isRandom = id.equals("random");
+
+        // an explicit id is a deliberate admin action, so it stays permissive - league-locked and
+        // retired uniques can still be handed out by typing their exact id. Only the random roll is gated.
+        UniqueGear exact = null;
+        if (!isRandom) {
+            // the registry returns its (nonexistent) default rather than erroring on an unknown guid
+            exact = ExileDB.UniqueGears().get(id);
+            if (exact == null) {
+                commandSource.sendFailure(Component.literal("No unique gear with id: " + id));
+                return 1;
+            }
+        }
+
         for (int i = 0; i < amount; i++) {
             GearBlueprint blueprint = new GearBlueprint(LootInfo.ofLevel(lvl));
             blueprint.level.set(lvl);
 
-            if (!id.equals("random")) {
-
-                blueprint.rarity.set(ExileDB.GearRarities()
-                        .get(ExileDB.UniqueGears()
-                                .random().rarity));
-
-                blueprint.uniquePart.set(ExileDB.UniqueGears()
-                        .get(id));
-                blueprint.gearItemSlot.set(blueprint.uniquePart.get()
-                        .getBaseGear());
+            if (!isRandom) {
+                blueprint.rarity.set(ExileDB.GearRarities().get(exact.rarity));
+                blueprint.uniquePart.set(exact);
+                blueprint.gearItemSlot.set(exact.getBaseGear());
             } else {
-
-                blueprint.rarity.set(ExileDB.GearRarities()
+                GearRarity rar = ExileDB.GearRarities()
                         .getFilterWrapped(x -> x.is_unique_item)
-                        .random());
-                blueprint.uniquePart.set(ExileDB.UniqueGears()
-                        .getFilterWrapped(x -> x.rarity.equals(blueprint.rarity.get()
-                                .GUID()))
-                        .random());
-                blueprint.gearItemSlot.set(blueprint.uniquePart.get()
-                        .getBaseGear());
+                        .random();
+
+                // roll through the same filter the loot pipeline uses, so this can't hand out
+                // league-locked or retired uniques. Tier is deliberately unbounded: the command has no
+                // map context (LootInfo.ofLevel leaves map_tier at 0), so gating on it would exclude
+                // every high-tier unique rather than gate anything.
+                UniqueGear uniq = UniqueGearPart.eligibleUniques(
+                        rar.GUID(), Integer.MAX_VALUE, lvl, LibLeagues.INSTANCE.EMPTY.get()).random();
+
+                if (uniq == null) {
+                    commandSource.sendFailure(Component.literal(
+                            "No unique gear is eligible at level " + lvl + " (league-locked and retired uniques are excluded)."));
+                    return 1;
+                }
+
+                blueprint.rarity.set(rar);
+                blueprint.uniquePart.set(uniq);
+                blueprint.gearItemSlot.set(uniq.getBaseGear());
             }
 
             player.addItem(blueprint.createStack());

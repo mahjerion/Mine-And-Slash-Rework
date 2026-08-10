@@ -81,7 +81,10 @@ public class PhysicalDamageTakenAsRandom extends Stat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.GetElement() == Elements.Physical && effect.getAttackType().equals(AttackType.hit);
+            // see PhysicalDamageTakenAs
+            return effect.GetElement() == Elements.Physical
+                    && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg)
+                    && effect.conversionDepth < DamageEvent.MAX_CONVERSION_DEPTH;
         }
     }
 

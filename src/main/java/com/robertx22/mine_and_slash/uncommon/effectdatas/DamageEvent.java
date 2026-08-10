@@ -81,8 +81,20 @@ public class DamageEvent extends EffectEvent {
     public AttackInformation attackInfo;
     private HashMap<Elements, Integer> bonusElementDamageMap = new HashMap();
 
+    // kept apart from bonusElementDamageMap on purpose. this damage isn't extra damage the attacker
+    // deals, it's the hit the target is already taking, re-elemented by the target's own "taken as"
+    // stats. it has been through every attacker multiplier once already, so the event built from it
+    // must not run them again - see buildBonusElementEvent.
+    private HashMap<Elements, Integer> damageTakenAsMap = new HashMap();
+
     public float unconvertedDamagePercent = 100;
     public float unconvertedDamageTakenAsPercent = 100;
+
+    // how many times this damage has already been split off into another element. the original hit is
+    // 0, the bonus element events it spawns are 1, anything those convert away is 2. conversion stats
+    // stop firing at the cap so a pair of stats converting into each other can't loop forever.
+    public static final int MAX_CONVERSION_DEPTH = 2;
+    public int conversionDepth = 0;
 
     // these two are identical for this hit and for every bonus-element copy of it (same source,
     // same target, same tick), but each costs world/map data lookups to work out. resolve them
@@ -260,6 +272,14 @@ public class DamageEvent extends EffectEvent {
         } else {
             bonusElementDamageMap.put(element, (int) (bonusElementDamageMap.getOrDefault(element, 0) + dmg));
         }
+    }
+
+    // damage the target's own "x damage taken as y" stats moved out of this hit. it can't go through
+    // addBonusEleDmg: that would route it back into the FLAT_DAMAGE layer when the element matches
+    // (already applied by the time this runs, so the damage would just vanish), and would make the
+    // event that carries it re-run every attacker multiplier the damage already went through.
+    public void addDamageTakenAsEleDmg(Elements element, float dmg) {
+        damageTakenAsMap.put(element, (int) (damageTakenAsMap.getOrDefault(element, 0) + dmg));
     }
 
     /*
@@ -898,54 +918,109 @@ public class DamageEvent extends EffectEvent {
         }
     }
 
+    // builds the extra event that carries one element's worth of bonus damage. every copy takes its
+    // metadata from this event, the original hit, no matter how many conversion rounds deep it is -
+    // depth is the only thing that differs, and it's what stops conversion from recursing forever.
+    //
+    // takenAs flips it from "extra damage the attacker deals" to "the same damage, re-elemented by the
+    // target". that damage has already been through every attacker multiplier on the parent event, so
+    // it skips initBeforeActivating (attack speed, full swing, weapon, pvp and high level mob multis)
+    // and the whole source stat sweep (increased damage, crit, penetration, conversion, ailments) and
+    // only picks up the target's mitigation for its new element.
+    private DamageEvent buildBonusElementEvent(Elements element, float amount, int depth, boolean takenAs) {
+        // this how do i make a copy of the same event that it was at the start..except element
+        DamageEvent bonus = EventBuilder.ofDamage(attackInfo, source, target, amount)
+                .setupDamage(AttackType.bonus_dmg, data.getWeaponType(), data.getStyle())
+                .set(x -> {
+                    if (isSpell()) {
+                        x.data.setString(EventData.SPELL, this.data.getString(EventData.SPELL));
+                    }
+                    x.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
+
+                    // same hit, same positions - don't redo the map lookups per element
+                    x.sourceInMapWorld = this.sourceInMapWorld;
+                    x.mapResReqDmgMulti = this.mapResReqDmgMulti;
+
+                    x.conversionDepth = depth;
+                    x.calcSourceEffects = !takenAs;
+
+                    x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
+                    x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
+                    x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
+                    x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);
+                    if (wepdmgMulti != 1) {
+                        //  x.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, wepdmgMulti);
+                    }
+
+                    x.setElement(element);
+                })
+                .build();
+
+        if (!takenAs) {
+            bonus.initBeforeActivating();
+        }
+        bonus.calculateEffects();
+
+        bonus.setElement(element);
+        bonus.calculateEffects();
+
+        return bonus;
+    }
+
     // this calculates all the bonus elemental damages, uses the specific numbers for particles only, and the totalvalue for actually dealing dmg, ONCE
     public DmgByElement calculateAllBonusElementalDamage() {
         DmgByElement info = new DmgByElement();
 
-        for (Entry<Elements, Integer> entry : bonusElementDamageMap.entrySet()) {
-            if (entry.getValue() > 0) {
+        // a bonus element event runs the full stat sweep, so conversion and "taken as" stats fire on it
+        // too and push part of it into a *different* element - into that event's own maps, which nothing
+        // else reads. drain them round by round or that damage is silently lost. conversionDepth caps
+        // this; today only physical converts and nothing converts back to it, so round 2 always comes
+        // back empty, but the cap keeps a future two way conversion from looping forever.
+        HashMap<Elements, Integer> pending = new HashMap<>(bonusElementDamageMap);
+        HashMap<Elements, Integer> pendingTakenAs = new HashMap<>(damageTakenAsMap);
 
-                // this how do i make a copy of the same event that it was at the start..except element
-                DamageEvent bonus = EventBuilder.ofDamage(attackInfo, source, target, entry.getValue())
-                        .setupDamage(AttackType.bonus_dmg, data.getWeaponType(), data.getStyle())
-                        .set(x -> {
-                            if (isSpell()) {
-                                x.data.setString(EventData.SPELL, this.data.getString(EventData.SPELL));
-                            }
-                            x.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
+        for (int depth = conversionDepth + 1;
+             (!pending.isEmpty() || !pendingTakenAs.isEmpty()) && depth <= MAX_CONVERSION_DEPTH;
+             depth++) {
 
-                            // same hit, same positions - don't redo the map lookups per element
-                            x.sourceInMapWorld = this.sourceInMapWorld;
-                            x.mapResReqDmgMulti = this.mapResReqDmgMulti;
+            HashMap<Elements, Integer> next = new HashMap<>();
+            HashMap<Elements, Integer> nextTakenAs = new HashMap<>();
 
-                            x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
-                            x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
-                            x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
-                            x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);
-                            if (wepdmgMulti != 1) {
-                                //  x.addMoreMulti(Words.WEAPON_BASIC_ATTACK_DMG_MULTI.locName(), EventData.NUMBER, wepdmgMulti);
-                            }
-
-                            x.setElement(entry.getKey());
-                        })
-                        .build();
-
-
-                bonus.initBeforeActivating();
-                bonus.calculateEffects();
-
-                bonus.setElement(entry.getKey());
-                bonus.calculateEffects();
-                float dmg = bonus.getActualDamage();
-
-                info.addDmg(bonus, dmg, bonus.getElement());
-
+            for (Entry<Elements, Integer> entry : pending.entrySet()) {
+                resolveBonusElement(info, entry, depth, false, next, nextTakenAs);
             }
+            for (Entry<Elements, Integer> entry : pendingTakenAs.entrySet()) {
+                resolveBonusElement(info, entry, depth, true, next, nextTakenAs);
+            }
+
+            pending = next;
+            pendingTakenAs = nextTakenAs;
         }
+
         info.addDmg(this, this.getActualDamage(), this.getElement());
 
         return info;
 
+    }
+
+    private void resolveBonusElement(DmgByElement info, Entry<Elements, Integer> entry, int depth, boolean takenAs,
+                                     HashMap<Elements, Integer> next, HashMap<Elements, Integer> nextTakenAs) {
+        if (entry.getValue() <= 0) {
+            return;
+        }
+
+        DamageEvent bonus = buildBonusElementEvent(entry.getKey(), entry.getValue(), depth, takenAs);
+
+        float dmg = bonus.getActualDamage();
+
+        // a fully converted element resolves to 0. adding it anyway would leave an empty entry in the
+        // map and make isMixedDamage() call a single element hit "Multi Element"
+        if (dmg > 0) {
+            info.addDmg(bonus, dmg, bonus.getElement());
+        }
+
+        bonus.bonusElementDamageMap.forEach((ele, num) -> next.merge(ele, num, Integer::sum));
+        bonus.damageTakenAsMap.forEach((ele, num) -> nextTakenAs.merge(ele, num, Integer::sum));
     }
 
     public Elements GetElement() {

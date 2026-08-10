@@ -83,7 +83,10 @@ public class BonusPhysicalAsElemental extends ElementalStat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.GetElement() == Elements.Physical && effect.getAttackType().equals(AttackType.hit);
+            // see PhysicalToElement - bonus_dmg carries added flat physical damage on non physical skills
+            return effect.GetElement() == Elements.Physical
+                    && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg)
+                    && effect.conversionDepth < DamageEvent.MAX_CONVERSION_DEPTH;
         }
 
     }

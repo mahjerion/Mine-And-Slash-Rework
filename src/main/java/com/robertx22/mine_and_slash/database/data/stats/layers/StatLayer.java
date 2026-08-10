@@ -105,6 +105,12 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
                         var ele = en.getKey();
                         float conv = en.getValue();
 
+                        // taking an element as itself changes nothing, and moving it would only lose
+                        // the damage - this layer runs long after FLAT_DAMAGE was already applied
+                        if (ele == effect.getElement()) {
+                            continue;
+                        }
+
                         if (conv > 100) {
                             conv = 100;
                         }
@@ -119,7 +125,9 @@ public class StatLayer implements JsonExileRegistry<StatLayer>, IAutoGson<StatLa
                         float dmg = original * conv / 100F;
                         dmg = MathHelper.clamp(dmg, 0, original);
                         if (dmg > 0) {
-                            effect.addBonusEleDmg(ele, dmg, layer.side);
+                            // NOT addBonusEleDmg - this damage is already fully multiplied, the event
+                            // built from it must not sweep the attacker's stats a second time
+                            effect.addDamageTakenAsEleDmg(ele, dmg);
                             event.data.getNumber(EventData.NUMBER).number -= dmg;
                         }
                     }

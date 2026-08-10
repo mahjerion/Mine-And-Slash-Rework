@@ -106,7 +106,12 @@ public class PhysicalToElement extends ElementalStat {
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.GetElement() == Elements.Physical && effect.getAttackType().equals(AttackType.hit);
+            // bonus_dmg has to be allowed too - added flat physical damage on a non physical skill
+            // never touches the main number, it becomes its own bonus element event, and gating this
+            // on hit alone is what let it through unconverted
+            return effect.GetElement() == Elements.Physical
+                    && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg)
+                    && effect.conversionDepth < DamageEvent.MAX_CONVERSION_DEPTH;
         }
 
     }

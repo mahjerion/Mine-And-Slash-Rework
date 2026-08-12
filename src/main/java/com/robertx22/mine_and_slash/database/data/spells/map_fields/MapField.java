@@ -113,6 +113,9 @@ public class MapField<T> implements IGUID {
     public static MapField<Boolean> COUNTS_TOWARDS_MAX_SUMMONS = make("counts_towards_max_summons");
     // secondary projectiles (fired on hit/expire of another projectile) shouldn't be multiplied by extra projectile stats again
     public static MapField<Boolean> IGNORE_BONUS_PROJECTILES = make("ignore_bonus_proj");
+    // projectiles ignore the summon/totem/banner duration stats by default, since most are short lived
+    // delivery vehicles rather than the thing being summoned. set false to opt a projectile in
+    public static MapField<Boolean> UNAFFECTED_BY_DURATION = make("unaffect_by_duration");
 
     public static MapField<List<String>> ENTITY_PREDICATES = make("entity_predicates");
 

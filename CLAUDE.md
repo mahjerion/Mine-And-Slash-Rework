@@ -24,10 +24,28 @@ Datapack JSON for content (stats, spells, gear, etc.) is generated from Java cod
 
 1. Set `MMORPG.RUN_DEV_TOOLS = true` (`MMORPG.java`).
 2. `./gradlew runClient` and join any world. It must be a **client** — the lang file is written under `DistExecutor.safeRunWhenOn(Dist.CLIENT, ...)`, so `runServer` won't produce it.
-3. Two `PlayerLoggedInEvent` hooks fire and write into `src/generated/resources`:
-   - `CommonInit` (Library of Exile) runs `new LibDataGen().run(...)` — every `ExileRegistryType`'s datapack generator, i.e. the content JSON for all four mods. It also prints "WARNING: Dev tools ON!" in chat.
-   - `LifeCycleEvents` runs `DataGeneration.generateAll()` — the `mmorpg` lang file, `DataGenHook`, the `modpack_dev_helper` txt dumps, curio JSONs, and item models.
+3. On `PlayerLoggedInEvent`, `LifeCycleEvents` runs `DataGeneration.generateAll()` — the `mmorpg` lang file, `DataGenHook`, the `modpack_dev_helper` txt dumps, curio JSONs, and item models. `DataGenHook` is what loops `ExileRegistryType.getAllInRegisterOrder()` and runs each type's datapack generator, so the registry content JSON comes from there.
 4. Set `RUN_DEV_TOOLS` back to `false`.
+
+#### One mod per run — a client run does *not* generate all four mods
+
+`ExileRegistryUtil.MODID_TO_GENERATE_DATA` is a predicate over a **single** modid (`setCurrentRegistarMod` sets `x -> x.equals(modid)`), and `ExileDatapackGenerator.generateAll` skips every entry whose owning `getRegistrationInfo().modid` fails it. Each mod calls `setCurrentRegistarMod` from inside its own `if (RUN_DEV_TOOLS)` block, so **whichever mod has its flag on claims the run** — and if two are on, the one constructed last silently wins while the other emits nothing.
+
+Each mod also drives its own generator, and they are not symmetric:
+
+| Mod | Flag | Generator call |
+|---|---|---|
+| `library_of_exile` | `CommonInit.RUN_DEV_TOOLS` — **its own flag**, unreachable from any other mod's setting | `new LibDataGen().run(...)`, also prints "WARNING: Dev tools ON!" in chat |
+| `mmorpg` | `MMORPG.RUN_DEV_TOOLS` | none in that block — only sets the modid; generation comes from `DataGenHook` above |
+| `dungeon_realm` | `DungeonMain.RUN_DEV_TOOLS` | `DungeonDatabase.INSTANCE.runDataGen(...)` |
+| `the_harvest` | `HarvestMain.RUN_DEV_TOOLS` | `HarvestDatabase.INSTANCE.runDataGen(...)` |
+| `ancient_obelisks` | `ObelisksMain.RUN_DEV_TOOLS` | `ObeliskDatabase.generateJsons()` |
+
+Because "WARNING: Dev tools ON!" comes only from `CommonInit`, **its absence does not mean datagen failed** — an mmorpg or addon pass never prints it.
+
+Output location follows `FMLPaths.GAMEDIR` with `run/` rewritten to `src/generated/resources/` (`BaseDatapackGenerator.movePath`), so files land in **whichever project you launched the client from**. Regenerating `library_of_exile`-owned entries means running the library's *own* `runClient` from `Library-of-Exile-Rework/`; the root client would write them to the wrong project.
+
+**Consequence:** adding or renaming a field on a shared Library-of-Exile registry class (e.g. `RelicAffix`) restales *every* mod's JSON of that type at once, so it needs a separate pass per owning mod. `JsonExileRegistry.compareLoadedJsonAndFinalClass` round-trips each entry and demands byte-equality, and a mismatch shows as a red "[DATAPACK ERROR]" chat message on login plus a "Datapack Check Failed" diff in the log. Note the check runs at **world load** while generation runs at **player login just after**, so the errors a run reports describe the state *before* that run fixed anything — always do a second run to confirm a fix. The log (`<project>/run/logs/latest.log`) is the source of truth; the failure list is greppable via `The file with id (\S+) is different after loading`.
 
 `runData` registers the same providers via `GatherDataEvent`, but Forge datagen never fires `FMLCommonSetupEvent` — which is where `ExileEvents.EXILE_REGISTRY_GATHER` populates the content DB — so every provider emits **zero** files. Worse, its `HashCache` then treats the existing output as stale and **deletes all of `src/generated/resources`**.
 

@@ -556,51 +556,6 @@
 "_comment": " [CATEGORY]: FOODS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
-
-	"mmorpg.ailment.bleed": "Bleed",
-	"mmorpg.ailment.burn": "Burn",
-	"mmorpg.ailment.electrify": "Electrify",
-	"mmorpg.ailment.freeze": "Freeze",
-	"mmorpg.ailment.poison": "Poison",
-	"mmorpg.effect.agony": "Physical Agony",
-	"mmorpg.effect.blind": "Blind",
-	"mmorpg.effect.blizzard_reduce_heal_strength": "Blizzard Debuff",
-	"mmorpg.effect.bone_chill": "Bone Chill",
-	"mmorpg.effect.charm": "Charm",
-	"mmorpg.effect.despair": "Despair of Chaos",
-	"mmorpg.effect.draconic_blood": "Dragon Blood",
-	"mmorpg.effect.endurance_charge": "Endurance Charge",
-	"mmorpg.effect.essence_of_frost": "Essence of Frost",
-	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
-	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
-	"mmorpg.effect.frost_lich": "Frost Lich",
-	"mmorpg.effect.gale_force": "Gale Force",
-	"mmorpg.effect.ground": "Grounding",
-	"mmorpg.effect.harvest_bounty": "Bountiful Aftermath",
-	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
-	"mmorpg.effect.inner_calm": "Inner Calm",
-	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
-	"mmorpg.effect.mage_circle": "Mage Circle",
-	"mmorpg.effect.perseverance": "Perseverance",
-	"mmorpg.effect.petrify": "Petrify",
-	"mmorpg.effect.power_charge": "Power Charge",
-	"mmorpg.effect.rejuvenation": "Rejuvenation",
-	"mmorpg.effect.shred": "Shred",
-	"mmorpg.effect.slow": "Lethargy",
-	"mmorpg.effect.stun": "Stun",
-	"mmorpg.effect.taunt_stance": "Taunt Stance",
-	"mmorpg.effect.thorn": "Thorn",
-	"mmorpg.effect.undying_will": "Undying Will",
-	"mmorpg.effect.valor": "Valor",
-	"mmorpg.effect.vamp_blood": "Vamp Blood",
-	"mmorpg.effect.vigor": "Vigor",
-	"mmorpg.effect.weak": "Elemental Weakness",
-	"mmorpg.effect.wounds": "Wounds",
-
-"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
-
-
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
 
 	"item.mmorpg.currency.affix_common_reroll": "Orb of New Beginnings",
@@ -680,6 +635,51 @@
 	"item.mmorpg.currency.upgrade_common_affix": "Orb of Fledgling's Reprieve",
 
 "_comment": " [CATEGORY]: CURRENCY ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
+
+	"mmorpg.ailment.bleed": "Bleed",
+	"mmorpg.ailment.burn": "Burn",
+	"mmorpg.ailment.electrify": "Electrify",
+	"mmorpg.ailment.freeze": "Freeze",
+	"mmorpg.ailment.poison": "Poison",
+	"mmorpg.effect.agony": "Physical Agony",
+	"mmorpg.effect.blind": "Blind",
+	"mmorpg.effect.blizzard_reduce_heal_strength": "Blizzard Debuff",
+	"mmorpg.effect.bone_chill": "Bone Chill",
+	"mmorpg.effect.charm": "Charm",
+	"mmorpg.effect.despair": "Despair of Chaos",
+	"mmorpg.effect.draconic_blood": "Dragon Blood",
+	"mmorpg.effect.endurance_charge": "Endurance Charge",
+	"mmorpg.effect.essence_of_frost": "Essence of Frost",
+	"mmorpg.effect.fire_golem_buff": "Fire Golem Buff",
+	"mmorpg.effect.frenzy_charge": "Frenzy Charge",
+	"mmorpg.effect.frost_lich": "Frost Lich",
+	"mmorpg.effect.gale_force": "Gale Force",
+	"mmorpg.effect.ground": "Grounding",
+	"mmorpg.effect.harvest_bounty": "Bountiful Aftermath",
+	"mmorpg.effect.ice_golem_buff": "Ice Golem Buff",
+	"mmorpg.effect.inner_calm": "Inner Calm",
+	"mmorpg.effect.lightning_golem_buff": "Lightning Golem Buff",
+	"mmorpg.effect.mage_circle": "Mage Circle",
+	"mmorpg.effect.perseverance": "Perseverance",
+	"mmorpg.effect.petrify": "Petrify",
+	"mmorpg.effect.power_charge": "Power Charge",
+	"mmorpg.effect.rejuvenation": "Rejuvenation",
+	"mmorpg.effect.shred": "Shred",
+	"mmorpg.effect.slow": "Lethargy",
+	"mmorpg.effect.stun": "Stun",
+	"mmorpg.effect.taunt_stance": "Taunt Stance",
+	"mmorpg.effect.thorn": "Thorn",
+	"mmorpg.effect.undying_will": "Undying Will",
+	"mmorpg.effect.valor": "Valor",
+	"mmorpg.effect.vamp_blood": "Vamp Blood",
+	"mmorpg.effect.vigor": "Vigor",
+	"mmorpg.effect.weak": "Elemental Weakness",
+	"mmorpg.effect.wounds": "Wounds",
+
+"_comment": " [CATEGORY]: STATUSEFFECTS - NAMES",
 
 
 "_comment": " [CATEGORY]: TALENTS - NAMES",
@@ -1853,48 +1853,6 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gear_type.trident": "Trident",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-	"mmorpg.gearslot.trident": "Trident",
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1950,6 +1908,48 @@
 	"mmorpg.unique_gear.witch_brew.name": "Witch's Brew",
 
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gear_type.trident": "Trident",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+	"mmorpg.gearslot.trident": "Trident",
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
 "_comment": " [CATEGORY]: STATPRIORITY - NAMES",
@@ -3009,18 +3009,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -3033,6 +3021,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",
@@ -3922,6 +3922,14 @@
 	"library_of_exile.relic_stat.bonus_rune": "Rune Drop rate %1$s",
 	"library_of_exile.relic_stat.bonus_skill_gem": "Skill Gem Drop rate %1$s",
 	"library_of_exile.relic_stat.bonus_watcher_eye": "Watcher Eye Drop rate %1$s",
+	"library_of_exile.relic_stat.guarantee_imprisoned_monster_content": "%1$s Chance to Add Imprisoned Monster To A Map",
+	"library_of_exile.relic_stat.guarantee_imprisoned_monster_content.guaranteed": "Adds Imprisoned Monster To A Map",
+	"library_of_exile.relic_stat.guarantee_prophecy_content": "%1$s Chance to Add Prophecy To A Map",
+	"library_of_exile.relic_stat.guarantee_prophecy_content.guaranteed": "Adds Prophecy To A Map",
+	"library_of_exile.relic_stat.guarantee_shrine_content": "%1$s Chance to Add Shrine To A Map",
+	"library_of_exile.relic_stat.guarantee_shrine_content.guaranteed": "Adds Shrine To A Map",
+	"library_of_exile.relic_stat.guarantee_strongbox_content": "%1$s Chance to Add Strongbox To A Map",
+	"library_of_exile.relic_stat.guarantee_strongbox_content.guaranteed": "Adds Strongbox To A Map",
 	"library_of_exile.relic_type.mmorpg": "Mine and Slash Relic"
 
 }

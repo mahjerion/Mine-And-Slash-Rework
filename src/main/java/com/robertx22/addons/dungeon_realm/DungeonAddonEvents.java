@@ -394,7 +394,20 @@ public class DungeonAddonEvents {
         DungeonExileEvents.GET_BONUS_CONTENT_CHANCE.register(new EventConsumer<GetBonusContentChanceEvent>() {
             @Override
             public void accept(GetBonusContentChanceEvent event) {
-                event.bonusPercent = Load.Unit(event.player).getUnit().getCalculatedStat(DoubleEventChance.getInstance()).getValue();
+                float chance = Load.Unit(event.player).getUnit().getCalculatedStat(DoubleEventChance.getInstance()).getValue();
+
+                // map tier feeds the same pool: higher tier maps just have a higher chance at more
+                // league mechanics, scaling linearly from nothing at tier 0 to the configured value
+                // at max tier. dungeon_realm has no concept of map tiers, which is why this lives here.
+                MapItemData map = StackSaving.MAP.loadFrom(event.mapStack);
+                if (map != null) {
+                    int maxTier = MapItemData.maxMapTier();
+                    if (maxTier > 0) {
+                        chance += ServerContainer.get().MAX_TIER_BONUS_EVENT_CHANCE.get() * (map.tier / (float) maxTier);
+                    }
+                }
+
+                event.bonusPercent = chance;
             }
         });
 

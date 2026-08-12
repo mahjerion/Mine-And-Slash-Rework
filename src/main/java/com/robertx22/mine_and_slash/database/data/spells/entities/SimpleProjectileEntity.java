@@ -761,8 +761,15 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.pickup = Pickup.DISALLOWED;
 
         this.setNoGravity(!holder.getOrDefault(MapField.GRAVITY, true));
-        this.setDeathTime(holder.get(MapField.LIFESPAN_TICKS)
-                .intValue());
+
+        int lifespan = holder.get(MapField.LIFESPAN_TICKS)
+                .intValue();
+        // opt in only: a projectile that IS the summon (summon_wisp) scales with summon duration,
+        // while delivery projectiles and novas keep their fixed flight time
+        if (!holder.getOrDefault(MapField.UNAFFECTED_BY_DURATION, true)) {
+            lifespan *= data.data.getNumber(EventData.DURATION_MULTI, 1).number;
+        }
+        this.setDeathTime(lifespan);
 
         this.entityData.set(EXPIRE_ON_ENTITY_HIT, holder.getOrDefault(MapField.EXPIRE_ON_ENTITY_HIT, true));
         this.entityData.set(EXPIRE_ON_BLOCK_HIT, holder.getOrDefault(MapField.EXPIRE_ON_BLOCK_HIT, true));

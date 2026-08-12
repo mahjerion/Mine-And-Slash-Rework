@@ -19,6 +19,12 @@ bonus_watcher_eye
 double_harvest_chance
 empty
 extra_map_boss_chance
+guarantee_harvest_content
+guarantee_imprisoned_monster_content
+guarantee_obelisk_content
+guarantee_prophecy_content
+guarantee_shrine_content
+guarantee_strongbox_content
 harvest_content
 mob_spawn_chance
 mobs_spawned

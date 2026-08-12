@@ -151,6 +151,13 @@ public class ServerContainer {
 
         b.pop();
 
+        b.comment("Percent chance a maximum tier map contributes toward containing an additional league mechanic.")
+                .comment("Scales linearly with map tier, so a tier 0 map contributes 0 and a max tier map contributes this full value.")
+                .comment("This is added into the same pool as the Atlas additional event chance stat and the relic bonus content chance stat.")
+                .comment("Every full 100 in that pool is one guaranteed additional league mechanic, the leftover is a single roll - so 250 means +2 mechanics and a 50% chance at a third.")
+                .comment("Set to 0 to go back to maps only ever rolling one league mechanic unless the player has stats for more.");
+        MAX_TIER_BONUS_EVENT_CHANCE = b.defineInRange("MAX_TIER_BONUS_EVENT_CHANCE", 100, 0, 10000);
+
         List<String> list = new ArrayList<>();
 
         list.add("minecraft:iron_sword:sword");
@@ -376,5 +383,7 @@ public class ServerContainer {
     public ForgeConfigSpec.IntValue MIN_LEVEL_SHRINE_IN_MAPS;
     public ForgeConfigSpec.IntValue MIN_LEVEL_STRONGBOX_IN_MAPS;
     public ForgeConfigSpec.IntValue MIN_LEVEL_IMPRISONED_MONSTER_IN_MAPS;
+
+    public ForgeConfigSpec.IntValue MAX_TIER_BONUS_EVENT_CHANCE;
 
 }

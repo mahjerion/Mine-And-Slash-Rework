@@ -1,16 +1,21 @@
 package com.robertx22.mine_and_slash.gui.inv_gui.actions;
 
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
+import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenGearSubFilterAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -79,6 +84,15 @@ public abstract class GuiAction<T> implements IGUID {
                 of(new ToggleAutoSalvageRarity(type, rar));
             }
         }
+        for (BaseGearType gt : ExileDB.GearTypes().getList()) {
+            of(new ResetGearTypeSalvage(gt));
+            for (GearRarity rar : ExileDB.GearRarities().getList()) {
+                of(new ToggleGearTypeSalvage(gt, rar));
+            }
+        }
+        for (ToggleAutoSalvageRarity.SalvageType type : OpenGearSubFilterAction.TYPES) {
+            of(new OpenGearSubFilterAction(type));
+        }
         for (Spell rw : ExileDB.Spells().getList()) {
             of(new PickSpellAction(rw));
         }
@@ -92,6 +106,21 @@ public abstract class GuiAction<T> implements IGUID {
 
     public ResourceLocation getBackGroundIcon() {
         return null;
+    }
+
+    // a non empty stack is rendered instead of getIcon(), lets datapacked content have an icon without shipping a png
+    public ItemStack getItemStackIcon() {
+        return ItemStack.EMPTY;
+    }
+
+    // rgba multiplied onto getIcon(), used to show state without needing more textures
+    public float[] getIconTint() {
+        return new float[]{1F, 1F, 1F, 1F};
+    }
+
+    // true skips the packet to the server, for actions that only navigate the gui
+    public boolean isClientOnly() {
+        return false;
     }
 
     public abstract void saveExtraData(FriendlyByteBuf buf);

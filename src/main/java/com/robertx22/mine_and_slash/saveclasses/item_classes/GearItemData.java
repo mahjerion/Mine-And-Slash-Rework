@@ -81,12 +81,12 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
         return this.lvl;
     }
 
-    @Override
-    public ToggleAutoSalvageRarity.SalvageType getSalvageType() {
-        if (GetBaseGearType().isWeapon()) {
+    // the salvage screen groups gear types into rows with this, so it has to match what the pickup check does
+    public static ToggleAutoSalvageRarity.SalvageType salvageTypeOf(BaseGearType type) {
+        if (type.isWeapon()) {
             return ToggleAutoSalvageRarity.SalvageType.WEAPON;
         }
-        else if (GetBaseGearType().isArmor()) {
+        else if (type.isArmor()) {
             return ToggleAutoSalvageRarity.SalvageType.ARMOR;
         }
         else {
@@ -95,8 +95,18 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
     }
 
     @Override
+    public ToggleAutoSalvageRarity.SalvageType getSalvageType() {
+        return salvageTypeOf(GetBaseGearType());
+    }
+
+    @Override
     public String getSalvageConfigurationId() {
         return GetBaseGearType().gear_slot;
+    }
+
+    @Override
+    public String getSubFilterId() {
+        return gtype;
     }
 
     public StatRequirement getRequirement() {

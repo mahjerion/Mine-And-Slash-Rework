@@ -20,6 +20,13 @@ public interface ISalvagable {
         return null;
     }
 
+    // a more specific id than getSalvageConfigurationId(), configured per rarity.
+    // gear returns its BaseGearType GUID, so players can filter staves apart from swords,
+    // or cloth apart from plate, and datapacked gear types work with zero extra code.
+    default String getSubFilterId() {
+        return null;
+    }
+
   
     default boolean isSalvagable(ExileStack stack) {
         return !stack.get(StackKeys.CUSTOM).getOrCreate().data.get(CustomItemData.KEYS.SALVAGING_DISABLED);

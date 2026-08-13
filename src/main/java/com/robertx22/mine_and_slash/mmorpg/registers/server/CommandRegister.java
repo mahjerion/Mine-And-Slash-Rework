@@ -55,13 +55,15 @@ public class CommandRegister {
         new GenericGive("omen", ExileRegistryTypes.OMEN, x -> new OmenBlueprint(x)).register(dispatcher);
 
 
-        new AutoSalvageGenericConfigure(ExileRegistryTypes.GEAR_SLOT).register(dispatcher);
+        // gear types, not gear slots: a slot keyed override could never match a weapon or armor piece,
+        // because those report SalvageType WEAPON/ARMOR while the command wrote under GEAR
+        new AutoSalvageGenericConfigure(ExileRegistryTypes.GEAR_TYPE).register(dispatcher);
         new AutoSalvageGenericConfigure(ExileRegistryTypes.SUPPORT_GEM).register(dispatcher);
 
-        new AutoSalvageGenericList(ExileRegistryTypes.GEAR_SLOT).register(dispatcher);
+        new AutoSalvageGenericList(ExileRegistryTypes.GEAR_TYPE).register(dispatcher);
         new AutoSalvageGenericList(ExileRegistryTypes.SUPPORT_GEM).register(dispatcher);
 
-        new AutoSalvageGenericShow(ExileRegistryTypes.GEAR_SLOT).register(dispatcher);
+        new AutoSalvageGenericShow(ExileRegistryTypes.GEAR_TYPE).register(dispatcher);
         new AutoSalvageGenericShow(ExileRegistryTypes.SUPPORT_GEM).register(dispatcher);
 
         AutoSalvageHelp.register(dispatcher);

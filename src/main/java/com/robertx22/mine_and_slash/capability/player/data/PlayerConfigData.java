@@ -89,11 +89,28 @@ public class PlayerConfigData {
         // this configuration should take precedence over the rarity config because it's more specific
         private HashMap<ToggleAutoSalvageRarity.SalvageType, HashMap<String, Boolean>> tmap = new HashMap<>();
 
+        // Gear Type id (BaseGearType GUID) -> <rarity, enabled>
+        // Ex:
+        // plate_chest, <rare, disabled>
+        // sword, <common, enabled>
+        //
+        // this is the most specific configuration of them all, an absent entry means "inherit",
+        // aka fall through to the less specific configs below it.
+        private HashMap<String, HashMap<String, Boolean>> gtmap = new HashMap<>();
+
         public HashMap<ToggleAutoSalvageRarity.SalvageType, HashMap<String, Boolean>> getTMap() {
             if (tmap == null) {
                 tmap = new HashMap<>();
             }
             return tmap;
+        }
+
+        // old saves predate this field, gson leaves it null
+        public HashMap<String, HashMap<String, Boolean>> getGtMap() {
+            if (gtmap == null) {
+                gtmap = new HashMap<>();
+            }
+            return gtmap;
         }
 
         // todo test this
@@ -116,14 +133,21 @@ public class PlayerConfigData {
             if (data != null) {
                 if (data.isSalvagable(ex)) {
 
-                    Optional<Boolean> typeSalvageEnabled = checkTypeSalvageConfig(data.getSalvageType(), data.getSalvageConfigurationId());
+                    // most specific first: gear type + rarity, then the per id override, then the plain rarity config
+                    Optional<Boolean> subFilterEnabled = checkGearTypeSalvageConfig(data.getSubFilterId(), data.getRarityId());
 
-                    if (typeSalvageEnabled.isEmpty()) {
-                        if (checkRaritySalvageConfig(data.getSalvageType(), data.getRarityId())) {
-                            doSalvage = true;
-                        }
+                    if (subFilterEnabled.isPresent()) {
+                        doSalvage = subFilterEnabled.get();
                     } else {
-                        doSalvage = typeSalvageEnabled.get();
+                        Optional<Boolean> typeSalvageEnabled = checkTypeSalvageConfig(data.getSalvageType(), data.getSalvageConfigurationId());
+
+                        if (typeSalvageEnabled.isEmpty()) {
+                            if (checkRaritySalvageConfig(data.getSalvageType(), data.getRarityId())) {
+                                doSalvage = true;
+                            }
+                        } else {
+                            doSalvage = typeSalvageEnabled.get();
+                        }
                     }
                 }
 
@@ -221,6 +245,71 @@ public class PlayerConfigData {
 
         public HashMap<String, Boolean> getConfiguredMapForSalvageType(ToggleAutoSalvageRarity.SalvageType salvageType) {
             return getTMap().getOrDefault(salvageType, new HashMap<>());
+        }
+
+        // an empty Optional means "inherit", aka this gear type has no opinion for this rarity
+        public Optional<Boolean> checkGearTypeSalvageConfig(String gearTypeId, String rarityId) {
+            if (gearTypeId == null || rarityId == null) {
+                return Optional.empty();
+            }
+            var rarities = getGtMap().get(gearTypeId);
+
+            if (rarities == null || !rarities.containsKey(rarityId)) {
+                return Optional.empty();
+            }
+            return Optional.ofNullable(rarities.get(rarityId));
+        }
+
+        // inherit -> salvage -> keep -> inherit
+        public void cycleGearTypeSalvageConfig(String gearTypeId, String rarityId) {
+            var current = checkGearTypeSalvageConfig(gearTypeId, rarityId);
+
+            if (current.isEmpty()) {
+                setGearTypeSalvageConfig(gearTypeId, rarityId, AutoSalvageGenericConfigure.AutoSalvageConfigAction.ENABLE);
+            } else if (current.get()) {
+                setGearTypeSalvageConfig(gearTypeId, rarityId, AutoSalvageGenericConfigure.AutoSalvageConfigAction.DISABLE);
+            } else {
+                setGearTypeSalvageConfig(gearTypeId, rarityId, AutoSalvageGenericConfigure.AutoSalvageConfigAction.CLEAR);
+            }
+        }
+
+        // a null rarityId applies the action to every registered rarity
+        public void setGearTypeSalvageConfig(String gearTypeId, String rarityId, AutoSalvageGenericConfigure.AutoSalvageConfigAction action) {
+            if (gearTypeId == null) {
+                return;
+            }
+            if (rarityId == null) {
+                if (action == AutoSalvageGenericConfigure.AutoSalvageConfigAction.CLEAR) {
+                    clearGearTypeSalvageConfig(gearTypeId);
+                    return;
+                }
+                for (GearRarity rar : ExileDB.GearRarities().getList()) {
+                    setGearTypeSalvageConfig(gearTypeId, rar.GUID(), action);
+                }
+                return;
+            }
+
+            if (action == AutoSalvageGenericConfigure.AutoSalvageConfigAction.CLEAR) {
+                var rarities = getGtMap().get(gearTypeId);
+                if (rarities != null) {
+                    rarities.remove(rarityId);
+                    if (rarities.isEmpty()) {
+                        getGtMap().remove(gearTypeId);
+                    }
+                }
+                return;
+            }
+
+            getGtMap().computeIfAbsent(gearTypeId, x -> new HashMap<>())
+                    .put(rarityId, action == AutoSalvageGenericConfigure.AutoSalvageConfigAction.ENABLE);
+        }
+
+        public void clearGearTypeSalvageConfig(String gearTypeId) {
+            getGtMap().remove(gearTypeId);
+        }
+
+        public HashMap<String, Boolean> getConfiguredRaritiesForGearType(String gearTypeId) {
+            return getGtMap().getOrDefault(gearTypeId, new HashMap<>());
         }
 
     }

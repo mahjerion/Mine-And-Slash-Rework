@@ -1,17 +1,24 @@
 package com.robertx22.mine_and_slash.aoe_data.database.exile_effects;
 
+import com.robertx22.mine_and_slash.aoe_data.database.spells.PartBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.exile_effects.EffectType;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.VanillaStatData;
+import com.robertx22.mine_and_slash.database.data.spells.components.AttachedSpell;
+import com.robertx22.mine_and_slash.database.data.spells.components.ComponentPart;
+import com.robertx22.mine_and_slash.database.data.spells.components.EntityActivation;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.tags.all.EffectTags;
 import com.robertx22.mine_and_slash.tags.imp.EffectTag;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
+
+import java.util.ArrayList;
 
 public class ExileEffectBuilder {
 
@@ -89,8 +96,56 @@ public class ExileEffectBuilder {
     }
 
     public ExileEffectBuilder spell(Spell stat) {
-        this.effect.spell = stat.getAttached();
+        AttachedSpell incoming = stat.getAttached();
+
+        if (this.effect.spell == null) {
+            this.effect.spell = incoming;
+            return this;
+        }
+        // an effect only holds one attached spell, so assigning would silently drop whatever was
+        // already added (a commandOnRemove part built before this call). merge instead so call order
+        // doesn't matter
+        this.effect.spell.on_cast.addAll(incoming.on_cast);
+        incoming.entity_components.forEach((en, parts) -> this.effect.spell.entity_components
+                .computeIfAbsent(en, x -> new ArrayList<>())
+                .addAll(parts));
         return this;
+    }
+
+    /**
+     * Runs a minecraft command when the effect is removed, for every removal that goes through
+     * {@link com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect#onRemove}: the
+     * duration running out, the last stack being consumed, remove-on-spell-cast, and respec cleanup.
+     * The leading slash is optional. Can be called multiple times to run several commands.
+     * <p>
+     * The command runs as the <b>caster</b> that applied the effect, not the entity it was on, so
+     * {@code @s} and {@code ~ ~ ~} resolve to the applier. Three caveats come from the onRemove hook
+     * itself:
+     * <p>
+     * 1. onRemove only fires the expire spell when the caster can be resolved by uuid in the target's
+     * level, so a caster that logged off, died, unloaded or changed dimension means no command. Effects
+     * applied without a recorded caster (shrine/stat granted) never run it at all.
+     * <p>
+     * 2. Two removal paths skip onRemove entirely: dropping effects whose id is no longer registered,
+     * and the one_of_a_kind_id sweep in onApply.
+     * <p>
+     * 3. Commands run at permission level 100 (hardcoded in CommandUtils), so this is op level.
+     */
+    public ExileEffectBuilder commandOnRemove(String command) {
+        ComponentPart part = PartBuilder.justAction(SpellAction.CASTER_USE_COMMAND.create(command));
+        part.addActivationRequirement(EntityActivation.ON_EXPIRE);
+
+        getOrCreateAttachedSpell().entity_components
+                .computeIfAbsent(Spell.DEFAULT_EN_NAME, x -> new ArrayList<>())
+                .add(part);
+        return this;
+    }
+
+    private AttachedSpell getOrCreateAttachedSpell() {
+        if (this.effect.spell == null) {
+            this.effect.spell = new AttachedSpell();
+        }
+        return this.effect.spell;
     }
 
     public ExileEffectBuilder disableStackingStatBuff() {

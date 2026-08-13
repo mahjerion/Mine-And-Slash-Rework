@@ -36,14 +36,13 @@ public class CasterCommandAction extends SpellAction {
 
             if (entity instanceof Player p) {
                 CommandUtils.execute(p, command);
+            } else if (entity.getServer() != null) {
+                // mobs apply effects too, so a caster sourced command would silently do nothing on
+                // every debuff if this only ran for players
+                entity.getServer()
+                        .getCommands()
+                        .performPrefixedCommand(source, command);
             }
-            /*
-            ctx.caster
-                .getServer()
-                .getCommands()
-                .performCommand(source, command);
-
-             */
         } catch (Exception e) {
             e.printStackTrace();
         }

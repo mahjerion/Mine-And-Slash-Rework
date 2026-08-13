@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,9 @@ public class InvGuiButton extends ImageButton {
     public InvGuiButton(GuiItemData data, int xPos, int yPos) {
         super(xPos, yPos, BUTTON_SIZE_X, BUTTON_SIZE_Y, 0, 0, BUTTON_SIZE_Y, TEX, (button) -> {
             if (!data.isEmpty()) {
-                Packets.sendToServer(new InvGuiPacket(data));
+                if (!data.getAction().isClientOnly()) {
+                    Packets.sendToServer(new InvGuiPacket(data));
+                }
                 data.getAction().clientAction(ClientOnly.getPlayer(), data);
             }
 
@@ -66,8 +69,19 @@ public class InvGuiButton extends ImageButton {
             gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             gui.blit(data.getAction().getBackGroundIcon(), getX() + 1, getY() + 1, 16, 16, 16, 16, 16, 16);
         }
-        gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+        ItemStack stackIcon = data.getAction().getItemStackIcon();
+
+        if (!stackIcon.isEmpty()) {
+            gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            gui.renderFakeItem(stackIcon, getX() + 1, getY() + 1);
+            return;
+        }
+
+        float[] tint = data.getAction().getIconTint();
+        gui.setColor(tint[0], tint[1], tint[2], tint[3]);
         gui.blit(data.getAction().getIcon(), getX() + 1, getY() + 1, 16, 16, 16, 16, 16, 16);
+        gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
     }
 

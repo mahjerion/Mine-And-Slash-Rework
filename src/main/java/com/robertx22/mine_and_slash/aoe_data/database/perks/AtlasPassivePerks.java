@@ -120,6 +120,17 @@ public class AtlasPassivePerks {
                 new OptScaleExactStat(6, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
         PerkBuilder.stat("shrine_buff_effectiveness_node_big",
                 new OptScaleExactStat(15, EffectStats.EFFECT_OF_BUFFS_ON_YOU_PER_EFFECT_TAG.get(EffectTags.shrine), ModType.FLAT));
+        // duration side of the same per-EffectTag idea (EFFECT_DURATION_YOU_CAST_PER_TAG -> shrine_eff_dur_u_cast).
+        // that family is Source-side, but "you cast" is not a multiplayer footgun here: ShrineBlock loops the
+        // players in range and fires one event per player with source == target == that player, so every
+        // recipient is their own caster. each player's own node scales only their own buff - the player who
+        // clicked the shrine does not extend anyone else's.
+        // additive against the base duration, and Twin Blessing's 0.75 multi is applied before the event,
+        // so the two compose multiplicatively.
+        PerkBuilder.stat("shrine_buff_duration_node",
+                new OptScaleExactStat(10, EffectStats.EFFECT_DURATION_YOU_CAST_PER_TAG.get(EffectTags.shrine), ModType.FLAT));
+        PerkBuilder.stat("shrine_buff_duration_node_big",
+                new OptScaleExactStat(25, EffectStats.EFFECT_DURATION_YOU_CAST_PER_TAG.get(EffectTags.shrine), ModType.FLAT));
         // Harvest/Obelisk in-encounter reward quantity (distinct from harvest_event_chance/obelisk_event_chance
         // above, which only affect encounter spawn odds) - player-stat parallel to Obelisk's
         // TRIPLE_CHEST_REWARD_CHANCE relic stat

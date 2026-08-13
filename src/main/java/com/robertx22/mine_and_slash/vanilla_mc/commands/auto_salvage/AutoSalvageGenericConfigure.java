@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -59,6 +60,13 @@ public class AutoSalvageGenericConfigure {
         }
     }
 
+    private static class RaritySuggestions extends CommandSuggestions {
+        @Override
+        public List<String> suggestions() {
+            return ExileDB.GearRarities().getList().stream().map(x -> x.GUID()).toList();
+        }
+    }
+
     public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 
         dispatcher.register(
@@ -73,17 +81,32 @@ public class AutoSalvageGenericConfigure {
                                                                 .executes(e -> execute(e.getSource(),
                                                                         e.getSource().getPlayerOrException(),
                                                                         StringArgumentType.getString(e, "type"),
-                                                                        e.getArgument("action", AutoSalvageConfigAction.class)
-                                                                )))))))
+                                                                        e.getArgument("action", AutoSalvageConfigAction.class),
+                                                                        null
+                                                                ))
+                                                                // gear types can also be configured for a single rarity, matching the salvage screen
+                                                                .then(argument("rarity", StringArgumentType.word())
+                                                                        .suggests(new RaritySuggestions())
+                                                                        .executes(e -> execute(e.getSource(),
+                                                                                e.getSource().getPlayerOrException(),
+                                                                                StringArgumentType.getString(e, "type"),
+                                                                                e.getArgument("action", AutoSalvageConfigAction.class),
+                                                                                StringArgumentType.getString(e, "rarity")
+                                                                        ))))))))
         );
     }
 
-    private int execute(CommandSourceStack commandSource, Player player, String typeId, AutoSalvageConfigAction action) {
+    private int execute(CommandSourceStack commandSource, Player player, String typeId, AutoSalvageConfigAction action, String rarityId) {
 
         List<String> allTypeIds = new DatabaseSuggestions(registryType, null).suggestions();
 
         if (!allTypeIds.contains(typeId)) {
             player.sendSystemMessage(Component.literal("The type provided: " + typeId + ", for (" + registryType.id + ") is not valid.").withStyle(ChatFormatting.RED));
+            return 0;
+        }
+
+        if (rarityId != null && !ExileDB.GearRarities().isRegistered(rarityId)) {
+            player.sendSystemMessage(Component.literal("The rarity provided: " + rarityId + ", is not valid.").withStyle(ChatFormatting.RED));
             return 0;
         }
 
@@ -98,13 +121,22 @@ public class AutoSalvageGenericConfigure {
 
         PlayerConfigData playerConfigData = Load.player(player).config;
 
-        ToggleAutoSalvageRarity.SalvageType salvageType = registryType == ExileRegistryTypes.GEAR_SLOT ? ToggleAutoSalvageRarity.SalvageType.GEAR : ToggleAutoSalvageRarity.SalvageType.SPELL;
+        if (registryType == ExileRegistryTypes.GEAR_TYPE) {
+            // no SalvageType key at all here, which is exactly why the WEAPON/ARMOR mismatch can't come back
+            playerConfigData.salvage.setGearTypeSalvageConfig(typeId, rarityId, action);
+        } else {
+            if (rarityId != null) {
+                player.sendSystemMessage(Component.literal("A rarity can only be given for " + ExileRegistryTypes.GEAR_TYPE.id + ".").withStyle(ChatFormatting.RED));
+                return 0;
+            }
+            playerConfigData.salvage.setAutoSalvageForTypeAndId(ToggleAutoSalvageRarity.SalvageType.SPELL, typeId, action);
+        }
 
-        playerConfigData.salvage.setAutoSalvageForTypeAndId(salvageType, typeId, action);
+        Load.player(player).playerDataSync.setDirtyAndSync(player);
 
-        Load.player(player).playerDataSync.setDirty();
+        String rarityPart = rarityId == null ? "all rarities" : rarityId;
 
-        player.sendSystemMessage(Component.literal("Successfully updated auto_salvage settings for " + registryType.id + ": " + typeId + " to " + action.getLowercasePastTense()).withStyle(ChatFormatting.GREEN));
+        player.sendSystemMessage(Component.literal("Successfully updated auto_salvage settings for " + registryType.id + ": " + typeId + " (" + rarityPart + ") to " + action.getLowercasePastTense()).withStyle(ChatFormatting.GREEN));
 
         return 1;
 

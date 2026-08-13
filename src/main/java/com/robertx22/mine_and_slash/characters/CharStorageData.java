@@ -1,13 +1,17 @@
 package com.robertx22.mine_and_slash.characters;
 
 import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
+import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
+import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.WorldUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +50,9 @@ public class CharStorageData {
         int stored = CharacterEquipment.countEverything(snapshot);
         int restored = CharacterEquipment.countEverything(data); // the restores empty it
 
+        // before load(p), so the removals still see the outgoing character's level and stats
+        clearTemporaryBuffs(p);
+
         data.load(p); // sets the level last, so do this before handing the items back
         CharacterEquipment.restoreFrom(p, data.getEquipment());
         // after load(p), so the hotbar the support gems belong to is already the incoming character's
@@ -59,6 +66,46 @@ public class CharStorageData {
             p.sendSystemMessage(Chats.CHARACTER_SWITCHED_GEAR.locName(stored, restored)
                     .withStyle(ChatFormatting.GRAY));
         }
+    }
+
+    // buffs are stored per player, not per character, so anything still running when you switch would be
+    // inherited by whoever you switch to - eat a meal, swap, and the whole roster rides along on it. death
+    // already wipes these for the same reason (see OnPlayerDeath); a switch has to as well.
+    //
+    // two separate stores hold them. PlayerData.buff is the food/elixir side (meals, seafood, alchemy
+    // elixirs) plus the vanilla effect that only exists to draw its hud icon. EntityData.statusEffects is
+    // the exile effect side - auras, stances, shrine buffs, anything a spell put on you.
+    private static void clearTemporaryBuffs(Player p) {
+
+        var data = Load.player(p);
+        var unit = Load.Unit(p);
+
+        data.buff = new PlayerBuffData();
+        for (PlayerBuffData.Type type : PlayerBuffData.Type.values()) {
+            // the vanilla effect is purely the icon for the buff above, so it goes with it
+            p.removeEffect(type.effect.get());
+        }
+
+        var statuses = unit.getStatusEffectsData();
+
+        if (!statuses.exileMap.isEmpty()) {
+            // go through onRemove rather than dropping the map. that's what takes the vanilla attribute
+            // modifiers back off (ExileEffect.mc_stats) - clearing alone would leave them on the player
+            // permanently, with no effect left to ever remove them. it's the same path expiry takes.
+            for (String id : new ArrayList<>(statuses.exileMap.keySet())) {
+                ExileEffect eff = ExileDB.ExileEffects().get(id);
+                if (eff != null) {
+                    eff.onRemove(p);
+                }
+            }
+            // after the loop, so an on-expire spell that re-applies something doesn't survive the switch
+            statuses.exileMap.clear();
+        }
+
+        // statusEffects is part of the entity cap's client nbt, so the client keeps showing the old
+        // effects until this resyncs. afterSwap only marks the player cap.
+        unit.sync.setDirty();
+        unit.setEquipsChanged();
     }
 
     public CharacterData getCurrent() {

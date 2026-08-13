@@ -56,10 +56,13 @@ public class AutoSalvageGenericShow {
             }
         }
 
-        ToggleAutoSalvageRarity.SalvageType salvageType = registryType == ExileRegistryTypes.GEAR_SLOT ? ToggleAutoSalvageRarity.SalvageType.GEAR : ToggleAutoSalvageRarity.SalvageType.SPELL;
         PlayerConfigData playerConfigData = Load.player(player).config;
 
-        HashMap<String, Boolean> configuredMap = playerConfigData.salvage.getConfiguredMapForSalvageType(salvageType);
+        if (registryType == ExileRegistryTypes.GEAR_TYPE) {
+            return showGearTypes(player, playerConfigData, searchQuery);
+        }
+
+        HashMap<String, Boolean> configuredMap = playerConfigData.salvage.getConfiguredMapForSalvageType(ToggleAutoSalvageRarity.SalvageType.SPELL);
 
         if (configuredMap.isEmpty()) {
             player.sendSystemMessage(Component.literal("There are no currently configured options for " + registryType.id + " items.").withStyle(ChatFormatting.GRAY));
@@ -72,19 +75,16 @@ public class AutoSalvageGenericShow {
             player.sendSystemMessage(Component.literal("--- Listing configured " + registryType.id + " ids matching: " + searchQuery + " ---"));
         }
 
-        var enabledTextComponent = Component.literal("ENABLED").withStyle(ChatFormatting.GREEN);
-        var disabledTextComponent = Component.literal("DISABLED").withStyle(ChatFormatting.RED);
-
         for (String id : configuredMap.keySet()) {
             var enabled = configuredMap.get(id);
             if (registryType == ExileRegistryTypes.SUPPORT_GEM) {
                 SupportGem gem = ExileDB.SupportGems().get(id);
                 if (searchQuery == null || gem.id.toLowerCase().contains(searchQuery.toLowerCase()) || gem.locName().getString().toLowerCase().contains(searchQuery.toLowerCase())) {
-                    player.sendSystemMessage(Component.literal("[" + gem.id + "] " + gem.locName().getString() + " [").append(enabled ? enabledTextComponent : disabledTextComponent).append(Component.literal("]").withStyle(ChatFormatting.WHITE)));
+                    player.sendSystemMessage(Component.literal("[" + gem.id + "] " + gem.locName().getString() + " [").append(enabledText(enabled)).append(Component.literal("]").withStyle(ChatFormatting.WHITE)));
                 }
             } else {
                 if (searchQuery == null || id.toLowerCase().contains(searchQuery.toLowerCase())) {
-                    player.sendSystemMessage(Component.literal(id + " [").append(enabled ? enabledTextComponent : disabledTextComponent).append(Component.literal("]").withStyle(ChatFormatting.WHITE)));
+                    player.sendSystemMessage(Component.literal(id + " [").append(enabledText(enabled)).append(Component.literal("]").withStyle(ChatFormatting.WHITE)));
                 }
             }
         }
@@ -93,6 +93,59 @@ public class AutoSalvageGenericShow {
 
         return 1;
 
+    }
+
+    private static Component enabledText(boolean enabled) {
+        return enabled
+                ? Component.literal("ENABLED").withStyle(ChatFormatting.GREEN)
+                : Component.literal("DISABLED").withStyle(ChatFormatting.RED);
+    }
+
+    // gear types are configured per rarity, so print one line per gear type with its rarity breakdown
+    private int showGearTypes(Player player, PlayerConfigData playerConfigData, String searchQuery) {
+
+        var all = playerConfigData.salvage.getGtMap();
+
+        if (all.isEmpty()) {
+            player.sendSystemMessage(Component.literal("There are no currently configured options for " + registryType.id + " items.").withStyle(ChatFormatting.GRAY));
+            return 1;
+        }
+
+        if (searchQuery == null) {
+            player.sendSystemMessage(Component.literal("--- Listing all configured " + registryType.id + " ids ---"));
+        } else {
+            player.sendSystemMessage(Component.literal("--- Listing configured " + registryType.id + " ids matching: " + searchQuery + " ---"));
+        }
+
+        for (String id : all.keySet().stream().sorted().toList()) {
+
+            if (searchQuery != null && !id.toLowerCase().contains(searchQuery.toLowerCase())) {
+                continue;
+            }
+
+            var rarities = all.get(id);
+
+            if (rarities == null || rarities.isEmpty()) {
+                continue;
+            }
+
+            var line = Component.literal(id + ": ").withStyle(ChatFormatting.WHITE);
+
+            boolean first = true;
+            for (String rar : rarities.keySet().stream().sorted().toList()) {
+                if (!first) {
+                    line.append(Component.literal(", ").withStyle(ChatFormatting.WHITE));
+                }
+                line.append(Component.literal(rar + " ").withStyle(ChatFormatting.GRAY)).append(enabledText(rarities.get(rar)));
+                first = false;
+            }
+
+            player.sendSystemMessage(line);
+        }
+
+        player.sendSystemMessage(Component.literal("---~---"));
+
+        return 1;
     }
 
 }

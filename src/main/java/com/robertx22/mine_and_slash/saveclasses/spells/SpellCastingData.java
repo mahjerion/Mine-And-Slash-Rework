@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimations;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
+import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
@@ -92,7 +93,10 @@ public class SpellCastingData {
     public List<InsertedSpell> spells = new ArrayList<>();
 
 
-    public void setHotbar(int slot, String spell) {
+    public void setHotbar(Player p, int slot, String spell) {
+
+        // compared as sets so moving a skill from one slot to another doesn't count as unequipping it
+        Set<String> before = new HashSet<>(hotbar.values());
 
         for (Map.Entry<Integer, String> en : hotbar.entrySet()) {
             if (en.getValue().equals(spell)) {
@@ -101,6 +105,22 @@ public class SpellCastingData {
         }
 
         hotbar.put(slot, spell);
+
+        before.removeAll(hotbar.values());
+
+        // a skill that left the bar takes its self buffs with it. otherwise a player casts every
+        // buff skill in turn, swaps each one out for the next and ends up with all of them at once
+        if (!before.isEmpty() && p != null && !p.level().isClientSide) {
+            var statuses = Load.Unit(p).getStatusEffectsData();
+
+            boolean removed = false;
+            for (String unequipped : before) {
+                removed |= statuses.removeSelfBuffsOfSpell(p, unequipped);
+            }
+            if (removed) {
+                Load.Unit(p).sync.setDirty();
+            }
+        }
     }
 
     public void resetSpells() {
@@ -186,22 +206,12 @@ public class SpellCastingData {
             data.id = id;
             data.type = SkillGemData.SkillGemType.SKILL;
 
-            data.setLinks(0);
-
             data.perc = (int) ((rankBeforePlusSkills / (float) data.getSpell().max_lvl) * 100);
 
-            if (rankBeforePlusSkills > 1) {
-
-                int total = rankBeforePlusSkills - 1;
-
-                while (total > 2) {
-                    total -= 3;
-
-                    data.setLinks(data.getFlatLinks() + 1);
-
-                }
-
-            }
+            // bonus ranks from +skill gear grant power but no extra slots, hence rankBeforePlusSkills
+            data.setLinks(Math.min(
+                    rankBeforePlusSkills / GemInventoryHelper.RANKS_PER_SUPPORT_SLOT,
+                    GemInventoryHelper.SUPPORT_GEMS_PER_SKILL));
 
             return data;
         }

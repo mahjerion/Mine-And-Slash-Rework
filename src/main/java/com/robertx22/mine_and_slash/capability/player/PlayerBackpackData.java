@@ -51,9 +51,9 @@ public class PlayerBackpackData implements ICap {
         this.player = player;
         this.data = new Backpacks(player);
 
-        for (Backpacks.BackpackType type : Backpacks.BackpackType.values()) {
-            data.getInv(type).onChanged(nbtCache::markDirty);
-        }
+        // openBackpack can rebuild an inventory when a datapack changed how many slots a tab
+        // needs, so Backpacks keeps the hook and re-applies it
+        data.setOnChanged(nbtCache::markDirty);
     }
 
     public Backpacks getBackpacks() {

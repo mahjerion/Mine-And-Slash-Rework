@@ -23,6 +23,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 
+import java.util.EnumSet;
 import java.util.function.Supplier;
 
 // todo make it easier for me to know which runes are rare, maybe something like A_RUNE_MYTHIC ?
@@ -141,6 +142,19 @@ public enum RuneType {
             .addJewerly(TreasureQuantity.getInstance().mod(1, 4))
             .addWeapon(TreasureQuantity.getInstance().mod(1, 4))
     );
+
+    // the rarer block above. they're kept as their own group in ui layouts like the backpack,
+    // where sorting purely by weight would scatter them among the common runes
+    private static final EnumSet<RuneType> DIMENSION_RUNES = EnumSet.of(OWD, NET, UND, BRI, DAW, END, SID);
+
+    public static boolean isDimensionRune(String runeId) {
+        for (RuneType type : DIMENSION_RUNES) {
+            if (type.id.equals(runeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public String id;
     public String locName;

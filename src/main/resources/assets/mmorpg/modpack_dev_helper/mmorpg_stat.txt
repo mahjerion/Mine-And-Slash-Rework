@@ -192,6 +192,7 @@ ele_crossbow_damage
 ele_res_aura_cost
 ele_staff_damage
 ele_sword_damage
+ele_to_chaos
 ele_trident_damage
 electrify_chance
 electrify_damage

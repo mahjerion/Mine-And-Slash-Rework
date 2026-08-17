@@ -346,6 +346,7 @@ public enum Words implements IAutoLocName {
     Exp("Exp"),
 
     Currency("Currency"),
+    Socketables("Gems & Runes"),
     Backpack("Backpack"),
 
     Gears("Gears"),

@@ -189,6 +189,7 @@ public class StatsRegister implements ExileRegistryInit {
                     add(new ElementalPenetration(Elements.Physical));
                     add(new PhysicalToElement(Elements.Physical));
                     add(PhysicalToRandom.getInstance());
+                    add(ElementalToChaos.getInstance());
                     add(new PhysicalDamageTakenAs(Elements.Physical));
                     add(PhysicalDamageTakenAsRandom.getInstance());
                     add(new BonusFlatElementalDamage(Elements.Physical));

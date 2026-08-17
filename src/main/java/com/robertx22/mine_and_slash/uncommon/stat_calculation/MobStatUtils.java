@@ -178,6 +178,7 @@ public class MobStatUtils {
 
         // stats.add(ExactStatData.scaleTo(5 * rar.DamageMultiplier(), ModType.FLAT, OffenseStats.CRIT_CHANCE.get().GUID(), lvl));
 
+        rar.stats.forEach(x -> stats.add(x.ToExactStat(100, lvl)));
 
         list.add(new MiscStatCtx(stats));
 

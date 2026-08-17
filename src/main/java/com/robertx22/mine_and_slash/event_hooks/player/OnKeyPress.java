@@ -68,7 +68,9 @@ public class OnKeyPress {
             Packets.sendToServer(new QuickUsePotionPacket());
         }
 
-        if (KeybindsRegister.HOTBAR_SWAP.isDown()) {
+        // with hotbar swapping off there are 8 keybinds and no second bar to swap to, so swapping would
+        // just offset every cast by 4. F1 also toggles vanilla's hud, so this gets pressed by accident.
+        if (ClientConfigs.getConfig().HOTBAR_SWAPPING.get() && KeybindsRegister.HOTBAR_SWAP.isDown()) {
             SpellKeybind.IS_ON_SECONd_HOTBAR = !SpellKeybind.IS_ON_SECONd_HOTBAR;
             cooldown = 5;
         }
@@ -149,7 +151,7 @@ public class OnKeyPress {
 
         if (!spellKeysPressed.empty()) {
             number = spellKeysPressed.lastElement().getIndex();
-            if (SpellKeybind.IS_ON_SECONd_HOTBAR) {
+            if (ClientConfigs.getConfig().HOTBAR_SWAPPING.get() && SpellKeybind.IS_ON_SECONd_HOTBAR) {
                 number += 4;
             }
         } else {

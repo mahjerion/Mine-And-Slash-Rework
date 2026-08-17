@@ -31,8 +31,31 @@ public class VanillaStatData {
     }
 
     public void applyVanillaStats(LivingEntity en, int stacks) {
+        applyVanillaStats(en, stacks, 1F);
+    }
 
-        AttributeModifier mod = new AttributeModifier(UUID.fromString(uuid), "", val * stacks, type.operation);
+    /**
+     * @param strMulti the holder's effect strength multiplier (ExileEffectInstanceData.str_multi).
+     *                 The mns stats of an effect already scale by it, these vanilla modifiers have
+     *                 to as well or a target resistant to an effect still eats its whole attribute
+     *                 lockdown.
+     */
+    public void applyVanillaStats(LivingEntity en, int stacks, float strMulti) {
+
+        float amount = val * stacks;
+
+        // a MULTIPLY_TOTAL past -1 is already a full shutdown (the attribute floors at its own
+        // minimum, 0 for the speed/damage ones every effect here uses), so clamping loses nothing.
+        // without it there's no headroom for strMulti to scale into - the -10 the cc effects use
+        // is still deeply negative after a 75% cut - and two of them stacked multiply back into a
+        // large POSITIVE multiplier instead of stacking their reductions.
+        if (type == ModType.MORE) {
+            amount = Math.max(amount, -1F);
+        }
+
+        amount *= strMulti;
+
+        AttributeModifier mod = new AttributeModifier(UUID.fromString(uuid), "", amount, type.operation);
         Attribute attri = getAttribute();
 
         this.removeVanillaStats(en);

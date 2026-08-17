@@ -31,6 +31,9 @@ public class GemInventoryHelper {
     public static int SUPPORT_GEMS_PER_SKILL = 5;
     public static int TOTAL_SLOTS = MAX_SKILL_GEMS * (1 + SUPPORT_GEMS_PER_SKILL);
 
+    // one support slot per 4 spell ranks: 4, 8, 12, 16, 20
+    public static int RANKS_PER_SUPPORT_SLOT = 4;
+
 
     MyInventory inv;
     MyInventory auras;

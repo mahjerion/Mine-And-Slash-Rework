@@ -116,12 +116,17 @@ public class ProfessionRecipe implements JsonExileRegistry<ProfessionRecipe>, IA
             this.doubleDropChance = doubleDropChance;
         }
 
+        // note the naming is inverted relative to intuition: VERY_HARD means "at your level"
+        // (best xp, no double drops), EASY means "far below your level" (worst xp, best double
+        // drops). masteryLvls tops out at 30 (EASY), so past that nothing matches the filter -
+        // the fallback must be EASY, not VERY_HARD, or the multiplier wraps back around to full
+        // xp and makes low-tier recipes pay more than the tier above them.
         public static RecipeDifficulty get(int skilllvl, int recipelvl) {
             if (recipelvl > skilllvl) {
                 return VERY_HARD;
             } else {
                 int diff = Math.abs(skilllvl - recipelvl);
-                return Arrays.stream(RecipeDifficulty.values()).filter(x -> x.masteryLvls >= diff).max(Comparator.comparing(x -> -x.doubleDropChance)).orElse(VERY_HARD);
+                return Arrays.stream(RecipeDifficulty.values()).filter(x -> x.masteryLvls >= diff).max(Comparator.comparing(x -> -x.doubleDropChance)).orElse(EASY);
             }
         }
     }

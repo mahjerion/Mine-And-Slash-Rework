@@ -49,7 +49,7 @@ public class PickSpellAction extends GuiAction {
     public void doAction(Player p, Object data) {
         int slot = (int) data;
 
-        Load.player(p).spellCastingData.setHotbar(slot, spell.GUID());
+        Load.player(p).spellCastingData.setHotbar(p, slot, spell.GUID());
 
         Load.player(p).playerDataSync.setDirtyAndSync(p);
     }

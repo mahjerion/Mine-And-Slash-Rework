@@ -44,7 +44,9 @@ public class SummonAtSightAction extends SpellAction {
 
         int yadd = 0;
 
-        BlockPos bpos = new BlockPos((int) pos.x, (int) pos.y, (int) pos.z);
+        // must floor, not truncate toward zero - (int) -3.5 is -3, so the air scan below used to
+        // read the wrong block everywhere in negative coordinates
+        BlockPos bpos = BlockPos.containing(pos);
 
 
         for (int i = 0; i < height.intValue(); i++) {

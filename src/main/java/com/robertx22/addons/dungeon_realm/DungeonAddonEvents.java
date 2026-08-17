@@ -307,6 +307,15 @@ public class DungeonAddonEvents {
             }
         });
 
+        DungeonExileEvents.ANY_PINNACLE_UNLOCKED.register(new EventConsumer<AnyPinnacleUnlockedEvent>() {
+            @Override
+            public void accept(AnyPinnacleUnlockedEvent event) {
+                // one shared drop for the whole arena - a party carrying an un-unlocked player still
+                // gets the fragment, matching how the relic/map drops in this arena are group loot
+                event.anyUnlocked = event.players.stream().anyMatch(p -> Load.player(p).atlas.pinnacleUnlocked);
+            }
+        });
+
         DungeonExileEvents.GET_RELIC_FIND_BONUS.register(new EventConsumer<GetRelicFindBonusEvent>() {
             @Override
             public void accept(GetRelicFindBonusEvent event) {

@@ -600,6 +600,8 @@ shock_proc_chance
 shock_proc_chance_big
 shooting_star
 shred
+shrine_buff_duration_node
+shrine_buff_duration_node_big
 shrine_buff_effectiveness_node
 shrine_buff_effectiveness_node_big
 shrine_event_chance_node

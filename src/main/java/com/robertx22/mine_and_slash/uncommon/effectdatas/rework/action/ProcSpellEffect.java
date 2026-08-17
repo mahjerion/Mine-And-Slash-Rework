@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import net.minecraft.world.entity.player.Player;
 
@@ -41,6 +42,11 @@ public class ProcSpellEffect extends StatEffect {
         var spell = ExileDB.Spells().get(spellId);
 
         var ctx = new SpellCastContext(SO, 0, spell);
+
+        // a proc triggered by a summon's hit is still the summon's doing. procs are cast from the
+        // owner, so this is the only place the summon-ness of the triggering hit can be carried
+        // over. chains to any depth, because the proc's own damage re-sets the flag from here.
+        ctx.calcData.summon_triggered = event.data.getBoolean(EventData.IS_SUMMON_ATTACK);
 
         var unit = Load.Unit(SO);
         if (use_resource_costs) {

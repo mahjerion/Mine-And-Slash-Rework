@@ -85,6 +85,36 @@ public class EntityStatusEffectsData {
         exileMap.remove(eff.GUID());
     }
 
+    /**
+     * Drops every self buff this entity is holding that was granted by the given spell.
+     * Used when a skill stops being equipped: otherwise a player casts a long/infinite self buff,
+     * swaps that skill out for another one and keeps both.
+     * <p>
+     * Only self cast buffs are touched, so a buff another player cast on this one survives, and so
+     * does anything this spell put on other entities.
+     *
+     * @return true if anything was removed
+     */
+    public boolean removeSelfBuffsOfSpell(LivingEntity en, String spellId) {
+
+        if (spellId == null || spellId.isEmpty() || exileMap.isEmpty()) {
+            return false;
+        }
+
+        // has to go through the effect's own onRemove like the tick loop does, or its vanilla
+        // attribute modifiers (mc_stats) stay on the entity forever
+        return exileMap.entrySet().removeIf(x -> {
+            if (!x.getValue().self_cast || !spellId.equals(x.getValue().spell_id)) {
+                return false;
+            }
+            if (!ExileDB.ExileEffects().isRegistered(x.getKey())) {
+                return true;
+            }
+            ExileDB.ExileEffects().get(x.getKey()).onRemove(en);
+            return true;
+        });
+    }
+
 
     public List<ExileEffect> getEffects() {
         return exileMap.keySet().stream().map(x -> ExileDB.ExileEffects().get(x)).collect(Collectors.toList());

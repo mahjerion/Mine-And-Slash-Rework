@@ -173,14 +173,11 @@ public class SpellOnHotbarRender {
         gui.setColor(1.0F, 1.0F, 1.0F, 1);
 
 
-        String txt = CLOC.translate(KeybindsRegister.getSpellHotbar(keyNum).key.getKey().getDisplayName()).toUpperCase(Locale.ROOT);
-        txt = txt.substring(0, 1);
-        if (KeybindsRegister.getSpellHotbar(keyNum).key.isUnbound()) {
-            if (disableKeyRender) {
-                txt = "";
-            } else {
-                //txt = "UNBOUND KEY";
-                txt = "";
+        String txt = "";
+        if (!KeybindsRegister.getSpellHotbar(keyNum).key.isUnbound()) {
+            txt = CLOC.translate(KeybindsRegister.getSpellHotbar(keyNum).key.getKey().getDisplayName()).toUpperCase(Locale.ROOT);
+            if (!txt.isEmpty()) {
+                txt = txt.substring(0, 1);
             }
         }
         // todo renderScaledText doesnt do push and pop but does antiscale.. FIX THIS

@@ -121,7 +121,11 @@ public class GeneratedData {
         orig.player_points.put(PlayerPointsType.ATLAS, new PlayerPointsConfig(PlayerPointsType.ATLAS, 0, 0, 200, 200));
 
         for (BackpackType type : BackpackType.values()) {
-            orig.backpack_tabs.put(type, new BackpackTabConfig(6, 1));
+            // rows is how many are on screen at once. the currency and socketable tabs reserve a
+            // slot per item so they hold far more than that and scroll, and one slot per item also
+            // means the stack multiplier is the only thing capping how many of each you can keep
+            boolean dedicated = type == BackpackType.CURRENCY || type == BackpackType.SOCKETABLE;
+            orig.backpack_tabs.put(type, dedicated ? new BackpackTabConfig(8, 64) : new BackpackTabConfig(6, 1));
         }
 
         orig.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);

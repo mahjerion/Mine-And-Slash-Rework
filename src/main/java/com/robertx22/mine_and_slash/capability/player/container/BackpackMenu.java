@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
 import com.robertx22.mine_and_slash.capability.player.helper.BackpackInventory;
+import com.robertx22.mine_and_slash.capability.player.helper.BackpackLayouts;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashContainers;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -15,14 +16,19 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class BackpackMenu extends AbstractContainerMenu {
 
     Player player;
     Backpacks.BackpackType type;
+    // the whole container. bigger than what the window shows on tabs that scroll
     int size;
+    // how many rows are on screen at once. drives the window height and the player inv offset
     int containerRows;
+    int totalRows;
     int stackMultiplier;
 
     public BackpackMenu(Backpacks.BackpackType type, int pContainerId, Inventory inv) {
@@ -33,16 +39,22 @@ public class BackpackMenu extends AbstractContainerMenu {
         super(SlashContainers.BACKPACK_TABS.get(type).get(), pContainerId);
         this.player = player;
         this.type = type;
-        this.size = type.getSize();
+        this.size = Math.min(type.getTotalSize(), backpackINV.getContainerSize());
         this.containerRows = type.getRows();
+        this.totalRows = size / 9;
         this.stackMultiplier = type.getStackMultiplier();
+
+        BackpackLayouts.Layout layout = BackpackLayouts.get(type);
 
         try {
             int i = (containerRows - 4) * 18;
 
-            for (int j = 0; j < containerRows; ++j) {
+            // every slot in the container gets built. the screen scrolls them through the window
+            // by moving them and switching the off-screen ones inactive
+            for (int j = 0; j < totalRows; ++j) {
                 for (int k = 0; k < 9; ++k) {
-                    this.addSlot(new BackpackSlot(backpackINV, k + j * 9, 8 + k * 18, 18 + j * 18));
+                    int index = k + j * 9;
+                    this.addSlot(new BackpackSlot(backpackINV, index, 8 + k * 18, 18 + j * 18, layout.getReservedItem(index)));
                 }
             }
             for (int l = 0; l < 3; ++l) {
@@ -59,6 +71,14 @@ public class BackpackMenu extends AbstractContainerMenu {
         }
     }
 
+
+    public int getVisibleRows() {
+        return containerRows;
+    }
+
+    public int getTotalRows() {
+        return totalRows;
+    }
 
     @Override
     public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
@@ -208,12 +228,36 @@ public class BackpackMenu extends AbstractContainerMenu {
 
     public class BackpackSlot extends Slot {
 
-        public BackpackSlot(Container pContainer, int pSlot, int pX, int pY) {
+        // the item this slot is reserved for, or AIR when it accepts anything the tab does.
+        // the screen draws it faded when the slot is empty, so it's kept as a ready-made stack
+        // rather than rebuilt every frame for every empty slot
+        public final Item ghost;
+        public final ItemStack ghostStack;
+
+        // false while scrolled out of the window. AbstractContainerScreen skips inactive slots
+        // for both rendering and hit testing
+        public boolean visible = true;
+
+        public BackpackSlot(Container pContainer, int pSlot, int pX, int pY, Item ghost) {
             super(pContainer, pSlot, pX, pY);
+            this.ghost = ghost;
+            this.ghostStack = ghost == Items.AIR ? ItemStack.EMPTY : new ItemStack(ghost);
+        }
+
+        public boolean isReserved() {
+            return ghost != Items.AIR;
+        }
+
+        @Override
+        public boolean isActive() {
+            return visible;
         }
 
         @Override
         public boolean mayPlace(ItemStack pStack) {
+            if (isReserved()) {
+                return pStack.getItem() == ghost;
+            }
             return type.isValid(pStack);
         }
 

@@ -79,7 +79,8 @@ public class ItemReqs extends ExileKeyHolder<ItemRequirement> {
                     new IdKey(SlotTags.pants.GUID()),
                     new IdKey(SlotTags.boots.GUID()),
                     new IdKey(SlotTags.necklace.GUID()),
-                    new IdKey(SlotTags.ring.GUID())
+                    new IdKey(SlotTags.ring.GUID()),
+                    new IdKey(SlotTags.offhand_family.GUID())
             ))
             .build((id, info) -> new IsGearSlotTagReq(id, new IsGearSlotTagReq.Data(info.GUID())));
 

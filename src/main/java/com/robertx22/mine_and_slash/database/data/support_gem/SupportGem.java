@@ -110,6 +110,11 @@ public class SupportGem implements ISkillGem, JsonExileRegistry<SupportGem>, IAu
     }
 
     @Override
+    public List<StatMod> getStatMods() {
+        return this.stats;
+    }
+
+    @Override
     public int getRequiredLevel() {
         return min_lvl;
     }

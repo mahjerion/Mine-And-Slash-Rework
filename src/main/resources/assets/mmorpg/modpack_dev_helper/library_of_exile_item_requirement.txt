@@ -42,6 +42,7 @@ is_gear_slot_boots
 is_gear_slot_chest
 is_gear_slot_helmet
 is_gear_slot_necklace
+is_gear_slot_offhand_family
 is_gear_slot_pants
 is_gear_slot_ring
 is_gear_slot_weapon_family

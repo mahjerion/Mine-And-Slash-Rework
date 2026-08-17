@@ -80,6 +80,10 @@ public class DamageAction extends SpellAction {
                 if (ctx.sourceEntity instanceof LivingEntity && Load.Unit(ctx.sourceEntity).isSummon()) {
                     dmg.petEntity = (LivingEntity) ctx.sourceEntity;
                     dmg.data.setBoolean(EventData.IS_SUMMON_ATTACK, true);
+                } else if (ctx.calculatedSpellData.summon_triggered) {
+                    // a spell procced by a summon's hit is still the summon's doing. no petEntity
+                    // here - no actual pet swung this, and petEntity drives threat attribution.
+                    dmg.data.setBoolean(EventData.IS_SUMMON_ATTACK, true);
                 }
 
 

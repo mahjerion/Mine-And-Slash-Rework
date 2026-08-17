@@ -104,6 +104,11 @@ public class AuraGem implements JsonExileRegistry<SupportGem>, ISkillGem, IAutoG
     }
 
     @Override
+    public List<StatMod> getStatMods() {
+        return this.stats;
+    }
+
+    @Override
     public Class<AuraGem> getClassForSerialization() {
         return AuraGem.class;
     }

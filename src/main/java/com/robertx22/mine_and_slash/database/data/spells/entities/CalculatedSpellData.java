@@ -22,7 +22,13 @@ public class CalculatedSpellData {
     public String spell_id = "";
     public int lvl = 1;
     public int chains_did = 0;
-  
+
+    // true when this cast was triggered by a hit one of the caster's summons dealt. procs always
+    // cast from the owner (ProcSpellEffect), so without carrying this the summon-ness of the
+    // triggering hit is lost and the proc's own damage reads as a hit the player landed themselves.
+    // gson-serialized with the rest of the object, so it survives onto spell projectiles/blocks.
+    public boolean summon_triggered = false;
+
     private CalculatedSpellData() {
     }
 

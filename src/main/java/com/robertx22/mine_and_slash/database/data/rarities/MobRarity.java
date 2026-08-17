@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.database.data.rarities;
 import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
+import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -77,6 +78,10 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
 
     public List<String> spells = new ArrayList<>();
 
+    // stats every mob of this rarity gets, on top of the multipliers above. used for things the
+    // multipliers can't express, like boss resistance to the stats of negative exile effects
+    public List<StatMod> stats = new ArrayList<>();
+
     public boolean is_elite = false;
 
 
@@ -91,6 +96,11 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
 
     public MobRarity addSpell(String id) {
         this.spells.add(id);
+        return this;
+    }
+
+    public MobRarity addStat(StatMod mod) {
+        this.stats.add(mod);
         return this;
     }
 

@@ -21,7 +21,7 @@ public class SpellKeybind {
 
     public SpellKeybind(int num, int key, KeyModifier mod, boolean firstbar) {
         if (mod != null) {
-            this.key = new KeyMapping(
+            this.key = new ExileKeyMapping(
                     KeybindsRegister.prefix + "spell_" + num,
                     KeyConflictContext.IN_GAME,
                     mod,
@@ -30,7 +30,7 @@ public class SpellKeybind {
                     KeybindsRegister.CATEGORY
             );
         } else {
-            this.key = new KeyMapping(
+            this.key = new ExileKeyMapping(
                     KeybindsRegister.prefix + "spell_" + num,
                     KeyConflictContext.IN_GAME,
                     InputConstants.Type.KEYSYM,

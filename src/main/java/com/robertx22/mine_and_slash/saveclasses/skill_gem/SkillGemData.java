@@ -15,10 +15,10 @@ import com.robertx22.mine_and_slash.gui.texts.textblocks.dropblocks.DropLevelBlo
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SkillGemsItems;
-import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.ModRange;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.tooltips.TooltipStatWithContext;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -235,8 +235,8 @@ public class SkillGemData implements ICommonDataItem<GearRarity> {
         if (this.type == SkillGemType.SUPPORT) {
             SupportGem supp = getSupport();
             List<MutableComponent> stats = new ArrayList<>();
-            for (ExactStatData ex : supp.GetAllStats(Load.Unit(p), this)) {
-                stats.addAll(ex.GetTooltipString());
+            for (TooltipStatWithContext ctx : supp.getAllStatsWithCtx(Load.Unit(p), this)) {
+                stats.addAll(ctx.GetTooltipString());
             }
             tip.accept(new StatBlock() {
                 @Override
@@ -258,8 +258,8 @@ public class SkillGemData implements ICommonDataItem<GearRarity> {
             AuraGem aura = getAura();
             List<MutableComponent> stats = new ArrayList<>();
 
-            for (ExactStatData ex : aura.GetAllStats(Load.Unit(p), this)) {
-                stats.addAll(ex.GetTooltipString());
+            for (TooltipStatWithContext ctx : aura.getAllStatsWithCtx(Load.Unit(p), this)) {
+                stats.addAll(ctx.GetTooltipString());
             }
             tip.accept(new StatBlock() {
                 @Override

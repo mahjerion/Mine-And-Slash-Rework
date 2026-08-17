@@ -58,6 +58,7 @@ perfected_orb_with_tag_dexterity
 perfected_orb_with_tag_intelligence
 perfected_orb_with_tag_strength
 perfected_root_seed
+perfected_shell_seed
 perfected_soul_seed
 perfected_stride_seed
 pinnacle_upgrade
@@ -70,6 +71,7 @@ sharpening_stone_2
 sharpening_stone_3
 sharpening_stone_4
 sharpening_stone_5
+shell_seed
 socket_adder
 soul_seed
 stride_seed

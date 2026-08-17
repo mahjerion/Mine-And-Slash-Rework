@@ -307,10 +307,12 @@ public class ProfessionBlockEntity extends BlockEntity {
         }
 
         int expGive = (int) (recipe.getExpReward(p, ownerLvl, getMats()) * expMulti);
-        this.addExp(expGive);
         var output = recipe.craft(p, getMats());
         if (!destroyOuput && !tryPutToOutputs(output))
             return ExplainedResult.failure(Chats.PROF_OUTPUT_SLOT_NOT_EMPTY.locName());
+        // exp only after the output actually landed - granting it before the bail-out above
+        // paid out full exp for a craft that consumed nothing
+        this.addExp(expGive);
         recipe.spendMaterials(getMats());
         this.setChanged();
         return ExplainedResult.success();

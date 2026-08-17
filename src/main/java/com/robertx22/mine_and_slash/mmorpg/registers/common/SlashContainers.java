@@ -30,6 +30,7 @@ public class SlashContainers {
         addBackpackTab(BackpackType.GEARS);
         addBackpackTab(BackpackType.MAPS);
         addBackpackTab(BackpackType.CURRENCY);
+        addBackpackTab(BackpackType.SOCKETABLE);
         addBackpackTab(BackpackType.SKILL_GEMS);
         addBackpackTab(BackpackType.PROFESSION);
     }

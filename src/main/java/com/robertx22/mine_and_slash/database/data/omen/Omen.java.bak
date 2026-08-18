@@ -46,24 +46,9 @@ public class Omen implements JsonExileRegistry<Omen>, IAutoGson<Omen>, IAutoLocN
     }
 
 
-    public GearSlot getRandomSlotReq(OmenData data) {
+    public GearSlot getRandomSlotReq() {
         // exclude weapons from omens req at least, they're a lot of times swapped
-        var wrap = ExileDB.GearSlots().getFilterWrapped(x -> !x.fam.isWeapon())
-                // a slot can only be required once
-                .of(x -> data.slot_req.stream().noneMatch(s -> s.slot.equals(x.GUID())));
-
-        // shield/tome/totem are separate gear slots but share the single offhand, so requiring
-        // two of them at once would be impossible to fulfill
-        boolean hasOffhand = data.slot_req.stream().anyMatch(s -> {
-            var gs = ExileDB.GearSlots().get(s.slot);
-            return gs != null && gs.fam.isOffhand();
-        });
-        if (hasOffhand) {
-            wrap.of(x -> !x.fam.isOffhand());
-        }
-
-        // running out of slots is a legit end state here, not a misconfiguration, so don't log it
-        return wrap.errorIfNothingLeft(false).random();
+        return ExileDB.GearSlots().getFilterWrapped(x -> !x.fam.isWeapon()).random();
     }
 
     public GearRarityType getRandomSlotReqRarity(OmenData data) {

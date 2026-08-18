@@ -107,7 +107,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         //return !config.tags.contains(SpellTags.magic);
     }
 
-    public int max_lvl = 16; // first lvl unlocks spell, then every 3 lvls unlocks a supp gem slot?
+    public int max_lvl = 20; // first lvl unlocks spell, then every 4 lvls unlocks a supp gem slot
     public List<StatMod> statsForSkillGem = new ArrayList<>();
     public transient String locDesc = "";
 

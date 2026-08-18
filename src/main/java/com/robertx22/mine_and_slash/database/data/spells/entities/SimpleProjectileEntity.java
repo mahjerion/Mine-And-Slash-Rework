@@ -78,6 +78,13 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     private static final EntityDataAccessor<Float> YAW_ACCELERATION = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Vector3f> FORWARD_VECTOR = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> UP_VECTOR = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.VECTOR3);
+    // orbit mode: the projectile keeps a fixed distance around its caster and follows them around,
+    // instead of flying free. synced so the client can place it itself against the local player
+    private static final EntityDataAccessor<Boolean> ORBITING = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> ORBIT_RADIUS = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> ORBIT_SPEED = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> ORBIT_Y_OFFSET = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> ORBIT_START_ANGLE = SynchedEntityData.defineId(SimpleProjectileEntity.class, EntityDataSerializers.FLOAT);
 
     public Entity ignoreEntity;
 
@@ -216,12 +223,20 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
     public void onTick() {
 
-        applyAcceleration();
-        applyYawVelocity();
+        if (entityData.get(ORBITING)) {
+            // orbit mode replaces free flight entirely, so the acceleration/yaw/tracking steering
+            // below must not run and fight it for control of the motion
+            applyOrbit();
+        } else {
+            applyAcceleration();
+            applyYawVelocity();
+        }
 
         if (getCaster() != null) {
 
-            tryMoveTowardsTargets();
+            if (!entityData.get(ORBITING)) {
+                tryMoveTowardsTargets();
+            }
 
             if (!level().isClientSide) {
                 this.getSpellData()
@@ -409,6 +424,35 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         entityData.set(YAW_VELOCITY, yawVelocity);
 
         adjustYaw(yawVelocity);
+    }
+
+    private void applyOrbit() {
+
+        LivingEntity caster = getCaster();
+
+        if (caster == null) {
+            return;
+        }
+
+        // derived from tickCount rather than accumulated, so both sides land on the exact same
+        // angle every tick without any per tick sync traffic, and a resynced client can't drift
+        float angle = entityData.get(ORBIT_START_ANGLE) + tickCount * entityData.get(ORBIT_SPEED);
+        double rad = angle * Mth.DEG_TO_RAD;
+        double radius = entityData.get(ORBIT_RADIUS);
+
+        Vec3 want = caster.position()
+                .add(Math.cos(rad) * radius, entityData.get(ORBIT_Y_OFFSET), Math.sin(rad) * radius);
+
+        if (level().isClientSide) {
+            // the client owns its own player's position, so placing the orb here instead of waiting
+            // for server position packets keeps the ring glued to you with no lag
+            setPos(want);
+        } else {
+            // moving via the delta rather than setPos keeps a real movement vector for the next
+            // tick's hit trace, which is what vanilla raycasts the projectile along
+            setDeltaMovement(want.subtract(position()));
+            setMotionDirty();
+        }
     }
 
     Entity target = null;
@@ -694,6 +738,11 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.entityData.define(YAW_ACCELERATION, 0f);
         this.entityData.define(FORWARD_VECTOR, new Vector3f());
         this.entityData.define(UP_VECTOR, new Vector3f());
+        this.entityData.define(ORBITING, false);
+        this.entityData.define(ORBIT_RADIUS, 0f);
+        this.entityData.define(ORBIT_SPEED, 0f);
+        this.entityData.define(ORBIT_Y_OFFSET, 0f);
+        this.entityData.define(ORBIT_START_ANGLE, 0f);
         super.defineSynchedData();
     }
 
@@ -791,6 +840,22 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
         this.entityData.set(YAW_VELOCITY, holder.getOrDefault(MapField.YAW_VELOCITY, 0D).floatValue() * getYawSpeedMultiplier());
         this.entityData.set(YAW_ACCELERATION, holder.getOrDefault(MapField.YAW_ACCELERATION, 0D).floatValue() * getYawSpeedMultiplier());
 
+        // orbit speed is deliberately NOT scaled by the projectile speed stats, otherwise a fast
+        // projectile build would spin the ring apart instead of keeping it in formation
+        this.entityData.set(ORBITING, holder.getOrDefault(MapField.ORBITS_CASTER, false));
+        this.entityData.set(ORBIT_RADIUS, holder.getOrDefault(MapField.ORBIT_RADIUS, 2D).floatValue());
+        this.entityData.set(ORBIT_SPEED, holder.getOrDefault(MapField.ORBIT_SPEED, 3D).floatValue());
+        this.entityData.set(ORBIT_Y_OFFSET, holder.getOrDefault(MapField.ORBIT_Y_OFFSET, 1D).floatValue());
+
+        if (this.entityData.get(ORBITING)) {
+            // vanilla AbstractArrow latches its own inGround flag whenever the arrow sits inside a
+            // block collision shape and then stops moving it entirely, which would freeze an orbit
+            // the moment the caster walks past a wall. no physics skips that whole branch.
+            // it also skips onHit, which is fine: orbiting projectiles damage from their attached
+            // spell tick, not from collision
+            this.setNoPhysics(true);
+        }
+
         data.data.setString(EventData.ITEM_ID, holder.get(MapField.ITEM));
         CompoundTag nbt = new CompoundTag();
         nbt.putString("spell", GSON.toJson(spellData));
@@ -806,6 +871,13 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
     public void setVectors(Vector3f forward, Vector3f up) {
         this.entityData.set(FORWARD_VECTOR, forward);
         this.entityData.set(UP_VECTOR, up);
+
+        // ProjectileCastHelper calls this after init(), so this is the first point where the per
+        // projectile spawn direction is known. a nova cast spaces the directions evenly, which is
+        // what spreads an orbiting ring out evenly around the caster
+        if (this.entityData.get(ORBITING)) {
+            this.entityData.set(ORBIT_START_ANGLE, (float) Mth.atan2(forward.z, forward.x) * Mth.RAD_TO_DEG);
+        }
     }
 
     @Override

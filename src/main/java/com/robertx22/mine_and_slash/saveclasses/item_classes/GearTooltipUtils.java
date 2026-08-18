@@ -6,6 +6,8 @@ import com.robertx22.library_of_exile.tooltip.ExileTooltipUtils;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
+import com.robertx22.mine_and_slash.database.data.item_set.EquippedSets;
+import com.robertx22.mine_and_slash.database.data.item_set.ItemSet;
 import com.robertx22.mine_and_slash.database.data.unique_items.UniqueGear;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.gui.texts.IgnoreNullList;
@@ -28,6 +30,7 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -244,8 +247,16 @@ public class GearTooltipUtils {
                     }
                 })
                 .accept(CommonTooltips.potentialCorruptionAndQuality(exStack, true))
-                .accept(CommonTooltips.craftedItem(exStack))
-                .accept(new AdditionalBlock(() -> {
+                .accept(CommonTooltips.craftedItem(exStack));
+
+        // set block goes right after the stats. ExileTooltips emits STAT before ADDITIONAL and keeps
+        // insertion order inside ADDITIONAL, so accepting it here lands it above the shift-only info.
+        ItemSet itemSet = gear.isUnique() ? ItemSet.ofUnique(EquippedSets.getUniqueId(stack)) : null;
+        if (itemSet != null) {
+            etip.accept(new AdditionalBlock(itemSet.getTooltip(ClientOnly.getPlayer(), gear.getLevel())));
+        }
+
+        etip.accept(new AdditionalBlock(() -> {
                             int cost = (int) Energy.getInstance().scale(ModType.FLAT, gear.GetBaseGearType().getGearSlot().weapon_data.energy_cost_per_swing, data.getLevel());
                             int permob = (int) Energy.getInstance().scale(ModType.FLAT, gear.GetBaseGearType().getGearSlot().weapon_data.energy_cost_per_mob_attacked, data.getLevel());
                             float damageFactor = (gear.GetBaseGearType().getGearSlot().getBasicDamageMulti() * 100) / 100F;

@@ -58,6 +58,8 @@ public enum Itemtips implements IAutoLocName {
     CHEST_CONTAINS("Contains: %1$s"),
     NEED_KEY("Needs %1$s "),
     OMEN_SET_PIECES("%1$s Piece:"),
+    SET_PIECES("%1$s (%2$s/%3$s)"),
+    SET_BONUS_TIER("(%1$s): "),
     EMPTY_SOCKET("[Socket]"),
     LOCKED_SOCKET("[Locked Socket]"),
 

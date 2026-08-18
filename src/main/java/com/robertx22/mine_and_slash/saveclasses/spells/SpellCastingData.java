@@ -138,7 +138,6 @@ public class SpellCastingData {
                     }
                 });
 
-        // todo this might be a bit perf heavy?
         unit.getStats().stats.values().forEach(x -> {
             if (x.GetStat() instanceof MaxSpellLevel max) {
                 for (InsertedSpell spell : this.spells) {

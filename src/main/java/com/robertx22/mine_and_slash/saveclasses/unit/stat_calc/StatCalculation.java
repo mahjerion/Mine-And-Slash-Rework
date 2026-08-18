@@ -3,11 +3,14 @@ package com.robertx22.mine_and_slash.saveclasses.unit.stat_calc;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
+import com.robertx22.mine_and_slash.database.data.item_set.EquippedSets;
+import com.robertx22.mine_and_slash.database.data.item_set.SetBonus;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AddPerPercentOfOther;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AttributeStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.core_stats.base.ICoreStat;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
+import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.GearData;
 import com.robertx22.mine_and_slash.saveclasses.unit.InCalcStatContainer;
@@ -208,6 +211,7 @@ public class StatCalculation {
         statContexts.add(data.equipmentCache.getStatusEffectStats());
 
         statContexts.addAll(addGearStats(gears));
+        statContexts.addAll(addItemSetStats(gears));
         statContexts.addAll(CommonStatUtils.addMapAffixStats(entity));
         statContexts.addAll(CommonStatUtils.addBaseStats(entity));
 
@@ -236,6 +240,25 @@ public class StatCalculation {
         }
 
         return statContexts;
+    }
+
+    // diablo style set bonuses. this can't live in GearData like the other gear stats do, because a
+    // set bonus depends on the whole equipped combination, not on one item.
+    static List<StatContext> addItemSetStats(List<GearData> gears) {
+        List<StatContext> ctxs = new ArrayList<>();
+
+        for (EquippedSets equipped : EquippedSets.of(gears)) {
+            List<ExactStatData> stats = new ArrayList<>();
+            for (SetBonus bonus : equipped.set.getSortedBonuses()) {
+                if (equipped.isActive(bonus)) {
+                    stats.addAll(bonus.getStats(equipped.avgLevel));
+                }
+            }
+            if (!stats.isEmpty()) {
+                ctxs.add(new SimpleStatCtx(StatContext.StatCtxType.ITEM_SET, stats));
+            }
+        }
+        return ctxs;
     }
 
     static List<StatContext> addGearStats(List<GearData> gears) {

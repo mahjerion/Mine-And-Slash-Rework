@@ -17,6 +17,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.mob_rarities.MobRarities;
 import com.robertx22.mine_and_slash.aoe_data.database.perks.AllPerks;
 import com.robertx22.mine_and_slash.aoe_data.database.prophecies.ProphecyModifiers;
 import com.robertx22.mine_and_slash.aoe_data.database.runes.Runes;
+import com.robertx22.mine_and_slash.aoe_data.database.item_sets.ItemSets;
 import com.robertx22.mine_and_slash.aoe_data.database.runewords.Runewords;
 import com.robertx22.mine_and_slash.aoe_data.database.spell_schools.SpellSchoolsAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
@@ -97,6 +98,7 @@ public class GeneratedData {
         new BaseStatsAdder().registerAll();
 
         new Runewords().registerAll();
+        new ItemSets().registerAll();
 
 
         Professions.init();

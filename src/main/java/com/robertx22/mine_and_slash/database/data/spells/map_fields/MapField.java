@@ -63,6 +63,11 @@ public class MapField<T> implements IGUID {
     public static MapField<Double> YAW_VELOCITY = make("yaw_velocity");
     public static MapField<Double> YAW_ACCELERATION = make("yaw_acceleration");
 
+    // projectile holds a fixed distance around its caster and follows them, instead of flying free
+    public static MapField<Double> ORBIT_RADIUS = make("orbit_radius");
+    public static MapField<Double> ORBIT_SPEED = make("orbit_speed"); // degrees per tick
+    public static MapField<Double> ORBIT_Y_OFFSET = make("orbit_y_offset");
+
     // string
     public static MapField<String> PROJECTILE_ENTITY = make("proj_en");
     public static MapField<String> SUMMONED_PET_ID = make("summon_id");
@@ -107,6 +112,8 @@ public class MapField<T> implements IGUID {
     public static MapField<Boolean> TRACKS_ENEMIES = make("tracks_enemies");
     // projectile re-steers toward its caster each tick, e.g. the return leg of a boomerang
     public static MapField<Boolean> TRACKS_CASTER = make("tracks_caster");
+    // projectile orbits its caster at ORBIT_RADIUS instead of flying, keeping formation as the caster moves
+    public static MapField<Boolean> ORBITS_CASTER = make("orbits_caster");
     public static MapField<Boolean> DISABLE_KNOCKBACK = make("disable_knockback");
     public static MapField<Boolean> ALLOW_SELF_DAMAGE = make("allow_self_damage");
     // a summon can keep its summon type without occupying one of that type's cap slots

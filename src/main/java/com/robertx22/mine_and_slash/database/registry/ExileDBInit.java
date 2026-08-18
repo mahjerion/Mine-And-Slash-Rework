@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.base_stats.BaseStatsAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.gear_slots.GearSlots;
 import com.robertx22.mine_and_slash.aoe_data.database.mob_affixes.MobAffixes;
 import com.robertx22.mine_and_slash.aoe_data.database.perks.Perks;
+import com.robertx22.mine_and_slash.aoe_data.database.item_sets.ItemSets;
 import com.robertx22.mine_and_slash.aoe_data.database.runewords.Runewords;
 import com.robertx22.mine_and_slash.aoe_data.database.spell_schools.SpellSchoolsAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.impl.IntSpells;
@@ -38,6 +39,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.GEAR_SLOT, GearSlots.SWORD).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.GEAR_TYPE, BaseGearTypes.SWORD.GUID()).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.RUNEWORDS, Runewords.EMPTY).setIsDatapack());
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.ITEM_SET, ItemSets.EMPTY).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.EXILE_EFFECT, "").setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.AFFIX, ExileDBInit.UNKNOWN_ID).setIsDatapack())
         ;

@@ -18,6 +18,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanc
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
+import com.robertx22.mine_and_slash.database.data.item_set.ItemSet;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffix;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
 import com.robertx22.mine_and_slash.database.data.omen.Omen;
@@ -118,6 +119,8 @@ public class ExileRegistryTypes {
     // mobs could be deterministic per pos, based on the current map world? but with an event to change it to specific if needed
     public static ExileRegistryType OMEN = ExileRegistryType.register(SlashRef.MODID, "omen", 47, Omen.SERIALIZER, SyncTime.ON_LOGIN);
     public static ExileRegistryType SHRINE_BUFF = ExileRegistryType.register(SlashRef.MODID, "shrine_buff", 48, ShrineBuff.SERIALIZER, SyncTime.ON_LOGIN);
+    // must load after UNIQUE_GEAR (11): a set lists the unique guids that belong to it
+    public static ExileRegistryType ITEM_SET = ExileRegistryType.register(SlashRef.MODID, "sets", 49, ItemSet.SERIALIZER, SyncTime.ON_LOGIN);
 
     public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 

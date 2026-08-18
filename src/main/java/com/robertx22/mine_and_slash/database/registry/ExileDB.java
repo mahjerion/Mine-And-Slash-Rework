@@ -20,6 +20,7 @@ import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.gems.Gem;
+import com.robertx22.mine_and_slash.database.data.item_set.ItemSet;
 import com.robertx22.mine_and_slash.database.data.loot_chest.base.LootChest;
 import com.robertx22.mine_and_slash.database.data.map_affix.MapAffix;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
@@ -164,6 +165,10 @@ public class ExileDB {
 
     public static ExileRegistryContainer<RuneWord> RuneWords() {
         return Database.getRegistry(ExileRegistryTypes.RUNEWORDS);
+    }
+
+    public static ExileRegistryContainer<ItemSet> ItemSets() {
+        return Database.getRegistry(ExileRegistryTypes.ITEM_SET);
     }
 
     public static ExileRegistryContainer<Affix> Affixes() {

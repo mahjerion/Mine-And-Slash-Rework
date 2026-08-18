@@ -45,10 +45,12 @@ public class OmenBlueprint extends RarityItemBlueprint implements ITypeBlueprint
         data.rarities.put(GearRarityType.RUNED, diff.runed.random());
 
         while (data.slot_req.size() < slots) {
-            var slot = omen.getRandomSlotReq();
-            if (data.slot_req.stream().noneMatch(x -> x.slot.equals(slot.GUID()))) {
-                data.slot_req.add(new OmenData.OmenSlotReq(slot.GUID(), omen.getRandomSlotReqRarity(data)));
+            // the picker excludes slots already taken, and any second offhand slot
+            var slot = omen.getRandomSlotReq(data);
+            if (slot == null) {
+                break; // pool exhausted, can't happen at current numbers but never spin
             }
+            data.slot_req.add(new OmenData.OmenSlotReq(slot.GUID(), omen.getRandomSlotReqRarity(data)));
         }
 
         for (int i = 0; i < affixes; i++) {

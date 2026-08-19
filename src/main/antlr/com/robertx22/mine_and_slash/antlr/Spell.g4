@@ -31,18 +31,18 @@ entityName: Identifier;
 
 // spell action syntax
 scriptBlock: '{' scriptStatement* '}' | scriptStatement;
-scriptStatement: ifBlock | selectBlock | actions;
+scriptStatement: ifBlock | filterBlock | selectBlock | actions;
 ifBlock: 'if' '(' conditionExpr ')' scriptBlock elseBlock?;
+filterBlock: 'filter' '(' conditionExpr ')' scriptBlock elseBlock?; // en_preds
 elseBlock: 'else' scriptBlock;
-selectBlock: 'select' '(' selectorList ')' scriptBlock;
+selectBlock: 'select' '(' selectorList ')' scriptBlock; // targets
 actions: mapHolder+ (';' | perEntityHit); // spell action list
 perEntityHit: 'per_entity_hit' scriptBlock;
 
 selectorList: selector ('||' selector)*;
 selector: mapHolder; // spell targets entry
 
-enPredPrefix: 'en' '.';
-condition: enPredPrefix? mapHolder; // single condition
+condition: mapHolder; // single condition
 conditionParen: '(' conditionExpr ')' | condition;
 conditionNot: Not conditionParen | conditionParen;
 conditionAnd: conditionNot ('&&' conditionNot)*;

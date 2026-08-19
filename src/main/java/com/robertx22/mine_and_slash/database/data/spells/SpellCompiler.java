@@ -34,6 +34,7 @@ import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.conditions.EffectCondition;
+import com.robertx22.mine_and_slash.database.data.spells.components.conditions.OrCondition;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.BaseTargetSelector;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -450,6 +451,13 @@ public class SpellCompiler {
     }
 
     private void invertConditions(List<ConditionHolder> conditions) {
+        if (conditions.size() == 1) {
+            if (conditions.get(0).map.type == EffectCondition.OR.GUID()) {
+                // to invert an OR, we invert the conditions and turn it into an AND
+                var conditions =
+            }
+        }
+
         for (var condition : conditions) {
             if (condition.map.has(MapField.IS_FALSE) && condition.map.get(MapField.IS_FALSE)) {
                 condition.map.remove(MapField.IS_FALSE);

@@ -33,6 +33,7 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
     public static HasMnsEffectCondition HAS_MNS_EFFECT;
     public static CasterHasMnsEffectCondition CASTER_HAS_MNS_EFFECT;
 
+    public static OrCondition OR;
 
     public abstract boolean canActivate(SpellCtx ctx, MapHolder data);
 
@@ -47,6 +48,10 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
         return can;
     }
 
+    public final static boolean conditionPasses(MapHolder part, SpellCtx ctx) {
+        return EffectCondition.MAP.get(part.type).can(ctx, part);
+    }
+
     public final static boolean conditionsPass(List<MapHolder> ifs, SpellCtx ctx) {
 
         boolean did = true;
@@ -54,9 +59,7 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
 
         for (MapHolder part : ifs) {
 
-            EffectCondition condition = EffectCondition.MAP.get(part.type);
-
-            boolean passed = condition.can(ctx, part);
+            boolean passed = conditionPasses(part, ctx);
 
             boolean isOptional = part.getOrDefault(MapField.OPTIONAL, false);
 
@@ -74,7 +77,6 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
 
         return did;
     }
-
 
     public static HashMap<String, EffectCondition> MAP = new HashMap<>();
 
@@ -102,6 +104,7 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
         CASTER_HAS_STAT = of(new CasterHasStatCondition());
         ON_ATTACKED = of(new OnAttackedCondition());
 
+        OR = of(new OrCondition());
     }
 }
 

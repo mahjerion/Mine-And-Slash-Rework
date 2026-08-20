@@ -102,6 +102,8 @@ spell_has_tag_cast_speed_to_cooldown
 spell_has_tag_cast_speed_to_cooldown_is_false
 spell_has_tag_chaining
 spell_has_tag_chaining_is_false
+spell_has_tag_channel
+spell_has_tag_channel_is_false
 spell_has_tag_chaos
 spell_has_tag_chaos_is_false
 spell_has_tag_cold

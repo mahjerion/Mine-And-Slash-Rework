@@ -27,7 +27,7 @@ public class SpellChangeStats {
             .setPriority(StatPriority.Spell.FIRST)
             .setSide(EffectSides.Source)
             .setLocName(x -> Stat.format(x.name + " Augment Cost"))
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Reduces reservation cost of Augments, potentially allowing you to equip more.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.minus_is_good = true;
@@ -58,7 +58,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.ADD_MAX_TOTEMS)
             .setLocName(x -> "Maximum Totems")
-            .setLocDesc(x -> "You can have more totems active at once.")
+            .setLocDesc(x -> "You can have more Totems active at once.")
             .modifyAfterDone(x ->
             {
                 x.is_perc = false;
@@ -74,7 +74,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.ADD_TOTEM_COUNT)
             .setLocName(x -> "Totems Per Cast")
-            .setLocDesc(x -> "Each totem spell places extra totems at once, up to your Maximum Totems.")
+            .setLocDesc(x -> "Each Totem Skill places extra totems at once, up to your Maximum Totems.")
             .modifyAfterDone(x ->
             {
                 x.is_perc = false;
@@ -90,7 +90,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.ADD_MAX_BANNERS)
             .setLocName(x -> "Maximum Banners")
-            .setLocDesc(x -> "You can have more banners planted at once.")
+            .setLocDesc(x -> "You can have more Banners planted at once.")
             .modifyAfterDone(x ->
             {
                 x.is_perc = false;
@@ -106,7 +106,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.INCREASE_MANA_COST)
             .setLocName(x -> "Mana Cost")
-            .setLocDesc(x -> "Modifies mana cost of spells")
+            .setLocDesc(x -> "Modifies mana cost of Skills.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
@@ -146,7 +146,7 @@ public class SpellChangeStats {
             .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
             .addEffect(StatEffects.DECREASE_CAST_TIME)
             .setLocName(x -> x.locNameForLangFile() + " Cast Time")
-            .setLocDesc(x -> "Reduces cast time of spells with this tag")
+            .setLocDesc(x -> "Reduces cast time of Skills with this tag.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
             })
@@ -160,8 +160,8 @@ public class SpellChangeStats {
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(x))
             .addEffect(StatEffects.DECREASE_COOLDOWN)
             .addEffect(StatEffects.DECREASE_CHARGE_CD)
-            .setLocName(x -> x.locNameForLangFile() + " Spell Cooldown Reduction")
-            .setLocDesc(x -> "Reduces spell cooldown of spells with the tag.")
+            .setLocName(x -> x.locNameForLangFile() + " Skill Cooldown Reduction")
+            .setLocDesc(x -> "Reduces Skill cooldown of Skills with the tag.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
@@ -176,7 +176,7 @@ public class SpellChangeStats {
             .addEffect(StatEffects.DECREASE_COOLDOWN)
             .addEffect(StatEffects.DECREASE_CHARGE_CD)
             .setLocName(x -> "Cooldown Reduction")
-            .setLocDesc(x -> "Reduces spell cooldown.")
+            .setLocDesc(x -> "Reduces Skill cooldown.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
@@ -190,7 +190,7 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.DECREASE_COOLDOWN_BY_X_TICKS)
             .setLocName(x -> "Cooldown Ticks")
-            .setLocDesc(x -> "Reduces spell cooldown by x ticks")
+            .setLocDesc(x -> "Reduces Skill cooldown by x ticks.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
                 x.min = -15;
@@ -205,7 +205,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.INCREASE_PROJ_SPEED)
             .setLocName(x -> "Projectile Speed")
-            .setLocDesc(x -> "Makes your spell projectiles faster")
+            .setLocDesc(x -> "Makes your Skill projectiles faster.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.icon = "\u27B9";
@@ -240,7 +240,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.PROJECTILE_COUNT)
             .setLocName(x -> "Projectile Count")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Adds more projectiles to your Projectile Skills.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
             })
@@ -254,7 +254,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.chaining))
             .addEffect(StatEffects.BONUS_CHAINS)
             .setLocName(x -> "Chain Count")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Increases the number of bounces on Skills that chain.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
             })
@@ -268,7 +268,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.SET_BOOLEAN.get(EventData.BARRAGE))
             .setLocName(x -> "Projectiles Barrage")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Causes your projectiles to shoot forward.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
             })
@@ -282,7 +282,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.SET_BOOLEAN.get(EventData.NOVA))
             .setLocName(x -> "Projectile Nova")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Causes your projectiles to fire in a circle around you.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
             })
@@ -313,7 +313,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.totem))
             .addEffect(StatEffects.DURATION_INCREASE)
             .setLocName(x -> "Totem Duration")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Increases the duration of your Totems.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.format = ChatFormatting.GREEN.getName();
@@ -328,7 +328,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.banner))
             .addEffect(StatEffects.DURATION_INCREASE)
             .setLocName(x -> "Banner Duration")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "Increases the duration of your Banners.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.format = ChatFormatting.GREEN.getName();
@@ -372,7 +372,7 @@ public class SpellChangeStats {
             .addCondition(StatConditions.SPELL_HAS_TAG.get(SpellTags.projectile))
             .addEffect(StatEffects.SET_BOOLEAN.get(EventData.PIERCE))
             .setLocName(x -> "Piercing Projectiles")
-            .setLocDesc(x -> "Makes spell pierce enemies and keep on")
+            .setLocDesc(x -> "Makes Projectile Skills pierce enemies.")
             .modifyAfterDone(x -> {
                 x.is_perc = false;
                 x.is_long = true;

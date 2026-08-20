@@ -27,6 +27,12 @@ public class SpellCastBarOverlay {
             return;
         }
 
+        // a channel has no cast to fill up. its bar would just refill once per pulse, and client side
+        // the pulse loop is only predicted, so it flickers whenever a PlayerData sync resets the state.
+        if (data.spellCastingData.isChannelling()) {
+            return;
+        }
+
         if (data.spellCastingData.isCasting() && data.spellCastingData.castTickLeft > 0) {
 
             float total = data.spellCastingData.spellTotalCastTicks;

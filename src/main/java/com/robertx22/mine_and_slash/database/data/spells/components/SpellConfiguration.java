@@ -14,6 +14,7 @@ public class SpellConfiguration {
 
     public boolean swing_arm = true;
     public boolean slows_when_casting = true;
+    public boolean channel_skill = false;
     public CastingWeapon castingWeapon = CastingWeapon.ANY_WEAPON;
     public LeveledValue mana_cost = new LeveledValue(0, 0);
     public LeveledValue ene_cost = new LeveledValue(0, 0);
@@ -49,6 +50,11 @@ public class SpellConfiguration {
 
     public int getCastTimeTicks() {
         return cast_time_ticks;
+    }
+
+    // a channel has no cast time, cast_time_ticks is the gap between pulses instead
+    public boolean isChannel() {
+        return channel_skill;
     }
 
     public SpellConfiguration applyCastSpeedToCooldown() {
@@ -157,6 +163,18 @@ public class SpellConfiguration {
             SpellConfiguration c = new SpellConfiguration();
             c.cast_time_ticks = casttime;
             c.mana_cost = new LeveledValue(1F * mana, 0.75F * mana);
+            c.cooldown_ticks = cd;
+            return c;
+        }
+
+        // channels pay per pulse and are held down, so mana is the cost of one pulse and
+        // cast_time_ticks is the gap between pulses. cd only applies once the player lets go.
+        public static SpellConfiguration channel(int manaPerPulse, int cd, int ticksPerPulse) {
+            SpellConfiguration c = new SpellConfiguration();
+            c.channel_skill = true;
+            c.times_to_cast = 1; // channel replaces the multicast loop, they cannot combine
+            c.cast_time_ticks = ticksPerPulse;
+            c.mana_cost = new LeveledValue(1F * manaPerPulse, 0.75F * manaPerPulse);
             c.cooldown_ticks = cd;
             return c;
         }

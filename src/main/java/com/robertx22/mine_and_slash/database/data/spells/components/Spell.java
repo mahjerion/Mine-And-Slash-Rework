@@ -67,6 +67,9 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     public static String DEFAULT_EN_NAME = "default_entity_name";
     public static String CASTER_NAME = "caster";
 
+    // fastest a channel may pulse, 10 pulses a second
+    public static final int MIN_CHANNEL_PULSE_TICKS = 1;
+
     public int weight = 1000;
     public String identifier = "";
     public Boolean hide_from_wiki = null;
@@ -203,8 +206,14 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final int getCastTimeTicks(SpellCastContext ctx) {
+        int ticks = (int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_TICKS).number);
+        if (config.isChannel()) {
+            // for a channel this is the gap between pulses, so cap the rate instead. without a floor
+            // stacked channel cast speed reaches one pulse per tick.
+            return MathHelper.clamp(ticks, MIN_CHANNEL_PULSE_TICKS, 10000);
+        }
         // if it casts 5 times a cast, it should take at least 5 ticks to cast it
-        return MathHelper.clamp((int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_TICKS).number), config.times_to_cast, 10000);
+        return MathHelper.clamp(ticks, config.times_to_cast, 10000);
     }
 
     @Override
@@ -232,11 +241,20 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final int getCalculatedManaCost(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.MANA_COST).number;
+        return channelCostFloor((int) ctx.event.data.getNumber(EventData.MANA_COST).number, config.mana_cost.min);
     }
 
     public final int getCalculatedEnergyCost(SpellCastContext ctx) {
-        return (int) ctx.event.data.getNumber(EventData.ENERGY_COST).number;
+        return channelCostFloor((int) ctx.event.data.getNumber(EventData.ENERGY_COST).number, config.ene_cost.min);
+    }
+
+    // a channel pays this on every pulse, and per pulse costs are small enough that cost reductions
+    // plus the int truncation can round one down to a free channel. anything that costs at all costs 1.
+    private int channelCostFloor(int cost, float configured) {
+        if (config.isChannel() && configured > 0) {
+            return Math.max(1, cost);
+        }
+        return cost;
     }
 
     // Helper record to pair effects and durations
@@ -281,7 +299,10 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         int casttime = getCastTimeTicks(ctx);
 
-        if (casttime <= 1) {
+        if (config.isChannel()) {
+            // a channel has no cast time, casttime is the gap between pulses
+            list.add(Words.CHANNEL_PULSE_RATE.locName(tooltipFormatTicksAsSeconds(casttime)).withStyle(ChatFormatting.GREEN));
+        } else if (casttime <= 1) {
             list.add(Words.INSTANT_CAST.locName().withStyle(ChatFormatting.GREEN));
         } else {
             list.add(Words.CAST_TIME.locName(tooltipFormatTicksAsSeconds(casttime)).withStyle(ChatFormatting.GREEN));
@@ -311,6 +332,11 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         }
 
         list.add(ExileText.emptyLine().get());
+
+        if (this.config.isChannel()) {
+            list.add(ExileText.emptyLine().get());
+            list.add(Words.CHANNELLED.locName().withStyle(ChatFormatting.RED));
+        }
 
         if (this.config.times_to_cast > 1) {
             list.add(ExileText.emptyLine().get());

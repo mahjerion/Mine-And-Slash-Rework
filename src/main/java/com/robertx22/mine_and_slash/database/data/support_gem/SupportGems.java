@@ -132,6 +132,21 @@ public class SupportGems {
                 ))
                 .levelReq(1).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 
+        // channel gems ride the auto generated per spell tag stats, the SPELL_HAS_TAG condition on those
+        // is what keeps them from doing anything on a non channel skill.
+        new SupportGem("faster_channelling", "Faster Channelling", PlayStyle.DEX, 1.2F,
+                Arrays.asList(new StatMod(15, 30, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.channel), ModType.FLAT)
+                ))
+                .levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+
+        // negative cast time means DecreaseNumberByPercentEffect adds to the pulse gap instead
+        new SupportGem("heavy_channelling", "Heavy Channelling", PlayStyle.STR, 1F,
+                Arrays.asList(
+                        new StatMod(-25, -40, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.channel), ModType.FLAT),
+                        new StatMod(20, 45, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.channel), ModType.MORE)
+                ))
+                .levelReq(20).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+
         new SupportGem("totem_damage", "Totem Damage", PlayStyle.STR, 1.3F,
                 Arrays.asList(new StatMod(15, 30, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.MORE)
                 ))

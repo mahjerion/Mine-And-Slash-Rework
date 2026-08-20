@@ -105,6 +105,10 @@ chaining_spell_dmg
 chaining_spell_dmg_taken
 chance_of_blind
 chance_of_slow
+channel_cast_time
+channel_cdr
+channel_spell_dmg
+channel_spell_dmg_taken
 chaos_ailment_aura_cost
 chaos_any_wep_damage
 chaos_cast_time
@@ -625,6 +629,7 @@ plus_lvl_beast_spells
 plus_lvl_buff_spells
 plus_lvl_cast_speed_to_cooldown_spells
 plus_lvl_chaining_spells
+plus_lvl_channel_spells
 plus_lvl_chaos_spells
 plus_lvl_cold_spells
 plus_lvl_curse_spells

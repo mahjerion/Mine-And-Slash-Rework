@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.SpellKeybind;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ChatUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LookUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenEntityStatsRequestPacket;
@@ -156,6 +157,13 @@ public class OnKeyPress {
             }
         } else {
             number = -1;
+        }
+
+        // the client predicts the channel pulse loop in SpellCastingData, so it needs the same held
+        // key the server has. without this the client ends a channel after its first pulse.
+        Player clientPlayer = Minecraft.getInstance().player;
+        if (clientPlayer != null) {
+            Load.player(clientPlayer).spellCastingData.setHeldSpellInput(number);
         }
 
         if (number == lastSpellNumber) {

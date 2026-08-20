@@ -87,9 +87,11 @@ public class HolySpells implements ExileRegistryInit {
         song(HYMN_OF_PERSERVANCE, "Hymn of Perseverance", ModEffects.PERSEVERANCE);
         song(HYMN_OF_VIGOR, "Hymn of Vigor", ModEffects.VIGOR);
 
-        SpellBuilder.of(WHIRLWIND, PlayStyle.STR, SpellConfiguration.Builder.multiCast(10, 0, 100, 10)
+        // was multiCast(10, 0, 100, 10): 10 mana over 10 pulses, one pulse per 10 ticks. same numbers
+        // per pulse, only now the player holds the key and the 10 tick cd starts when they let go.
+        SpellBuilder.of(WHIRLWIND, PlayStyle.STR, SpellConfiguration.Builder.channel(1, 10, 10)
                                 .setSwingArm(), "Whirlwind",
-                        Arrays.asList(SpellTags.weapon_skill, SpellTags.area, SpellTags.damage, SpellTags.PHYSICAL))
+                        Arrays.asList(SpellTags.weapon_skill, SpellTags.area, SpellTags.damage, SpellTags.PHYSICAL, SpellTags.channel))
                 .manualDesc("Spin and continuously strike enemies around you for " + SpellCalcs.WHIRLWIND.getLocDmgTooltip(Elements.Physical))
                 .animations(SpellAnimations.SPIN, SpellAnimations.CAST_FINISH)
                 .weaponReq(CastingWeapon.MELEE_WEAPON)

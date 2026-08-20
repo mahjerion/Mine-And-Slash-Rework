@@ -228,9 +228,11 @@ public class RangerSpells implements ExileRegistryInit {
 
                 .build();
 
-        SpellBuilder.of(BARRAGE, PlayStyle.DEX, SpellConfiguration.Builder.multiCast(20, 20, 20, 10)
-                                .setChargesAndRegen(BARRAGE, 3, 20 * 10), "Arrow Barrage",
-                        Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.PHYSICAL))
+        // was multiCast(20, 20, 20, 10) with 3 charges: 20 mana over 10 arrows, one arrow per 2 ticks.
+        // charges cannot survive a channel, they are spent once on release, so one charge would buy an
+        // unlimited barrage. mana is the limiter now, at the same 2 mana per arrow as before.
+        SpellBuilder.of(BARRAGE, PlayStyle.DEX, SpellConfiguration.Builder.channel(2, 10, 2), "Arrow Barrage",
+                        Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.PHYSICAL, SpellTags.channel))
 
                 .weaponReq(CastingWeapon.RANGED)
                 .animations(SpellAnimations.SHOOT_ARROW_FAST, SpellAnimations.CAST_FINISH)

@@ -239,6 +239,14 @@ public class SpellCastingData {
     transient int spellInputNumber = -1;
     // How many ticks left without another packet before we stop casting
     transient int spellInputTimeoutTicks = 0;
+    // The hotbar index of the spell key held right now. the server fills this in from the input packet,
+    // the client from its own keybinds, so both sides agree on when a channel is still being held.
+    public transient int heldSpellInput = -1;
+
+    // called from the client keybind poll. the server goes through onSpellInputPressed instead
+    public void setHeldSpellInput(int number) {
+        this.heldSpellInput = number;
+    }
 
     public void onSpellInputPressed(int number) {
         if (number != -1 && number != spellInputNumber) {
@@ -248,6 +256,7 @@ public class SpellCastingData {
             }
         }
         spellInputNumber = number;
+        heldSpellInput = number;
         spellInputTimeoutTicks = 8;
     }
 
@@ -278,7 +287,10 @@ public class SpellCastingData {
 
                 SpellCastContext c = new SpellCastContext(player, 0, spell);
                 setToCast(c);
-                spell.spendResources(c);
+                if (!spell.getConfig().isChannel()) {
+                    // a channel pays per pulse in tryChannelPulse, so letting go early costs nothing
+                    spell.spendResources(c);
+                }
 
                 // Limit global cooldown to spell cooldown to allow rapid fire spells
                 int gcd = Math.min(GameBalanceConfig.get().GLOBAL_COOLDOWN_TICKS, spell.getCooldownTicks(c));
@@ -339,6 +351,62 @@ public class SpellCastingData {
                 .isRegistered(calcSpell.spell_id);
     }
 
+    public boolean isChannelling() {
+        Spell spell = getSpellBeingCast();
+        return isCasting() && spell != null && spell.getConfig().isChannel();
+    }
+
+    // a channel keeps going only while the key that started it is still down
+    private boolean isChannelInputHeld(LivingEntity entity) {
+        // heldSpellInput comes off a client packet, so it is not necessarily a real hotbar index
+        if (heldSpellInput < 0 || heldSpellInput >= GemInventoryHelper.MAX_SKILL_GEMS || !(entity instanceof Player p)) {
+            return false;
+        }
+        Spell channelled = getSpellBeingCast();
+        if (channelled == null) {
+            return false;
+        }
+        var gem = Load.player(p).getSkillGemInventory().getHotbarGem(heldSpellInput);
+        Spell held = gem == null ? null : gem.getSpell();
+        return held != null && held.GUID().equals(channelled.GUID());
+    }
+
+    // the server decides whether a channel may keep going. the client keeps predicting pulses until the
+    // cast finished packet lands, otherwise it stutters whenever its resource values are a tick stale.
+    private boolean canPulseChannel(SpellCastContext ctx, Spell spell) {
+        if (ctx.caster.level().isClientSide) {
+            return true;
+        }
+        if (ctx.caster instanceof Player p && p.isCreative()) {
+            return true;
+        }
+        if (!spell.isAllowedInDimension(ctx.caster.level())) {
+            return false;
+        }
+        if (RepairUtils.isItemBroken(ctx.caster.getMainHandItem())) {
+            return false;
+        }
+        return ctx.data.getResources().hasEnough(spell.getManaCostCtx(ctx))
+                && ctx.data.getResources().hasEnough(spell.getEnergyCostCtx(ctx));
+    }
+
+    // stops a channel part way through a pulse interval. nothing was pre paid, so this costs nothing
+    private void endChannel(LivingEntity entity) {
+        Spell spell = getSpellBeingCast();
+        SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
+
+        onSpellCastFinished(ctx);
+
+        this.calcSpell = null;
+        this.castTickLeft = 0;
+        this.spellTotalCastTicks = 0;
+        this.castTicksDone = 0;
+
+        if (entity instanceof ServerPlayer p) {
+            TellClientEntityCastingSpell.sendUpdates(PlayerAnimations.CastEnum.CAST_FINISH, p, spell);
+        }
+    }
+
     transient static Spell lastSpell = null;
 
     private void processSpellInputs(Player player) {
@@ -348,6 +416,7 @@ public class SpellCastingData {
         } else {
             // client stopped responding, don't cast forever
             spellInputNumber = -1;
+            heldSpellInput = -1;
         }
 
         // Prune input buffer
@@ -355,6 +424,13 @@ public class SpellCastingData {
             if (iterator.next().ticksLeft-- == 0) {
                 iterator.remove();
             }
+        }
+
+        // a running channel owns the input. going through tryStartSpellCast here would fail with
+        // ALREADY_CASTING every tick and spam the cast failed message. onTimePass ends the channel once
+        // the held key stops matching it, and any buffered input then fires on the tick after that.
+        if (isChannelling()) {
+            return;
         }
 
         // See if any buffered inputs succeed
@@ -379,6 +455,11 @@ public class SpellCastingData {
 
         if (isCasting()) {
             try {
+                if (isChannelling() && !isChannelInputHeld(entity)) {
+                    endChannel(entity);
+                    return;
+                }
+
                 castTickLeft--;
                 castTicksDone++;
 
@@ -397,13 +478,10 @@ public class SpellCastingData {
 
                 if (castTickLeft <= 0) {
 
-                    for (Map.Entry<String, ExileEffectInstanceData> en : ctx.data.statusEffects.exileMap.entrySet()) {
-                        ExileEffect eff = ExileDB.ExileEffects().get(en.getKey());
-                        if (eff.remove_on_spell_cast != null) {
-                            if (spell.config.tags.contains(eff.remove_on_spell_cast)) {
-                                en.getValue().stacks--;
-                            }
-                        }
+                    if (!spell.getConfig().isChannel()) {
+                        // a channel consumes these per pulse in tryChannelPulse instead, so that a stack
+                        // is spent per cast either way no matter how the channel ends
+                        consumeBuffsRemovedOnCast(ctx, spell);
                     }
 
                     if (ctx.caster instanceof ServerPlayer p) {
@@ -448,6 +526,11 @@ public class SpellCastingData {
             if (castTickLeft <= 0) {
                 Spell spell = getSpellBeingCast();
 
+                if (spell.getConfig().isChannel()) {
+                    tryChannelPulse(ctx, spell);
+                    return;
+                }
+
                 int timesToCast = ctx.spell.getConfig().times_to_cast;
 
                 if (timesToCast == 1) {
@@ -460,6 +543,40 @@ public class SpellCastingData {
             }
         }
 
+    }
+
+    // effects flagged remove_on_spell_cast lose a stack when a matching spell actually goes off
+    private void consumeBuffsRemovedOnCast(SpellCastContext ctx, Spell spell) {
+        for (Map.Entry<String, ExileEffectInstanceData> en : ctx.data.statusEffects.exileMap.entrySet()) {
+            ExileEffect eff = ExileDB.ExileEffects().get(en.getKey());
+            if (eff.remove_on_spell_cast != null) {
+                if (spell.config.tags.contains(eff.remove_on_spell_cast)) {
+                    en.getValue().stacks--;
+                }
+            }
+        }
+    }
+
+    // one beat of a channel: pay for it, fire it, then arm the timer for the next one. the caller has
+    // already seen castTickLeft hit zero, so falling through here ends the channel and starts the cd.
+    private void tryChannelPulse(SpellCastContext ctx, Spell spell) {
+
+        if (!isChannelInputHeld(ctx.caster) || !canPulseChannel(ctx, spell)) {
+            onSpellCastFinished(ctx);
+            this.calcSpell = null;
+            return;
+        }
+
+        if (!ctx.caster.level().isClientSide) {
+            spell.spendResources(ctx);
+        }
+        spell.cast(ctx);
+        consumeBuffsRemovedOnCast(ctx, spell);
+
+        // recomputed every pulse, so cast speed changes take effect on the very next one
+        this.castTickLeft = spell.getCastTimeTicks(ctx);
+        this.spellTotalCastTicks = this.castTickLeft;
+        this.castTicksDone = 0;
     }
 
     public Spell getSpellBeingCast() {
@@ -601,6 +718,11 @@ public class SpellCastingData {
 
         setCooldownOnCasted(ctx);
         this.casting = false;
+
+        if (ctx.spell.getConfig().isChannel() && ctx.caster instanceof ServerPlayer p) {
+            // the client predicts the pulse loop, so it needs to hear the channel is over right away
+            Load.player(p).playerDataSync.setDirty();
+        }
 
         /*
         if (ctx.caster instanceof ServerPlayer p) {

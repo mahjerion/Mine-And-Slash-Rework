@@ -437,8 +437,8 @@ public class OffenseStats {
             .setUsesMoreMultiplier()
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(x))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
-            .setLocName(x -> x.locNameForLangFile() + " Spell Tag Damage")
-            .setLocDesc(x -> "Increases damage of spells with this tag. Totem Damage increases dmg of totems, etc.")
+            .setLocName(x -> x.locNameForLangFile() + " Skill Damage")
+            .setLocDesc(x -> "Increases damage of Skills with this tag.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
             })
@@ -452,7 +452,7 @@ public class OffenseStats {
             .addCondition(StatConditions.IS_TARGET_CURSED)
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> "Damage to Cursed Enemies")
-            .setLocDesc(x -> "")
+            .setLocDesc(x -> "If an enemy is under a Cursed effect, deal increased damage to them.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
             })

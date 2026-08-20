@@ -2,7 +2,9 @@ package com.robertx22.mine_and_slash.vanilla_mc.packets;
 
 import com.robertx22.library_of_exile.main.MyPacket;
 import com.robertx22.library_of_exile.packets.ExilePacketContext;
+import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -47,12 +49,23 @@ public class CancelItemUsePacket extends MyPacket<CancelItemUsePacket> {
             return;
         }
 
+        // inert for anyone who never turned the feature on, which is the only thing that sends this
+        if (!Load.player(p).config.isConfigEnabled(PlayerConfigData.Config.AUTO_FIRE_BOWS)) {
+            return;
+        }
+
         ItemStack stack = p.getUseItem();
         UseAnim anim = stack.getUseAnimation();
 
         // deliberately narrow. this is only ever sent for a bow draw auto fire started on the
         // player's behalf, and keeping the check here stops it being a general "abort whatever I am
-        // doing" lever - eating, blocking and the like stay out of reach
+        // doing" lever - eating, blocking and the like stay out of reach.
+        //
+        // this duplicates AutoFireBows.isBowLike on purpose, do not "clean it up" by calling it:
+        // isBowLike reads ItemProperties, which is @OnlyIn(Dist.CLIENT), so touching AutoFireBows
+        // from here would NoClassDefFoundError on a dedicated server. the copy also has to stay at
+        // least as permissive as the client's or legitimate cancels get silently dropped - the
+        // client's extra "has a pull property" requirement only ever narrows
         if (stack.getItem() instanceof ProjectileWeaponItem || anim == UseAnim.BOW || anim == UseAnim.CROSSBOW) {
             p.stopUsingItem();
         }

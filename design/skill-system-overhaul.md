@@ -23,12 +23,15 @@ Remove simultaneous multi-casting entirely while maintaining fluid gameplay thro
 
 ## 📊 Stat & Skill Remapping
 
+* Craft to Exile 2 datapack path, do NOT update server files - I will do it on my own: C:\Users\Kelvin\curseforge\minecraft\Instances\Craft to Exile 2\config\openloader\data\cte_mns\data\mmorpg
 * Cooldown → Cast Speed: Existing instances of "Cooldown" on gear/skills will convert to "Cast Speed."
 * Cast Speed → Channel Speed: Existing instances of "Cast Speed" will either remain or convert to "Channel Speed" depending on the skill type.
 * Archetype Separation:
 * Cast Speed applies exclusively to Intelligence (spell) skills.
    * Attack Speed applies to non-Intelligence skills. The old "Attack Speed to Attack Cooldown" conversion will shift to a clean Attack Cast Speed metric.
 * Balance Pass: Audit all skills to ensure their new Cast Speeds feel fluid. For the majority of skills, the new Cast Speed should exactly match their current local cooldowns if they are ≤ 2 seconds.
+* Notes: Skills that use charges and Brawler skills (only applicable to datapack) should have a shorter "cast speed"/post-cast cooldown, at about 75% of other skills.
+* Notes: Channel skills should all share a 0.5s post-cast cooldown/cast speed. Remember that Channel Skills can use Channel Speed now.
 
 ------------------------------
 ## ⚠️ Caveats & Compensations## 1. The Input Problem: Built-In Macro (Skill Queue) System

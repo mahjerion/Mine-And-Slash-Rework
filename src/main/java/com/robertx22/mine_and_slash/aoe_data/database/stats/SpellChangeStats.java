@@ -145,7 +145,7 @@ public class SpellChangeStats {
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(x))
             .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
             .addEffect(StatEffects.DECREASE_CAST_TIME)
-            .setLocName(x -> x.locNameForLangFile() + " Cast Time")
+            .setLocName(x -> x.locNameForLangFile() + " Cast Speed")
             .setLocDesc(x -> "Reduces cast time of Skills with this tag.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;

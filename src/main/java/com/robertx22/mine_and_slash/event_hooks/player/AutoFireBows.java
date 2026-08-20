@@ -9,6 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -18,16 +19,19 @@ import net.minecraft.world.item.UseAnim;
  * Clicking once per arrow is the actual damage cap on a ranged basic attack build, so this automates
  * the one step vanilla leaves to the player: letting go of the button at full draw.
  * <p>
- * Vanilla already re-draws for us. Minecraft.handleKeybinds does
- * "if (keyUse.isDown() && rightClickDelay == 0 && !player.isUsingItem()) startUseItem()", which is
- * why holding right click keeps placing blocks. The only missing half is the release, and the vanilla
- * key-up path is a single call - gameMode.releaseUsingItem(player) - so that is all we do here.
- * Nothing about shooting, damage, ammo or enchantments is reimplemented; the server just receives the
- * ordinary RELEASE_USE_ITEM packet and every other mod runs exactly as it always did.
+ * A shot is two halves. The release is the vanilla key-up path, a single call -
+ * gameMode.releaseUsingItem(player) - so that half is free. The re-draw vanilla would also give us
+ * for free, via "if (keyUse.isDown() && rightClickDelay == 0 && !isUsingItem()) startUseItem()" in
+ * handleKeybinds, but not usably: startUseItem right clicks the world before it reaches the item.
+ * See reArm. So we drive the second half too, through gameMode.useItem.
  * <p>
- * This runs on ClientTickEvent phase START on purpose. Minecraft.tick decrements rightClickDelay,
- * then fires the START event, then calls handleKeybinds - so a release here is picked up by the
- * re-draw in the same tick and a shot costs no extra ticks.
+ * Nothing about shooting, damage, ammo or enchantments is reimplemented. On the firing path the
+ * server sees the same RELEASE_USE_ITEM and USE_ITEM packets a clicking player would send, and every
+ * other mod runs exactly as it always did.
+ * <p>
+ * This runs on ClientTickEvent phase START on purpose. Minecraft.tick fires the START event before
+ * handleKeybinds, so releasing and re-arming here both land before vanilla gets a look at the key
+ * state, and a shot costs no extra ticks.
  * <p>
  * The same START ordering is what lets us pre-empt the other half of handleKeybinds: a key-up while
  * the bow is only part drawn, which vanilla reads as "shoot now" and turns into a weak arrow. Since
@@ -75,8 +79,10 @@ public class AutoFireBows {
                 ticksAtFullDraw = 0;
                 return;
             }
-            // vanilla gates handleKeybinds on both of these, so with either one up nothing would
-            // restart the draw and we would only be cancelling the shot
+            // vanilla gates handleKeybinds on both of these, so with either one up it is not going
+            // to release or re-draw anything and there is nothing here to pre-empt. the draw keeps
+            // charging behind the GUI, so by the time it closes the bow is essentially always full
+            // and vanilla's release is the shot the player wants
             if (mc.screen != null || mc.getOverlay() != null || mc.isPaused()) {
                 ticksAtFullDraw = 0;
                 return;
@@ -101,7 +107,7 @@ public class AutoFireBows {
                 return;
             }
 
-            boolean drawn = isFullyDrawn(mc, player, stack);
+            Draw draw = drawStateOf(mc, player, stack);
 
             if (!mc.options.keyUse.isDown()) {
                 ticksAtFullDraw = 0;
@@ -110,14 +116,27 @@ public class AutoFireBows {
                 // it reads a key-up as "shoot now" at whatever charge the string happens to be at.
                 // but auto fire started this draw, not the player, so letting go means "stop
                 // shooting" instead - cancel it rather than spitting out a weak arrow
-                if (!drawn) {
+                if (draw == Draw.PARTIAL) {
                     player.stopUsingItem(); // clears startedUsingItem, so vanilla skips its release
+
+                    // vanilla drains these in its using-item branch and acts on them in the other
+                    // one. clearing startedUsingItem just flipped handleKeybinds onto the acting
+                    // branch for the rest of this tick, so a click queued in this same tick would
+                    // suddenly take effect - opening the chest under the crosshair instead of being
+                    // swallowed. drain them exactly as the branch we diverted from would have
+                    while (mc.options.keyUse.consumeClick()) {
+                    }
+                    while (mc.options.keyAttack.consumeClick()) {
+                    }
+                    while (mc.options.keyPickItem.consumeClick()) {
+                    }
+
                     Packets.sendToServer(new CancelItemUsePacket()); // and the server drops it too
                 }
                 return; // already at full draw - let vanilla fire it, that shot is worth keeping
             }
 
-            if (!drawn) {
+            if (draw != Draw.FULL) {
                 ticksAtFullDraw = 0;
                 return;
             }
@@ -131,10 +150,44 @@ public class AutoFireBows {
 
             shotCooldown = MIN_TICKS_BETWEEN_SHOTS;
             ticksAtFullDraw = 0;
+
+            InteractionHand hand = player.getUsedItemHand(); // capture before the release clears it
+
             mc.gameMode.releaseUsingItem(player); // the exact call vanilla makes when you let go
+
+            reArm(mc, player, hand);
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Start the next draw ourselves rather than leaving it to vanilla.
+     * <p>
+     * handleKeybinds would re-arm us for free - that is the whole trick this class rests on - but it
+     * does it through startUseItem, which tries a block or entity interaction FIRST and only reaches
+     * the item if nothing consumed the click. Holding the button through a release therefore hands
+     * vanilla a fresh right click on the world once per shot, so shooting past a chest opens it. That
+     * cannot happen in vanilla because loosing an arrow means letting go of the button, which is
+     * exactly the state startUseItem is gated on.
+     * <p>
+     * The player clicked once to start shooting. The automation should repeat "use the bow", not
+     * re-issue "click on whatever is under the crosshair" - and gameMode.useItem is precisely the
+     * second half of startUseItem, minus the interaction. Re-arming also leaves isUsingItem true,
+     * which is what stops vanilla running startUseItem later in this same tick.
+     */
+    private static void reArm(Minecraft mc, LocalPlayer player, InteractionHand hand) {
+
+        // twice at most. a bow needs one call - use() starts the draw. a crossbow needs two, because
+        // the first only looses the loaded bolt and returns without starting anything, so stopping
+        // there would leave isUsingItem false and hand the tick straight back to vanilla
+        for (int i = 0; i < 2 && !player.isUsingItem(); i++) {
+            if (!mc.gameMode.useItem(player, hand).consumesAction()) {
+                return; // out of ammo or something refused it. let vanilla have the tick, as before
+            }
+            // vanilla does this for a consumed use, so keep the held item animation identical
+            mc.gameRenderer.itemInHandRenderer.itemUsed(hand);
         }
     }
 
@@ -185,10 +238,10 @@ public class AutoFireBows {
             // by zero: NaN on the first tick, then +Infinity. NaN would silently never fire, so let
             // that fall through to the class rules instead, and treat +Infinity as drawn
             if (value == Float.POSITIVE_INFINITY) {
-                return true;
+                return Draw.FULL;
             }
             if (Float.isFinite(value)) {
-                return value >= 1.0F;
+                return value >= 1.0F ? Draw.FULL : Draw.PARTIAL;
             }
         }
 
@@ -200,16 +253,18 @@ public class AutoFireBows {
         // client (completeUsingItem is server side only), so without this gate we could fire a
         // release at nothing
         if (stack.useOnRelease()) {
-            return duration - remaining >= duration;
+            return duration - remaining >= duration ? Draw.FULL : Draw.PARTIAL;
         }
 
         if (stack.getItem() instanceof BowItem) {
-            return duration - remaining >= 20; // where BowItem.getPowerForTime reaches 1.0
+            // where BowItem.getPowerForTime reaches 1.0
+            return duration - remaining >= 20 ? Draw.FULL : Draw.PARTIAL;
         }
 
-        // unknown draw model. do nothing and let it behave exactly like vanilla - never force a
-        // partial draw shot, that would silently lose damage to ARROW_DRAW_AMOUNT_MULTI
-        return false;
+        // no draw model we can read. this fires nothing AND cancels nothing, so the item behaves
+        // exactly like vanilla: we never force a partial draw shot, which would silently lose damage
+        // to ARROW_DRAW_AMOUNT_MULTI, and we never abort a release the player made deliberately
+        return Draw.UNKNOWN;
     }
 
     private static ItemPropertyFunction getPullProperty(ItemStack stack) {

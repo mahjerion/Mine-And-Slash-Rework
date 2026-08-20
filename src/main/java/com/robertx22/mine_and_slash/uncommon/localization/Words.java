@@ -148,6 +148,7 @@ public enum Words implements IAutoLocName {
     TITLE_FEATURE_DROP_MAP_CHEST_ITEMS("Drop Map Chest Contents When Looted"),
     TITLE_FEATURE_ENABLE_EXP_GAIN("Enable Exp Gain"),
     TITLE_FEATURE_AUTO_SALVAGE_DROP("Auto-Salvaging Drop Stones On The Ground"),
+    TITLE_FEATURE_AUTO_FIRE_BOWS("Auto-Fire Bows and Crossbows"),
 
     CAST_FAIL_MSGS("Will print helpful messages when you fail to cast a spell\nParticularly Helpful for New Players\nPlayers below lvl 15 can't disable this option."),
     MOB_DEATH_MESSAGES("Provides a short message when you kill a mob.\n\nYou can hover over it for useful info like Loot Chance"),
@@ -162,6 +163,7 @@ public enum Words implements IAutoLocName {
     DROP_MAP_CHEST_CONTENTS_ON_GROUND("When you loot chests in maps, should they drop their contents on the ground automatically? \n\nThis is helpful if you use the Master Backpack or other loot filtering mods like Sophisticated Backpacks."),
     ENABLE_EXP_GAIN("Allows you to gain exp.\n\nWhen playing in party, you always participate in exp splitting."),
     AUTO_SALVAGE_DROP("Forces auto-salvaging to drop stones on the ground instead of putting them in your inventory.\n\nThis is helpful if you use the Master Backpack or other loot filtering mods like Sophisticated Backpacks."),
+    AUTO_FIRE_BOWS("Bows and crossbows keep firing while you hold the use key.\n\nThe bow draws to full, fires, and immediately starts drawing again, so a ranged basic attack build no longer needs a click per shot.\n\nShots are always released at full draw, so damage is unchanged."),
 
     WHILE_UNDER_AURA("While Under Effect of %1$s:"),
     CURSE_OFFERS("Curse Offers:"),

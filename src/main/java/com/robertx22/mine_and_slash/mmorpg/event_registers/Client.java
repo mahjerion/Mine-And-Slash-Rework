@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mmorpg.event_registers;
 
 import com.robertx22.mine_and_slash.event_hooks.ontick.OnClientTick;
 import com.robertx22.mine_and_slash.event_hooks.ontick.SmoothTeleportRender;
+import com.robertx22.mine_and_slash.event_hooks.player.AutoFireBows;
 import com.robertx22.mine_and_slash.event_hooks.player.OnKeyPress;
 import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
@@ -39,6 +40,15 @@ public class Client {
             // last thing in the tick on purpose, see the class comment
             SmoothTeleportRender.onEndTick(Minecraft.getInstance());
 
+        });
+
+        // a separate listener because this one has to run on START. Minecraft.tick fires the START
+        // event just before handleKeybinds, which is what re-draws the bow, so releasing here costs
+        // no extra tick per shot. see AutoFireBows
+        ForgeEvents.registerForgeEvent(TickEvent.ClientTickEvent.class, event -> {
+            if (event.phase == TickEvent.Phase.START) {
+                AutoFireBows.onStartTick(Minecraft.getInstance());
+            }
         });
 
         // clean up a bind left sitting on a bare modifier key before it can poison the next rebind

@@ -134,12 +134,20 @@ public class GuiInventoryGrids {
     public static InvGuiGrid ofConfigs() {
         GuiAction.regenActionMap(); //  todo find better way of ensuring
 
-        List<GuiItemData> lists = new ArrayList<>();
+        List<GuiItemData> all = new ArrayList<>();
 
         for (PlayerConfigData.Config v : Arrays.stream(PlayerConfigData.Config.values()).filter(x -> !x.isDebug).collect(Collectors.toList())) {
-            lists.add(new GuiItemData(new GuiConfigToggle(v)));
+            all.add(new GuiItemData(new GuiConfigToggle(v)));
         }
 
-        return InvGuiGrid.ofYRowLists(Arrays.asList(lists));
+        // ofYRowLists pads a row up to X_MAX but does nothing when the row is already longer, so
+        // handing it every config as one row shifts every slot after the ninth. chunk them instead
+        List<List<GuiItemData>> rows = new ArrayList<>();
+
+        for (int i = 0; i < all.size(); i += InvGuiGrid.X_MAX) {
+            rows.add(new ArrayList<>(all.subList(i, Math.min(i + InvGuiGrid.X_MAX, all.size()))));
+        }
+
+        return InvGuiGrid.ofYRowLists(rows);
     }
 }

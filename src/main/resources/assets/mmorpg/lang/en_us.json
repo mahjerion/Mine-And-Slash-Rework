@@ -1982,22 +1982,6 @@
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
-	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
-	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
-	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
-	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
-	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
-	"mmorpg.stat_priority.first": "FIRST",
-	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
-	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
-
-"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
-
-
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
 
 	"item.mmorpg.jewelry.necklace.diamond": "Necklace",
@@ -2012,6 +1996,22 @@
 	"item.mmorpg.weapon.staff.wood": "Staff",
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
+
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
+
+	"mmorpg.stat_priority.after_damage_bonuses": "AFTER_DAMAGE_BONUSES",
+	"mmorpg.stat_priority.before_damage_layers": "BEFORE_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.before_hit_prevention": "BEFORE_HIT_PREVENTION",
+	"mmorpg.stat_priority.calc_damage_layers": "CALC_DAMAGE_LAYERS",
+	"mmorpg.stat_priority.damage_layers": "DAMAGE_LAYERS",
+	"mmorpg.stat_priority.data_modification": "DATA_MODIFICATION",
+	"mmorpg.stat_priority.final_damage": "FINAL_DAMAGE",
+	"mmorpg.stat_priority.first": "FIRST",
+	"mmorpg.stat_priority.hit_prevention": "HIT_PREVENTION",
+	"mmorpg.stat_priority.post_final_damage_checks": "POST_FINAL_DAMAGE_CHECKS",
+
+"_comment": " [CATEGORY]: STATPRIORITY - NAMES",
 
 
 "_comment": " [CATEGORY]: STAT LAYER - NAMES",
@@ -2758,6 +2758,7 @@
 	"mmorpg.word.atlaspassives": "Atlas Passives",
 	"mmorpg.word.attack_speed_multi": "Weapon Atk Speed Cooldown",
 	"mmorpg.word.aura": "Augment",
+	"mmorpg.word.auto_fire_bows": "Bows and crossbows keep firing while you hold the use key.\n\nThe bow draws to full, fires, and immediately starts drawing again, so a ranged basic attack build no longer needs a click per shot.\n\nShots are always released at full draw, so damage is unchanged.",
 	"mmorpg.word.auto_salvage_drop": "Forces auto-salvaging to drop stones on the ground instead of putting them in your inventory.\n\nThis is helpful if you use the Master Backpack or other loot filtering mods like Sophisticated Backpacks.",
 	"mmorpg.word.automatic_pve": "Players who enable this are considered Teamed up and Allies\n- Must be Nearby (Radius set by config)",
 	"mmorpg.word.avg_lvl": "Average LVL: %1$s",
@@ -3016,6 +3017,7 @@
 	"mmorpg.word.teleport_to_boss": "Enter Boss Arena!",
 	"mmorpg.word.tier": "Tier",
 	"mmorpg.word.title_feature_aggro_summons": "Aggressive Summons",
+	"mmorpg.word.title_feature_auto_fire_bows": "Auto-Fire Bows and Crossbows",
 	"mmorpg.word.title_feature_auto_salvage_drop": "Auto-Salvaging Drop Stones On The Ground",
 	"mmorpg.word.title_feature_auto_team": "Auto-Team Nearby Players",
 	"mmorpg.word.title_feature_cast_fail": "Spell-Cast Failure Messages",

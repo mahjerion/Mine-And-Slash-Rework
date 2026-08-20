@@ -35,6 +35,7 @@ public class PlayerConfigData {
         AGGRESSIVE_SUMMONS("aggressive_summons", true, Words.TITLE_FEATURE_AGGRO_SUMMONS, Words.AGGRESIVE_SUMMONS, false),
         ENABLE_EXP_GAIN("enable_exp_gain", true, Words.TITLE_FEATURE_ENABLE_EXP_GAIN, Words.ENABLE_EXP_GAIN, false),
         AUTO_SALVAGE_DROP("auto_salvage_drop", false, Words.TITLE_FEATURE_AUTO_SALVAGE_DROP, Words.AUTO_SALVAGE_DROP, false),
+        AUTO_FIRE_BOWS("auto_fire_bows", true, Words.TITLE_FEATURE_AUTO_FIRE_BOWS, Words.AUTO_FIRE_BOWS, false),
         STAT_ORDER_TEST("stat_order_test", false, Words.TITLE_FEATURE_STAT_ORDER_DEBUG, Words.STAT_ORDER_TEST, true),
         DAMAGE_CONFLICT_MSG("damage_conflict_check", false, Words.TITLE_FEATURE_DMG_CONFLICT_DEBUG, Words.DMG_CONFLICT_CHECK, true),
         //EVERYONE_IS_ALLY("everyone_is_ally", false, Words.TITLE_FEATURE_EVERYONE_ALLY, Words.EVERYONE_IS_ALLY, false),

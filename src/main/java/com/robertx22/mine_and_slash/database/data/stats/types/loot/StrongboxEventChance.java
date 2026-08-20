@@ -38,7 +38,7 @@ public class StrongboxEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Strongbox Event Chance";
+        return "Increased Strongbox Event Chance";
     }
 
     private static class SingletonHolder {

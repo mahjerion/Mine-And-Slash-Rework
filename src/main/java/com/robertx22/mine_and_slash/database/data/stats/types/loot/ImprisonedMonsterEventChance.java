@@ -38,7 +38,7 @@ public class ImprisonedMonsterEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Imprisoned Monster Event Chance";
+        return "Increased Imprisoned Monster Event Chance";
     }
 
     private static class SingletonHolder {

@@ -38,7 +38,7 @@ public class ShrineEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Shrine Event Chance";
+        return "Increased Shrine Event Chance";
     }
 
     private static class SingletonHolder {

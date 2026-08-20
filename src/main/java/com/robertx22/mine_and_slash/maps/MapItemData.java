@@ -396,4 +396,19 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
     public ToggleAutoSalvageRarity.SalvageType getSalvageType() {
         return ToggleAutoSalvageRarity.SalvageType.MAP;
     }
+
+    @Override
+    public String getMapLayoutId(ExileStack stack) {
+        DungeonItemMapData d = DungeonItemNbt.DUNGEON_MAP.loadFrom(stack.getStack());
+
+        if (d == null || d.dungeon == null || d.dungeon.isEmpty()) {
+            // maps predating fixed layouts pick one at the map device, so there is nothing to filter on
+            return null;
+        }
+        // an upgraded map cost something, never scrap it over its layout
+        if (d.uber || d.pinnacle) {
+            return null;
+        }
+        return d.dungeon;
+    }
 }

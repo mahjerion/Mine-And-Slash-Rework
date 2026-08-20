@@ -38,7 +38,7 @@ public class HarvestEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Harvest Event Chance";
+        return "Increased Harvest Event Chance";
     }
 
     private static class SingletonHolder {

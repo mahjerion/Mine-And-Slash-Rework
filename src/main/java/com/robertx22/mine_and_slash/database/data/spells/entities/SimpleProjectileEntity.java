@@ -445,14 +445,75 @@ public class SimpleProjectileEntity extends AbstractArrow implements IMyRenderAs
 
         if (level().isClientSide) {
             // the client owns its own player's position, so placing the orb here instead of waiting
-            // for server position packets keeps the ring glued to you with no lag
+            // for server position packets keeps the ring glued to you with no lag.
+            // the delta is zeroed because vanilla's own movement step runs before this method every
+            // tick, and a leftover velocity would drag the orb off the ring before we correct it
+            setDeltaMovement(Vec3.ZERO);
             setPos(want);
         } else {
             // moving via the delta rather than setPos keeps a real movement vector for the next
-            // tick's hit trace, which is what vanilla raycasts the projectile along
+            // tick's hit trace, which is what vanilla raycasts the projectile along.
+            // deliberately no setMotionDirty(): the client ignores motion for orbiting projectiles,
+            // so broadcasting it every tick for every orb would be pure bandwidth
             setDeltaMovement(want.subtract(position()));
-            setMotionDirty();
         }
+    }
+
+    /**
+     * Where this orb should really be drawn for a given partial tick, expressed as a delta from
+     * where the renderer would otherwise put it. Ticking only produces 20 positions a second, and
+     * an orbiting projectile's position is derived from the caster's, so lerping between its last
+     * two ticked positions always trails the player by up to a full tick and cuts the circle into
+     * chords. Recomputing against the caster's own interpolated render position removes both.
+     */
+    @Override
+    public Vec3 getSmoothRenderOffset(float partialTicks) {
+
+        if (!entityData.get(ORBITING)) {
+            return Vec3.ZERO;
+        }
+
+        LivingEntity caster = getCaster();
+
+        if (caster == null) {
+            return Vec3.ZERO;
+        }
+
+        // tickCount - 1 + partial, because at partialTicks 0 every entity renders at its previous
+        // tick's position, so that is the angle this offset has to line up with
+        float angle = entityData.get(ORBIT_START_ANGLE) + (tickCount - 1 + partialTicks) * entityData.get(ORBIT_SPEED);
+        double rad = angle * Mth.DEG_TO_RAD;
+        double radius = entityData.get(ORBIT_RADIUS);
+
+        Vec3 want = caster.getPosition(partialTicks)
+                .add(Math.cos(rad) * radius, entityData.get(ORBIT_Y_OFFSET), Math.sin(rad) * radius);
+
+        return want.subtract(this.getPosition(partialTicks));
+    }
+
+    @Override
+    public void lerpTo(double x, double y, double z, float yaw, float pitch, int steps, boolean teleport) {
+
+        if (entityData.get(ORBITING)) {
+            // an orbiting projectile is fully reproducible on the client from the caster it can
+            // already see, so the server's position is redundant here - and worse, it was computed
+            // from where the server thought the caster was a few ticks ago. applying it snaps the
+            // orb backwards, then the next tick pulls it forwards again, which is what jitters
+            return;
+        }
+
+        super.lerpTo(x, y, z, yaw, pitch, steps, teleport);
+    }
+
+    @Override
+    public void lerpMotion(double x, double y, double z) {
+
+        if (entityData.get(ORBITING)) {
+            // same reasoning as lerpTo: a synced velocity would only fight applyOrbit
+            return;
+        }
+
+        super.lerpMotion(x, y, z);
     }
 
     Entity target = null;

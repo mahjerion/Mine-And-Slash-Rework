@@ -38,7 +38,7 @@ public class ProphecyEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Prophecy Event Chance";
+        return "Increased Prophecy Event Chance";
     }
 
     private static class SingletonHolder {

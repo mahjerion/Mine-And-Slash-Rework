@@ -1,14 +1,19 @@
 package com.robertx22.mine_and_slash.gui.inv_gui.actions;
 
+import com.robertx22.dungeon_realm.database.DungeonDatabase;
+import com.robertx22.dungeon_realm.database.dungeon.Dungeon;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.CycleRunedSocketFilter;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenGearSubFilterAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenMapLayoutFilterAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleMapLayoutSalvage;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.network.FriendlyByteBuf;
@@ -92,6 +97,12 @@ public abstract class GuiAction<T> implements IGUID {
         }
         for (ToggleAutoSalvageRarity.SalvageType type : OpenGearSubFilterAction.TYPES) {
             of(new OpenGearSubFilterAction(type));
+        }
+        of(new CycleRunedSocketFilter());
+        of(new OpenMapLayoutFilterAction());
+        // datapacked layouts are in this registry too, so they register with no extra code
+        for (Dungeon layout : DungeonDatabase.Dungeons().getList()) {
+            of(new ToggleMapLayoutSalvage(layout));
         }
         for (Spell rw : ExileDB.Spells().getList()) {
             of(new PickSpellAction(rw));

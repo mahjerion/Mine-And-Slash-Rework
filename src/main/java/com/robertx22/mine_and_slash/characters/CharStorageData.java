@@ -108,8 +108,16 @@ public class CharStorageData {
         unit.setEquipsChanged();
     }
 
+    // getOrDefault evaluates its default eagerly, so this used to build a throwaway CharacterData -
+    // four MyInventory totalling 75 ItemStack slots, plus four POJOs - on every call, even when the
+    // entry exists. only build the blank on a real miss.
+    //
+    // that blank leaves `name` null, which is why anything comparing it has to be null safe - see
+    // PlayerStatUtils.addBonusExpPerCharacters. a shared static blank would be cheaper still, but
+    // callers get a mutable object back, so keep it per-miss.
     public CharacterData getCurrent() {
-        return this.map.getOrDefault(current, new CharacterData());
+        CharacterData data = this.map.get(current);
+        return data != null ? data : new CharacterData();
     }
 
     public boolean canChangeCharactersRightNow(Player p) {

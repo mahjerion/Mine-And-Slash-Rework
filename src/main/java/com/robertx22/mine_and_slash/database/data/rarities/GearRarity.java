@@ -210,4 +210,13 @@ public final class GearRarity extends BaseRarity implements IGearRarity, IAutoGs
         return Optional.ofNullable(null);
     }
 
+    // highest socket count any runed rarity can roll. drives the salvage socket filter's range
+    public static int maxRunedSockets() {
+        return ExileDB.GearRarities().getList().stream()
+                .filter(x -> x.type == GearRarityType.RUNED)
+                .mapToInt(x -> x.sockets.max)
+                .max()
+                .orElse(0);
+    }
+
 }

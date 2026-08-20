@@ -38,7 +38,7 @@ public class ObeliskEventChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Obelisk Event Chance";
+        return "Increased Obelisk Event Chance";
     }
 
     private static class SingletonHolder {

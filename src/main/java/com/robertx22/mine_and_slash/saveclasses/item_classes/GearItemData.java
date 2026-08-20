@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.SlotFamily;
 import com.robertx22.mine_and_slash.database.data.profession.PlayerUTIL;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
+import com.robertx22.mine_and_slash.database.data.rarities.GearRarityType;
 import com.robertx22.mine_and_slash.database.data.requirements.bases.GearRequestedFor;
 import com.robertx22.mine_and_slash.database.data.stat_compat.StatCompat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -107,6 +108,19 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
     @Override
     public String getSubFilterId() {
         return gtype;
+    }
+
+    @Override
+    public int getSocketFilterCount() {
+        // only runed bases roll past 2 sockets, so a threshold of 4 would wipe out everything else
+        if (getRarity().type != GearRarityType.RUNED) {
+            return -1;
+        }
+        // never cull someone's work: a finished runeword, or a base with runes/gems already in it
+        if (sockets.hasRuneWord() || !sockets.isEmpty()) {
+            return -1;
+        }
+        return sockets.getTotalSockets();
     }
 
     public StatRequirement getRequirement() {

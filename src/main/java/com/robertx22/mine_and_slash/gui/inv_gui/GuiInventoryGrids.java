@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiConfigToggle;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.PickSpellAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenGearSubFilterAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenMapLayoutFilterAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
@@ -76,6 +77,10 @@ public class GuiInventoryGrids {
             // gear backed rows get a button into their per gear type filters
             if (OpenGearSubFilterAction.TYPES.contains(type)) {
                 map.get(type).add(new GuiItemData(new OpenGearSubFilterAction(type)));
+            }
+            // maps get their own page, keyed by layout rather than by rarity
+            else if (type == ToggleAutoSalvageRarity.SalvageType.MAP) {
+                map.get(type).add(new GuiItemData(new OpenMapLayoutFilterAction()));
             }
         }
         List<List<GuiItemData>> lists = new ArrayList<>();

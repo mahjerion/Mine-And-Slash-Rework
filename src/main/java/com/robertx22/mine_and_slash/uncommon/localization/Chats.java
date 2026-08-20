@@ -62,6 +62,7 @@ public enum Chats implements IAutoLocName {
     MUST_BE_IN_MAP_TO_ACCEPT_PROPHECY("You must be inside the same Map Dungeon to accept Prophecy Rewards"),
     NOT_ENOUGH_FAVOR_TO_BUY_PROPHECY("Not enough Prophecy Coins to claim the Prophecy. You can gain more Coins by killing map mobs while under Prophecy Curses."),
     MUST_BE_IN_MAP_TO_REROLL_PROPHECY("You must be inside the same Map Dungeon to reroll Prophecy Reward Offers"),
+    PROPHECY_NOT_ACTIVE_THIS_MAP("You must find and use a Prophecy Altar in this Map before you can reroll Prophecy Rewards"),
     NOT_ENOUGH_FAVOR_TO_REROLL_PROPHECY("Not enough Prophecy Coins to reroll the offers. You can gain more Coins by killing map mobs while under Prophecy Curses."),
     NO_PROPHECY_REROLLS_LEFT("You've used all your Prophecy Reward rerolls for this Map."),
     RESISTS_TOO_LOW_FOR_MAP("You lack Resistances to Open/Enter this Map."),

@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PlayerStatUtils {
@@ -38,7 +39,16 @@ public class PlayerStatUtils {
         int lvl = data.getLevel();
 
 
-        List<Integer> all = pd.characters.getAllCharacters().stream().filter(x -> !x.name.equals(pd.characters.getCurrent().name)).map(x -> x.lvl).collect(Collectors.toList());
+        // hoisted out of the filter below - it cannot change during the stream, and getCurrent()
+        // builds a blank CharacterData on a miss. Objects.equals because that blank leaves `name`
+        // null, as does any character stored before it was named. an NPE here would take down the
+        // whole recalcAllocated pass, not just this stat context.
+        String currentName = pd.characters.getCurrent().name;
+
+        List<Integer> all = pd.characters.getAllCharacters().stream()
+                .filter(x -> !Objects.equals(x.name, currentName))
+                .map(x -> x.lvl)
+                .collect(Collectors.toList());
 
 
         int higher = (int) all.stream().filter(x -> x > lvl).count();

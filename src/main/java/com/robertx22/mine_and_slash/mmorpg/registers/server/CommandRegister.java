@@ -16,6 +16,8 @@ import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvage
 import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageGenericList;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageGenericShow;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageHelp;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageMapLayout;
+import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageRunedSockets;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.entity.*;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.giveitems.GenericGive;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.giveitems.GiveExactUnique;
@@ -65,6 +67,9 @@ public class CommandRegister {
 
         new AutoSalvageGenericShow(ExileRegistryTypes.GEAR_TYPE).register(dispatcher);
         new AutoSalvageGenericShow(ExileRegistryTypes.SUPPORT_GEM).register(dispatcher);
+
+        AutoSalvageRunedSockets.register(dispatcher);
+        AutoSalvageMapLayout.register(dispatcher);
 
         AutoSalvageHelp.register(dispatcher);
 

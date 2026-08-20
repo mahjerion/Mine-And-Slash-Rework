@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.event_registers;
 
 import com.robertx22.mine_and_slash.event_hooks.ontick.OnClientTick;
+import com.robertx22.mine_and_slash.event_hooks.ontick.SmoothTeleportRender;
 import com.robertx22.mine_and_slash.event_hooks.player.OnKeyPress;
 import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
@@ -30,6 +31,8 @@ public class Client {
             }
             OnClientTick.onEndTick(Minecraft.getInstance());
             OnKeyPress.onEndTick(Minecraft.getInstance());
+            // last thing in the tick on purpose, see the class comment
+            SmoothTeleportRender.onEndTick(Minecraft.getInstance());
 
         });
 

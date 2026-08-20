@@ -37,9 +37,12 @@ public class RerollProphecyButton extends ImageButton {
         var data = Load.player(mc.player).prophecy;
         int maxRerolls = ServerContainer.get().PROPHECY_MAX_REROLLS_PER_MAP.get();
 
-        this.active = data.rerollsUsed < maxRerolls;
+        this.active = data.usedFreeRoll && data.rerollsUsed < maxRerolls;
 
         List<MutableComponent> list = new ArrayList<>();
+        if (!data.usedFreeRoll) {
+            list.add(Words.PROPHECY_NOT_ACTIVE_THIS_MAP.locName());
+        }
         list.add(Words.REROLL_PROPHECY_OFFERS.locName());
         list.add(Words.COSTS_FAVOR.locName(data.getRerollCost()));
         list.add(Words.PROPHECY_REROLLS_REMAINING.locName(Math.max(0, maxRerolls - data.rerollsUsed), maxRerolls));

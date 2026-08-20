@@ -158,6 +158,11 @@ public class PlayerProphecies implements IStatCtx {
             return;
         }
 
+        if (!usedFreeRoll) {
+            p.sendSystemMessage(Chats.PROPHECY_NOT_ACTIVE_THIS_MAP.locName().withStyle(ChatFormatting.RED));
+            return;
+        }
+
         if (rerollsUsed >= ServerContainer.get().PROPHECY_MAX_REROLLS_PER_MAP.get()) {
             p.sendSystemMessage(Chats.NO_PROPHECY_REROLLS_LEFT.locName().withStyle(ChatFormatting.RED));
             return;

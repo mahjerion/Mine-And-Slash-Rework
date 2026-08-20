@@ -10,10 +10,12 @@ import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ISalvagable;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.commands.auto_salvage.AutoSalvageGenericConfigure;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -98,6 +100,15 @@ public class PlayerConfigData {
         // aka fall through to the less specific configs below it.
         private HashMap<String, HashMap<String, Boolean>> gtmap = new HashMap<>();
 
+        // minimum sockets a runed base needs to survive auto salvage. 0 == filter off.
+        // a primitive, so a save written before this field existed loads as 0, aka off,
+        // with none of the null dance getGtMap() needs
+        private int runed_min_sockets = 0;
+
+        // map layout (dungeon_realm Dungeon GUID) -> filtered out. absent or false == keep.
+        // deliberately not keyed by rarity, unlike gtmap: a filtered layout goes at any rarity
+        private HashMap<String, Boolean> maplayouts = new HashMap<>();
+
         public HashMap<ToggleAutoSalvageRarity.SalvageType, HashMap<String, Boolean>> getTMap() {
             if (tmap == null) {
                 tmap = new HashMap<>();
@@ -111,6 +122,68 @@ public class PlayerConfigData {
                 gtmap = new HashMap<>();
             }
             return gtmap;
+        }
+
+        public int getRunedMinSockets() {
+            return runed_min_sockets;
+        }
+
+        public void setRunedMinSockets(int sockets) {
+            this.runed_min_sockets = Mth.clamp(sockets, 0, GearRarity.maxRunedSockets());
+        }
+
+        // off -> 2 -> 3 -> ... -> the highest a runed rarity can roll -> off.
+        // starts at 2 because the runed rarity's socket floor is 2, so a bar of 1 would cull nothing
+        public void cycleRunedMinSockets() {
+            int max = GearRarity.maxRunedSockets();
+
+            if (max < 2) {
+                return; // no rarity rolls enough sockets for the filter to mean anything
+            }
+            int next = runed_min_sockets < 2 ? 2 : runed_min_sockets + 1;
+
+            runed_min_sockets = next > max ? 0 : next;
+        }
+
+        // a runed base under the socket threshold is culled before any other filter gets a say
+        public boolean failsRunedSocketFilter(ISalvagable data) {
+            if (runed_min_sockets < 1) {
+                return false;
+            }
+            int count = data.getSocketFilterCount();
+
+            return count > -1 && count < runed_min_sockets;
+        }
+
+        // old saves predate this field, gson leaves it null
+        public HashMap<String, Boolean> getMapLayoutMap() {
+            if (maplayouts == null) {
+                maplayouts = new HashMap<>();
+            }
+            return maplayouts;
+        }
+
+        // a filtered layout is salvaged at every rarity, which is the whole point of the page
+        public boolean isMapLayoutFiltered(String layoutId) {
+            if (layoutId == null) {
+                return false;
+            }
+            return getMapLayoutMap().getOrDefault(layoutId, false);
+        }
+
+        public void toggleMapLayoutFilter(String layoutId) {
+            setMapLayoutFilter(layoutId, !isMapLayoutFiltered(layoutId));
+        }
+
+        public void setMapLayoutFilter(String layoutId, boolean filtered) {
+            if (layoutId == null) {
+                return;
+            }
+            if (filtered) {
+                getMapLayoutMap().put(layoutId, true);
+            } else {
+                getMapLayoutMap().remove(layoutId); // keep is the default, so don't store it
+            }
         }
 
         // todo test this
@@ -133,20 +206,28 @@ public class PlayerConfigData {
             if (data != null) {
                 if (data.isSalvagable(ex)) {
 
-                    // most specific first: gear type + rarity, then the per id override, then the plain rarity config
-                    Optional<Boolean> subFilterEnabled = checkGearTypeSalvageConfig(data.getSubFilterId(), data.getRarityId());
-
-                    if (subFilterEnabled.isPresent()) {
-                        doSalvage = subFilterEnabled.get();
+                    if (failsRunedSocketFilter(data)) {
+                        // too few sockets to ever be worth a runeword, so nothing else gets a vote
+                        doSalvage = true;
+                    } else if (isMapLayoutFiltered(data.getMapLayoutId(ex))) {
+                        // a layout the player crossed off, at any rarity
+                        doSalvage = true;
                     } else {
-                        Optional<Boolean> typeSalvageEnabled = checkTypeSalvageConfig(data.getSalvageType(), data.getSalvageConfigurationId());
+                        // most specific first: gear type + rarity, then the per id override, then the plain rarity config
+                        Optional<Boolean> subFilterEnabled = checkGearTypeSalvageConfig(data.getSubFilterId(), data.getRarityId());
 
-                        if (typeSalvageEnabled.isEmpty()) {
-                            if (checkRaritySalvageConfig(data.getSalvageType(), data.getRarityId())) {
-                                doSalvage = true;
-                            }
+                        if (subFilterEnabled.isPresent()) {
+                            doSalvage = subFilterEnabled.get();
                         } else {
-                            doSalvage = typeSalvageEnabled.get();
+                            Optional<Boolean> typeSalvageEnabled = checkTypeSalvageConfig(data.getSalvageType(), data.getSalvageConfigurationId());
+
+                            if (typeSalvageEnabled.isEmpty()) {
+                                if (checkRaritySalvageConfig(data.getSalvageType(), data.getRarityId())) {
+                                    doSalvage = true;
+                                }
+                            } else {
+                                doSalvage = typeSalvageEnabled.get();
+                            }
                         }
                     }
                 }

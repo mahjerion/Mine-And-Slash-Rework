@@ -85,7 +85,7 @@ public class ItemSet implements IAutoGson<ItemSet>, JsonExileRegistry<ItemSet>, 
         int lvl = equipped.pieces > 0 ? equipped.avgLevel : fallbackLevel;
 
         list.add(Itemtips.SET_PIECES.locName(locName(), equipped.pieces, getSetSize())
-                .withStyle(ChatFormatting.GOLD));
+                .withStyle(ChatFormatting.GREEN));
 
         for (SetBonus bonus : getSortedBonuses()) {
             ChatFormatting color = equipped.isActive(bonus) ? ChatFormatting.GREEN : ChatFormatting.GRAY;

@@ -164,6 +164,15 @@ public class PlayerData implements ICap {
     // so anything this misses can only be stale for that long, and saves force a rebuild outright.
     private transient final CapNbtCache nbtCache = new CapNbtCache();
 
+    // the client tag gets its own cache. the stored characters' items are server side only, and the
+    // 3 second sync used to build them, deep copy the whole tag, then strip them straight back out -
+    // work that scales with MAX_CHARACTERS and with how geared the alts are, all of it discarded.
+    // keyed off the same playerDataSync version, so it rides the setDirty() call sites already
+    // maintained and needs no invalidation hooks of its own.
+    private transient final CapNbtCache syncNbtCache = new CapNbtCache();
+
+    // deliberately only the save cache. PlayerSaveInvalidateCacheMixin uses this to force a rebuild
+    // before a disk write; the sync tag never reaches disk, so it must not be wired in here.
     public CapNbtCache getNbtCache() {
         return nbtCache;
     }
@@ -173,9 +182,30 @@ public class PlayerData implements ICap {
         return nbtCache.get(player, playerDataSync.getVersion(), this::buildNBT);
     }
 
-    private CompoundTag buildNBT() {
+    // what actually goes to the client. never contains the CHAR_* keys, so syncData has nothing to
+    // strip and no reason to copy.
+    private CompoundTag buildSyncNBT() {
+        return syncNbtCache.get(player, playerDataSync.getVersion(), this::buildClientNBT);
+    }
 
+    // the full tag: what gets written to disk, and what PlayerCapabilities clones through on respawn
+    // and dimension change (data.deserializeNBT(origcap.serializeNBT())). dropping the character
+    // items from here would wipe every alt's loadout on death, so they stay.
+    private CompoundTag buildNBT() {
         CompoundTag nbt = new CompoundTag();
+        writeCommon(nbt);
+        writeCharacterItems(nbt);
+        return nbt;
+    }
+
+    private CompoundTag buildClientNBT() {
+        CompoundTag nbt = new CompoundTag();
+        writeCommon(nbt);
+        return nbt;
+    }
+
+    // everything both tags share. one body so the two builders can't drift apart as keys are added.
+    private void writeCommon(CompoundTag nbt) {
 
         LoadSave.Save(team, nbt, TEAM_DATA);
         LoadSave.Save(talents, nbt, TALENTS_DATA);
@@ -194,10 +224,22 @@ public class PlayerData implements ICap {
         LoadSave.Save(summonedData, nbt, SUMMONED);
         LoadSave.Save(atlas, nbt, ATLAS_DATA);
 
-        // a character's stored gear, gems, auras and jewels can't ride along in the CHARACTERS json -
-        // LoadSave is gson, and an ItemStack won't survive that. keyed by character slot, but they're
-        // owned by the CharacterData object, so deleting a character takes its items with it and no
-        // orphan can be left at an index that tryAddNewCharacter later reuses.
+        // LoadSave.Save(ctxStats, nbt, "ctx");
+
+        nbt.put(GEMS, skillGemInv.createTag());
+        nbt.put(AURAS, auraInv.createTag());
+        //nbt.put(JEWELS, jewelsInv.createTag());
+        nbt.put(JEWELS, jewelData.jewelInventory.createTag());
+
+        nbt.putInt(BONUS_TALENTS, bonusTalents);
+        nbt.putInt(OMENS_FILLED, omensFilled);
+    }
+
+    // a character's stored gear, gems, auras and jewels can't ride along in the CHARACTERS json -
+    // LoadSave is gson, and an ItemStack won't survive that. keyed by character slot, but they're
+    // owned by the CharacterData object, so deleting a character takes its items with it and no
+    // orphan can be left at an index that tryAddNewCharacter later reuses.
+    private void writeCharacterItems(CompoundTag nbt) {
         CompoundTag charEquipment = new CompoundTag();
         CompoundTag charGems = new CompoundTag();
         CompoundTag charAuras = new CompoundTag();
@@ -215,25 +257,15 @@ public class PlayerData implements ICap {
         nbt.put(CHAR_GEMS, charGems);
         nbt.put(CHAR_AURAS, charAuras);
         nbt.put(CHAR_JEWELS, charJewels);
-
-        // LoadSave.Save(ctxStats, nbt, "ctx");
-
-        nbt.put(GEMS, skillGemInv.createTag());
-        nbt.put(AURAS, auraInv.createTag());
-        //nbt.put(JEWELS, jewelsInv.createTag());
-        nbt.put(JEWELS, jewelData.jewelInventory.createTag());
-
-        nbt.putInt(BONUS_TALENTS, bonusTalents);
-        nbt.putInt(OMENS_FILLED, omensFilled);
-
-        return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
 
-        // anything cached was built before this data existed
+        // anything cached was built before this data existed. both caches, or the sync tag keeps
+        // describing the state from before this load.
         nbtCache.markDirty();
+        syncNbtCache.markDirty();
 
         this.team = loadOrBlank(TeamData.class, new TeamData(), nbt, TEAM_DATA, new TeamData());
         this.prophecy = loadOrBlank(PlayerProphecies.class, new PlayerProphecies(), nbt, PROPHECY, new PlayerProphecies());
@@ -295,18 +327,12 @@ public class PlayerData implements ICap {
 
     private void syncData() {
 
-        // serializeNBT hands out a cached instance now, so this must not edit it in place. removing the
-        // stored character keys from the shared tag would strip them from the cache and then from the
-        // next save - every alt's equipment, gems, auras and jewels, gone silently.
-        CompoundTag nbt = this.serializeNBT().copy();
-
-        // a character's stored items are server side only. the client has no use for them, and leaving
-        // them in would put every alt's full item nbt into this packet and into the comparison below.
-        // the live GEMS/AURAS/JEWELS keys below still sync - those are what the gui renders.
-        nbt.remove(CHAR_EQUIPMENT);
-        nbt.remove(CHAR_GEMS);
-        nbt.remove(CHAR_AURAS);
-        nbt.remove(CHAR_JEWELS);
+        // the stored characters' gear, gems, auras and jewels are server side only - the client has
+        // no use for them, and including them would put every alt's full item nbt into this packet.
+        // buildSyncNBT never contains them in the first place, so there is nothing to strip and no
+        // reason to copy. the live GEMS/AURAS/JEWELS keys are still in there - those are what the
+        // gui renders.
+        CompoundTag nbt = buildSyncNBT();
 
         // OnServerTick marks this dirty every 3 seconds no matter what, and most of the explicit
         // setDirty() callers fire far more often than the data actually changes. serializing is
@@ -319,7 +345,9 @@ public class PlayerData implements ICap {
         lastSyncedNbt = nbt;
 
         // build the packet from the tag we already have instead of using the (Player, String)
-        // constructor, which would serialize the whole capability a second time
+        // constructor, which would serialize the whole capability a second time. nothing mutates
+        // this tag - we only compare it above and write it below - and a cache rebuild replaces the
+        // reference rather than editing in place, so handing out the cached instance is safe.
         SyncPlayerCapToClient packet = new SyncPlayerCapToClient();
         packet.capid = this.getCapIdForSyncing();
         packet.nbt = nbt;

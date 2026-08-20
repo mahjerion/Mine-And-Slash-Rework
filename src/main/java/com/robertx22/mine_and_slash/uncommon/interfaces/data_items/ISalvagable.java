@@ -27,6 +27,17 @@ public interface ISalvagable {
         return null;
     }
 
+    // sockets on this item, or -1 when the runed socket filter does not apply to it
+    default int getSocketFilterCount() {
+        return -1;
+    }
+
+    // the map layout this item will run, or null when it isn't a map, predates layouts, or is exempt.
+    // takes the stack because the layout lives in dungeon_realm's nbt, not in MapItemData's own fields
+    default String getMapLayoutId(ExileStack stack) {
+        return null;
+    }
+
   
     default boolean isSalvagable(ExileStack stack) {
         return !stack.get(StackKeys.CUSTOM).getOrCreate().data.get(CustomItemData.KEYS.SALVAGING_DISABLED);

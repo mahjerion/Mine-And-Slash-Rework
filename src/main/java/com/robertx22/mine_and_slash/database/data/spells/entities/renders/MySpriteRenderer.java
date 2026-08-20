@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.phys.Vec3;
 
 public class MySpriteRenderer<T extends Entity & IMyRenderAsItem> extends EntityRenderer<T> {
     private final ItemRenderer itemRenderer;
@@ -38,6 +39,9 @@ public class MySpriteRenderer<T extends Entity & IMyRenderAsItem> extends Entity
     public void render(T entity, float yaw, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
         if (entity.tickCount >= 2 || !(this.entityRenderDispatcher.camera.getEntity().distanceToSqr(entity) < 12.25D)) {
             matrices.pushPose();
+
+            Vec3 smooth = entity.getSmoothRenderOffset(tickDelta);
+            matrices.translate(smooth.x, smooth.y, smooth.z);
 
             float scale = 1; // todo
 

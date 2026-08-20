@@ -31,7 +31,7 @@ public class SalvageSubFilterScreen extends InvGuiScreen {
         int pages = GuiInventoryGrids.subFilterPageCount(type);
         int y = guiTop + sizeY + 2;
 
-        publicAddButton(Button.builder(Words.SalvageBack.locName(), b -> ClientOnly.setScreen(new InvGuiScreen(GuiInventoryGrids.ofSalvageConfig())))
+        publicAddButton(Button.builder(Words.SalvageBack.locName(), b -> ClientOnly.setScreen(new SalvageConfigScreen()))
                 .bounds(guiLeft + sizeX / 2 - BUTTON_SIZE_X / 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
                 .build());
 

@@ -40,6 +40,7 @@ import com.robertx22.mine_and_slash.gui.buttons.CharacterStatsButtons;
 import com.robertx22.mine_and_slash.gui.buttons.FavorButton;
 import com.robertx22.mine_and_slash.gui.buttons.ProfessionLevelsButton;
 import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
+import com.robertx22.mine_and_slash.gui.inv_gui.SalvageConfigScreen;
 import com.robertx22.mine_and_slash.gui.screens.OpenInvGuiScreen;
 import com.robertx22.mine_and_slash.gui.screens.OpenJewelsScreen;
 import com.robertx22.mine_and_slash.gui.screens.OpenSkillGems;
@@ -272,7 +273,7 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
 
         leftButtons.add(new ToonScreen());
         leftButtons.add(new NewWikiScreen());
-        leftButtons.add(new OpenInvGuiScreen(Words.Salvaging, "salvage", GuiInventoryGrids.ofSalvageConfig()));
+        leftButtons.add(new OpenInvGuiScreen(Words.Salvaging, "salvage", () -> new SalvageConfigScreen()));
         leftButtons.add(new OpenInvGuiScreen(Words.Configs, "configs", GuiInventoryGrids.ofConfigs()));
         leftButtons.add(new StatScreen(ClientOnly.getPlayer()));
 

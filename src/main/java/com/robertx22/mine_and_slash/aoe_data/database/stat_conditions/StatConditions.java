@@ -53,6 +53,7 @@ public class StatConditions implements ExileRegistryInit {
     public static StatCondition IS_DAY = new IsDayCondition();
     public static StatCondition IS_NIGHT = new IsDayCondition().flipCondition();
     public static StatCondition IS_RANGED_WEAPON = new IsRangedWeapon();
+    public static StatCondition IS_DUAL_WIELDING = new IsDualWieldingCondition();
     public static StatCondition IS_TARGET_UNDEAD = new IsUndeadCondition();
     public static StatCondition IS_TARGET_CURSED = new IsTargetCursed();
     public static StatCondition IS_TARGET_NOT_UNDEAD = new IsUndeadCondition().flipCondition();

@@ -38,7 +38,7 @@ public class UberFragmentFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Uber Fragment Find";
+        return "Increased Uber Fragment Find";
     }
 
     private static class SingletonHolder {

@@ -135,7 +135,7 @@ public class SupportGems {
         // channel gems ride the auto generated per spell tag stats, the SPELL_HAS_TAG condition on those
         // is what keeps them from doing anything on a non channel skill.
         new SupportGem("faster_channelling", "Faster Channelling", PlayStyle.DEX, 1.2F,
-                Arrays.asList(new StatMod(15, 30, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.channel), ModType.FLAT)
+                Arrays.asList(new StatMod(30, 60, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.channel), ModType.FLAT)
                 ))
                 .levelReq(10).addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
 

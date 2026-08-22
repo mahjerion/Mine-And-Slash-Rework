@@ -172,8 +172,11 @@ public class StatEffects implements ExileRegistryInit {
     public static StatEffect DURATION_INCREASE = new IncreaseNumberByPercentEffect(EventData.DURATION_MULTI);
     public static StatEffect AGGRO_INCREASE = new IncreaseNumberByPercentEffect(EventData.AGGRO_RADIUS_MULTI);
     public static StatEffect DECREASE_CAST_TIME = new DecreaseNumberByPercentEffect(EventData.CAST_TICKS);
+    // every cast, attack and channel speed stat funnels here. SpellStatsCalculationEvent.activate
+    // turns the summed percent into one divisor, so these add up instead of compounding
+    public static StatEffect ADD_CAST_SPEED_PERCENT = new AddToNumberEffect("add_cast_speed_perc", EventData.CAST_SPEED_PERCENT, NumberProvider.ofStatData());
+    public static StatEffect ADD_CHANNEL_SPEED_PERCENT = new AddToNumberEffect("add_channel_speed_perc", EventData.CHANNEL_SPEED_PERCENT, NumberProvider.ofStatData());
     public static StatEffect INCREASE_AREA = new IncreaseNumberByPercentEffect(EventData.AREA_MULTI);
-    public static StatEffect APPLY_CAST_SPEED_TO_CD = new ApplyCooldownAsCastTimeEffect();
     public static StatEffect CANCEL_EVENT = new CancelEvent();
     public static StatEffect DISABLE_ATTACKER_STAT_EFFECTS = new DisableSourceStatsEffect();
 

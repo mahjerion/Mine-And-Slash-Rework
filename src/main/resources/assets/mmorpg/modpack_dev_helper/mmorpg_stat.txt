@@ -47,6 +47,7 @@ arrow_cast_time
 arrow_cdr
 arrow_spell_dmg
 arrow_spell_dmg_taken
+attack_cast_speed
 attack_damage
 aura_effect
 axe_damage
@@ -107,6 +108,7 @@ chance_of_blind
 chance_of_slow
 channel_cast_time
 channel_cdr
+channel_speed
 channel_spell_dmg
 channel_spell_dmg_taken
 chaos_ailment_aura_cost
@@ -188,6 +190,8 @@ dot_lifesteal
 dot_speed
 double_attack_chance
 double_event_chance
+dual_wield_damage
+dual_wield_effectiveness
 duplicate_map_chance
 eff_dur_u_cast
 ele_axe_damage
@@ -261,11 +265,21 @@ fishing_core_drop_bonus
 fishing_double_drop
 fishing_exp_bonus
 fishing_triple_drop
+flat_chaos_added_attack_damage
 flat_chaos_added_damage
+flat_chaos_added_magic_damage
+flat_fire_added_attack_damage
 flat_fire_added_damage
+flat_fire_added_magic_damage
+flat_lightning_added_attack_damage
 flat_lightning_added_damage
+flat_lightning_added_magic_damage
+flat_physical_added_attack_damage
 flat_physical_added_damage
+flat_physical_added_magic_damage
+flat_water_added_attack_damage
 flat_water_added_damage
+flat_water_added_magic_damage
 food_eff_dur_u_cast
 freeze_chance
 freeze_damage
@@ -627,7 +641,6 @@ plus_lvl_arrow_spells
 plus_lvl_banner_spells
 plus_lvl_beast_spells
 plus_lvl_buff_spells
-plus_lvl_cast_speed_to_cooldown_spells
 plus_lvl_chaining_spells
 plus_lvl_channel_spells
 plus_lvl_chaos_spells
@@ -731,6 +744,7 @@ shrine_double_buff
 shrine_eff_dur_u_cast
 shrine_event_chance
 skill_gem_find
+skill_speed
 slow_immunity
 song_cast_time
 song_cdr

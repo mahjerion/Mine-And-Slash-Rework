@@ -61,6 +61,15 @@ public class EventData {
     public static String SECONDS = "seconds";
 
     public static String CAST_TICKS = "cast_ticks";
+    // the post-cast recovery window of a skill. doubles as the global cooldown, so it is the
+    // baseline pacing of every cast rather than a per skill cooldown
+    public static String CAST_SPEED_TICKS = "cast_speed_ticks";
+    // every cast/attack/channel speed stat sums into this, then CAST_TICKS and CAST_SPEED_TICKS are
+    // divided by it once. summing first is what keeps two +50% sources at +100%, not at 2.25x
+    public static String CAST_SPEED_PERCENT = "cast_speed_perc";
+    // Channel Speed keeps its own pot. activate() adds it on top of a weighted share of the general
+    // one, which is how a channel gets its own dedicated stat without ordinary gear being dead for it
+    public static String CHANNEL_SPEED_PERCENT = "channel_speed_perc";
     public static String EFFECT_DURATION_TICKS = "effect_duration_ticks";
     public static String EFFECT_IS_INFINITE = "effect_is_infinite";
     public static String COOLDOWN_TICKS = "cd_ticks";

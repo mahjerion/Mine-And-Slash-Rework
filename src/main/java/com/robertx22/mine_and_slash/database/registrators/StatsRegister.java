@@ -23,6 +23,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.loot.*;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.BonusExp;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.DamageTakenToMana;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.ExtraMobDropsStat;
+import com.robertx22.mine_and_slash.database.data.stats.types.offense.DualWieldEffectiveness;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.FullSwingDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.SkillDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
@@ -193,9 +194,12 @@ public class StatsRegister implements ExileRegistryInit {
                     add(new PhysicalDamageTakenAs(Elements.Physical));
                     add(PhysicalDamageTakenAsRandom.getInstance());
                     add(new BonusFlatElementalDamage(Elements.Physical));
+                    add(new BonusFlatMagicElementalDamage(Elements.Physical));
+                    add(new BonusFlatAttackElementalDamage(Elements.Physical));
 
                     add(AllAttributes.getInstance());
                     add(SkillDamage.getInstance());
+                    add(DualWieldEffectiveness.getInstance());
 
                     add(ExtraMobDropsStat.getInstance());
                     add(BonusExp.getInstance());

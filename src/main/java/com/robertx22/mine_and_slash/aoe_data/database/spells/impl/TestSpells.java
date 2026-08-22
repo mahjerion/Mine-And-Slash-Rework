@@ -29,8 +29,7 @@ public class TestSpells implements ExileRegistryInit {
 
 
         SpellBuilder.of("test_self_damage_spell", PlayStyle.INT, SpellConfiguration.Builder.instant(7, 20)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "self damage Ball",
+                                .setSwingArm(), "self damage Ball",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.SELF_DAMAGE))
                 .weaponReq(CastingWeapon.MAGE_WEAPON)
 

@@ -129,7 +129,7 @@ public class ModEffects implements ExileRegistryInit {
 
         ExileEffectBuilder.of(FRENZY_CHARGE)
                 .stat(3, 3, OffenseStats.TOTAL_DAMAGE.get(), ModType.MORE)
-                .stat(5, 5, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
+                .stat(10, 10, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
                 .maxStacks(3)
                 .addTags(EffectTags.offensive, EffectTags.charge)
                 .build();
@@ -156,7 +156,7 @@ public class ModEffects implements ExileRegistryInit {
 
 
         ExileEffectBuilder.of(LIGHTNING_GOLEM_BUFF)
-                .stat(3, 6, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
+                .stat(6, 12, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
                 .maxStacks(1)
                 .addTags(EffectTags.offensive, EffectTags.golem)
                 .build();

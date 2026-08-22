@@ -647,6 +647,8 @@ public class EntityData implements ICap, INeededForClient {
 
         StatCalculation.calc(unit, stats, entity, null, -1);
 
+        this.equipmentCache.afterStatCalc();
+
         if (entity instanceof Player p) {
             this.didStatCalcThisTickForPlayer = true;
 

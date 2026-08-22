@@ -38,7 +38,7 @@ public class RuneFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Rune Find";
+        return "Increased Rune Find";
     }
 
     private static class SingletonHolder {

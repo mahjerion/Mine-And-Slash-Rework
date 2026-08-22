@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.event_hooks.player;
 
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
+import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
@@ -31,8 +32,8 @@ public class OnKeyPress {
     // Store what order spell keys are pressed in to prioritize most recently pressed
     private static Stack<SpellKeybind> spellKeysPressed = new Stack<>();
 
-    // Number of last spell sent to the server
-    private static int lastSpellNumber = -1;
+    // the whole held set last sent, so adding a second key to an already held one still notifies
+    private static int lastHeldMask = 0;
     // Timer to resend packet so the server knows we want to keep casting
     private static int spellPacketResendTimer = 0;
 
@@ -109,7 +110,7 @@ public class OnKeyPress {
         return results.get(0);
     }
 
-    private static boolean checkToAddSpellKeyPress(SpellKeybind key) {
+    private static void checkToAddSpellKeyPress(SpellKeybind key) {
         if (key.key.consumeClick()) {
             if (!spellKeysPressed.contains(key)) {
                 spellKeysPressed.add(key);
@@ -117,9 +118,7 @@ public class OnKeyPress {
             // Consume any remaining clicks
             while (key.key.consumeClick()) {
             }
-            return true;
         }
-        return false;
     }
 
     private static void updateSpellInputs() {
@@ -131,43 +130,42 @@ public class OnKeyPress {
 
         spellKeysPressed.removeIf(key -> !key.key.isDown());
 
-        // Prioritize binds with modifiers in case the same key is reused but with a modifier
+        // every bind that went down this tick is collected, not just the first one. binds sharing a
+        // physical key all report a click, and the server plays them in slot order off one queue.
+        // modifier binds still go last so the stack's top - the channel key - is the specific one.
         for (SpellKeybind key : keys) {
             if (key.key.getKeyModifier() == KeyModifier.NONE) {
-                if (checkToAddSpellKeyPress(key)) {
-                    break;
-                }
+                checkToAddSpellKeyPress(key);
             }
         }
 
         for (SpellKeybind key : keys) {
             if (key.key.getKeyModifier() != KeyModifier.NONE) {
-                if (checkToAddSpellKeyPress(key)) {
-                    break;
-                }
+                checkToAddSpellKeyPress(key);
             }
         }
 
-        int number;
+        int heldMask = 0;
 
-        if (!spellKeysPressed.empty()) {
-            number = spellKeysPressed.lastElement().getIndex();
+        for (SpellKeybind key : spellKeysPressed) {
+            int index = key.getIndex();
             if (ClientConfigs.getConfig().HOTBAR_SWAPPING.get() && SpellKeybind.IS_ON_SECONd_HOTBAR) {
-                number += 4;
+                index += 4;
             }
-        } else {
-            number = -1;
+            if (index >= 0 && index < GemInventoryHelper.MAX_SKILL_GEMS) {
+                heldMask |= 1 << index;
+            }
         }
 
         // the client predicts the channel pulse loop in SpellCastingData, so it needs the same held
-        // key the server has. without this the client ends a channel after its first pulse.
+        // keys the server has. without this the client ends a channel after its first pulse.
         Player clientPlayer = Minecraft.getInstance().player;
         if (clientPlayer != null) {
-            Load.player(clientPlayer).spellCastingData.setHeldSpellInput(number);
+            Load.player(clientPlayer).spellCastingData.setHeldSlots(heldMask);
         }
 
-        if (number == lastSpellNumber) {
-            if (number == -1) {
+        if (heldMask == lastHeldMask) {
+            if (heldMask == 0) {
                 return;
             }
             if (spellPacketResendTimer > 0) {
@@ -176,8 +174,8 @@ public class OnKeyPress {
             }
         }
 
-        Packets.sendToServer(new TellServerToCastSpellPacket(number));
-        lastSpellNumber = number;
+        Packets.sendToServer(new TellServerToCastSpellPacket(heldMask));
+        lastHeldMask = heldMask;
         spellPacketResendTimer = 2;
     }
 }

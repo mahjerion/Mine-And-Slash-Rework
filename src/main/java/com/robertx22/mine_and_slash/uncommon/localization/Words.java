@@ -214,6 +214,7 @@ public enum Words implements IAutoLocName {
     MANA_COST("Mana Cost: %1$s"),
     ENE_COST("Energy Cost: %1$s"),
     COOLDOWN("Cooldown: %1$ss"),
+    RECOVERY("Recovery: %1$ss"),
     MAX_CHARGES("Max Charges: %1$s"),
     CHARGE_REGEN("Charge Regen: %1$ss"),
 

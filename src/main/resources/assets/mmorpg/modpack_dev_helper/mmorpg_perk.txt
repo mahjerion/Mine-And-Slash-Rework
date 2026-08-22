@@ -192,6 +192,10 @@ dot_dmg_hp_regen_big
 double_event_chance_node
 double_event_chance_node_big
 draconic_blood
+dual_wield_damage
+dual_wield_damage_big
+dual_wield_effectiveness
+dual_wield_effectiveness_big
 duelist
 duplicate_map_chance_node
 duplicate_map_chance_node_big

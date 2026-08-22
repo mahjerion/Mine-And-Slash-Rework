@@ -31,7 +31,7 @@ public enum Elements implements IGUID {
     // multi ele
     Elemental(Arrays.asList(ElementIds.NATURE, ElementIds.FIRE, ElementIds.WATER), Arrays.asList(ElementTags.ELEMENTAL), "Elemental", ChatFormatting.LIGHT_PURPLE, "elemental", "\u2600", SpellTags.PHYSICAL),
 
-    ALL(Arrays.asList(ElementIds.NATURE, ElementIds.FIRE, ElementIds.WATER, Shadow.GUID()), Arrays.asList(), "", ChatFormatting.LIGHT_PURPLE, "all", "\u2600", SpellTags.PHYSICAL);
+    ALL(Arrays.asList(ElementIds.NATURE, ElementIds.FIRE, ElementIds.WATER, Shadow.GUID()), Arrays.asList(), "All", ChatFormatting.LIGHT_PURPLE, "all", "\u2600", SpellTags.PHYSICAL);
 
     public SpellTag spellTag;
 

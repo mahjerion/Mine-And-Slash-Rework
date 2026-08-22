@@ -38,7 +38,7 @@ public class ProphecyCoinFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Prophecy Coin Find";
+        return "Increased Prophecy Coin Find";
     }
 
     private static class SingletonHolder {

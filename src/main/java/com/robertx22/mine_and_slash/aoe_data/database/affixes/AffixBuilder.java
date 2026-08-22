@@ -40,7 +40,7 @@ public class AffixBuilder {
 
     public static AffixBuilder Paragon(String id, String name) {
         return AffixBuilder.Normal("paragon_" + id)
-                .Named("Of Paragon's " + name)
+                .Named("of Paragon's " + name)
                 .Weight(50)
                 .stats(JewelEffect.getInstance().mod(1, 5))
                 .Suffix();

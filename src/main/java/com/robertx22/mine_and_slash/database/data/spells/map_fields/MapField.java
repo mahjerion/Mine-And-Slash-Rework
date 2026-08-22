@@ -80,6 +80,7 @@ public class MapField<T> implements IGUID {
     public static MapField<String> SOUND = make("sound");
     public static MapField<String> PARTICLE_SHAPE = make("shape");
     public static MapField<String> EXILE_POTION_ID = make("exile_potion_id");
+    public static MapField<String> MULTIPLY_BY_CASTER_EFFECT_STACKS = make("multiply_by_caster_effect_stacks");
     public static MapField<String> POTION_ID = make("potion_id");
     public static MapField<String> POTION_ACTION = make("potion_action");
     public static MapField<String> BLOCK = make("block");

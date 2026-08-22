@@ -38,7 +38,7 @@ public class OmenFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Omen Find";
+        return "Increased Omen Find";
     }
 
     private static class SingletonHolder {

@@ -34,7 +34,7 @@ public class CorruptJewelAffixes {
         of(OffenseStats.CRIT_DAMAGE.get(), 2, 5).Build();
         of(OffenseStats.CRIT_CHANCE.get(), 1, 2).Build();
 
-        of(SpellChangeStats.CAST_SPEED.get(), 1, 3).Build();
+        of(SpellChangeStats.CAST_SPEED.get(), 2, 6).Build();
         of(SpellChangeStats.COOLDOWN_REDUCTION.get(), 1, 3).Build();
 
         for (Elements ele : Elements.getAllSingleElemental()) {

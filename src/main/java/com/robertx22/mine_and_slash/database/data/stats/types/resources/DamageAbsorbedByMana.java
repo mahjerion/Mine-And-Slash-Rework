@@ -44,7 +44,7 @@ public class DamageAbsorbedByMana extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Of Damage Absorbed By Mana";
+        return "of Damage Absorbed By Mana";
     }
 
 

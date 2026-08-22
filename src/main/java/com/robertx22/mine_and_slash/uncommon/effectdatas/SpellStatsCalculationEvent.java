@@ -55,6 +55,9 @@ public class SpellStatsCalculationEvent extends EffectEvent {
             }
         }
         this.data.setupNumber(EventData.CAST_TICKS, spell.config.getCastTimeTicks());
+        this.data.setupNumber(EventData.CAST_SPEED_TICKS, spell.config.getCastSpeedTicks());
+        this.data.setupNumber(EventData.CAST_SPEED_PERCENT, 0F);
+        this.data.setupNumber(EventData.CHANNEL_SPEED_PERCENT, 0F);
         this.data.setupNumber(EventData.MANA_COST, manamultilvl * spell.config.mana_cost.getValue(caster, spell));
         this.data.setupNumber(EventData.ENERGY_COST, manamultilvl * spell.config.ene_cost.getValue(caster, spell));
         this.data.setupNumber(EventData.COOLDOWN_TICKS, spell.config.cooldown_ticks);
@@ -79,6 +82,29 @@ public class SpellStatsCalculationEvent extends EffectEvent {
 
         cd = (int) Mth.clamp(data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number, getSpell().config.charge_regen * GameBalanceConfig.get().MIN_SPELL_COOLDOWN_MULTI, 1000000);
         this.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number = cd; // cap it to 80% cooldown
+
+        // speed is a frequency multiplier now: +100% means twice the casts, not ten times them. every
+        // source sums into one percent first, so two +50% rolls give +100% rather than compounding.
+        float pct = data.getNumber(EventData.CAST_SPEED_PERCENT).number;
+
+        if (getSpell().config.isChannel()) {
+            // a channel's beat belongs to Channel Speed. the general pot still bleeds through at a
+            // fraction, so ordinary gear is not dead weight for a channel build - and because this
+            // weights the pot rather than naming stats, a per tag roll like Fire Skill Speed counts too
+            pct = pct * (float) GameBalanceConfig.get().CHANNEL_GENERAL_SPEED_TRANSFER
+                    + data.getNumber(EventData.CHANNEL_SPEED_PERCENT).number;
+        }
+
+        // floored above -100 so it can never divide by zero
+        float speedMulti = 1F + Math.max(-99F, pct) / 100F;
+
+        this.data.getNumber(EventData.CAST_SPEED_TICKS).number = Math.max(
+                GameBalanceConfig.get().GLOBAL_COOLDOWN_TICKS,
+                data.getNumber(EventData.CAST_SPEED_TICKS).number / speedMulti);
+
+        // the cast itself speeds up with the recovery, otherwise a long cast time would swallow the
+        // gain and slow skills would feel untouched by the stat
+        this.data.getNumber(EventData.CAST_TICKS).number = data.getNumber(EventData.CAST_TICKS).number / speedMulti;
 
         this.savedData.data = data;
     }

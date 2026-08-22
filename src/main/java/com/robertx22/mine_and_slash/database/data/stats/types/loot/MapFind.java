@@ -38,7 +38,7 @@ public class MapFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Map Find";
+        return "Increased Map Find";
     }
 
     private static class SingletonHolder {

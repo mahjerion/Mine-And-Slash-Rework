@@ -38,7 +38,7 @@ public class CurrencyFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Currency Find";
+        return "Increased Currency Find";
     }
 
     private static class SingletonHolder {

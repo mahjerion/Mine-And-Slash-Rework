@@ -70,12 +70,20 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
     public double MOB_DMG_MULTI_PER_MAP_RES_REQ_LACKING = 0.05;
 
 
-    public double HP_MOB_BONUS_PER_MAP_TIER = 0.1;
+    // a MORE multi of 1 + bonus x tier, and map tiers run to 100, so this is the whole endgame hp
+    // curve. cut ~30% off T100 to pay for the burst that the global cooldown took away, while a
+    // T1 map barely moves and overworld mobs are untouched
+    public double HP_MOB_BONUS_PER_MAP_TIER = 0.067;
     public double DMG_MOB_BONUS_PER_MAP_TIER = 0.01;
 
     public double MIN_SPELL_COOLDOWN_MULTI = 0.2;
 
     public int GLOBAL_COOLDOWN_TICKS = 3;
+
+    // how much of a player's general skill speed a channelled skill counts. Channel Speed is added on
+    // top at full weight, so this is the dial between "channels ignore your gear" and "Channel Speed
+    // is pointless"
+    public double CHANNEL_GENERAL_SPEED_TRANSFER = 0.5;
 
     public double CRAFTED_GEAR_POTENTIAL_MULTI = 0.5;
 

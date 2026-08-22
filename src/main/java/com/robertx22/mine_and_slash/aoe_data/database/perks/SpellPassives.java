@@ -95,7 +95,7 @@ public class SpellPassives implements ExileRegistryInit {
         PerkBuilder.passive(MANA_REGEN, 8, new OptScaleExactStat(4, ManaRegen.getInstance(), ModType.PERCENT));
         PerkBuilder.passive(SPELL_DMG, 8, new OptScaleExactStat(2, SkillDamage.getInstance(), ModType.FLAT));
         PerkBuilder.passive(MAGIC_SHIELD_REGEN, 8, new OptScaleExactStat(5, MagicShieldRegen.getInstance(), ModType.PERCENT));
-        PerkBuilder.passive(CAST_SPEED_SORC, 8, new OptScaleExactStat(3, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
+        PerkBuilder.passive(CAST_SPEED_SORC, 8, new OptScaleExactStat(6, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
         PerkBuilder.passive(ELE_RES, 8, new OptScaleExactStat(4, new ElementalResist(Elements.Elemental)));
         PerkBuilder.passive(GOLEM_CHANCE, 8, new OptScaleExactStat(3, GolemSpellChance.getInstance(), ModType.FLAT));
 //        PerkBuilder.passive(MISSILE_BARRAGE, 8, new OptScaleExactStat(5, AscensionStats.BARRAGE_SELF_BUFF_ON_SPELL_CRIT.get(), ModType.FLAT));
@@ -104,7 +104,7 @@ public class SpellPassives implements ExileRegistryInit {
         PerkBuilder.passive(POISON_CHANCE, 8, new OptScaleExactStat(4, new AilmentChance(Ailments.POISON)));
         PerkBuilder.passive(POISON_DURATION, 8, new OptScaleExactStat(6, new AilmentDuration(Ailments.POISON)));
         PerkBuilder.passive(DOT_DMG, 8, new OptScaleExactStat(3, OffenseStats.DOT_DAMAGE.get(), ModType.FLAT));
-        PerkBuilder.passive(CAST_SPEED_WL, 8, new OptScaleExactStat(2, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
+        PerkBuilder.passive(CAST_SPEED_WL, 8, new OptScaleExactStat(4, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
         PerkBuilder.passive(SUMMON_DMG, 8, new OptScaleExactStat(2, OffenseStats.SUMMON_DAMAGE.get(), ModType.FLAT));
         PerkBuilder.passive(DMG_TO_CURSED, 8, new OptScaleExactStat(4, OffenseStats.DAMAGE_TO_CURSED.get(), ModType.FLAT));
         PerkBuilder.passive(SPELL_LIFESTEAL, 8, new OptScaleExactStat(1, ResourceStats.SPELL_LIFESTEAL.get(), ModType.FLAT));

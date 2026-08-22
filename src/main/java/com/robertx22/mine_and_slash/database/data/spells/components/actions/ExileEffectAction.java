@@ -25,6 +25,7 @@ public class ExileEffectAction extends SpellAction {
     public enum GiveOrTake {
         GIVE_STACKS(GiveOrTake2.give),
         REMOVE_STACKS(GiveOrTake2.take),
+        REMOVE_ALL_STACKS(GiveOrTake2.take),
         REMOVE_NEGATIVE(null);
 
         private GiveOrTake2 other;
@@ -66,8 +67,6 @@ public class ExileEffectAction extends SpellAction {
                 return;
             }
 
-            int count = data.getOrDefault(COUNT, 1D)
-                    .intValue();
             Double durationField = data.getOrDefault(POTION_DURATION, 0D);
             int duration = durationField.intValue();
             boolean infinite = durationField.equals(INFINITE_DURATION);
@@ -85,6 +84,10 @@ public class ExileEffectAction extends SpellAction {
             targets.forEach(t -> {
 
                 if (RandomUtils.roll(chance)) {
+                    int count = action == GiveOrTake.REMOVE_ALL_STACKS
+                            ? Load.Unit(t).getStatusEffectsData().getStacks(potion.GUID())
+                            : data.getOrDefault(COUNT, 1D).intValue();
+
                     var builder = EventBuilder.ofEffect(ctx.calculatedSpellData, ctx.caster, t, Load.Unit(ctx.caster)
                                     .getLevel(), potion, action.getOther(), duration, infinite)
                             .set(x -> x.data.getNumber(EventData.STACKS).number = count);

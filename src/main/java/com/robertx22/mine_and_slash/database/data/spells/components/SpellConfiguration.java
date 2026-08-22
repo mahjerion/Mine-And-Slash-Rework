@@ -12,6 +12,19 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 
 public class SpellConfiguration {
 
+    // a skill's recovery is what paces it now, so these are the whole pacing vocabulary:
+    // a channel beat, the shorter charge/brawler recovery, and the normal 2s one.
+    public static final int CHANNEL_CAST_SPEED_TICKS = 10;
+    public static final int CHARGE_CAST_SPEED_TICKS = 30;
+    public static final int DEFAULT_CAST_SPEED_TICKS = 40;
+    public static final int MIN_CAST_SPEED_TICKS = 20;
+
+    // skills used to lean on tiny cooldowns for their feel, so a 1-3 tick cooldown means "as fast as
+    // the game allows" rather than a deliberate 0.05s recovery. clamp those up to the 1s floor.
+    public static int seedCastSpeedFromCooldown(int cooldownTicks) {
+        return Math.max(MIN_CAST_SPEED_TICKS, Math.min(DEFAULT_CAST_SPEED_TICKS, cooldownTicks));
+    }
+
     public boolean swing_arm = true;
     public boolean slows_when_casting = true;
     public boolean channel_skill = false;
@@ -28,6 +41,9 @@ public class SpellConfiguration {
     public String summon_basic_atk = "";
     private int cast_time_ticks = 0;
     public int cooldown_ticks = 20;
+    // the post-cast recovery of this skill, and the global cooldown it puts every other skill on.
+    // this is the number the cast speed stats scale, not cooldown_ticks
+    public int cast_speed_ticks = DEFAULT_CAST_SPEED_TICKS;
     private String style = PlayStyle.STR.id;
     public TagList<SpellTag> tags = new TagList<>();
     public int tracking_radius = 5;
@@ -52,14 +68,18 @@ public class SpellConfiguration {
         return cast_time_ticks;
     }
 
+    public int getCastSpeedTicks() {
+        return cast_speed_ticks;
+    }
+
+    public SpellConfiguration setCastSpeedTicks(int ticks) {
+        this.cast_speed_ticks = ticks;
+        return this;
+    }
+
     // a channel has no cast time, cast_time_ticks is the gap between pulses instead
     public boolean isChannel() {
         return channel_skill;
-    }
-
-    public SpellConfiguration applyCastSpeedToCooldown() {
-        this.tags.add(SpellTags.CAST_TO_CD);
-        return this;
     }
 
     public PlayStyle getStyle() {
@@ -89,6 +109,7 @@ public class SpellConfiguration {
         this.charges = charges;
         this.charge_name = name;
         this.cooldown_ticks = 3; // we force the cooldown to be the same for all spells with charges so it feels consistent and good
+        this.cast_speed_ticks = CHARGE_CAST_SPEED_TICKS; // charge skills recover faster than everything else
         return this;
     }
 
@@ -139,6 +160,7 @@ public class SpellConfiguration {
             c.cast_time_ticks = 0;
             c.ene_cost = new LeveledValue(1F * ene, 0.75F * ene);
             c.cooldown_ticks = cd;
+            c.cast_speed_ticks = seedCastSpeedFromCooldown(cd);
             return c;
         }
 
@@ -147,6 +169,7 @@ public class SpellConfiguration {
             c.cast_time_ticks = 0;
             c.mana_cost = new LeveledValue(1F * mana, 0.75F * mana);
             c.cooldown_ticks = cd;
+            c.cast_speed_ticks = seedCastSpeedFromCooldown(cd);
             return c;
         }
 
@@ -155,6 +178,7 @@ public class SpellConfiguration {
             c.cast_time_ticks = 0;
             c.mana_cost = new LeveledValue(1F * mana, 0.75F * mana);
             c.cooldown_ticks = cd;
+            c.cast_speed_ticks = seedCastSpeedFromCooldown(cd);
             c.swing_arm = false;
             return c;
         }
@@ -164,6 +188,7 @@ public class SpellConfiguration {
             c.cast_time_ticks = casttime;
             c.mana_cost = new LeveledValue(1F * mana, 0.75F * mana);
             c.cooldown_ticks = cd;
+            c.cast_speed_ticks = seedCastSpeedFromCooldown(cd);
             return c;
         }
 
@@ -176,6 +201,8 @@ public class SpellConfiguration {
             c.cast_time_ticks = ticksPerPulse;
             c.mana_cost = new LeveledValue(1F * manaPerPulse, 0.75F * manaPerPulse);
             c.cooldown_ticks = cd;
+            // every channel shares one short recovery on release, the beat rate is cast_time_ticks
+            c.cast_speed_ticks = CHANNEL_CAST_SPEED_TICKS;
             return c;
         }
 
@@ -185,6 +212,7 @@ public class SpellConfiguration {
             c.cast_time_ticks = casttime;
             c.mana_cost = new LeveledValue(1F * mana, 0.75F * mana);
             c.cooldown_ticks = cd;
+            c.cast_speed_ticks = seedCastSpeedFromCooldown(cd);
             return c;
         }
 

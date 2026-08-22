@@ -160,7 +160,7 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
 
         PerkBuilder.gameChanger("performer", "Performer",
                 new OptScaleExactStat(20, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.song), ModType.MORE),
-                new OptScaleExactStat(-10, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
+                new OptScaleExactStat(-20, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
         );
 
         PerkBuilder.gameChanger("heretic", "Heretic",
@@ -186,7 +186,7 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
 
         PerkBuilder.gameChanger("focused_magician", "Focused Magician",
                 new OptScaleExactStat(10, ManaRegen.getInstance(), ModType.MORE),
-                new OptScaleExactStat(6, SpellChangeStats.CAST_SPEED.get(), ModType.MORE),
+                new OptScaleExactStat(12, SpellChangeStats.CAST_SPEED.get(), ModType.MORE),
                 new OptScaleExactStat(-100, DodgeRating.getInstance(), ModType.MORE)
         );
 

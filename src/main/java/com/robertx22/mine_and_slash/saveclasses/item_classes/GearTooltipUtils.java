@@ -31,6 +31,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Gui;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -61,7 +62,8 @@ public class GearTooltipUtils {
                 .accept(new RarityBlock(gear.getRarity()))
                 .accept(new RequirementBlock()
                         .setStatRequirement(gear.getRequirement())
-                        .setLevelRequirement(gear.getLevel()))
+                        .setLevelRequirement(gear.getLevel())
+                        .warnIfMainHandIsTwoHanded(DualWieldUtils.isDualWieldWeapon(gear)))
                 .accept(new StatBlock() {
                     @Nonnull
                     private final GearItemData gearItemData = gear;

@@ -38,7 +38,7 @@ public class EpicMonsterChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Epic Monster Chance";
+        return "Increased Epic Monster Chance";
     }
 
     private static class SingletonHolder {

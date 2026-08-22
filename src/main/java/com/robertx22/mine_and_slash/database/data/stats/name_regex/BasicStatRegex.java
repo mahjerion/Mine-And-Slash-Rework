@@ -23,13 +23,13 @@ public class BasicStatRegex extends StatNameRegex {
         if (type.isPercent()) {
             if (stat.IsPercent() && type != ModType.MORE) {
                 if (v1 > 0) {
-                    return VALUE + Words.INCREASE_PERCENT_STAT.locName().getString() + NAME;
+                    return VALUE + " " + Words.MULTIPLY_STAT_INCREASED.locName().getString() + " " + NAME;
                 } else {
-                    return VALUE + Words.REDUCE_PERCENT_STAT.locName().getString() + NAME;
+                    return VALUE + " " + Words.MULTIPLY_STAT_REDUCED.locName().getString() + " " + NAME;
                 }
             }
 
-            String s = v1 > 0 && (stat.IsPercent() && type != ModType.MORE) ? Words.INCREASE_PERCENT_STAT.locName().getString() : "";
+            String s = v1 > 0 && (stat.IsPercent() && type != ModType.MORE) ? Words.MULTIPLY_STAT_INCREASED.locName().getString() + " " : "";
             return VALUE + s + NAME;
         }
         if (type == ModType.MORE) {

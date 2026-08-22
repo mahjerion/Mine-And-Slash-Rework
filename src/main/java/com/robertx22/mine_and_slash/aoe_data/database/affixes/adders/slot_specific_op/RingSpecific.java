@@ -16,13 +16,13 @@ public class RingSpecific implements ExileRegistryInit {
     public void registerAll() {
 
         AffixBuilder.Normal("of_energy")
-                .Named("Of Energy")
+                .Named("of Energy")
                 .stats(new StatMod(6, 15, Energy.getInstance(), ModType.PERCENT))
                 .includesTags(SlotTags.ring, SlotTags.jewel_dex)
                 .Suffix()
                 .Build();
         AffixBuilder.Normal("of_mana")
-                .Named("Of Mana")
+                .Named("of Mana")
                 .stats(new StatMod(6, 15, Mana.getInstance(), ModType.PERCENT))
                 .includesTags(SlotTags.ring, SlotTags.jewel_int)
                 .Suffix()

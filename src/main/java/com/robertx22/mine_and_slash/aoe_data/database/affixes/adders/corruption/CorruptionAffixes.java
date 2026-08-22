@@ -29,7 +29,7 @@ public class CorruptionAffixes {
         of(OffenseStats.CRIT_DAMAGE.get(), 3, 15, SlotTags.weapon_family).Build();
         of(OffenseStats.CRIT_CHANCE.get(), 1, 3, SlotTags.weapon_family).Build();
 
-        of(SpellChangeStats.CAST_SPEED.get(), 2, 5, SlotTags.jewelry_family).Build();
+        of(SpellChangeStats.CAST_SPEED.get(), 4, 10, SlotTags.jewelry_family).Build();
         of(SpellChangeStats.COOLDOWN_REDUCTION.get(), 1, 4, SlotTags.jewelry_family).Build();
 
         of(new ElementalResist(Elements.Physical), 2, 5, SlotTags.armor_family).Build();

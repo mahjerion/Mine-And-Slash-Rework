@@ -41,6 +41,11 @@ public class DamageAction extends SpellAction {
 
             int value = calc.getCalculatedValue(ctx.caster, ctx.target, ctx.calculatedSpellData.getSpell());
 
+            String stackEffectId = data.getOrDefault(MapField.MULTIPLY_BY_CASTER_EFFECT_STACKS, "");
+            if (!stackEffectId.isEmpty()) {
+                value *= Load.Unit(ctx.caster).getStatusEffectsData().getStacks(stackEffectId);
+            }
+
             if (ctx.calculatedSpellData.chains_did > 0) {
                 float dmgMulti = MathHelper.clamp(1F - (GameBalanceConfig.get().DMG_REDUCT_PER_CHAIN * ctx.calculatedSpellData.chains_did), GameBalanceConfig.get().MIN_CHAIN_DMG, 1F);
                 value *= dmgMulti;

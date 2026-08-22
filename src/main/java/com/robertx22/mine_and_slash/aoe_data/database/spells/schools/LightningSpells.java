@@ -31,8 +31,7 @@ public class LightningSpells implements ExileRegistryInit {
 
 
         SpellBuilder.of(CHAIN_LIGHTNING, PlayStyle.INT, SpellConfiguration.Builder.instant(25, 20)
-                                .setChargesAndRegen("chain_lightning", 3, 20 * 10)
-                                .applyCastSpeedToCooldown(), "Chain Lightning",
+                                .setChargesAndRegen("chain_lightning", 3, 20 * 10), "Chain Lightning",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.chaining, SpellTags.LIGHTNING))
                 .manualDesc(
                         "Strike enemies with chaining lightning that deals " + SpellCalcs.LIGHTNING_SPEAR.getLocDmgTooltip()
@@ -53,8 +52,7 @@ public class LightningSpells implements ExileRegistryInit {
 
         SpellBuilder.of(LIGHTNING_SPEAR, PlayStyle.INT, SpellConfiguration.Builder.instant(5, 20 * 5)
                                 .setSwingArm()
-                                .setChargesAndRegen("lightning_spear", 3, 20 * 5)
-                                .applyCastSpeedToCooldown(), "Lightning Spear",
+                                .setChargesAndRegen("lightning_spear", 3, 20 * 5), "Lightning Spear",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.LIGHTNING))
                 .manualDesc(
                         "Throw out an electric spear, dealing " + SpellCalcs.LIGHTNING_SPEAR.getLocDmgTooltip()

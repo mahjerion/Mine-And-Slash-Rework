@@ -9,10 +9,12 @@ import net.minecraft.resources.ResourceLocation;
 
 public class TellServerToCastSpellPacket extends MyPacket<TellServerToCastSpellPacket> {
 
-    int number;
+    // every hotbar slot whose key is down right now, one bit each. the server queues these in slot
+    // order, so a key shared by several skills plays them one after another instead of at once
+    int heldMask;
 
-    public TellServerToCastSpellPacket(int number) {
-        this.number = number;
+    public TellServerToCastSpellPacket(int heldMask) {
+        this.heldMask = heldMask;
     }
 
     public TellServerToCastSpellPacket() {
@@ -25,17 +27,17 @@ public class TellServerToCastSpellPacket extends MyPacket<TellServerToCastSpellP
 
     @Override
     public void loadFromData(FriendlyByteBuf tag) {
-        this.number = tag.readInt();
+        this.heldMask = tag.readInt();
     }
 
     @Override
     public void saveToData(FriendlyByteBuf tag) {
-        tag.writeInt(number);
+        tag.writeInt(heldMask);
     }
 
     @Override
     public void onReceived(ExilePacketContext ctx) {
-        Load.player(ctx.getPlayer()).spellCastingData.onSpellInputPressed(number);
+        Load.player(ctx.getPlayer()).spellCastingData.onSpellInputPressed(heldMask);
 
     }
 

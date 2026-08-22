@@ -116,6 +116,27 @@ public class SpellChangeStats {
             })
             .build();
 
+    // every speed stat sums into one accumulator that SpellStatsCalculationEvent divides by, so they
+    // read as "how often", never as a flat cut off the timer. the archetype split is by PlayStyle:
+    // SpellBuilder gives every skill its style tag, so magic == Int. Channels are not excluded here -
+    // activate() weights the whole accumulator down for them instead, which is what lets a per tag
+    // roll like Fire Skill Speed reach a channelled fire skill.
+    public static DataPackStatAccessor<EmptyAccessor> SKILL_SPEED = DatapackStatBuilder
+            .ofSingle("skill_speed", Elements.Physical)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
+            .addEffect(StatEffects.ADD_CAST_SPEED_PERCENT)
+            .setLocName(x -> "Skill Speed")
+            .setLocDesc(x -> "How often you can use any Skill. Shortens Cast Time and Recovery, but not Cooldowns. +100% means twice as many casts. Channelled Skills gain half as much.")
+            .modifyAfterDone(x -> {
+                x.is_perc = true;
+                x.base = 0;
+                x.min = -75;
+                x.max = 300;
+            })
+            .build();
     public static DataPackStatAccessor<EmptyAccessor> CAST_SPEED = DatapackStatBuilder
             .ofSingle("cast_speed", Elements.Physical)
             .worksWithEvent(SpellStatsCalculationEvent.ID)
@@ -123,16 +144,49 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(SpellTags.magic))
             .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
-            .addEffect(StatEffects.DECREASE_CAST_TIME)
-            .addCondition(DatapackStatBuilder.EffectPlace.SECOND, StatConditions.SPELL_HAS_TAG.get(SpellTags.CAST_TO_CD))
-            .addEffect(DatapackStatBuilder.EffectPlace.SECOND, StatEffects.APPLY_CAST_SPEED_TO_CD)
-            .setLocName(x -> "Cast Speed")
-            .setLocDesc(x -> "Affects amount of time needed to cast spells. If the spell is instant, it reduces the cooldown. Only works on spells tagged as Magic")
+            .addEffect(StatEffects.ADD_CAST_SPEED_PERCENT)
+            .setLocName(x -> "Magic Skill Speed")
+            .setLocDesc(x -> "How often you can use Magic Skills. Shortens Cast Time and Recovery, but not Cooldowns. +100% means twice as many casts. Channelled Skills gain half as much.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
-                x.min = -90;
-                x.max = 90;
+                x.min = -75;
+                x.max = 300;
+            })
+            .build();
+    public static DataPackStatAccessor<EmptyAccessor> ATTACK_CAST_SPEED = DatapackStatBuilder
+            .ofSingle("attack_cast_speed", Elements.Physical)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(StatConditions.IS_ATTACK_DAMAGE)
+            .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
+            .addEffect(StatEffects.ADD_CAST_SPEED_PERCENT)
+            .setLocName(x -> "Attack Skill Speed")
+            .setLocDesc(x -> "How often you can use Melee and Ranged Skills. Shortens Cast Time and Recovery, but not Cooldowns. +100% means twice as many casts. Channelled Skills gain half as much.")
+            .modifyAfterDone(x -> {
+                x.is_perc = true;
+                x.base = 0;
+                x.min = -75;
+                x.max = 300;
+            })
+            .build();
+    // the only stat a channel gets at full weight, and the only one that does nothing anywhere else
+    public static DataPackStatAccessor<EmptyAccessor> CHANNEL_SPEED = DatapackStatBuilder
+            .ofSingle("channel_speed", Elements.Physical)
+            .worksWithEvent(SpellStatsCalculationEvent.ID)
+            .setPriority(StatPriority.Spell.FIRST)
+            .setSide(EffectSides.Source)
+            .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(SpellTags.channel))
+            .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
+            .addEffect(StatEffects.ADD_CHANNEL_SPEED_PERCENT)
+            .setLocName(x -> "Channel Speed")
+            .setLocDesc(x -> "How fast Channelled Skills pulse while you hold the key. Shortens the gap between pulses and your Recovery, but not Cooldowns. +100% means twice as many pulses.")
+            .modifyAfterDone(x -> {
+                x.is_perc = true;
+                x.base = 0;
+                x.min = -75;
+                x.max = 300;
             })
             .build();
     public static DataPackStatAccessor<SpellTag> CAST_TIME_PER_SPELL_TAG = DatapackStatBuilder
@@ -144,11 +198,14 @@ public class SpellChangeStats {
             .setSide(EffectSides.Source)
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(x))
             .addCondition(x -> StatConditions.SPELL_NOT_HAVE_TAG.get(SpellTags.not_affected_by_cast_speed))
-            .addEffect(StatEffects.DECREASE_CAST_TIME)
-            .setLocName(x -> x.locNameForLangFile() + " Cast Speed")
-            .setLocDesc(x -> "Reduces cast time of Skills with this tag.")
+            .addEffect(StatEffects.ADD_CAST_SPEED_PERCENT)
+            .setLocName(x -> x.locNameForLangFile() + " Skill Speed")
+            .setLocDesc(x -> "How often you can use Skills with this tag. Shortens Cast Time and Recovery, but not Cooldowns. +100% means twice as many casts.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
+                x.base = 0;
+                x.min = -75;
+                x.max = 300;
             })
             .build();
     public static DataPackStatAccessor<SpellTag> COOLDOWN_REDUCTION_PER_SPELL_TAG = DatapackStatBuilder
@@ -161,7 +218,7 @@ public class SpellChangeStats {
             .addEffect(StatEffects.DECREASE_COOLDOWN)
             .addEffect(StatEffects.DECREASE_CHARGE_CD)
             .setLocName(x -> x.locNameForLangFile() + " Skill Cooldown Reduction")
-            .setLocDesc(x -> "Reduces Skill cooldown of Skills with the tag.")
+            .setLocDesc(x -> "Reduces Cooldowns and Charge Regeneration of Skills with the tag. Does not affect Cast Time or Recovery. Only matters on Skills whose Cooldown is longer than their Recovery.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;
@@ -176,7 +233,7 @@ public class SpellChangeStats {
             .addEffect(StatEffects.DECREASE_COOLDOWN)
             .addEffect(StatEffects.DECREASE_CHARGE_CD)
             .setLocName(x -> "Cooldown Reduction")
-            .setLocDesc(x -> "Reduces Skill cooldown.")
+            .setLocDesc(x -> "Reduces Skill Cooldowns and Charge Regeneration. Does not affect Cast Time or Recovery. Only matters on Skills whose Cooldown is longer than their Recovery.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
                 x.base = 0;

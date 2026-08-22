@@ -38,7 +38,7 @@ public class GemFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Gem Find";
+        return "Increased Gem Find";
     }
 
     private static class SingletonHolder {

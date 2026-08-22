@@ -39,6 +39,7 @@ is_crit_true_is_false
 is_crossbow_wep_type
 is_day
 is_day_is_false
+is_dual_wielding
 is_elemental_damage
 is_hit_or_bonus
 is_hp_or_ms_restore

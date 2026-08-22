@@ -32,7 +32,7 @@ public class MagicShieldHeal extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "A % of your healing goes to your magic shield too.";
+        return "A portion of your healing applies to Magic Shield. This includes Skills, Regen, Leech, etc.";
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.MiscStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -38,6 +39,12 @@ public class CachedEntityStats {
     public AttackInformation attackInfo; // this was used to retrieve thrown weapons like tridents
 
     private StatContext statusEffects;
+
+    // Dual-Wield Effectiveness scales how much of an offhand weapon's stats you get, but gear is
+    // cached before stats are calculated, so recalcGears() can only read the previous calc's value.
+    // these remember what it used so afterStatCalc() can redo the gear pass if the value moved.
+    private boolean offhandUsesDualWieldEffectiveness = false;
+    private float dualWieldEffectivenessUsed = 0;
 
 
     LazyClass<EntityData> unitdata = new LazyClass<>(() -> Load.Unit(entity));
@@ -187,6 +194,21 @@ public class CachedEntityStats {
 
         this.gear = list.stream().filter(x -> x.isUsableBy(unitdata.get())).collect(Collectors.toList());
 
+        this.offhandUsesDualWieldEffectiveness = this.gear.stream().anyMatch(x -> x.usesDualWieldEffectiveness);
+        this.dualWieldEffectivenessUsed = DualWieldUtils.getEffectiveness(unitdata.get());
+    }
+
+    // the gear pass above reads Dual-Wield Effectiveness from the *previous* stat calc, since gear
+    // stats are cached before stats are calculated. if the calc that just finished disagrees, redo
+    // the gear pass so the offhand's share catches up. GEAR syncs before STAT_CALC in onTick, so
+    // this lands next tick, and it converges because each round shrinks the disagreement.
+    public void afterStatCalc() {
+        if (!offhandUsesDualWieldEffectiveness) {
+            return;
+        }
+        if (Math.abs(DualWieldUtils.getEffectiveness(unitdata.get()) - dualWieldEffectivenessUsed) > 0.01F) {
+            GEAR.setDirty();
+        }
     }
 
     GearData getDataFor(EquipmentSlot slot, LivingEntity en, EntityData data) {

@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 public class CooldownsData {
 
     public static String IN_COMBAT = "in_combat";
+    // the one skill at a time gate. every started cast puts this on, so it is what the hotbar greys
+    // out and what processSpellInputs waits on before pulling the next queued skill
+    public static String GLOBAL_COOLDOWN = "global_cooldown";
 
     private HashMap<String, Data> map = new HashMap<>();
 

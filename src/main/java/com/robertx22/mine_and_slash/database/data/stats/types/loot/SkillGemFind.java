@@ -38,7 +38,7 @@ public class SkillGemFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Skill Gem Find";
+        return "Increased Skill Gem Find";
     }
 
     private static class SingletonHolder {

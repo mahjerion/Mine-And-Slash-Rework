@@ -293,6 +293,24 @@ public class OffenseStats {
                 x.format = ChatFormatting.RED.getName();
             })
             .build();
+    public static DataPackStatAccessor<EmptyAccessor> DUAL_WIELD_DAMAGE = DatapackStatBuilder
+            .ofSingle("dual_wield_damage", Elements.Physical)
+            .worksWithEvent(DamageEvent.ID)
+            .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
+            .setSide(EffectSides.Source)
+            .setUsesMoreMultiplier()
+            .addCondition(StatConditions.IS_DUAL_WIELDING)
+            .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
+            .setLocName(x -> "Dual-Wield Damage")
+            .setLocDesc(x -> "Increases all damage you deal while holding a weapon in each hand.")
+            .modifyAfterDone(x -> {
+                x.is_perc = true;
+                x.base = 0;
+                x.min = 0;
+                x.group = Stat.StatGroup.WEAPON;
+                x.format = ChatFormatting.RED.getName();
+            })
+            .build();
     public static DataPackStatAccessor<EmptyAccessor> AREA_DAMAGE = DatapackStatBuilder
             .ofSingle("area_dmg", Elements.ALL)
             .worksWithEvent(DamageEvent.ID)
@@ -513,7 +531,7 @@ public class OffenseStats {
             .addCondition(StatConditions.ELEMENT_MATCH_STAT)
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> format("Execute targets below 30% health, dealing "
-                    + VAL1 + "% increased  " + x.getIconNameFormat()))
+                    + VAL1 + "% increased " + x.getIconNameFormat()))
             .setLocDesc(x -> "Low hp is 30% or less.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
@@ -572,8 +590,8 @@ public class OffenseStats {
             .setSide(EffectSides.Source)
             .addEffect(StatEffects.MISSING_RESOURCE_SCALING.get(
                     new StatEffects.ResourceScalingConfig(ResourceType.mana, 10f)))
-            .setLocName(x -> "More Damage per 10% Missing Mana")
-            .setLocDesc(x -> "Gain " + Stat.VAL1 + "% More Damage for every 10% of Mana that is missing.")
+            .setLocName(x -> "Damage per 10% Missing Mana")
+            .setLocDesc(x -> "Gain " + Stat.VAL1 + "% Damage for every 10% of Mana that is missing.")
             .modifyAfterDone(x -> {
                 x.is_perc = true;
             })

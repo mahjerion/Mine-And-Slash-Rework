@@ -91,8 +91,7 @@ public class RangerSpells implements ExileRegistryInit {
 
 
         SpellBuilder.of(BOOMERANG, PlayStyle.DEX, SpellConfiguration.Builder.instant(10, 20 * 5)
-                                .setChargesAndRegen("boomerang", 3, 20 * 10)
-                                .applyCastSpeedToCooldown(), "Boomerang",
+                                .setChargesAndRegen("boomerang", 3, 20 * 10), "Boomerang",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.chaining, SpellTags.PHYSICAL))
                 .manualDesc("Strike enemies with a projectile that deals " + SpellCalcs.BOOMERANG.getLocDmgTooltip(Elements.Physical))
                 .animations(SpellAnimations.THROW, AnimationHolder.none())

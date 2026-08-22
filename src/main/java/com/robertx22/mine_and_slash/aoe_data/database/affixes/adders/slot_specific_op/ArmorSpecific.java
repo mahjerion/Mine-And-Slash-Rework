@@ -10,7 +10,7 @@ public class ArmorSpecific implements ExileRegistryInit {
     public void registerAll() {
 
         AffixBuilder.Normal("strong_int_armor_suf")
-                .Named("Of the Genius")
+                .Named("of the Genius")
                 .bigCoreStat(DatapackStats.INT)
                 .includesTags(SlotTags.armor_family)
                 .Suffix()
@@ -18,7 +18,7 @@ public class ArmorSpecific implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("strong_str_armor_suf")
-                .Named("Of the Monster")
+                .Named("of the Monster")
                 .bigCoreStat(DatapackStats.STR)
                 .includesTags(SlotTags.armor_family)
                 .Suffix()
@@ -26,7 +26,7 @@ public class ArmorSpecific implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("strong_dex_armor_suf")
-                .Named("Of Skill")
+                .Named("of Skill")
                 .bigCoreStat(DatapackStats.DEX)
                 .includesTags(SlotTags.armor_family)
                 .Suffix()

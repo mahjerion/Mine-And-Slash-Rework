@@ -31,8 +31,7 @@ public class BasicAttackSpells implements ExileRegistryInit {
         double RADIUS = 1.5D;
 
         SpellBuilder.of(FROSTBALL_ID, PlayStyle.INT, SpellConfiguration.Builder.instant(mana, cd)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "Ice Shard",
+                                .setSwingArm(), "Ice Shard",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.COLD))
                 .manualDesc(
                         "Throw out a shard of ice, dealing " + SpellCalcs.ICEBALL.getLocDmgTooltip()
@@ -52,8 +51,7 @@ public class BasicAttackSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(FIREBALL_ID, PlayStyle.INT, SpellConfiguration.Builder.instant(mana, cd)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "Fire Ball",
+                                .setSwingArm(), "Fire Ball",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.FIRE))
                 .manualDesc(
                         "Throw out a ball of fire, dealing " + SpellCalcs.FIREBALL.getLocDmgTooltip()
@@ -74,8 +72,7 @@ public class BasicAttackSpells implements ExileRegistryInit {
 
 
         SpellBuilder.of(POISONBALL_ID, PlayStyle.INT, SpellConfiguration.Builder.instant(mana, cd)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "Acid Blast",
+                                .setSwingArm(), "Acid Blast",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.CHAOS))
                 .manualDesc(
                         "Blast out a ball of poison, dealing " + SpellCalcs.POISON_BALL.getLocDmgTooltip()

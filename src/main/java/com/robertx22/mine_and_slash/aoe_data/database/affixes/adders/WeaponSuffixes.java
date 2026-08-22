@@ -17,14 +17,14 @@ public class WeaponSuffixes implements ExileRegistryInit {
     public void registerAll() {
 
         AffixBuilder.Normal("of_pene")
-                .Named("Of Penetration")
+                .Named("of Penetration")
                 .stats(new StatMod(5, 25, ArmorPenetration.getInstance(), ModType.FLAT))
                 .includesTags(SlotTags.weapon_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_vampirism")
-                .Named("Of Vampirism")
+                .Named("of Vampirism")
                 .stats(new StatMod(1, 5, ResourceStats.LIFESTEAL.get(), ModType.FLAT))
                 .includesTags(SlotTags.weapon_family)
                 .Suffix()
@@ -32,42 +32,42 @@ public class WeaponSuffixes implements ExileRegistryInit {
 
 
         AffixBuilder.Normal("of_gluttony")
-                .Named("Of Gluttony")
+                .Named("of Gluttony")
                 .stats(new StatMod(1, 6, ResourceStats.RESOURCE_ON_KILL.get(ResourceType.health), ModType.FLAT))
                 .includesTags(SlotTags.weapon_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_consumption")
-                .Named("Of Consumption")
+                .Named("of Consumption")
                 .stats(new StatMod(1, 6, ResourceStats.RESOURCE_ON_KILL.get(ResourceType.mana), ModType.FLAT))
                 .includesTags(SlotTags.weapon_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_fast_cast")
-                .Named("Of Faster Casting")
-                .stats(new StatMod(7, 20, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT))
+                .Named("of Faster Casting")
+                .stats(new StatMod(14, 40, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT))
                 .includesTags(SlotTags.mage_weapon, SlotTags.jewelry_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_less_cd")
-                .Named("Of Repetition")
+                .Named("of Repetition")
                 .stats(new StatMod(6, 15, SpellChangeStats.COOLDOWN_REDUCTION.get(), ModType.FLAT))
                 .includesTags(SlotTags.mage_weapon, SlotTags.jewelry_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_spell_dmg")
-                .Named("Of Spell Damage")
+                .Named("of Spell Damage")
                 .stats(new StatMod(6, 15, SkillDamage.getInstance(), ModType.FLAT))
                 .includesTags(SlotTags.mage_weapon, SlotTags.jewelry_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("heal_suff")
-                .Named("Of Restoration")
+                .Named("of Restoration")
                 .stats(new StatMod(5, 20, ResourceStats.HEAL_STRENGTH.get(), ModType.FLAT))
                 .includesTags(SlotTags.staff)
                 .Suffix()

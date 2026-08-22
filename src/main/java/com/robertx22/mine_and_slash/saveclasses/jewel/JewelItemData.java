@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class JewelItemData implements ICommonDataItem<GearRarity>, IStatCtx {
 
@@ -63,14 +64,43 @@ public class JewelItemData implements ICommonDataItem<GearRarity>, IStatCtx {
     public String rar = IRarity.COMMON_ID;
 
 
+    // mirrors GearItemData.canGetAffix — jewels store plain AffixData lists, not GearAffixesData
+    public static boolean canGetAffix(List<AffixData> current, Affix affix) {
+
+        if (affix.only_one_per_item && current.stream().anyMatch(x -> affix.GUID().equals(x.id))) {
+            return false;
+        }
+        if (!affix.one_of_a_kind.isEmpty() && current.stream()
+                .anyMatch(x -> x.getAffix() != null && x.getAffix().one_of_a_kind.equals(affix.one_of_a_kind))) {
+            return false;
+        }
+        return true;
+    }
+
+    // picks from the deduped pool, falling back to the full pool so the affix count is always met
+    public static Affix rollAffix(List<AffixData> current, Predicate<Affix> base) {
+
+        Affix affix = ExileDB.Affixes()
+                .getFilterWrapped(base.and(x -> canGetAffix(current, x)))
+                .errorIfNothingLeft(false)
+                .random();
+
+        if (affix == null) {
+            // fewer distinct eligible affixes than wanted, allow a duplicate instead of a shorter roll
+            affix = ExileDB.Affixes().getFilterWrapped(base).errorIfNothingLeft(false).random();
+        }
+        return affix; // still null only if nothing is eligible at all, callers must check
+    }
+
     public void corrupt() {
         if (cor.isEmpty()) {
             int num = RandomUtils.roll(10) ? 2 : 1;
 
             for (int i = 0; i < num; i++) {
-                Affix affix = ExileDB.Affixes().getFilterWrapped(x -> {
-                    return x.type == Affix.AffixSlot.jewel_corruption;
-                }).random();
+                Affix affix = rollAffix(cor, x -> x.type == Affix.AffixSlot.jewel_corruption);
+                if (affix == null) {
+                    break;
+                }
                 var data = new AffixData(Affix.AffixSlot.jewel_corruption);
                 data.randomizeTier(getRarity());
                 data.p = data.getMinMax().random();
@@ -87,9 +117,12 @@ public class JewelItemData implements ICommonDataItem<GearRarity>, IStatCtx {
         affixes.clear();
 
         for (int i = 0; i < num; i++) {
-            Affix affix = ExileDB.Affixes().getFilterWrapped(x -> {
-                return x.type == Affix.AffixSlot.jewel && x.getAllTagReq().contains(SlotTags.any_jewel.GUID()) || x.getAllTagReq().contains(getStyle().getJewelAffixTag().GUID());
-            }).random();
+            Affix affix = rollAffix(affixes, x -> x.type == Affix.AffixSlot.jewel
+                    && (x.getAllTagReq().contains(SlotTags.any_jewel.GUID())
+                    || x.getAllTagReq().contains(getStyle().getJewelAffixTag().GUID())));
+            if (affix == null) {
+                break;
+            }
 
             var data = new AffixData(Affix.AffixSlot.jewel);
             data.randomizeTier(getRarity());

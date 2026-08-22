@@ -51,6 +51,22 @@ Output location follows `FMLPaths.GAMEDIR` with `run/` rewritten to `src/generat
 
 `src/generated` is gitignored and untracked (dropped from git in `b75833f5`, Dec 2023), so `git status` will *not* warn you if that happens. The files are purely local build artifacts; the only recovery is the in-game regeneration above. `build.gradle` adds `src/generated/resources` as a `sourceSets.main.resources` dir, so they must exist before `./gradlew build` produces a complete jar.
 
+## Craft to Exile 2 modpack — live pack overrides
+
+Day-to-day tuning of `mmorpg` content often happens **outside this repo**, as openloader datapack overrides in the Craft to Exile 2 pack, which take priority over the mod's own generated JSON at runtime. Only work there **when the user asks** — by default a request to change mod behavior means editing the Java source in `aoe_data` and regenerating.
+
+**Client instance — the working copy, edit here:**
+`C:\Users\Kelvin\curseforge\minecraft\Instances\Craft to Exile 2\`
+
+- mmorpg datapack overrides: `config\openloader\data\cte_mns\data\mmorpg\` — one folder per registry type, mirroring `src/generated/resources` (`mmorpg_spells`, `mmorpg_stat_effect`, `mmorpg_game_balance`, `mmorpg_perk`, …). Sibling `data\library_of_exile\`, `data\dungeon_realm\`, `data\ancient_obelisks\` folders override the library and the addons.
+- Forge configs: `defaultconfigs\mine_and_slash-server.toml` (plus the addons' `*-server.toml`).
+- Other openloader packs: `config\openloader\data\cte_configuration\` and `cte_events\`.
+
+**Live server — never edit:**
+`C:\Users\Kelvin\Documents\GitHub\Craft-to-Exile-2-Server\` mirrors the same paths, but the user copies client → server manually. Do not write to it, do not mirror or sync files into it, and do not offer to. Read it only to see what players are actually running — it lags the instance (often by dozens of files) and, despite living under `GitHub\`, is not a git repo, so it has no history to recover from.
+
+Decoys to ignore when hunting for the live pack: other CurseForge instances (e.g. `Craft to Exile 2 - 2.0 Atlas Update`), `curseforge\minecraft\Backups\`, and this repo's own `src\generated\resources` / `build\resources\main`.
+
 ## Multi-module / submodule layout (important)
 
 This repo depends on four sibling libraries that are **git submodules** included as Gradle `includeBuild` composite builds — code changes in them are picked up directly by the main build (no need to bump versions or reinstall for local edits):

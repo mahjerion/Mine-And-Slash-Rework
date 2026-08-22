@@ -38,7 +38,7 @@ public class JewelFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Jewel Find";
+        return "Increased Jewel Find";
     }
 
     private static class SingletonHolder {

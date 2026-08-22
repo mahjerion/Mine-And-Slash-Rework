@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.saveclasses.jewel;
 
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
-import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_parts.AffixData;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import net.minecraft.world.item.ItemStack;
@@ -38,9 +37,12 @@ public class CraftedUniqueJewelData {
 
         if (tier.addsAffix) {// make all rarity upgrades add to affixes, whatever, if its too op, nerf the affixes
 
-            Affix affix = ExileDB.Affixes().getFilterWrapped(x -> {
-                return x.type == Affix.AffixSlot.crafted_jewel_unique && x.getAllTagReq().contains(SlotTags.crafted_jewel_unique.GUID());
-            }).random();
+            Affix affix = JewelItemData.rollAffix(data.affixes, x -> x.type == Affix.AffixSlot.crafted_jewel_unique
+                    && x.getAllTagReq().contains(SlotTags.crafted_jewel_unique.GUID()));
+
+            if (affix == null) {
+                return;
+            }
 
             var affixdata = new AffixData(Affix.AffixSlot.crafted_jewel_unique);
             affixdata.randomizeTier(data.getRarity());

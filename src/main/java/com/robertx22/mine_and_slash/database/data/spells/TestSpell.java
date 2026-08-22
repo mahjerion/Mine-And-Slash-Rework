@@ -21,8 +21,7 @@ public class TestSpell {
     public static Spell get() {
         return
                 SpellBuilder.of(USE_THIS_EXACT_ID, PlayStyle.INT, SpellConfiguration.Builder.instant(7, 20)
-                                        .setSwingArm()
-                                        .applyCastSpeedToCooldown(), "Poison Ball",
+                                        .setSwingArm(), "Poison Ball",
                                 Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.SELF_DAMAGE))
                         .weaponReq(CastingWeapon.MAGE_WEAPON)
 

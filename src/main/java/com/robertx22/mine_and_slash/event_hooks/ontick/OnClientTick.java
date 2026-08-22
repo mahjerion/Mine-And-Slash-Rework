@@ -78,6 +78,10 @@ public class OnClientTick {
                         .getCooldowns()
                         .onTicksPass(1);
 
+                // charges are a wait like a cooldown and are drawn with the same bar, so they have to
+                // advance locally too. the server ticks 5 at a time every 5 ticks and corrects us
+                Load.player(player).spellCastingData.charges.onTicks(player, 1);
+
                 if (!mc.isPaused()) {
                     Load.player(player).spellCastingData
                             .onTimePass(player); // ticks spells on client

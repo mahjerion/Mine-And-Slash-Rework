@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.localization.Itemtips;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -31,6 +32,9 @@ public class RequirementBlock extends AbstractTextBlock {
     @Nullable
     public List<? extends Component> customComponents;
 
+    // set for offhand-capable weapons: warn that a two handed main hand suppresses their stats
+    private boolean warnIfMainHandIsTwoHanded = false;
+
     public RequirementBlock() {
         super();
     }
@@ -53,6 +57,11 @@ public class RequirementBlock extends AbstractTextBlock {
 
     public RequirementBlock setLevelRequirement(@Nullable Integer levelRequirement) {
         this.levelRequirement = levelRequirement;
+        return this;
+    }
+
+    public RequirementBlock warnIfMainHandIsTwoHanded(boolean warn) {
+        this.warnIfMainHandIsTwoHanded = warn;
         return this;
     }
 
@@ -82,6 +91,15 @@ public class RequirementBlock extends AbstractTextBlock {
                     .map(req -> req.GetTooltipString(this.levelRequirement, this.playerData))
                     .ifPresent(x -> x.forEach(builder::add));
 
+        }
+
+        // only shown while the player actually holds a two hander, so one handed weapons sitting in
+        // a chest don't all carry the warning
+        if (warnIfMainHandIsTwoHanded && DualWieldUtils.mainHandBlocksOffhandWeapon(ClientOnly.getPlayer())) {
+            builder.add(Component.literal("")
+                    .append(Component.literal(NO_ICON).withStyle(ChatFormatting.RED, ChatFormatting.BOLD))
+                    .append(Component.literal(" "))
+                    .append(Itemtips.TWO_HANDED_BLOCKS_OFFHAND.locName().withStyle(ChatFormatting.DARK_GRAY)));
         }
 
         if (this.customComponents != null) {

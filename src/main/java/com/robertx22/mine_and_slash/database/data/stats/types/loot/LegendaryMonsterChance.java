@@ -38,7 +38,7 @@ public class LegendaryMonsterChance extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Legendary Monster Chance";
+        return "Increased Legendary Monster Chance";
     }
 
     private static class SingletonHolder {

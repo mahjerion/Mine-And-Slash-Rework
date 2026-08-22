@@ -38,7 +38,7 @@ public class WatcherEyeFind extends Stat {
 
     @Override
     public String locNameForLangFile() {
-        return "Watcher Eye Find";
+        return "Increased Watcher Eye Find";
     }
 
     private static class SingletonHolder {

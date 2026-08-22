@@ -25,16 +25,16 @@ public class JewelrySuffixes implements ExileRegistryInit {
 
         ElementalAffixBuilder.start()
                 .guid(x -> x.guidName + "_ele_dmg_jewelry")
-                .add(Elements.Fire, "Of Embers")
-                .add(Elements.Cold, "Of Ice")
-                .add(Elements.Shadow, "Of Venom")
+                .add(Elements.Fire, "of Embers")
+                .add(Elements.Cold, "of Ice")
+                .add(Elements.Shadow, "of Venom")
                 .stats(x -> Arrays.asList(new StatMod(3, 10, OffenseStats.ELEMENTAL_DAMAGE.get(x), ModType.FLAT)))
                 .includesTags(SlotTags.jewelry_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_the_philosopher")
-                .Named("Of the Philosopher")
+                .Named("of the Philosopher")
                 .coreStat(DatapackStats.INT)
                 .includesTags(SlotTags.jewelry_family, SlotTags.armor_family)
                 .excludesTags(SlotTags.weapon_family)
@@ -42,7 +42,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("of_the_titan")
-                .Named("Of the Titan")
+                .Named("of the Titan")
                 .coreStat(DatapackStats.STR)
                 .includesTags(SlotTags.jewelry_family, SlotTags.armor_family)
                 .excludesTags(SlotTags.weapon_family)
@@ -50,7 +50,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("of_the_wind")
-                .Named("Of the Wind")
+                .Named("of the Wind")
                 .coreStat(DatapackStats.DEX)
                 .includesTags(SlotTags.jewelry_family, SlotTags.armor_family)
                 .excludesTags(SlotTags.weapon_family)
@@ -59,7 +59,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
 
 
         AffixBuilder.Normal("of_the_sky")
-                .Named("Of the Sky")
+                .Named("of the Sky")
                 .stats(new StatMod(0.1F, 0.4F, AllAttributes.getInstance(), ModType.FLAT))
                 .includesTags(SlotTags.jewelry_family)
                 .Weight(50)
@@ -67,7 +67,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("of_the_troll")
-                .Named("Of The Troll")
+                .Named("of the Troll")
                 .stats(new StatMod(3, 15, HealthRegen.getInstance(), ModType.PERCENT))
                 .includesTags(SlotTags.jewelry_family, SlotTags.armor_family, SlotTags.shield)
                 .Weight(200)
@@ -75,7 +75,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("of_spirit_markings")
-                .Named("Of Spirit Markings")
+                .Named("of Spirit Markings")
                 .stats(new StatMod(3, 15, ManaRegen.getInstance(), ModType.PERCENT))
                 .includesTags(SlotTags.jewelry_family, SlotTags.armor_family, SlotTags.tome)
                 .Weight(200)
@@ -83,7 +83,7 @@ public class JewelrySuffixes implements ExileRegistryInit {
                 .Build();
 
         AffixBuilder.Normal("of_azure_skies")
-                .Named("Of Azure Skies")
+                .Named("of Azure Skies")
                 .stats(new StatMod(3, 15, MagicShieldRegen.getInstance(), ModType.PERCENT))
                 .includesTags(SlotTags.jewelry_family, SlotTags.tome)
                 .Weight(200)
@@ -92,14 +92,14 @@ public class JewelrySuffixes implements ExileRegistryInit {
 
 
         AffixBuilder.Normal("of_treasure")
-                .Named("Of Treasure")
+                .Named("of Treasure")
                 .stats(new StatMod(3, 10F, TreasureQuality.getInstance(), ModType.FLAT))
                 .includesTags(SlotTags.jewelry_family)
                 .Suffix()
                 .Build();
 
         AffixBuilder.Normal("of_affluence")
-                .Named("Of Affluence")
+                .Named("of Affluence")
                 .stats(new StatMod(3, 10, TreasureQuantity.getInstance(), ModType.FLAT))
                 .includesTags(SlotTags.jewelry_family)
                 .Suffix()

@@ -201,6 +201,13 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         return (int) Math.ceil(ctx.event.data.getNumber(EventData.COOLDOWN_TICKS).number);
     }
 
+
+    // the recovery this cast imposes, on this skill and on every other one. already scaled by the
+    // cast/attack/channel speed stats, so read it from the event and not from config
+    public final int getCastSpeedTicks(SpellCastContext ctx) {
+        return (int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_SPEED_TICKS).number);
+    }
+
     public final int getChargeCooldownTicks(SpellCastContext ctx) {
         return (int) Math.ceil(ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number);
     }
@@ -290,12 +297,20 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         if (ene > 0) {
             list.add(Words.ENE_COST.locName(ene).withStyle(ChatFormatting.GREEN));
         }
+        int recovery = getCastSpeedTicks(ctx);
+
         if (config.usesCharges()) {
             list.add(Words.MAX_CHARGES.locName(config.charges).withStyle(ChatFormatting.YELLOW));
-            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(config.charge_regen)).withStyle(ChatFormatting.YELLOW));
-        } else {
+            // read from the event, not from config - Cooldown Reduction shortens charge regen too, and
+            // getChargeCooldownTicks is the same value spendCharge actually stores on the charge
+            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(getChargeCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
+        } else if (getCooldownTicks(ctx) > recovery) {
+            // recovery is the floor of every skill's cycle now, so only a genuinely longer cooldown
+            // is worth a line. printing both on the ~250 skills where they match is just noise
             list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(getCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
         }
+
+        list.add(Words.RECOVERY.locName(tooltipFormatTicksAsSeconds(recovery)).withStyle(ChatFormatting.YELLOW));
 
         int casttime = getCastTimeTicks(ctx);
 

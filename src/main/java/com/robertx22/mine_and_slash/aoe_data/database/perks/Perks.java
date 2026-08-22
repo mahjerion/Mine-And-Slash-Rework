@@ -15,6 +15,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.generated.BonusAtt
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalPenetration;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.PhysicalToElement;
+import com.robertx22.mine_and_slash.database.data.stats.types.offense.DualWieldEffectiveness;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.SkillDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.EnergyRegen;
@@ -77,7 +78,7 @@ public class Perks implements ExileRegistryInit {
         PerkBuilder.bigStat(new OptScaleExactStat(2, BlockChance.getInstance(), ModType.FLAT));
 
 
-        PerkBuilder.stat(new OptScaleExactStat(3, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
+        PerkBuilder.stat(new OptScaleExactStat(6, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
 
         PerkBuilder.stat(new OptScaleExactStat(-2, SpellChangeStats.MANA_COST.get(), ModType.FLAT));
         PerkBuilder.bigStat(new OptScaleExactStat(-5, SpellChangeStats.MANA_COST.get(), ModType.FLAT));
@@ -102,6 +103,12 @@ public class Perks implements ExileRegistryInit {
         PerkBuilder.bigStat(new OptScaleExactStat(4, ResourceStats.LIFESTEAL.get(), ModType.FLAT));
         PerkBuilder.bigStat(new OptScaleExactStat(4, ResourceStats.SPELL_LIFESTEAL.get(), ModType.FLAT));
 
+
+        PerkBuilder.stat(new OptScaleExactStat(3, OffenseStats.DUAL_WIELD_DAMAGE.get(), ModType.FLAT));
+        PerkBuilder.bigStat(new OptScaleExactStat(10, OffenseStats.DUAL_WIELD_DAMAGE.get(), ModType.FLAT));
+
+        PerkBuilder.stat(new OptScaleExactStat(10, DualWieldEffectiveness.getInstance(), ModType.FLAT));
+        PerkBuilder.bigStat(new OptScaleExactStat(25, DualWieldEffectiveness.getInstance(), ModType.FLAT));
 
         PerkBuilder.stat(new OptScaleExactStat(3, OffenseStats.AREA_DAMAGE.get(), ModType.FLAT));
         PerkBuilder.stat(new OptScaleExactStat(3, SpellChangeStats.INCREASED_AREA.get(), ModType.FLAT));

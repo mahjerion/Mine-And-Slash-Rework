@@ -47,6 +47,7 @@ public enum Itemtips implements IAutoLocName {
     LEVEL_TIP("Level %1$s"),
 
     LEVEL_REQ("Player Level Min: %1$s"), // todo is this too long
+    TWO_HANDED_BLOCKS_OFFHAND("No Off-Hand stats: your Main Hand weapon is Two-Handed"),
     Stat_Req("%1$s Min: "),
     POTENTIAL("Potential: %1$s"),
     QUALITY("Quality: %1$s%%"),

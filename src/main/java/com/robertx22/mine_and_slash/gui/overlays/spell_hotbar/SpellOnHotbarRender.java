@@ -24,6 +24,11 @@ import java.util.Locale;
 public class SpellOnHotbarRender {
     static int CHARGE_SIZE = 20;
 
+    // sits along the bottom edge of the icon, so it never fights the cooldown overlay, the key badge
+    // or the summon count for pixels
+    private static final int CHARGE_BAR_BG = 0xFF1C1C1C;
+    private static final int CHARGE_BAR_FILL = 0xFF4FC3F7;
+
     private static final ResourceLocation CHARGE = new ResourceLocation(SlashRef.MODID, "textures/gui/spells/charges/full_charges.png");
     private static final ResourceLocation LOW_CHARGE = new ResourceLocation(SlashRef.MODID, "textures/gui/spells/charges/low_charges.png");
     private static final ResourceLocation NO_CHARGE = new ResourceLocation(SlashRef.MODID, "textures/gui/spells/charges/no_charges.png");
@@ -100,13 +105,13 @@ public class SpellOnHotbarRender {
 
                 if (spell.config.charges > 0) {
                     drawCharge(xs, ys);
-                } else {
-
-                    CooldownsData cds = Load.Unit(mc.player).getCooldowns();
-                    float percent = (float) cds.getCooldownTicks(spell.GUID()) / (float) cds.getNeededTicks(spell.GUID());
-                    drawCooldown(gui, percent, xs, ys);
-
                 }
+
+                // the global cooldown darkens every skill, not only the one just cast, so a shared
+                // bind visibly plays its skills one at a time instead of looking frozen
+                drawCooldown(gui);
+
+                drawChargeRecharge(gui);
 
                 SummonedData summonedData = Load.player(mc.player).getSummonedData();
                 if (summonedData.getSummonedAmount(spell.GUID()) > 0) {
@@ -139,18 +144,6 @@ public class SpellOnHotbarRender {
             if (charges != spell.config.charges) {
                 chargeTex = LOW_CHARGE;
             }
-        }
-
-        if (charges == 0) {
-            float needed = (float) spell.config.charge_regen;
-            float currentticks = (float) Load.player(mc.player)
-                    .spellCastingData.charges.getCurrentTicksChargingOf(spell.config.charge_name);
-
-            float ticksleft = needed - currentticks;
-
-            float percent = ticksleft / needed;
-            percent = Mth.clamp(percent, 0, 1F);
-            drawCooldown(gui, percent, xs, ys);
         }
 
         int chargex = x - 2;
@@ -199,22 +192,57 @@ public class SpellOnHotbarRender {
         RenderSystem.disableBlend(); // enables transparency
     }
 
-    private void drawCooldown(GuiGraphics gui, float percent, int xs, int ys) {
-        percent = Mth.clamp(percent, 0, 1F);
+    // a charge coming back is progress, not a lock: with a charge in hand the skill is usable, so it
+    // must not darken the icon. it gets its own slim meter under the icon rather than sharing the
+    // cooldown bar, where a 30 second regen next to a 2 second recovery just looked frozen
+    private void drawChargeRecharge(GuiGraphics gui) {
+        if (spell.config.charges < 1) {
+            return;
+        }
+        var charges = Load.player(mc.player).spellCastingData.charges;
+        float left = charges.getRechargeFractionLeft(spell.config.charge_name, spell.config.charge_regen);
+        if (left <= 0) {
+            return; // nothing on its way back
+        }
+
+        // fills toward the next charge, so it reads as progress rather than as another cooldown
+        int barY = this.y + 15;
+        int filled = (int) (16 * Mth.clamp(1F - left, 0F, 1F));
+
+        gui.fill(this.x, barY, this.x + 16, barY + 1, CHARGE_BAR_BG);
+        if (filled > 0) {
+            gui.fill(this.x, barY, this.x + filled, barY + 1, CHARGE_BAR_FILL);
+        }
+    }
+
+    private void drawCooldown(GuiGraphics gui) {
 
         CooldownsData cds = Load.Unit(mc.player).getCooldowns();
 
-        if (cds.getCooldownTicks(spell.GUID()) > 1) {
-            gui.blit(COOLDOWN_TEX, this.x, this.y, 0, 0, 16, (int) (16 * percent), 16, 16);
-        } else {
-            return;
+        // whichever wait has the most left is the one the player actually cares about. the global
+        // cooldown is in here so every slot darkens together, not just the skill that was cast
+        float percent = 0F;
+        int longestLeft = 0;
+
+        for (String id : new String[]{spell.GUID(), CooldownsData.GLOBAL_COOLDOWN}) {
+            int left = cds.getCooldownTicks(id);
+            int need = cds.getNeededTicks(id);
+            // compared by time left, not by fraction. the two waits have different lengths, so a full
+            // 2s recovery is a smaller wait than a 25s cooldown at 40% - picking by fraction made the
+            // long one snap back to full and then halt where it had been
+            if (left > 1 && need > 0 && left > longestLeft) {
+                longestLeft = left;
+                percent = (float) left / (float) need;
+            }
         }
 
-        int cdsec = cds.getCooldownTicks(spell.GUID()) / 20;
-        if (cdsec > 1) {
-            String stext = cdsec + "s";
-            //  GuiUtils.renderScaledText(gui, xs + 27, ys + 10, 0.75F, stext, ChatFormatting.YELLOW);
+        if (percent > 0) {
+            drawCooldownBar(gui, percent);
         }
+    }
+
+    private void drawCooldownBar(GuiGraphics gui, float percent) {
+        gui.blit(COOLDOWN_TEX, this.x, this.y, 0, 0, 16, (int) (16 * Mth.clamp(percent, 0, 1F)), 16, 16);
     }
 
     private void drawSummoned(int x, int y, int summonedAmount) {

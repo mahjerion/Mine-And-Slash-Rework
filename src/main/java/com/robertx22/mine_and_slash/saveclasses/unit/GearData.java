@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.saveclasses.unit;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
-import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
@@ -11,6 +10,7 @@ import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.GearStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.tags.all.SlotTags;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.RepairUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,12 @@ public class GearData {
     public ItemStack stack;
     public GearItemData gear;
     public EquipmentSlot slot;
-    public int percentStatUtilization = 100; // todo if stats change stat utilization, they need special handling..
+    public float percentStatUtilization = 100;
+
+    // a dual wielded offhand weapon only grants a share of its stats, and Dual-Wield Effectiveness
+    // scales that share. that stat isn't known yet while gear is being cached, so this flags the case
+    // for CachedEntityStats, which redoes the gear pass if the following stat calc disagrees with it.
+    public boolean usesDualWieldEffectiveness = false;
 
     public List<StatContext> cachedStats = new ArrayList<>();
 
@@ -48,7 +53,7 @@ public class GearData {
                 calcStatUtilization(data);
 
                 List<ExactStatData> stats = gear.GetAllStats(ex);
-                if (percentStatUtilization != 100) {
+                if (percentStatUtilization != 100F) {
                     // multi stats like for offfhand weapons
                     float multi = percentStatUtilization / 100F;
                     stats.forEach(s -> s.multiplyBy(multi));
@@ -85,10 +90,9 @@ public class GearData {
                 if (gear.GetBaseGearType().getTags().contains(SlotTags.offhand_family)) {
                     percentStatUtilization = 100;
                 }
-                if (gear.GetBaseGearType().weaponType().can_dual_wield) {
-                    if (gear.GetBaseGearType().getTags().contains(SlotTags.weapon_family)) {
-                        percentStatUtilization = ServerContainer.get().PERC_OFFHAND_WEP_STAT.get();
-                    }
+                if (DualWieldUtils.isDualWieldWeapon(gear)) {
+                    percentStatUtilization = DualWieldUtils.getOffhandStatPercent(data);
+                    usesDualWieldEffectiveness = true;
                 }
             }
         }
@@ -120,7 +124,8 @@ public class GearData {
         if (type.isWeapon()) {
             if (type.weaponType().can_dual_wield) {
                 if (slot == EquipmentSlot.OFFHAND) {
-                    return true;
+                    // a two handed mainhand takes up both hands, so the offhand weapon isn't wielded
+                    return !DualWieldUtils.mainHandBlocksOffhandWeapon(data.getEntity());
                 }
             }
 

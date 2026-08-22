@@ -17,7 +17,7 @@ public class WeaponOrNecklaceSpecific implements ExileRegistryInit {
                 .Prefix()
                 .Build();
         AffixBuilder.Normal("of_brutality")
-                .Named("Of Brutality")
+                .Named("of Brutality")
                 .stats(new StatMod(6, 50, OffenseStats.CRIT_DAMAGE.get(), ModType.FLAT))
                 .includesTags(SlotTags.necklace, SlotTags.weapon_family)
                 .Suffix()
@@ -30,7 +30,7 @@ public class WeaponOrNecklaceSpecific implements ExileRegistryInit {
                 .Prefix()
                 .Build();
         AffixBuilder.Normal("of_devastation")
-                .Named("Of Devastation")
+                .Named("of Devastation")
                 .stats(new StatMod(6, 50, OffenseStats.CRIT_DAMAGE.get(), ModType.FLAT))
                 .includesTags(SlotTags.necklace, SlotTags.mage_weapon)
                 .Suffix()

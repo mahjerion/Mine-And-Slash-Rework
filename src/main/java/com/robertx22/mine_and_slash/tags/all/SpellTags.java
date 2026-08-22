@@ -8,7 +8,7 @@ public class SpellTags {
     public static SpellTag not_affected_by_cast_speed = SpellTag.of("not_affected_by_cast_speed");
     public static SpellTag melee = SpellTag.of("melee");
     public static SpellTag magic = SpellTag.of("magic");
-    public static SpellTag weapon_skill = SpellTag.of("weapon_skill");
+    public static SpellTag weapon_skill = SpellTag.of("weapon_skill", "Weapon");
     public static SpellTag movement = SpellTag.of("movement");
     public static SpellTag damage = SpellTag.of("damage");
     public static SpellTag minion_explode = SpellTag.of("minion_explode");
@@ -39,7 +39,6 @@ public class SpellTags {
     public static SpellTag SHATTER = SpellTag.of("shatter");
     public static SpellTag MISSILE = SpellTag.of("missile");
     public static SpellTag channel = SpellTag.of("channel");
-    public static SpellTag CAST_TO_CD = SpellTag.of("cast_speed_to_cooldown");
 
     public static void init() {
 

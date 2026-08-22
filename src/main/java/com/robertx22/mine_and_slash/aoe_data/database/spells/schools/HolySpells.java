@@ -213,8 +213,7 @@ public class HolySpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(SHOOTING_STAR, PlayStyle.INT, SpellConfiguration.Builder.instant(10, 20)
-                                .setSwingArm().setTracksNonSelfAllies().setTrackingRadius(5)
-                                .applyCastSpeedToCooldown(), "Shooting Star",
+                                .setSwingArm().setTracksNonSelfAllies().setTrackingRadius(5), "Shooting Star",
                         Arrays.asList(SpellTags.projectile, SpellTags.heal))
                 .manualDesc("Shoots a star that heals allies for " + SpellCalcs.SHOOTING_STAR.getLocDmgTooltip() + " health on hit.")
 

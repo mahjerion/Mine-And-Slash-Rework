@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.saveclasses.spells;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.util.ExplainedResult;
 import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimations;
+import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
@@ -216,16 +217,6 @@ public class SpellCastingData {
         }
     }
 
-    private static class SpellInputBufferEntry {
-        public int number;
-        public int ticksLeft;
-
-        public SpellInputBufferEntry(int number) {
-            this.number = number;
-            this.ticksLeft = 5;
-        }
-    }
-
     public int castTickLeft = 0;
     public int castTicksDone = 0;
     public int spellTotalCastTicks = 0;
@@ -233,30 +224,41 @@ public class SpellCastingData {
     public Boolean casting = false;
     public ChargeData charges = new ChargeData();
 
-    // Spell inputs to continuously attempt
-    transient List<SpellInputBufferEntry> spellInputBuffer = new LinkedList<>();
-    // The hotbar index of the spell key the client is holding
-    transient int spellInputNumber = -1;
+    // How long a press stays castable after the key comes back up. Short on purpose: it exists so a
+    // tap is not swallowed, not so a cast can happen once the player has moved on
+    static final int INPUT_BUFFER_TICKS = 5;
+
+    // Every hotbar slot whose key is down right now, one bit each. the server fills this in from the
+    // input packet, the client from its own keybinds, so both agree on when a channel is still held
+    public transient int heldSlotMask = 0;
+    // The client's copy of the above. it cannot live on this object: PlayerData.loadOrBlank replaces
+    // spellCastingData wholesale on every sync, which zeroes every transient field on it. that made
+    // the client read "no keys held" for a tick and falsely end its own channel
+    public static int CLIENT_HELD_SLOT_MASK = 0;
+    // Slots pressed within the last INPUT_BUFFER_TICKS, whether or not they are still down
+    transient int bufferedSlotMask = 0;
+    transient int bufferTicks = 0;
+    // Where the next slot walk starts. advancing it past every cast is what makes a key bound to
+    // several skills play the next one instead of the same one forever
+    transient int rotationSlot = 0;
     // How many ticks left without another packet before we stop casting
     transient int spellInputTimeoutTicks = 0;
-    // The hotbar index of the spell key held right now. the server fills this in from the input packet,
-    // the client from its own keybinds, so both sides agree on when a channel is still being held.
-    public transient int heldSpellInput = -1;
 
     // called from the client keybind poll. the server goes through onSpellInputPressed instead
-    public void setHeldSpellInput(int number) {
-        this.heldSpellInput = number;
+    public void setHeldSlots(int heldMask) {
+        CLIENT_HELD_SLOT_MASK = heldMask;
     }
 
-    public void onSpellInputPressed(int number) {
-        if (number != -1 && number != spellInputNumber) {
-            // Cap size to prevent DoS
-            if (spellInputBuffer.size() < 10) {
-                spellInputBuffer.add(new SpellInputBufferEntry(number));
-            }
+    public void onSpellInputPressed(int heldMask) {
+        // a key that just went down is remembered for a moment even after it comes back up. without
+        // this a tap whose press and release land in the same server tick is lost entirely, and a
+        // press arriving a few ticks before the global cooldown opens is thrown away
+        int justPressed = heldMask & ~heldSlotMask;
+        if (justPressed != 0) {
+            bufferedSlotMask |= justPressed;
+            bufferTicks = INPUT_BUFFER_TICKS;
         }
-        spellInputNumber = number;
-        heldSpellInput = number;
+        heldSlotMask = heldMask;
         spellInputTimeoutTicks = 8;
     }
 
@@ -269,7 +271,7 @@ public class SpellCastingData {
             return false;
         }
 
-        if (cds.isOnCooldown("global_cooldown")) {
+        if (cds.isOnCooldown(CooldownsData.GLOBAL_COOLDOWN)) {
             return false;
         }
 
@@ -290,11 +292,11 @@ public class SpellCastingData {
                 if (!spell.getConfig().isChannel()) {
                     // a channel pays per pulse in tryChannelPulse, so letting go early costs nothing
                     spell.spendResources(c);
+                    // no cooldown is armed here. the cast is not recovery - it is the skill happening,
+                    // and isCasting() already holds the input for its whole duration. everything the
+                    // cast costs is armed once by onSpellCastFinished, at the end
+                    Load.Unit(player).sync.setDirty();
                 }
-
-                // Limit global cooldown to spell cooldown to allow rapid fire spells
-                int gcd = Math.min(GameBalanceConfig.get().GLOBAL_COOLDOWN_TICKS, spell.getCooldownTicks(c));
-                cds.setOnCooldown("global_cooldown", gcd);
 
                 data.playerDataSync.setDirty();
                 return true;
@@ -312,8 +314,13 @@ public class SpellCastingData {
     }
 
     public boolean tryStartSpellCast(Player player, int number) {
-        Spell spell = Load.player(player).getSkillGemInventory().getHotbarGem(number).getSpell();
-        return tryStartSpellCast(player, spell);
+        // getHotbarGem returns null on its internal exception path, and this runs every tick from
+        // processSpellInputs - outside the try in onTimePass, so an NPE here eats the rest of the tick
+        var gem = Load.player(player).getSkillGemInventory().getHotbarGem(number);
+        if (gem == null) {
+            return false;
+        }
+        return tryStartSpellCast(player, gem.getSpell());
     }
 
     public void cancelCast(LivingEntity entity) {
@@ -322,12 +329,19 @@ public class SpellCastingData {
                 SpellCastContext ctx = new SpellCastContext(entity, 0, getSpellBeingCast());
 
                 Spell spell = getSpellBeingCast();
-                if (spell != null) {
-                    int cd = ctx.spell.getCooldownTicks(ctx);
+                if (spell != null && !entity.level().isClientSide) {
+                    // server side only, same reason as setCooldownOnCasted
+                    int cd = Math.max(ctx.spell.getCooldownTicks(ctx), ctx.spell.getCastSpeedTicks(ctx));
                     Load.Unit(entity)
                             .getCooldowns()
                             .setOnCooldown(spell.GUID(), cd);
 
+                    // an interrupted cast still owes the recovery, but only from where it stopped -
+                    // the gate was holding the remaining cast time and that time is not being spent
+                    Load.Unit(entity)
+                            .getCooldowns()
+                            .setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, ctx.spell.getCastSpeedTicks(ctx));
+                    Load.Unit(entity).sync.setDirty();
                 }
 
                 this.calcSpell = null;
@@ -356,19 +370,29 @@ public class SpellCastingData {
         return isCasting() && spell != null && spell.getConfig().isChannel();
     }
 
-    // a channel keeps going only while the key that started it is still down
+    // a channel keeps going only while a key that maps to it is still down
     private boolean isChannelInputHeld(LivingEntity entity) {
-        // heldSpellInput comes off a client packet, so it is not necessarily a real hotbar index
-        if (heldSpellInput < 0 || heldSpellInput >= GemInventoryHelper.MAX_SKILL_GEMS || !(entity instanceof Player p)) {
-            return false;
-        }
         Spell channelled = getSpellBeingCast();
-        if (channelled == null) {
+        if (channelled == null || !(entity instanceof Player p)) {
             return false;
         }
-        var gem = Load.player(p).getSkillGemInventory().getHotbarGem(heldSpellInput);
-        Spell held = gem == null ? null : gem.getSpell();
-        return held != null && held.GUID().equals(channelled.GUID());
+        // the client tracks its own keybinds in a static, the server gets the mask from the packet
+        int mask = entity.level().isClientSide ? CLIENT_HELD_SLOT_MASK : heldSlotMask;
+
+        // any held slot holding this same skill counts. tracking a single slot instead would drop the
+        // channel the moment a shared bind reported one of the other skills on that key
+        var inv = Load.player(p).getSkillGemInventory();
+        for (int slot = 0; slot < GemInventoryHelper.MAX_SKILL_GEMS; slot++) {
+            if ((mask & (1 << slot)) == 0) {
+                continue;
+            }
+            var gem = inv.getHotbarGem(slot);
+            Spell held = gem == null ? null : gem.getSpell();
+            if (held != null && held.GUID().equals(channelled.GUID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // the server decides whether a channel may keep going. the client keeps predicting pulses until the
@@ -414,36 +438,47 @@ public class SpellCastingData {
         if (spellInputTimeoutTicks > 0) {
             spellInputTimeoutTicks--;
         } else {
-            // client stopped responding, don't cast forever
-            spellInputNumber = -1;
-            heldSpellInput = -1;
+            heldSlotMask = 0; // client went quiet
+        }
+        if (bufferTicks > 0) {
+            bufferTicks--;
+        } else {
+            bufferedSlotMask = 0;
         }
 
-        // Prune input buffer
-        for (Iterator<SpellInputBufferEntry> iterator = spellInputBuffer.iterator(); iterator.hasNext(); ) {
-            if (iterator.next().ticksLeft-- == 0) {
-                iterator.remove();
-            }
-        }
-
-        // a running channel owns the input. going through tryStartSpellCast here would fail with
-        // ALREADY_CASTING every tick and spam the cast failed message. onTimePass ends the channel once
-        // the held key stops matching it, and any buffered input then fires on the tick after that.
-        if (isChannelling()) {
+        // an input lives exactly as long as the key is down, plus INPUT_BUFFER_TICKS. nothing is
+        // stored beyond that, so a skill can never fire from a press the player already let go of
+        int mask = heldSlotMask | bufferedSlotMask;
+        if (mask == 0) {
             return;
         }
 
-        // See if any buffered inputs succeed
-        for (Iterator<SpellInputBufferEntry> iterator = spellInputBuffer.iterator(); iterator.hasNext(); ) {
-            if (tryStartSpellCast(player, iterator.next().number)) {
-                iterator.remove();
-                return;
-            }
+        // a cast in progress owns the input. going through tryStartSpellCast here would fail with
+        // ALREADY_CASTING every tick and spam the cast failed message. this covers instant skills too,
+        // where the gate below is empty because there is no cast time to hold it
+        if (isCasting()) {
+            return;
         }
 
-        // If not, try held input
-        if (spellInputNumber != -1) {
-            tryStartSpellCast(player, spellInputNumber);
+        // one skill per global cooldown. this is what turns a shared bind from a simultaneous volley
+        // into a rotation, and it also covers the cast time of whatever is already going off
+        if (Load.Unit(player).getCooldowns().isOnCooldown(CooldownsData.GLOBAL_COOLDOWN)) {
+            return;
+        }
+
+        // walk the live slots once from the rotation point, so a key holding several skills plays the
+        // next one rather than all of them, and a slot that cannot cast right now yields to the next
+        for (int i = 0; i < GemInventoryHelper.MAX_SKILL_GEMS; i++) {
+            int slot = (rotationSlot + i) % GemInventoryHelper.MAX_SKILL_GEMS;
+            if ((mask & (1 << slot)) == 0) {
+                continue;
+            }
+            if (tryStartSpellCast(player, slot)) {
+                rotationSlot = (slot + 1) % GemInventoryHelper.MAX_SKILL_GEMS;
+                bufferedSlotMask &= ~(1 << slot); // this press has been spent
+                return;
+            }
+            // it could not be cast at all - own cooldown, no mana, no charges, mid swing
         }
     }
 
@@ -692,7 +727,16 @@ public class SpellCastingData {
 
     public void setCooldownOnCasted(SpellCastContext ctx) {
 
-        int cd = ctx.spell.getCooldownTicks(ctx);
+        // cooldowns are the server's to decide - the client only ticks down and draws what it is sent.
+        // canCast already refuses client side, so the only way we get here on the client is a
+        // mispredicted channel end, and letting that stamp a cooldown flashes the whole hotbar
+        if (ctx.caster.level().isClientSide) {
+            return;
+        }
+
+        // a skill is never ready again before its own recovery is over, even when its cooldown is
+        // shorter. the long cooldown skills are the only ones where cooldown_ticks still decides
+        int cd = Math.max(ctx.spell.getCooldownTicks(ctx), ctx.spell.getCastSpeedTicks(ctx));
 
         ctx.data.getCooldowns().setOnCooldown(ctx.spell.GUID(), cd);
 
@@ -719,9 +763,16 @@ public class SpellCastingData {
         setCooldownOnCasted(ctx);
         this.casting = false;
 
-        if (ctx.spell.getConfig().isChannel() && ctx.caster instanceof ServerPlayer p) {
-            // the client predicts the pulse loop, so it needs to hear the channel is over right away
-            Load.player(p).playerDataSync.setDirty();
+        if (!ctx.caster.level().isClientSide) {
+            // recovery starts when the cast ends, never when it began - a cast time is time spent, not
+            // time recovered. a channel follows the same rule, its cast simply runs until the key is up
+            ctx.data.getCooldowns().setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, ctx.spell.getCastSpeedTicks(ctx));
+            ctx.data.sync.setDirty(); // same reason as in tryStartSpellCast
+
+            if (ctx.spell.getConfig().isChannel() && ctx.caster instanceof ServerPlayer p) {
+                // the client predicts the pulse loop, so it needs to hear the channel is over right away
+                Load.player(p).playerDataSync.setDirty();
+            }
         }
 
         /*

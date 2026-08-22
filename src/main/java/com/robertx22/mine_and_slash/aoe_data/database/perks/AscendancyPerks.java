@@ -113,7 +113,7 @@ public class AscendancyPerks {
             );
             x.createPerk(4, "Arcane Surge",
                     new OptScaleExactStat(10, OffenseStats.TOTAL_DAMAGE.get(), ModType.MORE),
-                    new OptScaleExactStat(20, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
+                    new OptScaleExactStat(40, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT)
             );
 
 
@@ -252,7 +252,7 @@ public class AscendancyPerks {
 
             x.createPerk(3, "Swift Death",
                     new OptScaleExactStat(20, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.summon), ModType.MORE),
-                    new OptScaleExactStat(50, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.summon), ModType.FLAT)
+                    new OptScaleExactStat(100, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.summon), ModType.FLAT)
             );
 
             x.createPerk(4, "Flesh Army",

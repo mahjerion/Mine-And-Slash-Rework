@@ -27,8 +27,7 @@ public class SongSpells implements ExileRegistryInit {
     public void registerAll() {
 
         SpellBuilder.of(POWER_CHORD, PlayStyle.INT, SpellConfiguration.Builder.instant(7, 15)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "Power Chord",
+                                .setSwingArm(), "Power Chord",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.song, SpellTags.PHYSICAL))
                 .manualDesc(
                         "Throw out a ball of music, dealing " + SpellCalcs.POWER_CHORD.getLocDmgTooltip()
@@ -44,8 +43,7 @@ public class SongSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(RITARDANDO, PlayStyle.INT, SpellConfiguration.Builder.instant(7, 100)
-                                .setSwingArm()
-                                .applyCastSpeedToCooldown(), "Ritardando",
+                                .setSwingArm(), "Ritardando",
                         Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.song, SpellTags.PHYSICAL))
                 .manualDesc(
                         "Throw out a slow wave of sound, exploding upon contact and dealing " + SpellCalcs.RITARDANDO.getLocDmgTooltip()
@@ -61,8 +59,7 @@ public class SongSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(RESONANCE, PlayStyle.INT, SpellConfiguration.Builder.multiCast(7, 20, 30, 3)
-                                .setSwingArm().setChargesAndRegen("resonance", 3, 20 * 30)
-                                .applyCastSpeedToCooldown(), "Resonance",
+                                .setSwingArm().setChargesAndRegen("resonance", 3, 20 * 30), "Resonance",
                         Arrays.asList(SpellTags.projectile, SpellTags.area, SpellTags.damage, SpellTags.song, SpellTags.PHYSICAL))
                 .manualDesc(
                         "Throw out a ball of music, dealing " + SpellCalcs.RESONANCE.getLocDmgTooltip()

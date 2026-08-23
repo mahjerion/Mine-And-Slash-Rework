@@ -11,7 +11,14 @@ public class IsNotOnCooldownCondition extends StatCondition {
     String cd_id = "";
 
     public IsNotOnCooldownCondition(String cdid) {
-        super("is_" + cdid + "_not_on_cd", "is_not_on_cd");
+        this("is_" + cdid + "_not_on_cd", cdid);
+    }
+
+    // id and key are separate so the key can move without renaming the entry. the proc conditions
+    // keep their historical ids while pointing at ProcSpellEffect.procCooldownKey, which is what
+    // keeps every stat that references them by id from needing to change
+    public IsNotOnCooldownCondition(String id, String cdid) {
+        super(id, "is_not_on_cd");
         this.cd_id = cdid;
     }
 

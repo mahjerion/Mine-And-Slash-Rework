@@ -213,14 +213,29 @@ public class SpellBuilder {
         return this;
     }
 
+    // recovery is the floor of every skill's cycle now, so a cooldown at or below it is dead data that
+    // getEffectiveCooldownTicks already ignores. worse, it caps what Cast Speed alone can reach, because
+    // cooldown only floors at 20% of base while recovery floors at GLOBAL_COOLDOWN_TICKS - so a cast
+    // speed build with no Cooldown Reduction was stuck at the base cooldown.
+    // 0 means "no cooldown", so a non-zero cooldown_ticks always means a genuinely longer one.
+    // done here and not in SpellConfiguration.Builder because cast_speed_ticks is not final until the
+    // whole builder chain is over - setCastSpeedTicks and setChargesAndRegen both still move it
+    private void normalizeCooldown() {
+        if (spell.config.cooldown_ticks <= spell.config.cast_speed_ticks) {
+            spell.config.cooldown_ticks = 0;
+        }
+    }
+
     public Spell build() {
         Objects.requireNonNull(spell);
+        normalizeCooldown();
         this.spell.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         return spell;
     }
 
     public Spell buildForEffect() {
         Objects.requireNonNull(spell);
+        normalizeCooldown();
         return spell;
     }
 }

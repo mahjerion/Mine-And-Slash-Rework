@@ -45,4 +45,13 @@ public class SummonedData {
         summonedTypes.remove(spell);
         return true;
     }
+
+    public boolean clear() {
+        if (summonedTypes.isEmpty()) {
+            return false;
+        }
+
+        summonedTypes.clear();
+        return true;
+    }
 }

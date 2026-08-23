@@ -10,7 +10,6 @@ import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EffectEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
-import net.minecraft.world.entity.player.Player;
 
 public class ProcSpellEffect extends StatEffect {
 
@@ -21,7 +20,16 @@ public class ProcSpellEffect extends StatEffect {
     EffectSides target = EffectSides.Target;
 
     public boolean use_resource_costs = true;
-    
+
+    // a proc tracks its own cooldown under a key of its own, never the spell's. a proc of a skill the
+    // player also has socketed must not lock them out of casting it, grey its hotbar icon, or spend
+    // its charges - all of which happened while procs shared the spell's cooldown slot.
+    // note this key is not a registered spell id, so tickSpellCooldowns skips it and a cooldown
+    // refresh skill cannot wipe a proc guard
+    public static String procCooldownKey(String spellId) {
+        return "proc_" + spellId;
+    }
+
 
     public ProcSpellEffect(String spellId, PositionSource pos) {
         super("proc_spell_" + spellId, "proc_spell");
@@ -49,6 +57,15 @@ public class ProcSpellEffect extends StatEffect {
         ctx.calcData.summon_triggered = event.data.getBoolean(EventData.IS_SUMMON_ATTACK);
 
         var unit = Load.Unit(SO);
+        String cdKey = procCooldownKey(spell.GUID());
+
+        // ALWAYS CHECK THIS BEFORE ACTUALLY CASTING THE PROC SPELL.
+        // it also has to come before the resource spend below - a proc that is still on cooldown must
+        // not pay for a cast it is about to bail out of
+        if (unit.getCooldowns().isOnCooldown(cdKey)) {
+            return;
+        }
+
         if (use_resource_costs) {
             if (!unit.getResources().hasEnough(spell.getManaCostCtx(ctx))) {
                 return;
@@ -59,20 +76,14 @@ public class ProcSpellEffect extends StatEffect {
             spell.spendResources(ctx);
         }
 
+        // always set the cooldown first, it is the only guard against a proc procing itself. one path
+        // for every caster - proc pacing is a property of the spell, not of who triggered it.
+        // proc_cooldown_ticks is read raw so no cast speed or cooldown stat can move a proc's rate
+        unit.getCooldowns().setOnCooldown(cdKey, spell.config.proc_cooldown_ticks);
+
         var c = SpellCtx.onCast(SO, ctx.calcData);
         c.setPositionSource(pos);
         c.target = TA;
-
-        // ALWAYS CHECK THIS BEFORE ACTUALLY CASTING THE PROC SPELL
-        if (Load.Unit(event.source).getCooldowns().isOnCooldown(spell.GUID())) {
-            return;
-        }
-        if (event.source instanceof Player p) {
-            // always set the cooldown first
-            Load.player(p).spellCastingData.setCooldownOnCasted(ctx);
-        } else {
-            Load.Unit(event.source).getCooldowns().setOnCooldown(spell.GUID(), spell.getCooldownTicks(ctx));
-        }
 
         // THIS GOES LAST!!! If it's above in might create a stackoverflow
         spell.attached.onCast(c);

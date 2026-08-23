@@ -454,6 +454,12 @@ public class PlayerData implements ICap {
         }
     }
 
+    public void clearSummons() {
+        if (summonedData.clear()) {
+            this.playerDataSync.setDirty();
+        }
+    }
+
     public static <OBJ> OBJ loadOrBlank(Class theclass, OBJ newobj, CompoundTag nbt, String loc, OBJ blank) {
         try {
             OBJ data = LoadSave.Load(theclass, newobj, nbt, loc);

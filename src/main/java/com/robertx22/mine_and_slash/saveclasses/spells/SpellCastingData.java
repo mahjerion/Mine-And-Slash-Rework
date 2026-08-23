@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWeapon;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
@@ -109,14 +110,16 @@ public class SpellCastingData {
 
         before.removeAll(hotbar.values());
 
-        // a skill that left the bar takes its self buffs with it. otherwise a player casts every
-        // buff skill in turn, swaps each one out for the next and ends up with all of them at once
+        // a skill that left the bar takes its self buffs and its summons with it. otherwise a player
+        // casts every buff skill in turn, swaps each one out for the next and ends up with all of
+        // them at once - and the same trick collects every pet in the game onto one hotbar slot
         if (!before.isEmpty() && p != null && !p.level().isClientSide) {
             var statuses = Load.Unit(p).getStatusEffectsData();
 
             boolean removed = false;
             for (String unequipped : before) {
                 removed |= statuses.removeSelfBuffsOfSpell(p, unequipped);
+                SummonPetAction.despawnSummonsOfSpell(p, unequipped);
             }
             if (removed) {
                 Load.Unit(p).sync.setDirty();
@@ -331,7 +334,7 @@ public class SpellCastingData {
                 Spell spell = getSpellBeingCast();
                 if (spell != null && !entity.level().isClientSide) {
                     // server side only, same reason as setCooldownOnCasted
-                    int cd = Math.max(ctx.spell.getCooldownTicks(ctx), ctx.spell.getCastSpeedTicks(ctx));
+                    int cd = ctx.spell.getEffectiveCooldownTicks(ctx);
                     Load.Unit(entity)
                             .getCooldowns()
                             .setOnCooldown(spell.GUID(), cd);
@@ -734,9 +737,8 @@ public class SpellCastingData {
             return;
         }
 
-        // a skill is never ready again before its own recovery is over, even when its cooldown is
-        // shorter. the long cooldown skills are the only ones where cooldown_ticks still decides
-        int cd = Math.max(ctx.spell.getCooldownTicks(ctx), ctx.spell.getCastSpeedTicks(ctx));
+        // the long cooldown skills are the only ones where cooldown_ticks still decides
+        int cd = ctx.spell.getEffectiveCooldownTicks(ctx);
 
         ctx.data.getCooldowns().setOnCooldown(ctx.spell.GUID(), cd);
 

@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerBuffData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -75,10 +76,15 @@ public class CharStorageData {
     // two separate stores hold them. PlayerData.buff is the food/elixir side (meals, seafood, alchemy
     // elixirs) plus the vanilla effect that only exists to draw its hud icon. EntityData.statusEffects is
     // the exile effect side - auras, stances, shrine buffs, anything a spell put on you.
+    //
+    // summons are per player too, and CharacterData.load swaps the hotbar wholesale rather than going
+    // through setHotbar, so nothing else would notice their skill just left the bar.
     private static void clearTemporaryBuffs(Player p) {
 
         var data = Load.player(p);
         var unit = Load.Unit(p);
+
+        SummonPetAction.despawnAllSummons(p);
 
         data.buff = new PlayerBuffData();
         for (PlayerBuffData.Type type : PlayerBuffData.Type.values()) {

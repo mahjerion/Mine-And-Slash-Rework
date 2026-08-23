@@ -22,7 +22,7 @@ public class ProcSpells {
     public static String BLOOD_EXPLOSION = "blood_explosion";
 
     public static void init() {
-        SpellBuilder.of(BLOOD_EXPLOSION, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0),
+        SpellBuilder.of(BLOOD_EXPLOSION, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0).setProcCooldownTicks(20 * 1),
                         "Blood Explosion", Arrays.asList(SpellTags.area, SpellTags.damage, SpellTags.PHYSICAL))
                 .manualDesc("Causes a bloody explosion dealing " + SpellCalcs.BLOOD_EXPLOSION.getLocDmgTooltip(Elements.Physical))
                 .onCast(PartBuilder.playSound(SoundEvents.GLASS_BREAK, 1D, 1D))
@@ -36,7 +36,7 @@ public class ProcSpells {
 
                 .build();
 
-        SpellBuilder.of(PROFANE_EXPLOSION, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0),
+        SpellBuilder.of(PROFANE_EXPLOSION, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0).setProcCooldownTicks(20 * 1),
                         "Profane Explosion", Arrays.asList(SpellTags.area, SpellTags.damage, SpellTags.CHAOS))
                 .manualDesc("Causes an explosion dealing " + SpellCalcs.PROFANE_EXPLOSION.getLocDmgTooltip(Elements.Shadow))
                 .onCast(PartBuilder.playSound(SoundEvents.GLASS_BREAK, 1D, 1D))
@@ -50,7 +50,7 @@ public class ProcSpells {
 
                 .build();
 
-        SpellBuilder.of(IGNITE_EXPLOSION, PlayStyle.STR, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0),
+        SpellBuilder.of(IGNITE_EXPLOSION, PlayStyle.STR, SpellConfiguration.Builder.nonInstant(0, 20 * 1, 0).setProcCooldownTicks(20 * 1),
                         "Ignite Explosion", Arrays.asList(SpellTags.area, SpellTags.damage, SpellTags.FIRE))
                 .manualDesc("Causes an fiery explosion dealing " + SpellCalcs.IGNITE_EXPLOSION.getLocDmgTooltip(Elements.Fire))
                 .onCast(PartBuilder.playSound(SoundEvents.GLASS_BREAK, 1D, 1D))

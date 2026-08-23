@@ -208,6 +208,12 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         return (int) Math.ceil(ctx.event.data.getNumber(EventData.CAST_SPEED_TICKS).number);
     }
 
+    // a skill is never ready again before its own recovery is over, even when its cooldown is shorter.
+    // every path that stamps a spell's own cooldown goes through here so they cannot drift apart
+    public final int getEffectiveCooldownTicks(SpellCastContext ctx) {
+        return Math.max(getCooldownTicks(ctx), getCastSpeedTicks(ctx));
+    }
+
     public final int getChargeCooldownTicks(SpellCastContext ctx) {
         return (int) Math.ceil(ctx.event.data.getNumber(EventData.CHARGE_COOLDOWN_TICKS).number);
     }
@@ -466,6 +472,11 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             for (ExactStatData stat : getStats(info.player)) {
                 list.addAll(stat.GetTooltipString());
             }
+        }
+
+        if (info.hasShiftDown) {
+            list.add(Words.PROC_RECHARGE.locName(tooltipFormatTicksAsSeconds(config.proc_cooldown_ticks))
+                    .withStyle(ChatFormatting.GRAY));
         }
 
         MutableComponent taglist = ExileTooltipUtils.joinMutableComps(this.config.tags.getTags(SpellTag.SERIALIZER).stream().map(x -> x.locName()).iterator(), Gui.COMMA_SEPARATOR.locName());

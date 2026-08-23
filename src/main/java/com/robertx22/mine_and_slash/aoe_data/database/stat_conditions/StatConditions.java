@@ -18,6 +18,7 @@ import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.ThreatGenType;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.ProcSpellEffect;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.*;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
@@ -73,7 +74,10 @@ public class StatConditions implements ExileRegistryInit {
             ProcSpells.BLOOD_EXPLOSION,
             WaterSpells.BONE_SHATTER_PROC
 
-    ), x -> new IsNotOnCooldownCondition(x));
+            // these gate proc stats, so they must read the proc's own cooldown key and not the spell's -
+            // otherwise they would block a proc whenever the player had just cast that skill themselves.
+            // the id keeps its historical shape so every stat referencing it stays untouched
+    ), x -> new IsNotOnCooldownCondition("is_" + x + "_not_on_cd", ProcSpellEffect.procCooldownKey(x)));
 
 
     public static DataHolder<EffectCtx, StatCondition> TARGET_HAS_EFFECT = new DataHolder<>(Arrays.asList(ModEffects.BONE_CHILL), x -> new IsUnderExileEffect(x, EffectSides.Target));

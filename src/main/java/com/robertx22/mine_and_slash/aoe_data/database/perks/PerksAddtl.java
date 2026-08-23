@@ -123,14 +123,14 @@ public class PerksAddtl implements ExileRegistryInit {
         PerkBuilder.stat("trap_area_dmg", new OptScaleExactStat(3, OffenseStats.TRAP_AREA_DAMAGE.get(), ModType.FLAT));
         PerkBuilder.bigStat("trap_area_dmg_big", new OptScaleExactStat(10, OffenseStats.TRAP_AREA_DAMAGE.get(), ModType.FLAT));
 
-        PerkBuilder.stat("trap_cdr", new OptScaleExactStat(2, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.trap), ModType.FLAT));
-        PerkBuilder.bigStat("trap_cdr_big", new OptScaleExactStat(10, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.trap), ModType.FLAT));
+        PerkBuilder.stat("trap_cdr", new OptScaleExactStat(4, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.trap), ModType.FLAT));
+        PerkBuilder.bigStat("trap_cdr_big", new OptScaleExactStat(20, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.trap), ModType.FLAT));
 
         PerkBuilder.stat("song_damage", new OptScaleExactStat(3, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
         PerkBuilder.bigStat("song_damage_big", new OptScaleExactStat(10, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
 
-        PerkBuilder.stat("song_cdr", new OptScaleExactStat(2, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
-        PerkBuilder.bigStat("song_cdr_big", new OptScaleExactStat(10, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
+        PerkBuilder.stat("song_cdr", new OptScaleExactStat(5, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
+        PerkBuilder.bigStat("song_cdr_big", new OptScaleExactStat(12, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT));
 
         PerkBuilder.stat("song_effect", new OptScaleExactStat(6, EffectStats.EFFECT_OF_BUFFS_GIVEN_PER_EFFECT_TAG.get(EffectTags.song), ModType.FLAT));
         PerkBuilder.bigStat("song_effect_big", new OptScaleExactStat(20, EffectStats.EFFECT_OF_BUFFS_GIVEN_PER_EFFECT_TAG.get(EffectTags.song), ModType.FLAT));
@@ -144,8 +144,8 @@ public class PerksAddtl implements ExileRegistryInit {
         PerkBuilder.stat("totem_damage", new OptScaleExactStat(3, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
         PerkBuilder.bigStat("totem_damage_big", new OptScaleExactStat(10, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
 
-        PerkBuilder.stat("totem_cdr", new OptScaleExactStat(2, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
-        PerkBuilder.bigStat("totem_cdr_big", new OptScaleExactStat(10, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
+        PerkBuilder.stat("totem_cdr", new OptScaleExactStat(5, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
+        PerkBuilder.bigStat("totem_cdr_big", new OptScaleExactStat(12, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
 
         PerkBuilder.stat("totem_duration", new OptScaleExactStat(6, SpellChangeStats.TOTEM_DURATION.get(), ModType.FLAT));
         PerkBuilder.bigStat("totem_duration_big", new OptScaleExactStat(20, SpellChangeStats.TOTEM_DURATION.get(), ModType.FLAT));

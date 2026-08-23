@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.spells.components.actions;
 
+import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.capability.entity.SummonedPetData;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
@@ -13,6 +14,7 @@ import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class SummonPetAction extends SpellAction {
     public SummonPetAction() {
@@ -27,6 +30,10 @@ public class SummonPetAction extends SpellAction {
     }
 
     public static int INFINITE_DURATION = -1;
+
+    // how far out a summon is still found by the cap check and by the despawns below. a pet that
+    // wandered further than this is out of reach either way, and dies off the registry check instead
+    public static final int SEARCH_RADIUS = 100;
 
     @Override
     public void tryActivate(Collection<LivingEntity> targets, SpellCtx ctx, MapHolder data) {
@@ -88,11 +95,58 @@ public class SummonPetAction extends SpellAction {
         return (int) (duration * ctx.calculatedSpellData.data.getNumber(EventData.DURATION_MULTI, 1).number);
     }
 
+    // a skill that leaves the hotbar takes its minions with it, the same reason it takes its self
+    // buffs - see SpellCastingData.setHotbar. otherwise you summon off one slot, swap the gem out
+    // and summon again, ending up with every pet in the game running off a single hotbar slot.
+    public static void despawnSummonsOfSpell(Player p, String spellId) {
+        if (spellId == null || spellId.isEmpty() || p.level().isClientSide) {
+            return;
+        }
+
+        despawn(p, x -> spellId.equals(x.spell));
+
+        // the scan above is blind past its radius, so drop the registry entry too - any stray
+        // outside it fails SummonedPetData.registeredWithOwner on its next check and self destructs
+        Load.player(p).removeSummonType(spellId);
+    }
+
+    public static void despawnAllSummons(Player p) {
+        if (p.level().isClientSide) {
+            return;
+        }
+
+        despawn(p, x -> true);
+        Load.player(p).clearSummons();
+    }
+
+    private static void despawn(Player p, Predicate<SummonedPetData> predicate) {
+        boolean any = false;
+
+        for (SummonEntity en : EntityFinder.start(p, SummonEntity.class, p.blockPosition()).searchFor(AllyOrEnemy.all).radius(SEARCH_RADIUS).build()) {
+            if (en.getOwner() != p) {
+                continue;
+            }
+
+            var data = Load.Unit(en).summonedPetData;
+
+            if (!predicate.test(data)) {
+                continue;
+            }
+
+            data.discard(en);
+            any = true;
+        }
+
+        if (any) {
+            SoundUtils.playSound(p, SoundEvents.GENERIC_DEATH);
+        }
+    }
+
     public static void updatePlayerSummons(LivingEntity caster, SummonType cappedType, int typeCap) {
         ArrayList<NearbySummon> summonsNearby = new ArrayList<>();
         ArrayList<NearbySummon> ofCappedType = new ArrayList<>();
 
-        for (SummonEntity en : EntityFinder.start(caster, SummonEntity.class, caster.blockPosition()).searchFor(AllyOrEnemy.all).radius(100).build()) {
+        for (SummonEntity en : EntityFinder.start(caster, SummonEntity.class, caster.blockPosition()).searchFor(AllyOrEnemy.all).radius(SEARCH_RADIUS).build()) {
             if (en.getOwner() != caster) {
                 continue;
             }

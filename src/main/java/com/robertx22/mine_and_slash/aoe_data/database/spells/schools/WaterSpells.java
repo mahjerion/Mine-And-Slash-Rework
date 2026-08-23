@@ -68,7 +68,7 @@ public class WaterSpells implements ExileRegistryInit {
                 .build();
 
 
-        SpellBuilder.of(BONE_SHATTER_PROC, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 3, 0),
+        SpellBuilder.of(BONE_SHATTER_PROC, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(0, 20 * 3, 0).setProcCooldownTicks(20 * 3),
                         "Bone Shatter", Arrays.asList(SpellTags.area, SpellTags.damage, SpellTags.COLD, SpellTags.PHYSICAL))
                 .manualDesc("Shatters the ice dealing " + SpellCalcs.SHATTER_PROC.getLocDmgTooltip(Elements.Cold) + " and same amount of Physical Damage.")
                 .onCast(PartBuilder.playSound(SoundEvents.GLASS_BREAK, 1D, 1D))

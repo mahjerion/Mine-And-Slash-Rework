@@ -215,6 +215,8 @@ public enum Words implements IAutoLocName {
     ENE_COST("Energy Cost: %1$s"),
     COOLDOWN("Cooldown: %1$ss"),
     RECOVERY("Recovery: %1$ss"),
+    // deliberately not "Proc Cooldown" - Cooldown Reduction does not shorten this one
+    PROC_RECHARGE("Proc Recharge: %1$ss"),
     MAX_CHARGES("Max Charges: %1$s"),
     CHARGE_REGEN("Charge Regen: %1$ss"),
 

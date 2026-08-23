@@ -19,6 +19,10 @@ public class SpellConfiguration {
     public static final int DEFAULT_CAST_SPEED_TICKS = 40;
     public static final int MIN_CAST_SPEED_TICKS = 20;
 
+    // the default gap between two procs of the same skill. a second is short enough to feel responsive
+    // and long enough that an on hit proc cannot fire every swing
+    public static final int DEFAULT_PROC_COOLDOWN_TICKS = 20;
+
     // skills used to lean on tiny cooldowns for their feel, so a 1-3 tick cooldown means "as fast as
     // the game allows" rather than a deliberate 0.05s recovery. clamp those up to the 1s floor.
     public static int seedCastSpeedFromCooldown(int cooldownTicks) {
@@ -44,6 +48,11 @@ public class SpellConfiguration {
     // the post-cast recovery of this skill, and the global cooldown it puts every other skill on.
     // this is the number the cast speed stats scale, not cooldown_ticks
     public int cast_speed_ticks = DEFAULT_CAST_SPEED_TICKS;
+    // how often a proc may trigger this skill. deliberately independent of both numbers above: a proc
+    // is not a player cast, so neither Cast Speed nor Cooldown Reduction should change how often it
+    // fires. procs used to borrow cooldown_ticks for this, which breaks once skills stop having one.
+    // 0 means no limit at all. read straight off config, never through the stat event
+    public int proc_cooldown_ticks = DEFAULT_PROC_COOLDOWN_TICKS;
     private String style = PlayStyle.STR.id;
     public TagList<SpellTag> tags = new TagList<>();
     public int tracking_radius = 5;
@@ -74,6 +83,11 @@ public class SpellConfiguration {
 
     public SpellConfiguration setCastSpeedTicks(int ticks) {
         this.cast_speed_ticks = ticks;
+        return this;
+    }
+
+    public SpellConfiguration setProcCooldownTicks(int ticks) {
+        this.proc_cooldown_ticks = ticks;
         return this;
     }
 
@@ -108,7 +122,10 @@ public class SpellConfiguration {
         this.charge_regen = ticksToRegen;
         this.charges = charges;
         this.charge_name = name;
-        this.cooldown_ticks = 3; // we force the cooldown to be the same for all spells with charges so it feels consistent and good
+        // a charge skill is paced by its charges and its recovery, never by a cooldown of its own.
+        // SpellBuilder.normalizeCooldown zeroes anything at or below recovery, so this lands at 0 -
+        // it stays here so the intent is readable at the call site rather than only at build time
+        this.cooldown_ticks = 3;
         this.cast_speed_ticks = CHARGE_CAST_SPEED_TICKS; // charge skills recover faster than everything else
         return this;
     }

@@ -83,7 +83,7 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
     // how much of a player's general skill speed a channelled skill counts. Channel Speed is added on
     // top at full weight, so this is the dial between "channels ignore your gear" and "Channel Speed
     // is pointless"
-    public double CHANNEL_GENERAL_SPEED_TRANSFER = 0.5;
+    public double CHANNEL_GENERAL_SPEED_TRANSFER = 1.0;
 
     public double CRAFTED_GEAR_POTENTIAL_MULTI = 0.5;
 

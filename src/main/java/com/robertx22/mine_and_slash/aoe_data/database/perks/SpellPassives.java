@@ -138,7 +138,7 @@ public class SpellPassives implements ExileRegistryInit {
         PerkBuilder.passive(ARMOR_PER_MANA, 8, new OptScaleExactStat(0.2f, DatapackStats.ARMOR_PER_MANA));
         PerkBuilder.passive(ELECTRIFY_CHANCE, 8, new OptScaleExactStat(4, new AilmentChance(Ailments.ELECTRIFY)));
         PerkBuilder.passive(TOTEM_DMG, 8, new OptScaleExactStat(5, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
-        PerkBuilder.passive(TOTEM_CDR, 8, new OptScaleExactStat(3, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
+        PerkBuilder.passive(TOTEM_CDR, 8, new OptScaleExactStat(5, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT));
 
         // Warrior
         PerkBuilder.passive(HEALTH_WAR, 8, new OptScaleExactStat(4, Health.getInstance(), ModType.PERCENT));

@@ -107,6 +107,17 @@ public class AutoFireBows {
                 return;
             }
 
+            // a channel skill (eg Arrow Barrage) bound to the same right-click key is already using
+            // this hold as its own input and firing its own arrows through the spell system. without
+            // this check auto fire treats the same hold as "redraw the bow" too, so every pulse of the
+            // channel gets a free vanilla shot stacked on top of it. isCasting() is the client's
+            // predicted cast state (ticked in OnClientTick), so this reads true the instant the channel
+            // starts rather than waiting on a server round trip
+            if (Load.player(player).spellCastingData.isCasting()) {
+                ticksAtFullDraw = 0;
+                return;
+            }
+
             Draw draw = drawStateOf(mc, player, stack);
 
             if (!mc.options.keyUse.isDown()) {

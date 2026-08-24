@@ -155,8 +155,8 @@ public class PerksAddtl implements ExileRegistryInit {
         PerkBuilder.stat("banner_damage", new OptScaleExactStat(3, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
         PerkBuilder.bigStat("banner_damage_big", new OptScaleExactStat(10, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
 
-        PerkBuilder.stat("banner_cdr", new OptScaleExactStat(2, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
-        PerkBuilder.bigStat("banner_cdr_big", new OptScaleExactStat(10, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
+        PerkBuilder.stat("banner_cdr", new OptScaleExactStat(4, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
+        PerkBuilder.bigStat("banner_cdr_big", new OptScaleExactStat(20, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.banner), ModType.FLAT));
 
         PerkBuilder.stat("banner_duration", new OptScaleExactStat(6, SpellChangeStats.BANNER_DURATION.get(), ModType.FLAT));
         PerkBuilder.bigStat("banner_duration_big", new OptScaleExactStat(20, SpellChangeStats.BANNER_DURATION.get(), ModType.FLAT));

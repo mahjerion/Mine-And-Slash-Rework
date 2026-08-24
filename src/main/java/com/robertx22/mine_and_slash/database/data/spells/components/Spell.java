@@ -355,8 +355,8 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         list.add(ExileText.emptyLine().get());
 
         if (this.config.isChannel()) {
-            list.add(ExileText.emptyLine().get());
             list.add(Words.CHANNELLED.locName().withStyle(ChatFormatting.RED));
+            list.add(ExileText.emptyLine().get());
         }
 
         if (this.config.times_to_cast > 1) {

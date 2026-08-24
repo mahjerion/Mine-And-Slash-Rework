@@ -423,9 +423,33 @@ public class DamageEvent extends EffectEvent {
                         // multiply dmg by saved charge value
                     }
                 }
+
+                disableIframesForFastRangedAttacks();
             }
         }
 
+    }
+
+    // a high attack speed bow/crossbow build (auto fire, Quickdraw) can land consecutive shots well
+    // under vanilla's ~10 tick mob invulnerability window, so follow-up arrows silently deal no
+    // damage instead of missing visibly - the same "bouncing off" symptom disableMobIframes() already
+    // fixes for spells/DoTs that call target.hurt() directly (see the attackInfo == null branch in
+    // activate()). that existing bypass never reaches arrows, because arrow damage takes the
+    // attackInfo != null / overridesDamage branch instead, which lets vanilla's own already-running
+    // hurt() call reach its unmodified iframe check on its own. this runs earlier in that same call -
+    // initBeforeActivating happens before activate(), both before vanilla ever reaches its check - so
+    // zeroing it here lands in time
+    private void disableIframesForFastRangedAttacks() {
+        if (!data.getWeaponType().isProjectile) {
+            return;
+        }
+        if (target instanceof Player) {
+            return; // keep vanilla iframes for PvP
+        }
+        if (!CompatConfig.get().disableMobIframes()) {
+            return;
+        }
+        target.invulnerableTime = 0;
     }
 
     public boolean areBothPlayers() {
@@ -945,6 +969,12 @@ public class DamageEvent extends EffectEvent {
                     x.calcSourceEffects = !takenAs;
 
                     x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
+                    // a conversion/added flat event re-runs the whole source stat sweep, so every proc
+                    // stat fires on it again. without carrying this, converted damage from a summon (or
+                    // from a spell a summon's hit procced) reads as a hit the player landed themselves
+                    // and slips past every "is_summon_attack is false" guard - which is the only thing
+                    // stopping summon procs from summoning more summons forever.
+                    x.data.setBoolean(EventData.IS_SUMMON_ATTACK, this.data.getBoolean(EventData.IS_SUMMON_ATTACK));
                     x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
                     x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
                     x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);

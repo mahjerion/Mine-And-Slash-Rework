@@ -137,7 +137,7 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
 
         PerkBuilder.gameChanger("wandering_bard", "Wandering Bard",
                 new OptScaleExactStat(50, EffectStats.EFFECT_OF_BUFFS_GIVEN_PER_EFFECT_TAG.get(EffectTags.song), ModType.FLAT),
-                new OptScaleExactStat(33, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT),
+                new OptScaleExactStat(50, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.song), ModType.FLAT),
                 new OptScaleExactStat(-50, EffectStats.EFFECT_DURATION_YOU_CAST_PER_TAG.get(EffectTags.song), ModType.FLAT)
         );
 
@@ -164,7 +164,7 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
         );
 
         PerkBuilder.gameChanger("heretic", "Heretic",
-                new OptScaleExactStat(50, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT),
+                new OptScaleExactStat(100, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT),
                 new OptScaleExactStat(20, SpellChangeStats.TOTEM_DURATION.get(), ModType.FLAT),
                 new OptScaleExactStat(-50, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.weapon_skill), ModType.FLAT)
         );

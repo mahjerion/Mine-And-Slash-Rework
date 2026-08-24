@@ -84,7 +84,7 @@ public class AscendancyPerks {
 
             x.createPerk(5, "Curse Specialist",
                     new OptScaleExactStat(25, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.curse), ModType.MORE),
-                    new OptScaleExactStat(50, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.curse), ModType.FLAT)
+                    new OptScaleExactStat(50, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.curse), ModType.FLAT)
             );
             x.createPerk(6, "Chaotic Disposition",
                     new OptScaleExactStat(25, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Shadow), ModType.MORE),
@@ -119,7 +119,7 @@ public class AscendancyPerks {
 
             x.createPerk(5, "Totem Master",
                     new OptScaleExactStat(25, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.MORE),
-                    new OptScaleExactStat(25, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT)
+                    new OptScaleExactStat(50, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.totem), ModType.FLAT)
             );
             x.createPerk(6, "Tactical Genius",
                     new OptScaleExactStat(25, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.totem), ModType.MORE),
@@ -375,7 +375,7 @@ public class AscendancyPerks {
 
             x.createPerk(6, "Hunter's Chains",
                     new OptScaleExactStat(25, OffenseStats.DAMAGE_PER_SPELL_TAG.get(SpellTags.chaining), ModType.MORE),
-                    new OptScaleExactStat(25, SpellChangeStats.COOLDOWN_REDUCTION_PER_SPELL_TAG.get(SpellTags.chaining), ModType.FLAT)
+                    new OptScaleExactStat(50, SpellChangeStats.CAST_TIME_PER_SPELL_TAG.get(SpellTags.chaining), ModType.FLAT)
             );
 
         });

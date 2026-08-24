@@ -34,7 +34,7 @@ public class OnServerTick {
     public static AttributeModifier CASTING_SPEED_SLOW = new AttributeModifier(
             UUID.fromString("3fb10485-f309-128f-afc6-a23b0d6cf4c1"),
             BuiltInRegistries.ATTRIBUTE.getKey(Attributes.MOVEMENT_SPEED).toString(),
-            -0.5,
+            -0.25,
             AttributeModifier.Operation.MULTIPLY_TOTAL
     );
 

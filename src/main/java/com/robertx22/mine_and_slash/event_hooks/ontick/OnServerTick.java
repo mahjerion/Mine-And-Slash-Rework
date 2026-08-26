@@ -4,6 +4,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.profession.StationPacket;
 import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
 import com.robertx22.mine_and_slash.database.data.profession.screen.CraftingStationMenu;
@@ -77,6 +78,8 @@ public class OnServerTick {
 
                 playerData.spellCastingData.onTimePass(player);
                 unitdata.didStatCalcThisTickForPlayer = false;
+
+                MercenaryManager.onPlayerTick(player);
 
                 int age = player.tickCount;
 

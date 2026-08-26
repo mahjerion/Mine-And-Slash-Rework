@@ -2,10 +2,12 @@ package com.robertx22.mine_and_slash.capability.player.container;
 
 import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
 import com.robertx22.mine_and_slash.gui.inv_gui.InvGuiScreen;
+import com.robertx22.mine_and_slash.gui.screens.OpenSkillGems;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.library_of_exile.utils.TextUTIL;
 import net.minecraft.client.Minecraft;
@@ -28,7 +30,12 @@ public class SpellButton extends ImageButton {
 
     public SpellButton(int slot, int xPos, int yPos) {
         super(xPos, yPos, BUTTON_SIZE_X, BUTTON_SIZE_Y, 0, 0, BUTTON_SIZE_Y, SlashRef.guiId("empty_spell"), (button) -> {
-            Minecraft.getInstance().setScreen(new InvGuiScreen(GuiInventoryGrids.ofSelectableSpells(ClientOnly.getPlayer(), slot)));
+            // cancelling the pick goes back to the skill gem screen, not the hub. reopening it through
+            // OpenSkillGems is the same path the hub button takes, so the server closes and reopens the
+            // menu rather than being left holding a stale one
+            Minecraft.getInstance().setScreen(new InvGuiScreen(
+                    GuiInventoryGrids.ofSelectableSpells(ClientOnly.getPlayer(), slot),
+                    Words.Hotbar.locName(), () -> new OpenSkillGems().openContainer()));
         });
         this.slot = slot;
     }

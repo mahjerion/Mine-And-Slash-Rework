@@ -1,0 +1,124 @@
+package com.robertx22.mine_and_slash.database.data.stats.types.defense;
+
+import com.robertx22.library_of_exile.utils.RandomUtils;
+import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.database.data.stats.effects.base.BaseDamageEffect;
+import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
+import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
+import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
+import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.ShieldItem;
+
+public class BlockChance extends Stat {
+
+    public static String GUID = "block_chance";
+
+    // not a registered spell id on purpose, so tickSpellCooldowns skips it and a cooldown refresh
+    // skill cannot wipe the block guard
+    public static String BLOCK_CD = "block";
+
+    public static int BASE_BLOCK_COOLDOWN_TICKS = 20;
+    public static int MIN_BLOCK_COOLDOWN_TICKS = 5;
+
+    // Block Recovery is a frequency increase: +100% means the shield is back up twice as fast, so it
+    // divides the cooldown instead of subtracting from it
+    public static int getBlockCooldownTicks(EntityData target) {
+        float recovery = target.getUnit()
+                .getCalculatedStat(BlockRecovery.getInstance())
+                .getValue();
+
+        return Math.max(MIN_BLOCK_COOLDOWN_TICKS,
+                Math.round(BASE_BLOCK_COOLDOWN_TICKS / (1F + Math.max(-99F, recovery) / 100F)));
+    }
+
+    public static BlockChance getInstance() {
+        return BlockChance.SingletonHolder.INSTANCE;
+    }
+
+    @Override
+    public String locDescForLangFile() {
+        return "Chance to passively block a hit, taking no damage from it at all. Requires a shield in offhand. Blocked hits can't proc ailments like burn. Blocking has a 1 second cooldown, shortened by Block Recovery.";
+    }
+
+    private BlockChance() {
+        this.min = 0;
+        this.max = 75;
+        this.group = StatGroup.MAIN;
+
+        this.statEffect = new BlockChance.Effect();
+
+        this.format = ChatFormatting.BLUE.getName();
+
+    }
+
+    @Override
+    public String GUID() {
+        return GUID;
+    }
+
+    @Override
+    public Elements getElement() {
+        return Elements.Physical;
+    }
+
+    @Override
+    public boolean IsPercent() {
+        return true;
+    }
+
+    @Override
+    public String locNameForLangFile() {
+        return "Block Chance";
+    }
+
+    private static class Effect extends BaseDamageEffect {
+
+        @Override
+        public StatPriority GetPriority() {
+            return StatPriority.Damage.HIT_PREVENTION;
+        }
+
+        @Override
+        public EffectSides Side() {
+            return EffectSides.Target;
+        }
+
+        @Override
+        public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
+            float chance = data.getValue();
+            if (RandomUtils.roll(chance)) {
+                // a block negates the hit outright, the same way dodging does. this also stops the
+                // whole bonus element sweep before it starts (see DamageEvent.activate), so no
+                // converted or "taken as" part of the hit can leak through
+                effect.data.setHitAvoided(EventData.IS_BLOCKED);
+                effect.targetData.getCooldowns().setOnCooldown(BLOCK_CD, getBlockCooldownTicks(effect.targetData));
+            }
+            return effect;
+        }
+
+        @Override
+        public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
+            if (!effect.canAvoidHit()) {
+                return false;
+            }
+            // dodge and the raised shield resolve as avoidance too. don't spend the block cooldown
+            // on a hit that was already going to deal nothing
+            if (effect.data.isHitAvoided()) {
+                return false;
+            }
+            if (effect.targetData.getCooldowns().isOnCooldown(BLOCK_CD)) {
+                return false;
+            }
+            return effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg && effect.target.getOffhandItem().getItem() instanceof ShieldItem;
+        }
+    }
+
+    private static class SingletonHolder {
+        private static final BlockChance INSTANCE = new BlockChance();
+    }
+}

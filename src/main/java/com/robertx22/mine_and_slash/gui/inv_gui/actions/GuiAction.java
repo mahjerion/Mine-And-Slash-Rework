@@ -14,6 +14,8 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTy
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleMapLayoutSalvage;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.network.FriendlyByteBuf;
@@ -106,6 +108,12 @@ public abstract class GuiAction<T> implements IGUID {
         }
         for (Spell rw : ExileDB.Spells().getList()) {
             of(new PickSpellAction(rw));
+            of(new MercPickSkillAction(rw));
+        }
+        // the mercenary equip picker is keyed by player inventory slot - the action map is looked up
+        // by GUID on the server, so the slot has to be part of the id rather than extra data.
+        for (int i = 0; i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
+            of(new MercEquipAction(i));
         }
 
     }

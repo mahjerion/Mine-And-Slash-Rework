@@ -54,6 +54,13 @@ lightning_spear
 lightning_totem
 mage_circle
 magma_flower
+merc_fireball
+merc_frost_nova
+merc_gong_strike
+merc_mage_circle
+merc_meteor
+merc_pull
+merc_taunt
 meteor
 meteor_arrow
 minion_explosion

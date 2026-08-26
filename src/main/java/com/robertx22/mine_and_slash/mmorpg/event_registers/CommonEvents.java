@@ -3,6 +3,8 @@ package com.robertx22.mine_and_slash.mmorpg.event_registers;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.database.DatabaseCaches;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.reworked.NewDamageMain;
@@ -63,6 +65,16 @@ public class CommonEvents {
             x.put(SlashEntities.COLD_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.MAX_HEALTH, 15).build());
             x.put(SlashEntities.LIGHTNING_GOLEM.get(), Zombie.createAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.MAX_HEALTH, 15).build());
 
+            // max health here is only a seed - the mercenary's real pool comes from its Health stat,
+            // recalculated from its class profile and gear. speed matches the player's walk so it
+            // can actually keep up while following.
+            x.put(SlashEntities.MERCENARY.get(), Zombie.createAttributes()
+                    .add(Attributes.MOVEMENT_SPEED, 0.3)
+                    .add(Attributes.MAX_HEALTH, 20)
+                    .add(Attributes.ATTACK_DAMAGE, 1)
+                    .add(Attributes.FOLLOW_RANGE, 32)
+                    .build());
+
         });
 
 
@@ -104,6 +116,26 @@ public class CommonEvents {
         ForgeEvents.registerForgeEvent(LivingDeathEvent.class, event -> {
 
             if (event.getEntity() != null) {
+
+                // a mercenary kill is credited to its owner for everything vanilla: loot tables,
+                // advancements, and quest mods that watch kill credit. this fires before die(), which
+                // is where getKillCredit() and dropAllDeathLoot() read the field.
+                //
+                // note it deliberately does NOT make the owner the damage source, so the on-kill proc
+                // branch below still doesn't fire - the design wants participation, not on-kill stats.
+                if (event.getSource().getEntity() instanceof MercenaryEntity merc
+                        && merc.getOwner() instanceof Player owner
+                        && !(event.getEntity() instanceof Player)) {
+                    event.getEntity().setLastHurtByPlayer(owner);
+                }
+
+                // the mercenary itself died. it keeps its experience (design section 5) and comes back
+                // once its owner is out of combat.
+                if (event.getEntity() instanceof MercenaryEntity deadMerc && deadMerc.getOwner() instanceof Player owner) {
+                    Load.player(owner).mercs.spawnedId = null;
+                    MercenaryManager.requestRespawn(owner);
+                }
+
                 if (event.getSource().getEntity() instanceof Player p) {
                     LivingEntity target = event.getEntity();
                     if (!Load.Unit(target).getCooldowns().isOnCooldown("onkill")) {
@@ -195,6 +227,32 @@ public class CommonEvents {
                 ModErrors.print(e);
             }
         });
+
+        // LOWEST so this lands after Library-of-Exile's own Clone handler (ApiForgeEvents ->
+        // PlayerCapabilities.saveAllOnDeath), which rebuilds PlayerData through serializeNBT /
+        // deserializeNBT. mercs.spawnedId is transient - right for the world save, since the entity
+        // itself is never written there - but that same round trip is what a respawn goes through,
+        // so the new player came out with no handle on the mercenary still standing in the world.
+        // getMerc() and dismiss() both resolve through that id, so the old one became an orphan
+        // nothing could ever find and the tick spawned a second. Fires for the End portal too, where
+        // the player entity is likewise rebuilt without a death.
+        ForgeEvents.registerForgeEvent(PlayerEvent.Clone.class, event ->
+
+        {
+            try {
+                event.getOriginal().reviveCaps();
+
+                var from = Load.player(event.getOriginal()).mercs;
+                var to = Load.player(event.getEntity()).mercs;
+
+                to.spawnedId = from.spawnedId;
+                // carried too, so a mercenary that died just before its owner keeps its countdown
+                // instead of restarting it. blockedTicks is diagnostic only and may reset.
+                to.respawnTimer = from.respawnTimer;
+            } catch (Exception e) {
+                ModErrors.print(e);
+            }
+        }, EventPriority.LOWEST);
 
 
         ForgeEvents.registerForgeEvent(TickEvent.PlayerTickEvent.class, event ->

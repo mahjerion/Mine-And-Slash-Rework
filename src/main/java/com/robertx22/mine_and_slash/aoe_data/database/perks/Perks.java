@@ -77,6 +77,9 @@ public class Perks implements ExileRegistryInit {
         PerkBuilder.stat(new OptScaleExactStat(1, BlockChance.getInstance(), ModType.FLAT));
         PerkBuilder.bigStat(new OptScaleExactStat(2, BlockChance.getInstance(), ModType.FLAT));
 
+        PerkBuilder.stat(new OptScaleExactStat(5, BlockRecovery.getInstance(), ModType.FLAT));
+        PerkBuilder.bigStat(new OptScaleExactStat(15, BlockRecovery.getInstance(), ModType.FLAT));
+
 
         PerkBuilder.stat(new OptScaleExactStat(6, SpellChangeStats.CAST_SPEED.get(), ModType.FLAT));
 

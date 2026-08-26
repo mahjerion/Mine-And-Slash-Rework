@@ -31,6 +31,8 @@ public enum Chats implements IAutoLocName {
     NOT_MATCHING_GEAR_SLOT("Not the correct gear slot type."),
     ALREADY_HAS_SOUL("Item Already has a Soul."),
 
+    MERCENARIES_UNLOCKED("Word spreads! Mercenaries are now unlocked at the Hub."),
+
     NOT_ENOUGH_POINTS("No Points to Spend."),
     PERK_MAXED("Perk is maxed out, can't spend points anymore!"),
     MAX_2_CLASSES("You can't spend points in more than 2 classes."),
@@ -91,6 +93,8 @@ public enum Chats implements IAutoLocName {
     NO_DUPLICATE_AURA("You can't equip duplicate aura gems."),
     YOU_LACK_JEWEL_SLOTS("You lack jewel slots! You gain these typically from the Talent tree. You can use the search bar in the Talents screen to find them."),
     LACK_AURA_CAPACITY("You lack the Augment capacity to equip all these Augments."),
+
+    MERCENARY_LEVEL_UP("Mercenary reached level %1$s!"),
 
     CANT_EQUIP_THAT_MANY_SUPPORTS("You can't equip that many Support Gems! You can increase the number of slots by leveling the skill and by increasing your player level!."),
     CANT_USE_MULTIPLE_SAME_SUPPORTS("You can't use Multiples of those Support Gems."),

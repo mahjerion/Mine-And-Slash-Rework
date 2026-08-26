@@ -97,6 +97,7 @@
 
 "entity.mmorpg.boss_golem": "Corrupted Golem",
 "entity.mmorpg.auto_aim_skull": "Summoned Skull",
+"entity.mmorpg.mercenary": "Mercenary",
 
 "effect.mmorpg.food_health_regen": "Health Regen",
 "effect.mmorpg.food_mana_regen": "Mana Regen",

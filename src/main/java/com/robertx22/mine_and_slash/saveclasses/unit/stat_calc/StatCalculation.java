@@ -3,6 +3,14 @@ package com.robertx22.mine_and_slash.saveclasses.unit.stat_calc;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
+import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
+import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
+import com.robertx22.mine_and_slash.uncommon.stat_calculation.MercenaryStatUtils;
+import net.minecraft.world.item.ItemStack;
 import com.robertx22.mine_and_slash.database.data.item_set.EquippedSets;
 import com.robertx22.mine_and_slash.database.data.item_set.SetBonus;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
@@ -73,6 +81,9 @@ public class StatCalculation {
             PlayerData playerData = Load.player(p);
             gemstats.addAll(collectGemStats(p, data, playerData, skillGem));
             gemstats.addAll(collectSpellStats(p, data, playerData, spell));
+        } else if (entity instanceof MercenaryEntity merc) {
+            gemstats.addAll(collectMercGemStats(merc, data, skillGem));
+            gemstats.addAll(collectSpellStats(merc, data, spell));
         }
 
         InCalcStatContainer statCalc = new InCalcStatContainer();
@@ -180,23 +191,59 @@ public class StatCalculation {
     }
 
     private static List<StatContext> collectSpellStats(Player p, EntityData data, PlayerData playerData, Spell spell) {
+        return collectSpellStats(p, data, spell);
+    }
+
+    // the innate stats a skill gem grants while socketed. entity typed rather than player typed so a
+    // mercenary's equipped skills grant theirs too - Spell.getStats needs nothing player specific.
+    private static List<StatContext> collectSpellStats(LivingEntity en, EntityData data, Spell spell) {
         List<StatContext> statContexts = new ArrayList<>();
 
         if (spell != null) {
-            var stats = spell.getStats(p);
+            var stats = spell.getStats(en);
             if (!stats.isEmpty()) {
                 statContexts.add(new SimpleStatCtx(StatContext.StatCtxType.INNATE_SPELL, stats));
             }
 
             if (spell.config.usesSupportGemsFromAnotherSpell()) {
                 var other = spell.config.getSpellUsedForSuppGems();
-                var stats2 = other.getStats(p);
+                var stats2 = other.getStats(en);
 
                 if (!stats2.isEmpty()) {
                     statContexts.add(new SimpleStatCtx(StatContext.StatCtxType.INNATE_SPELL, stats2));
                 }
             }
 
+        }
+        return statContexts;
+    }
+
+    /**
+     * Support gems socketed under one of the mercenary's equipped skills. The mercenary equivalent of
+     * {@link #collectGemStats}: same SUPPORT_GEM context, read out of the mercenary's own inventory,
+     * and clipped to the slots its level has actually unlocked so a gem left in a slot that later
+     * locked (a level reset, a datapack change) stops contributing instead of silently counting.
+     */
+    private static List<StatContext> collectMercGemStats(MercenaryEntity merc, EntityData data, int skillSlot) {
+        List<StatContext> statContexts = new ArrayList<>();
+
+        if (skillSlot < 0 || skillSlot >= MercenaryClass.EQUIPPED_SKILLS) {
+            return statContexts;
+        }
+        MercenaryData mercData = merc.getMercData();
+        if (mercData == null) {
+            return statContexts;
+        }
+
+        int unlocked = mercData.getSupportSlots(skillSlot);
+        MyInventory inv = mercData.getSupports();
+
+        for (int i = 0; i < unlocked; i++) {
+            ItemStack stack = inv.getItem(MercenaryInventories.supportIndex(skillSlot, i));
+            SkillGemData gem = StackSaving.SKILL_GEM.loadFrom(stack);
+            if (gem != null && gem.getSupport() != null) {
+                statContexts.add(new SimpleStatCtx(StatContext.StatCtxType.SUPPORT_GEM, gem.getSupport().GetAllStats(data, gem)));
+            }
         }
         return statContexts;
     }
@@ -226,6 +273,11 @@ public class StatCalculation {
             if (omen != null) {
                 statContexts.add(omen);
             }
+        } else if (entity instanceof MercenaryEntity merc) {
+            // deliberately none of the mob paths below. a mercenary is a companion, not a monster -
+            // mob base stats, affixes, dimension multipliers and map tier scaling would all make its
+            // power a function of where it happens to be standing instead of its own gear and level.
+            statContexts.addAll(MercenaryStatUtils.getStats(merc));
         } else {
             statContexts.addAll(MobStatUtils.getMobBaseStats(data, entity));
 

@@ -118,18 +118,19 @@ public class SalvageMapFilterScreen extends BaseScreen {
                 ? Component.empty().append(Words.MapLayouts.locName()).append(Component.literal(" (" + (page + 1) + "/" + pages + ")"))
                 : Words.MapLayouts.locName();
 
-        publicAddButton(Button.builder(Words.SalvageBack.locName(), b -> ClientOnly.setScreen(new SalvageConfigScreen()))
-                .bounds(guiLeft + sizeX / 2 - NAV_SIZE_X / 2, navY, NAV_SIZE_X, NAV_SIZE_Y)
-                .build());
+        // this is a sub screen of the salvage config, so the corner arrow returns there, not to the hub
+        addBackButton(Words.Salvaging.locName(), () -> ClientOnly.setScreen(new SalvageConfigScreen()));
 
+        // paging only - the corner arrow is the way back now, so Prev/Next centre as a pair rather
+        // than flanking a Back button
         if (page > 0) {
             publicAddButton(Button.builder(Words.SalvagePrevPage.locName(), b -> ClientOnly.setScreen(new SalvageMapFilterScreen(page - 1)))
-                    .bounds(guiLeft + sizeX / 2 - NAV_SIZE_X / 2 - NAV_SIZE_X - 2, navY, NAV_SIZE_X, NAV_SIZE_Y)
+                    .bounds(guiLeft + sizeX / 2 - NAV_SIZE_X - 2, navY, NAV_SIZE_X, NAV_SIZE_Y)
                     .build());
         }
         if (page < pages - 1) {
             publicAddButton(Button.builder(Words.SalvageNextPage.locName(), b -> ClientOnly.setScreen(new SalvageMapFilterScreen(page + 1)))
-                    .bounds(guiLeft + sizeX / 2 + NAV_SIZE_X / 2 + 2, navY, NAV_SIZE_X, NAV_SIZE_Y)
+                    .bounds(guiLeft + sizeX / 2 + 2, navY, NAV_SIZE_X, NAV_SIZE_Y)
                     .build());
         }
     }

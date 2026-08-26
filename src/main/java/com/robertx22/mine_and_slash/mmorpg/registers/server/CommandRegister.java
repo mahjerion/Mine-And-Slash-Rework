@@ -30,6 +30,7 @@ import com.robertx22.mine_and_slash.vanilla_mc.commands.stats.RemoveStat;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.BuilderToolCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.DevCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.EntityCommands;
+import com.robertx22.mine_and_slash.vanilla_mc.new_commands.MercenaryCommands;
 import com.robertx22.mine_and_slash.vanilla_mc.new_commands.PlayerCommands;
 import net.minecraft.commands.CommandSourceStack;
 
@@ -42,6 +43,7 @@ public class CommandRegister {
         EntityCommands.init(dispatcher);
         PlayerCommands.init(dispatcher);
         DevCommands.init(dispatcher);
+        MercenaryCommands.init(dispatcher);
         BuilderToolCommands.reg(dispatcher);
 
         GiveExactUnique.register(dispatcher);

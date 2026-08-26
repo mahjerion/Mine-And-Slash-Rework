@@ -3,6 +3,7 @@ This registry is modify-able through datapacks.
 additive_damage
 armor_mitigation
 crit_damage
+damage_block
 damage_conversion
 damage_reduction
 damage_suppression

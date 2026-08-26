@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.a_libraries.curios.RefCurios;
 import com.robertx22.mine_and_slash.capability.player.helper.GemInventoryHelper;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.database.data.stats.types.JewelSocketStat;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -273,16 +274,41 @@ public class CharacterEquipment {
                 + countItems(character.getJewels());
     }
 
+    // a character's mercenaries need no stash/restore pair: their gear never sits on the player, it
+    // lives in the MercenaryData inventories, and switching character swaps the whole
+    // MercenaryStorageData reference (see CharacterData.from/load). Deleting one still has to hand
+    // the items back though, same as everything else here.
+    public static void returnMercItems(Player player, CharacterData character) {
+        character.getMercs().map.forEach((id, merc) -> {
+            if (merc != null) {
+                returnAllToPlayer(player, merc.getGear());
+                returnAllToPlayer(player, merc.getSupports());
+                returnAllToPlayer(player, merc.getAuras());
+            }
+        });
+    }
+
+    public static int countMercItems(CharacterData character) {
+        int count = 0;
+        for (MercenaryData merc : character.getMercs().map.values()) {
+            if (merc != null) {
+                count += countItems(merc.getGear()) + countItems(merc.getSupports()) + countItems(merc.getAuras());
+            }
+        }
+        return count;
+    }
+
     // every inventory a character owns, in one call - used when a character is deleted or reset, where
     // there is nothing to restore into. single entry point so a fourth inventory can't be forgotten at
     // one of those sites later.
     public static void returnEverythingToPlayer(Player player, CharacterData character) {
         returnAllToPlayer(player, character.getEquipment());
         returnGemsAndJewels(player, character);
+        returnMercItems(player, character);
     }
 
     public static int countEverything(CharacterData character) {
-        return countItems(character.getEquipment()) + countGemsAndJewels(character);
+        return countItems(character.getEquipment()) + countGemsAndJewels(character) + countMercItems(character);
     }
 
     // writing to the armor slots and to the curio stack handlers directly doesn't reliably fire

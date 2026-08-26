@@ -8,6 +8,9 @@ import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.database.data.stats.types.misc.BonusExp;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.loot.*;
@@ -67,6 +70,15 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                     }
                 }
 
+                // a mercenary kill belongs to its owner. without this a mercenary that lands the
+                // finishing blow drops nothing and awards nothing, because every path below is gated
+                // on the killer being a ServerPlayer.
+                MercenaryEntity mercKiller = null;
+                if (killerEntity instanceof MercenaryEntity merc && merc.getOwner() instanceof ServerPlayer owner) {
+                    mercKiller = merc;
+                    killerEntity = owner;
+                }
+
                 if (killerEntity instanceof ServerPlayer) {
 
                     ServerPlayer player = (ServerPlayer) killerEntity;
@@ -92,11 +104,11 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                             }
                         }
 
-                        MasterLootGen.genAndDrop(mobKilled, player);
+                        MasterLootGen.genAndDrop(mobKilled, player, mercKiller);
 
                     }
                     if (exp_multi > 0) {
-                        GiveExp(mobKilled, player, playerData, mobKilledData, exp_multi);
+                        GiveExp(mobKilled, player, playerData, mobKilledData, exp_multi, mercKiller);
                     }
 
 
@@ -113,7 +125,7 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
 
 
     private static void GiveExp(LivingEntity victim, Player killer, EntityData killerData, EntityData mobData,
-                                float multi) {
+                                float multi, MercenaryEntity mercKiller) {
 
         float exp = LevelUtils.getBaseExpMobReward(mobData.getLevel());
 
@@ -128,7 +140,15 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
         mods.add(new LootModifier(LootModifierEnum.MOB_DATAPACK, multi));
         mods.add(new LootModifier(LootModifierEnum.EXP_GAIN_CONFIG, ServerContainer.get().EXP_GAIN_MULTI.get().floatValue()));
         mods.add(new LootModifier(LootModifierEnum.DIMENSION_LOOT, ExileDB.getDimensionConfig(victim.level()).exp_multi));
-        mods.add(new LootModifier(LootModifierEnum.PLAYER_BONUS_EXP, killerData.getUnit().getCalculatedStat(BonusExp.getInstance()).getMultiplier()));
+        float bonusExp = killerData.getUnit().getCalculatedStat(BonusExp.getInstance()).getMultiplier();
+
+        // a mercenary kill combines its Bonus Experience with its owner's, into the same modifier -
+        // it is the same stat, and there is no mercenary-only source of it.
+        if (mercKiller != null) {
+            bonusExp *= Load.Unit(mercKiller).getUnit().getCalculatedStat(BonusExp.getInstance()).getMultiplier();
+        }
+        mods.add(new LootModifier(LootModifierEnum.PLAYER_BONUS_EXP, bonusExp));
+
         mods.add(new LootModifier(LootModifierEnum.FAVOR, Load.player(killer).favor.getLootExpMulti()));
 
         WorldUtils.ifMapData(victim.level(), victim.blockPosition()).ifPresent(map -> {
@@ -158,6 +178,12 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
 
             exp /= list.size();
 
+            // mercenaries earn their owner's share, not the party total - hence after the split. they
+            // are still not party members for the purposes of that split: TeamUtils only ever returns
+            // Players, so list.size() never counts them. and still before the per player level distance
+            // penalty applied below, which the design exempts them from.
+            giveMercsExp(victim, list, (int) exp);
+
             for (Player player : list) {
                 var canReceiveExp = Load.player(player).config.isConfigEnabled(PlayerConfigData.Config.ENABLE_EXP_GAIN);
                 if (!canReceiveExp) {
@@ -171,6 +197,36 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                 }
             }
 
+        }
+    }
+
+    /**
+     * "Only gains XP while alive and actively engaged" - read as alive, spawned, and near enough to
+     * the kill to have been part of it. Paid the owner's post-split share, with no level distance
+     * penalty (design section 3), and the mercenary never passes its owner's level, which
+     * {@code MercenaryManager.giveExp} enforces.
+     */
+    private static void giveMercsExp(LivingEntity victim, List<Player> team, int exp) {
+        if (exp < 1) {
+            return;
+        }
+        double radius = ServerContainer.get().PARTY_RADIUS.get();
+
+        for (Player player : team) {
+            if (!Load.player(player).config.isConfigEnabled(PlayerConfigData.Config.ENABLE_EXP_GAIN)) {
+                continue;
+            }
+            MercenaryEntity merc = MercenaryManager.getMerc(player);
+            if (merc == null || !merc.isAlive()) {
+                continue;
+            }
+            if (merc.level() != victim.level() || merc.distanceToSqr(victim) > radius * radius) {
+                continue;
+            }
+            MercenaryData data = merc.getMercData();
+            if (data != null) {
+                MercenaryManager.giveExp(player, data, exp);
+            }
         }
     }
 

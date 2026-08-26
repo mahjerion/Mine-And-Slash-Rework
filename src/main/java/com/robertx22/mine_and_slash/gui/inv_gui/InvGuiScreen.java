@@ -2,7 +2,10 @@ package com.robertx22.mine_and_slash.gui.inv_gui;
 
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.proxies.OpenGuiWrapper;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class InvGuiScreen extends BaseScreen {
@@ -10,10 +13,22 @@ public class InvGuiScreen extends BaseScreen {
 
     InvGuiGrid grid;
 
+    // This screen is the generic item picker - it backs the "Features" grid and the salvage config off
+    // the hub, but also the skill gem spell picker and the mercenary equip pickers, which are reached
+    // from another screen. A hardcoded hub target would strand those, so the destination is passed in.
+    private final Component backName;
+    private final Runnable onBack;
+
     public InvGuiScreen(InvGuiGrid grid) {
+        this(grid, Words.Main_Hub.locName(), OpenGuiWrapper::openMainHub);
+    }
+
+    public InvGuiScreen(InvGuiGrid grid, Component backName, Runnable onBack) {
         super(177, 136);
 
         this.grid = grid;
+        this.backName = backName;
+        this.onBack = onBack;
     }
 
 
@@ -50,5 +65,6 @@ public class InvGuiScreen extends BaseScreen {
             }
         }
 
+        addBackButton(backName, onBack);
     }
 }

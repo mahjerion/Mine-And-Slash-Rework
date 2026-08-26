@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.database.data.stats.StatGuiGroup;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatGuiGroupSection;
 import com.robertx22.mine_and_slash.loot.LootModifierEnum;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.tags.ModTag;
 import com.robertx22.mine_and_slash.tags.TagType;
@@ -198,6 +199,7 @@ public class CreateLangFile {
         list.addAll(Arrays.asList(PlayerBuffData.Type.values()));
         list.addAll(Arrays.asList(ChestContent.chestTypeEnum.values()));
         list.addAll(Arrays.asList(LootModifierEnum.values()));
+        list.addAll(Arrays.asList(MercenaryData.CombatMode.values()));
 
         HashMap<IAutoLocName.AutoLocGroup, List<IAutoLocName>> map = new HashMap<>();
 

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.wiki.reworked;
 
+import com.robertx22.mine_and_slash.gui.bases.BackToHubButton;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.gui.wiki.BestiaryEntry;
 import com.robertx22.mine_and_slash.gui.wiki.BestiaryGroup;
@@ -124,6 +125,9 @@ public class NewWikiScreen extends Screen implements INamedScreen {
         // the edit box keeps its text across inits, the list has to be filtered by it
         this.list.forceFilter(this.searchBox.getValue());
 
+        // full window screen, so the same top-left corner the talent trees use. the filter buttons
+        // start at x=15,y=55, so the corner is free
+        this.addRenderableWidget(new BackToHubButton(4, 4));
     }
 
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {

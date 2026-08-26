@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.database.data.DimensionConfig;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.chaos_stats.ChaosStat;
@@ -121,6 +122,9 @@ public class ExileRegistryTypes {
     public static ExileRegistryType SHRINE_BUFF = ExileRegistryType.register(SlashRef.MODID, "shrine_buff", 48, ShrineBuff.SERIALIZER, SyncTime.ON_LOGIN);
     // must load after UNIQUE_GEAR (11): a set lists the unique guids that belong to it
     public static ExileRegistryType ITEM_SET = ExileRegistryType.register(SlashRef.MODID, "sets", 49, ItemSet.SERIALIZER, SyncTime.ON_LOGIN);
+
+    // must load after SPELL (17): a mercenary class lists the spell guids it teaches
+    public static ExileRegistryType MERCENARY = ExileRegistryType.register(SlashRef.MODID, "mercenary", 54, MercenaryClass.SERIALIZER, SyncTime.ON_LOGIN);
 
     public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 

@@ -12,10 +12,17 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.OpenMapLayo
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +52,54 @@ public class GuiInventoryGrids {
         return InvGuiGrid.ofList(list);
     }
 
+
+    /**
+     * Everything in the player's inventory that legally fits one mercenary slot. This is the picker
+     * half of "click the slot and it brings up legal entries for that slot" - it is filtered here for
+     * the player's benefit, and filtered again on the server, which is the copy that counts.
+     */
+    public static InvGuiGrid ofMercSlotChoices(Player p, MercenarySlotType type, int index) {
+        GuiAction.regenActionMap();
+
+        MercEquipAction.TARGET_TYPE = type;
+        MercEquipAction.TARGET_INDEX = index;
+
+        MercenaryData data = Load.player(p).mercs.getActive();
+
+        List<GuiItemData> list = new ArrayList<>();
+
+        for (int i = 0; i < p.getInventory().getContainerSize() && i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
+            ItemStack stack = p.getInventory().getItem(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            if (!type.mayPlace(p, data, index, stack)) {
+                continue;
+            }
+            list.add(new GuiItemData(new MercEquipAction(i)));
+        }
+
+        return InvGuiGrid.ofList(list);
+    }
+
+    /** the skills this mercenary has learned, for slotting into one of its 4 active slots */
+    public static InvGuiGrid ofMercSkillChoices(Player p, int slot) {
+        GuiAction.regenActionMap();
+
+        MercPickSkillAction.SLOT = slot;
+
+        MercenaryData data = Load.player(p).mercs.getActive();
+        MercenaryClass mc = data.getMercClass();
+
+        List<GuiItemData> list = new ArrayList<>();
+        if (mc != null) {
+            for (Spell spell : mc.getLearnedSpells(data.lvl)) {
+                list.add(new GuiItemData(new MercPickSkillAction(spell)));
+            }
+        }
+
+        return InvGuiGrid.ofList(list);
+    }
 
     // the rarity columns, leaving the last grid column free for the per type filter / row header button
     private static List<GearRarity> filterRarities() {

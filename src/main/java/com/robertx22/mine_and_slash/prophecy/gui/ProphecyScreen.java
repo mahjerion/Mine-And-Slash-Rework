@@ -51,6 +51,10 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
         super.init();
         this.clearWidgets();
 
+        // outside the try below so a failure building the offer buttons still leaves a way back.
+        // init() re-runs from tick() when a reroll syncs, which is why it lives after clearWidgets()
+        addBackToHubButton();
+
         try {
 
             var data = Load.player(mc.player).prophecy;

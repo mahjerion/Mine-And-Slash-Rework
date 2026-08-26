@@ -146,6 +146,8 @@ public enum AllyOrEnemy {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
 
+            caster = resolveOwner(caster);
+
             if (caster instanceof Player p) {
                 if (EntityFinder.isTamedByAlly(p, target)) {
                     return false;
@@ -192,6 +194,8 @@ public enum AllyOrEnemy {
     non_ai_enemies {
         @Override
         public boolean is(Entity caster, LivingEntity target) {
+
+            caster = resolveOwner(caster);
 
             if (caster instanceof Player p) {
                 if (EntityFinder.isTamedByAlly(p, target)) {
@@ -269,4 +273,17 @@ public enum AllyOrEnemy {
     public abstract boolean is(Entity caster, LivingEntity target);
 
     public abstract boolean includesCaster();
+
+    // when a summon or a mercenary is the one casting, ally-ness has to be judged from its owner's
+    // point of view. the non player branch in `enemies` calls every player - the owner included -
+    // an enemy and every ordinary monster an ally, which is exactly backwards for an owned entity.
+    static Entity resolveOwner(Entity caster) {
+        if (caster instanceof Player) {
+            return caster;
+        }
+        if (caster instanceof OwnableEntity owned && owned.getOwner() instanceof Player owner) {
+            return owner;
+        }
+        return caster;
+    }
 }

@@ -86,6 +86,11 @@ public class SpellSchoolScreen extends BaseScreen implements INamedScreen, ILeft
         super.init();
         this.clearWidgets();
 
+        // added before the empty-database early return below, so there is still a way out of the
+        // screen if no spell schools loaded. init() re-runs on every school switch, hence after the
+        // clearWidgets() rather than in some one-shot place
+        addBackToHubButton();
+
         if (schoolsInOrder.isEmpty()) {
             return;
         }

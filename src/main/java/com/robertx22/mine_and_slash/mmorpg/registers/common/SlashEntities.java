@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
 import com.robertx22.library_of_exile.deferred.RegObj;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.entities.*;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SkeletonSummon;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SpiderPet;
@@ -29,6 +30,10 @@ public class SlashEntities {
     public static RegObj<EntityType<ZombieSummon>> ZOMBIE = mob(ZombieSummon::new, EntityType.SKELETON, "zombie");
     public static RegObj<EntityType<SkeletonSummon>> SKELETON = mob(SkeletonSummon::new, EntityType.SKELETON, "skeleton");
     public static RegObj<EntityType<SpiderPet>> SPIDER = mob(SpiderPet::new, EntityType.CAVE_SPIDER, "spider");
+
+    // hired companions. sized off the zombie because that is the model the renderer bakes, so the
+    // hitbox and the thing you see line up.
+    public static RegObj<EntityType<MercenaryEntity>> MERCENARY = mob(MercenaryEntity::new, EntityType.ZOMBIE, "mercenary");
 
     public static RegObj<EntityType<FireGolem>> FIRE_GOLEM = mob(FireGolem::new, EntityType.WOLF, "fire_golem");
     public static RegObj<EntityType<ColdGolem>> COLD_GOLEM = mob(ColdGolem::new, EntityType.WOLF, "cold_golem");

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.characters.reworked_gui;
 
+import com.robertx22.mine_and_slash.gui.bases.BackToHubButton;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
@@ -88,6 +89,9 @@ public class ToonScreen extends Screen implements INamedScreen {
         // the edit box keeps its text across inits, the list has to be filtered by it
         this.list.forceFilter(this.searchBox.getValue());
 
+        // full window screen, so the same top-left corner the talent trees use rather than a
+        // panel-relative spot
+        this.addRenderableWidget(new BackToHubButton(4, 4));
     }
 
     @Override

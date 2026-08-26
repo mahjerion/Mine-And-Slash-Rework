@@ -20,6 +20,7 @@ import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.prophecy.PlayerProphecies;
 import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
@@ -103,6 +104,13 @@ public class PlayerData implements ICap {
     private static final String CHAR_GEMS = "chargems";
     private static final String CHAR_AURAS = "charauras";
     private static final String CHAR_JEWELS = "charjewels";
+    private static final String MERCS = "mercs";
+    private static final String MERC_GEAR = "mercgear";
+    private static final String MERC_GEMS = "mercgems";
+    private static final String MERC_AURAS = "mercauras";
+    private static final String CHAR_MERC_GEAR = "charmercgear";
+    private static final String CHAR_MERC_GEMS = "charmercgems";
+    private static final String CHAR_MERC_AURAS = "charmercauras";
 
     public DirtySync playerDataSync = new DirtySync("playerdata_sync", x -> syncData());
 
@@ -132,6 +140,8 @@ public class PlayerData implements ICap {
 
     private MyInventory skillGemInv = new MyInventory(GemInventoryHelper.TOTAL_SLOTS);
     private MyInventory auraInv = new MyInventory(GemInventoryHelper.TOTAL_AURAS);
+
+    public MercenaryStorageData mercs = new MercenaryStorageData();
 
     public CharStorageData characters = new CharStorageData();
 
@@ -231,8 +241,45 @@ public class PlayerData implements ICap {
         //nbt.put(JEWELS, jewelsInv.createTag());
         nbt.put(JEWELS, jewelData.jewelInventory.createTag());
 
+        LoadSave.Save(mercs, nbt, MERCS);
+        writeMercItems(nbt);
+
         nbt.putInt(BONUS_TALENTS, bonusTalents);
         nbt.putInt(OMENS_FILLED, omensFilled);
+    }
+
+    // a mercenary's gear and gems can't ride along in the MERCS json - LoadSave is gson, and an
+    // ItemStack won't survive that. deliberately in writeCommon rather than the disk only half:
+    // unlike stored characters these have to reach the client, because the mercenary screen renders
+    // them, and browsing classes with the arrows previews each one's loadout. 20 slots per class the
+    // player has actually built, and syncData still skips the send when nothing changed.
+    private void writeMercItems(CompoundTag nbt) {
+        CompoundTag gear = new CompoundTag();
+        CompoundTag gems = new CompoundTag();
+        CompoundTag auras = new CompoundTag();
+        mercs.map.forEach((id, merc) -> {
+            if (merc != null) {
+                gear.put(id, merc.getGear().createTag());
+                gems.put(id, merc.getSupports().createTag());
+                auras.put(id, merc.getAuras().createTag());
+            }
+        });
+        nbt.put(MERC_GEAR, gear);
+        nbt.put(MERC_GEMS, gems);
+        nbt.put(MERC_AURAS, auras);
+    }
+
+    private void readMercItems(CompoundTag nbt, MercenaryStorageData into) {
+        CompoundTag gear = nbt.getCompound(MERC_GEAR);
+        CompoundTag gems = nbt.getCompound(MERC_GEMS);
+        CompoundTag auras = nbt.getCompound(MERC_AURAS);
+        into.map.forEach((id, merc) -> {
+            if (merc != null) {
+                merc.getGear().fromTag(gear.getList(id, 10));
+                merc.getSupports().fromTag(gems.getList(id, 10));
+                merc.getAuras().fromTag(auras.getList(id, 10));
+            }
+        });
     }
 
     // a character's stored gear, gems, auras and jewels can't ride along in the CHARACTERS json -
@@ -244,6 +291,9 @@ public class PlayerData implements ICap {
         CompoundTag charGems = new CompoundTag();
         CompoundTag charAuras = new CompoundTag();
         CompoundTag charJewels = new CompoundTag();
+        CompoundTag charMercGear = new CompoundTag();
+        CompoundTag charMercGems = new CompoundTag();
+        CompoundTag charMercAuras = new CompoundTag();
         characters.map.forEach((num, character) -> {
             if (character != null) {
                 String key = String.valueOf(num);
@@ -251,12 +301,31 @@ public class PlayerData implements ICap {
                 charGems.put(key, character.getGems().createTag());
                 charAuras.put(key, character.getAuras().createTag());
                 charJewels.put(key, character.getJewels().createTag());
+
+                // a stored character's mercenaries are a map of a map: character slot -> merc class
+                // id -> stacks. same reason as the four above, one level deeper.
+                CompoundTag gear = new CompoundTag();
+                CompoundTag gems = new CompoundTag();
+                CompoundTag auras = new CompoundTag();
+                character.getMercs().map.forEach((mercId, merc) -> {
+                    if (merc != null) {
+                        gear.put(mercId, merc.getGear().createTag());
+                        gems.put(mercId, merc.getSupports().createTag());
+                        auras.put(mercId, merc.getAuras().createTag());
+                    }
+                });
+                charMercGear.put(key, gear);
+                charMercGems.put(key, gems);
+                charMercAuras.put(key, auras);
             }
         });
         nbt.put(CHAR_EQUIPMENT, charEquipment);
         nbt.put(CHAR_GEMS, charGems);
         nbt.put(CHAR_AURAS, charAuras);
         nbt.put(CHAR_JEWELS, charJewels);
+        nbt.put(CHAR_MERC_GEAR, charMercGear);
+        nbt.put(CHAR_MERC_GEMS, charMercGems);
+        nbt.put(CHAR_MERC_AURAS, charMercAuras);
     }
 
     @Override
@@ -283,6 +352,10 @@ public class PlayerData implements ICap {
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
         this.atlas = loadOrBlank(AtlasData.class, new AtlasData(), nbt, ATLAS_DATA, new AtlasData());
+        this.mercs = loadOrBlank(MercenaryStorageData.class, new MercenaryStorageData(), nbt, MERCS, new MercenaryStorageData());
+
+        // must come after `mercs` is assigned above - the stacks hang off those objects
+        readMercItems(nbt, this.mercs);
 
         // must come after `characters` is assigned above - the stacks hang off those objects.
         // on the client these tags are absent (syncData strips them), so every inventory just ends up
@@ -291,6 +364,9 @@ public class PlayerData implements ICap {
         CompoundTag charGems = nbt.getCompound(CHAR_GEMS);
         CompoundTag charAuras = nbt.getCompound(CHAR_AURAS);
         CompoundTag charJewels = nbt.getCompound(CHAR_JEWELS);
+        CompoundTag charMercGear = nbt.getCompound(CHAR_MERC_GEAR);
+        CompoundTag charMercGems = nbt.getCompound(CHAR_MERC_GEMS);
+        CompoundTag charMercAuras = nbt.getCompound(CHAR_MERC_AURAS);
         this.characters.map.forEach((num, character) -> {
             if (character != null) {
                 String key = String.valueOf(num);
@@ -298,6 +374,17 @@ public class PlayerData implements ICap {
                 character.getGems().fromTag(charGems.getList(key, 10));
                 character.getAuras().fromTag(charAuras.getList(key, 10));
                 character.getJewels().fromTag(charJewels.getList(key, 10));
+
+                CompoundTag gear = charMercGear.getCompound(key);
+                CompoundTag gems = charMercGems.getCompound(key);
+                CompoundTag auras = charMercAuras.getCompound(key);
+                character.getMercs().map.forEach((mercId, merc) -> {
+                    if (merc != null) {
+                        merc.getGear().fromTag(gear.getList(mercId, 10));
+                        merc.getSupports().fromTag(gems.getList(mercId, 10));
+                        merc.getAuras().fromTag(auras.getList(mercId, 10));
+                    }
+                });
             }
         });
 

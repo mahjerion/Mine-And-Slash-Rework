@@ -8,7 +8,11 @@ import java.util.Locale;
 public enum Formatter implements IAutoLocName {
 
     //BASIC_STAT_FORMAT("%1$s %2$s %3$s"), todo the stat code is too messy to edit currently
-    MOB_NAME_TEMPLATE("Lvl %1$s %2$s %3$s %4$s %5$s"),
+    MOB_NAME_TEMPLATE("Lvl %1$s %2$s %3$s %4$s %5$s", "Use to control the order and space of mob nameplates that have both affixes, like \"(Lvl 12) (Rare) (Flaming) (Zombie) (of Frost)\""),
+    MOB_NAME_NO_PREFIX("Lvl %1$s %2$s %3$s %4$s", "same as mob_name_template, but for mobs without a prefix affix, like \"(Lvl 12) (Rare) (Zombie) (of Frost)\""),
+    MOB_NAME_NO_SUFFIX("Lvl %1$s %2$s %3$s %4$s", "same as mob_name_template, but for mobs without a suffix affix, like \"(Lvl 12) (Rare) (Flaming) (Zombie)\""),
+    MOB_NAME_NO_AFFIX("Lvl %1$s %2$s %3$s", "same as mob_name_template, but for mobs without any affix, like \"(Lvl 12) (Common) (Zombie)\""),
+    MOB_NAME_PLAYER("Lvl %1$s %2$s", "same as mob_name_template, but for players, who have no rarity or affixes, like \"(Lvl 12) (Steve)\""),
     UNIQUE_NAME_FORMAT("%1$s %2$s"),
     GEM_ITEM_NAME("%1$s %2$s", "Use to control the order and space of gem item name, like \"(cracked) (ruby)\""),
     BUFF_CONSUMPTIONS_NAME("%1$s %2$s %3$s", "control the order and space of buff consumption."),

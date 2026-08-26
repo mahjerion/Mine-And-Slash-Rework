@@ -19,7 +19,9 @@ import com.robertx22.mine_and_slash.aoe_data.database.prophecies.ProphecyModifie
 import com.robertx22.mine_and_slash.aoe_data.database.runes.Runes;
 import com.robertx22.mine_and_slash.aoe_data.database.item_sets.ItemSets;
 import com.robertx22.mine_and_slash.aoe_data.database.runewords.Runewords;
+import com.robertx22.mine_and_slash.aoe_data.database.mercenaries.Mercenaries;
 import com.robertx22.mine_and_slash.aoe_data.database.spell_schools.SpellSchoolsAdder;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.MercenarySpells;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.Spells;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_compats.StatCompats;
@@ -68,6 +70,8 @@ public class GeneratedData {
         SpellCalcs.init();
         new Spells().registerAll();
         new SpellSchoolsAdder().registerAll();
+        new MercenarySpells().registerAll();
+        new Mercenaries().registerAll();
 
 
         new GearSlots().registerAll();

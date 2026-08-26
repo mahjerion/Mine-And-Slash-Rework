@@ -16,6 +16,7 @@ import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
 import com.robertx22.mine_and_slash.database.data.profession.PlayerUTIL;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
@@ -253,8 +254,16 @@ public class EntityData implements ICap, INeededForClient {
             }
             LoadSave.Save(statusEffects, nbt, STATUSES);
 
-            if (unit != null && entity instanceof Player) {
+            if (unit != null && (entity instanceof Player || entity instanceof MercenaryEntity)) {
                 UnitNbt.Save(nbt, unit);
+            }
+
+            // the mercenary's hud entry draws a magic shield bar, and magic shield is a *current*
+            // resource value - it lives in `resources`, not in the Unit, and nothing was sending it
+            // to the client for a non player. deliberately scoped to mercenaries so no ordinary mob
+            // pays for the bigger packet; there is at most one per player.
+            if (resources != null && entity instanceof MercenaryEntity) {
+                LoadSave.Save(resources, nbt, RESOURCES_LOC);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -286,11 +295,16 @@ public class EntityData implements ICap, INeededForClient {
 
             this.statusEffects = loadOrBlank(EntityStatusEffectsData.class, new EntityStatusEffectsData(), nbt, STATUSES, new EntityStatusEffectsData());
 
-            if (entity instanceof Player) {
+            if (entity instanceof Player || entity instanceof MercenaryEntity) {
                 this.unit = UnitNbt.Load(nbt);
             }
             if (this.unit == null) {
                 this.unit = new Unit();
+            }
+
+            // only mercenaries send this, so only they read it back - see addClientNBT
+            if (entity instanceof MercenaryEntity) {
+                this.resources = loadOrBlank(ResourcesData.class, new ResourcesData(), nbt, RESOURCES_LOC, new ResourcesData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -668,6 +682,16 @@ public class EntityData implements ICap, INeededForClient {
 
             this.maxCharges.calc(this.unit.getStats());
 
+            this.sync.setDirty();
+
+        } else if (entity instanceof MercenaryEntity merc) {
+            // the mercenary's per skill Units fold in support gems, so they are stale the moment the
+            // base stats move. same invalidation point as the player's setSpellUnitsDirty above.
+            var mercData = merc.getMercData();
+            if (mercData != null) {
+                mercData.allStatsWithoutSuppGems = stats;
+                mercData.setSpellUnitsDirty();
+            }
             this.sync.setDirty();
 
         } else {

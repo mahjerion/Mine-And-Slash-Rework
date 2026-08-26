@@ -1,8 +1,11 @@
 package com.robertx22.mine_and_slash.capability.player.container;
 
+import com.robertx22.mine_and_slash.gui.bases.BackButton;
 import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.proxies.OpenGuiWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -52,9 +55,21 @@ public class SkillGemsScreen extends AbstractContainerScreen<SkillGemsMenu> {
 
         }
 
+        addRenderableWidget(new BackButton(leftPos, Math.max(2, topPos - BackButton.SIZE - 2),
+                Words.Main_Hub.locName(), this::backToHub));
+
         // runs after setScreen() warped the cursor to the middle of the window. no-op if nothing
         // was saved, and it consumes the saved position so a resize can't move the cursor again
         GuiMousePosition.restore();
+    }
+
+    // closeContainer() first: swapping the screen only calls removed(), which never sends
+    // ServerboundContainerClosePacket, so the server would be left holding this menu open
+    private void backToHub() {
+        if (minecraft != null && minecraft.player != null) {
+            minecraft.player.closeContainer();
+        }
+        OpenGuiWrapper.openMainHub();
     }
 
     @Override

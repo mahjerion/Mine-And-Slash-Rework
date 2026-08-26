@@ -18,7 +18,10 @@ public class SalvageSubFilterScreen extends InvGuiScreen {
     int page;
 
     public SalvageSubFilterScreen(ToggleAutoSalvageRarity.SalvageType type, int page) {
-        super(GuiInventoryGrids.ofGearSubFilter(type, page));
+        // this is a sub screen of the salvage config, so the corner arrow returns there rather than
+        // to the hub
+        super(GuiInventoryGrids.ofGearSubFilter(type, page), Words.Salvaging.locName(),
+                () -> ClientOnly.setScreen(new SalvageConfigScreen()));
 
         this.type = type;
         this.page = page;
@@ -31,18 +34,16 @@ public class SalvageSubFilterScreen extends InvGuiScreen {
         int pages = GuiInventoryGrids.subFilterPageCount(type);
         int y = guiTop + sizeY + 2;
 
-        publicAddButton(Button.builder(Words.SalvageBack.locName(), b -> ClientOnly.setScreen(new SalvageConfigScreen()))
-                .bounds(guiLeft + sizeX / 2 - BUTTON_SIZE_X / 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
-                .build());
-
+        // paging only - the corner arrow is the way back now, so Prev/Next centre as a pair rather
+        // than flanking a Back button
         if (page > 0) {
             publicAddButton(Button.builder(Words.SalvagePrevPage.locName(), b -> ClientOnly.setScreen(new SalvageSubFilterScreen(type, page - 1)))
-                    .bounds(guiLeft + sizeX / 2 - BUTTON_SIZE_X / 2 - BUTTON_SIZE_X - 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
+                    .bounds(guiLeft + sizeX / 2 - BUTTON_SIZE_X - 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
                     .build());
         }
         if (page < pages - 1) {
             publicAddButton(Button.builder(Words.SalvageNextPage.locName(), b -> ClientOnly.setScreen(new SalvageSubFilterScreen(type, page + 1)))
-                    .bounds(guiLeft + sizeX / 2 + BUTTON_SIZE_X / 2 + 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
+                    .bounds(guiLeft + sizeX / 2 + 2, y, BUTTON_SIZE_X, BUTTON_SIZE_Y)
                     .build());
         }
     }

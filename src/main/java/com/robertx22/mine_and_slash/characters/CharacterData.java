@@ -5,6 +5,7 @@ import com.robertx22.mine_and_slash.capability.player.data.StatPointsData;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.database.data.spell_school.SpellSchool;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -48,6 +49,11 @@ public class CharacterData {
     StatPointsData stats = new StatPointsData();
     SpellSchoolsData player_class = new SpellSchoolsData();
 
+    // this character's mercenaries - level, xp, combat mode and equipped skills. their gear and gems
+    // are ItemStacks so they live on the MercenaryData objects inside here, transient, and PlayerData
+    // writes them under CHAR_MERC_* keyed by character slot then merc class id.
+    MercenaryStorageData mercs = new MercenaryStorageData();
+
 
     public static CharacterData from(Player p) {
         var data = Load.player(p);
@@ -70,6 +76,7 @@ public class CharacterData {
         d.player_class = data.ascClass;
         d.stats = data.statPoints;
         d.talents = data.talents;
+        d.mercs = data.mercs;
 
 
         return d;
@@ -85,6 +92,7 @@ public class CharacterData {
         data.statPoints = this.stats;
         data.rested_xp = this.rested;
         data.ascClass = this.player_class;
+        data.mercs = this.getMercs();
 
         data.spellCastingData.hotbar = this.hotbar;
 
@@ -121,6 +129,15 @@ public class CharacterData {
             jewels = CharacterEquipment.newJewelStorage();
         }
         return jewels;
+    }
+
+    // gson leaves this null on a save written before mercenaries existed, and the field initializer
+    // above only survives because this class has a default constructor. same guard as the four above.
+    public MercenaryStorageData getMercs() {
+        if (mercs == null) {
+            mercs = new MercenaryStorageData();
+        }
+        return mercs;
     }
 
     public List<Component> getTooltip() {

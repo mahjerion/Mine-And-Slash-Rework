@@ -37,6 +37,7 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.*;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.DmgNumPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.interaction.IParticleSpawnMaterial;
 import net.minecraft.ChatFormatting;
@@ -891,6 +892,15 @@ public class DamageEvent extends EffectEvent {
                     threatEvent.Activate();
                 }
             }
+
+            // a mercenary's damage numbers go to its owner - the only feedback the owner gets that it
+            // is contributing anything. deliberately just the numbers: the player-only side effects
+            // above (last hurt mob, in-combat cooldown, threat credit) stay with the player, and chat
+            // stays silent because sendDamageMessage is gated on `source instanceof Player` on its own.
+            if (source instanceof MercenaryEntity mercSource && mercSource.getOwner() instanceof ServerPlayer mercOwner) {
+                InteractionNotifier.notifyClient(
+                        IParticleSpawnMaterial.DamageInformation.fromDmgByElement(info, data.isCrit()), mercOwner, target);
+            }
             //sendDamageParticle(info);
 
             // target.invulnerableTime = 20;
@@ -975,6 +985,11 @@ public class DamageEvent extends EffectEvent {
                     // and slips past every "is_summon_attack is false" guard - which is the only thing
                     // stopping summon procs from summoning more summons forever.
                     x.data.setBoolean(EventData.IS_SUMMON_ATTACK, this.data.getBoolean(EventData.IS_SUMMON_ATTACK));
+                    // a full block avoids the hit and returns before any of this is built, so this
+                    // only ever carries a partial block (Block Damage Reduction below 100). without
+                    // it every element split would roll block again on its own and one attack would
+                    // end up blocked in pieces.
+                    x.data.setBoolean(EventData.IS_BLOCKED, this.data.getBoolean(EventData.IS_BLOCKED));
                     x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
                     x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
                     x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);

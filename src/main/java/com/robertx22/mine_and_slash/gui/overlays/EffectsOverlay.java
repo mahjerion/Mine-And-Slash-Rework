@@ -1,15 +1,21 @@
 package com.robertx22.mine_and_slash.gui.overlays;
 
 import com.robertx22.library_of_exile.utils.GuiUtils;
+import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.config.forge.ClientConfigs;
 import com.robertx22.mine_and_slash.config.forge.overlay.OverlayType;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffectInstanceData;
+import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockChance;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
@@ -32,6 +38,18 @@ public class EffectsOverlay {
         int bgY = 24;
 
         // Minecraft mc = Minecraft.getInstance();
+
+        // the mercenary sits at the head of the track. it is a persistent status rather than a timed
+        // buff, so it reads better pinned first than shuffling about as effects come and go.
+        MercenaryEntity merc = ClientMercenary.get();
+        if (merc != null) {
+            renderMercenary(gui, merc, x, y, bgX, bgY);
+            if (horizontal) {
+                x += bgX;
+            } else {
+                y += bgY;
+            }
+        }
 
         for (Map.Entry<String, ExileEffectInstanceData> en : Load.Unit(p).getStatusEffectsData().exileMap.entrySet()) {
             if (!en.getValue().shouldRemove()) {
@@ -58,5 +76,113 @@ public class EffectsOverlay {
             }
         }
 
+        // the block cooldown is not an exile effect - it lives on CooldownsData - but to the player it
+        // reads like one, so it gets a slot on the same track. drawn after the real effects so a
+        // cooldown blinking in and out for a second does not shove all of them sideways
+        CooldownsData cds = Load.Unit(p).getCooldowns();
+        if (cds.isOnCooldown(BlockChance.BLOCK_CD)) {
+            renderBlockCooldown(gui, cds, x, y, bgX, bgY);
+            if (horizontal) {
+                x += bgX;
+            } else {
+                y += bgY;
+            }
+        }
+
+    }
+
+    /** only used when the entity has no datapack class yet, or the class points at a broken path */
+    private static final ResourceLocation MERC_ICON_FALLBACK = SlashRef.guiId("spells/icons/summon_zombie");
+
+    /** class icons are authored at this size (see MercGui.CLASS_ICON_SIZE), scaled down into the 16px slot */
+    private static final int CLASS_ICON_SRC_SIZE = 36;
+
+    private static final ResourceLocation BLOCK_DISABLED_ICON = SlashRef.guiId("block_disabled");
+
+    private static final int BAR_W = 16;
+    private static final int BAR_H = 2;
+    /** the strip under the icon, where an effect would print its duration */
+    private static final int BAR_Y_OFFSET = 18;
+
+    private static final int BAR_BACKING = 0xFF201A17;
+    private static final int HEALTH_GREEN = 0xFF3FBF3F;
+    private static final int SHIELD_BLUE = 0xFF4FD6E8;
+    private static final int COOLDOWN_GREY = 0xFF9AA4B0;
+
+    /**
+     * One track entry for the mercenary: the same frame the effects use, its icon, and a 2px bar
+     * showing health with magic shield laid over the top of it.
+     */
+    private static void renderMercenary(GuiGraphics gui, MercenaryEntity merc, int x, int y, int bgX, int bgY) {
+        gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+        ResourceLocation icon = mercIcon(merc);
+        int src = icon == MERC_ICON_FALLBACK ? 16 : CLASS_ICON_SRC_SIZE;
+        gui.blit(icon, x + 1, y + 1, 16, 16, 0, 0, src, src, src, src);
+        gui.blit(SlashRef.guiId("effect/effect_overlay"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+
+        int barX = x + 1;
+        int barY = y + BAR_Y_OFFSET;
+
+        gui.fill(barX, barY, barX + BAR_W, barY + BAR_H, BAR_BACKING);
+
+        // health comes free off the entity - vanilla syncs it. magic shield needs EntityData, which
+        // only carries resources for a mercenary (see EntityData.addClientNBT).
+        drawPortion(gui, barX, barY, merc.getHealth(), merc.getMaxHealth(), HEALTH_GREEN);
+
+        var data = Load.Unit(merc);
+        drawPortion(gui, barX, barY,
+                data.getResources().getMagicShield(),
+                data.getUnit().magicShieldData().getValue(),
+                SHIELD_BLUE);
+    }
+
+    /**
+     * The class icon the datapack gives this mercenary - the same art the mercenary screen shows -
+     * so a server adding its own class gets its own icon here for free. Falls back only when the
+     * entity has no class id yet or the datapack hands us a path that will not parse.
+     */
+    private static ResourceLocation mercIcon(MercenaryEntity merc) {
+        MercenaryClass mc = merc.getMercClass();
+        if (mc == null) {
+            return MERC_ICON_FALLBACK;
+        }
+        try {
+            return mc.getIconLoc();
+        } catch (Exception e) {
+            return MERC_ICON_FALLBACK;
+        }
+    }
+
+    /**
+     * One track entry telling the player their passive block is spent. A draining bar rather than a
+     * duration string: the cooldown is a second at most, and shorter still with Block Recovery, so
+     * a whole-second countdown would only ever read "1s" or "0s".
+     */
+    private static void renderBlockCooldown(GuiGraphics gui, CooldownsData cds, int x, int y, int bgX, int bgY) {
+        gui.blit(SlashRef.guiId("effect/effect_bg"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+        gui.blit(BLOCK_DISABLED_ICON, x + 1, y + 1, 16, 16, 0, 0, 16, 16, 16, 16);
+        gui.blit(SlashRef.guiId("effect/effect_overlay"), x, y, bgX, bgY, 0, 0, bgX, bgY, bgX, bgY);
+
+        int barX = x + 1;
+        int barY = y + BAR_Y_OFFSET;
+
+        gui.fill(barX, barY, barX + BAR_W, barY + BAR_H, BAR_BACKING);
+
+        // setOnCooldown stores what it started at, so the bar can empty as the block comes back
+        drawPortion(gui, barX, barY,
+                cds.getCooldownTicks(BlockChance.BLOCK_CD),
+                cds.getNeededTicks(BlockChance.BLOCK_CD),
+                COOLDOWN_GREY);
+    }
+
+    /** fills the left part of the bar in proportion to current/max, skipping empty or unknown pools */
+    private static void drawPortion(GuiGraphics gui, int barX, int barY, float current, float max, int color) {
+        if (max <= 0 || current <= 0) {
+            return;
+        }
+        int width = (int) (BAR_W * Math.min(1F, current / max));
+        if (width > 0) {
+            gui.fill(barX, barY, barX + width, barY + BAR_H, color);
+        }
     }
 }

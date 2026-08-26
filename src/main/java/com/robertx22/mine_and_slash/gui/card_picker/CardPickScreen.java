@@ -36,6 +36,9 @@ public class CardPickScreen extends BaseScreen implements INamedScreen {
             x += CardPickButton.SIZE_X + spacing;
         }
 
+        // this screen takes ProphecyScreen's place on the hub while curse offers are pending, so it
+        // needs its own way back
+        addBackToHubButton();
     }
 
     @Override

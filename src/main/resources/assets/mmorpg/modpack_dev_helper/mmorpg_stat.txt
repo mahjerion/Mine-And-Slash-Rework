@@ -70,7 +70,9 @@ bleed_resistance
 bleed_strength
 block_aura_cost
 block_chance
+block_damage_reduction
 block_per_endurance_charge
+block_recovery
 blood
 blood_leech_cap
 blood_on_is_blocked
@@ -430,6 +432,13 @@ learn_lightning_spear
 learn_lightning_totem
 learn_mage_circle
 learn_magma_flower
+learn_merc_fireball
+learn_merc_frost_nova
+learn_merc_gong_strike
+learn_merc_mage_circle
+learn_merc_meteor
+learn_merc_pull
+learn_merc_taunt
 learn_meteor
 learn_meteor_arrow
 learn_minion_explosion
@@ -539,6 +548,7 @@ map_rarity_bias
 max_all_resist
 max_banners
 max_beast_summons
+max_block_chance
 max_chaos_resist
 max_charm_charges
 max_elemental_resist

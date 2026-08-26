@@ -63,8 +63,17 @@ public abstract class StatEffect implements JsonExileRegistry<StatEffect>, IAuto
         String ser = json.get("ser")
                 .getAsString();
 
-        StatEffect t = GSON.fromJson(json, SERIALIZERS.get(ser)
-                .getSerClass());
+        StatEffect serializer = SERIALIZERS.get(ser);
+
+        // an unregistered ser used to come out of here as a bare NullPointerException naming only
+        // "HashMap.get(Object)", which says nothing about which entry or key is at fault. that happens
+        // for a datapack with a typo'd ser, and for a stale generated file left behind after the
+        // effect class that owned it was deleted. StatCondition.fromJson already warns like this.
+        if (serializer == null) {
+            throw new RuntimeException("StatEffect '" + this.id + "' has no serializer registered for ser '" + ser + "'.");
+        }
+
+        StatEffect t = GSON.fromJson(json, serializer.getSerClass());
         t.onLoadedFromJson();
         return t;
     }

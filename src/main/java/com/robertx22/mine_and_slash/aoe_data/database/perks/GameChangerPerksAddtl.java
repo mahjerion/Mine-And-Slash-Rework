@@ -11,7 +11,9 @@ import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentDam
 import com.robertx22.mine_and_slash.database.data.stats.types.ailment.AilmentDuration;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockDamageReduction;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.DodgeRating;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.MaxBlockChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.PhysicalToElement;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
@@ -153,9 +155,12 @@ public class GameChangerPerksAddtl implements ExileRegistryInit {
                 new OptScaleExactStat(-50, OffenseStats.ELEMENTAL_DAMAGE.get(Elements.Nature), ModType.MORE)
         );
 
+        // block far more often, but each block only stops a third of the hit. the max block chance
+        // is what gives the MORE multiplier room to work - block is capped at 75 without it
         PerkBuilder.gameChanger("glancing_strikes", "Glancing Strikes",
                 new OptScaleExactStat(100, BlockChance.getInstance(), ModType.MORE),
-                new OptScaleExactStat(25, DefenseStats.DAMAGE_RECEIVED.get(), ModType.FLAT)
+                new OptScaleExactStat(15, MaxBlockChance.getInstance(), ModType.FLAT),
+                new OptScaleExactStat(-65, BlockDamageReduction.getInstance(), ModType.FLAT)
         );
 
         PerkBuilder.gameChanger("performer", "Performer",

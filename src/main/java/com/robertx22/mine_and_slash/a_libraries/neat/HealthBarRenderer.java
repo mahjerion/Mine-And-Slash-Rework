@@ -37,7 +37,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -401,10 +400,9 @@ public class HealthBarRenderer {
             level = Component.literal(lvl + "").withStyle(ChatFormatting.YELLOW);
         }
 
-        Component prefix = CommonComponents.EMPTY;
         Component name = living.getDisplayName();
+        Component prefix = CommonComponents.EMPTY;
         Component suffix = CommonComponents.EMPTY;
-
 
         for (MobAffix affix : Load.Unit(entity).getAffixData().getAffixes()) {
 
@@ -415,24 +413,45 @@ public class HealthBarRenderer {
 
             }
         }
-        ChatFormatting rarityColor;
-        Component rarity;
-        rarity = Load.Unit(living).getMobRarity().locName();
-
-        rarityColor = Load.Unit(living).getMobRarity().textFormatting();
 
         if (living instanceof Player) {
-            rarity = CommonComponents.EMPTY;
-            rarityColor = ChatFormatting.RED;
+            return Formatter.MOB_NAME_PLAYER.locName(level, styled(name, ChatFormatting.RED))
+                    .withStyle(ChatFormatting.YELLOW);
         }
-        List<Component> rarity1 = List.of(rarity, prefix, name, suffix);
-        for (Component component : rarity1) {
-            if (component instanceof MutableComponent){
-                ((MutableComponent) component).withStyle(rarityColor);
-            }
+
+        ChatFormatting rarityColor = Load.Unit(living).getMobRarity().textFormatting();
+
+        Component rarity = styled(Load.Unit(living).getMobRarity().locName(), rarityColor);
+        name = styled(name, rarityColor);
+
+        // an empty affix slot would still get the separator spaces of the format string, so pick a template that omits it
+        boolean hasPrefix = !prefix.getString().isEmpty();
+        boolean hasSuffix = !suffix.getString().isEmpty();
+
+        MutableComponent text;
+
+        // rarity-prefix-name-suffix
+        if (hasPrefix && hasSuffix) {
+            text = Formatter.MOB_NAME_TEMPLATE.locName(level, rarity, styled(prefix, rarityColor), name, styled(suffix, rarityColor));
         }
-        Component[] array = rarity1.toArray(Component[]::new);
-        return Formatter.MOB_NAME_TEMPLATE.locName((Object[]) ArrayUtils.addFirst(array, level)).withStyle(ChatFormatting.YELLOW);
+        // rarity-name-suffix
+        else if (hasSuffix) {
+            text = Formatter.MOB_NAME_NO_PREFIX.locName(level, rarity, name, styled(suffix, rarityColor));
+        }
+        // rarity-prefix-name
+        else if (hasPrefix) {
+            text = Formatter.MOB_NAME_NO_SUFFIX.locName(level, rarity, styled(prefix, rarityColor), name);
+        }
+        // rarity-name
+        else {
+            text = Formatter.MOB_NAME_NO_AFFIX.locName(level, rarity, name);
+        }
+
+        return text.withStyle(ChatFormatting.YELLOW);
+    }
+
+    private static Component styled(Component comp, ChatFormatting format) {
+        return comp instanceof MutableComponent mutable ? mutable.withStyle(format) : comp;
     }
 
 }

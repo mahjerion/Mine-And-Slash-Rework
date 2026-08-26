@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.client;
 
+import com.robertx22.mine_and_slash.database.data.mercenary.render.MercenaryRenderer;
 import com.robertx22.mine_and_slash.database.data.spells.entities.renders.ModTridentRenderer;
 import com.robertx22.mine_and_slash.database.data.spells.entities.renders.MySpriteRenderer;
 import com.robertx22.mine_and_slash.database.data.spells.entities.renders.RangerArrowRenderer;
@@ -25,6 +26,8 @@ public class RenderRegister {
         x.registerEntityRenderer(SlashEntities.FIRE_GOLEM.get(), ctx -> new ModSkeletonRender(SlashRef.id("textures/entity/fire_golem.png"), ctx));
         x.registerEntityRenderer(SlashEntities.COLD_GOLEM.get(), ctx -> new ModSkeletonRender(SlashRef.id("textures/entity/cold_golem.png"), ctx));
         x.registerEntityRenderer(SlashEntities.LIGHTNING_GOLEM.get(), ctx -> new ModSkeletonRender(SlashRef.id("textures/entity/lightning_golem.png"), ctx));
+
+        x.registerEntityRenderer(SlashEntities.MERCENARY.get(), MercenaryRenderer::new);
 
  
         x.registerEntityRenderer(SlashEntities.SIMPLE_PROJECTILE.get(), (d) -> new MySpriteRenderer<>(d, Minecraft.getInstance()

@@ -127,9 +127,12 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         return attached;
     }
 
-    public List<ExactStatData> getStats(Player p) {
-        int perc = (int) ((getLevelOf(p) / (float) getMaxLevelWithBonuses()) * 100F);
-        var stats = statsForSkillGem.stream().map(x -> x.ToExactStat(perc, Load.Unit(p).getLevel())).collect(Collectors.toList());
+    // LivingEntity, not Player: mercenaries socket support gems too, and getLevelOf already answers
+    // for a non player (it hands back default_lvl, which is exactly how a mercenary skill gets its
+    // rank without any storage of its own).
+    public List<ExactStatData> getStats(LivingEntity en) {
+        int perc = (int) ((getLevelOf(en) / (float) getMaxLevelWithBonuses()) * 100F);
+        var stats = statsForSkillGem.stream().map(x -> x.ToExactStat(perc, Load.Unit(en).getLevel())).collect(Collectors.toList());
         return stats;
     }
 
@@ -282,7 +285,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     }
 
     public final List<Component> GetTooltipString(StatRangeInfo info) {
-        SpellCastContext ctx = new SpellCastContext(info.player, 0, this);
+        SpellCastContext ctx = new SpellCastContext(info.getCaster(), 0, this);
         List<Component> list = new ArrayList<>();
         list.add(locName().withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
         list.add(ExileText.emptyLine().get());
@@ -469,7 +472,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         if (!this.statsForSkillGem.isEmpty()) {
             list.add(Words.SPELL_STATS.locName());
-            for (ExactStatData stat : getStats(info.player)) {
+            for (ExactStatData stat : getStats(info.getCaster())) {
                 list.addAll(stat.GetTooltipString());
             }
         }

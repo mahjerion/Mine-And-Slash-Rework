@@ -3,6 +3,9 @@ package com.robertx22.mine_and_slash.event_hooks.my_events;
 import com.robertx22.mine_and_slash.capability.bases.EntityGears;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.characters.PlayerStats;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenarySpellCaster;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -62,6 +65,15 @@ public class OnEntityTick {
                         p.awardStat(Stats.CUSTOM.get(PlayerStats.REGISTERED_STATS.get(set.getKey())), max);
                     }
                 }
+            } else if (entity instanceof MercenaryEntity merc) {
+                // this branch runs for every mercenary entity, orphans included, so it is the one
+                // place a duplicate can notice it isn't the one its owner is holding and remove itself
+                MercenaryManager.discardIfOrphan(merc);
+
+                // mercenaries drive their own skills - they have no key inputs and no SpellCastingData,
+                // and they must not pick up the mob rarity spells below.
+                MercenarySpellCaster.onTick(merc);
+
             } else {
 
                 var rar = Load.Unit(entity).getMobRarity();

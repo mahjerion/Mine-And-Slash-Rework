@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -35,8 +36,27 @@ public class SummonAtSightAction extends SpellAction {
         Double distance = data.getOrDefault(MapField.DISTANCE, 10D);
         Double height = data.getOrDefault(MapField.HEIGHT, 10D);
 
-        HitResult ray = ctx.getPositionEntity().pick(distance, 0.0F, false);
-        Vec3 pos = ray.getLocation();
+        // the datapack may name the entity this lands on - the same MapField.POS_SOURCE that
+        // SummonProjectileAction reads - otherwise the context's own source decides.
+        PositionSource source = data.getOrDefault(ctx.getPositionSource());
+        Entity posEn = source.get(ctx);
+        if (posEn == null) {
+            // onTick/onExpire leave target null when the source entity isn't a LivingEntity
+            posEn = ctx.caster;
+        }
+
+        Vec3 pos;
+
+        if (posEn == ctx.caster && posEn instanceof Player) {
+            // someone is actually aiming, so trace from the crosshair - the whole point of "at sight"
+            HitResult ray = posEn.pick(distance, 0.0F, false);
+            pos = ray.getLocation();
+        } else {
+            // nobody is aiming here. a mob's pitch is wherever its LookControl last left it, and a
+            // victim's facing has nothing to do with where the caster wants this - so drop it on the
+            // entity itself rather than up to `distance` blocks off in a meaningless direction.
+            pos = posEn.position();
+        }
 
         Entity en = projectile.get()
                 .create(ctx.world);

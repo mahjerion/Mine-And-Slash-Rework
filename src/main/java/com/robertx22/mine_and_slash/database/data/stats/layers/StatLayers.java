@@ -36,6 +36,9 @@ public class StatLayers {
         // 0.5F, silently capping all of them at 50% no matter what their own max allowed
         public static StatLayer DAMAGE_REDUCTION = new StatLayer("damage_reduction", "Damage Reduction", StatLayer.LayerAction.MULTIPLY, 103, 0.25F, STATICS.MAX_FLOAT);
         public static StatLayer DAMAGE_SUPPRESSION = new StatLayer("damage_suppression", "Damage Suppression", StatLayer.LayerAction.MULTIPLY, 104, 0.5F, 1);
+        // no floor - Block Damage Reduction is its only source and that stat's own 0..100 range is
+        // the real bound. a 0.1F floor here would silently turn any reduction of 91-99 into 90
+        public static StatLayer DAMAGE_BLOCK = new StatLayer("damage_block", "Damage Block", StatLayer.LayerAction.MULTIPLY, 105, 0F, 1);
 
         public static StatLayer FLAT_DAMAGE_REDUCTION = new StatLayer("flat_damage_reduction", "Flat Damage Reduction", StatLayer.LayerAction.ADD, 200, -1000, STATICS.MAX_FLOAT);
 

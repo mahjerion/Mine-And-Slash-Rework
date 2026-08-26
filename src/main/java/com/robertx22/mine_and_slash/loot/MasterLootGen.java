@@ -135,8 +135,19 @@ public class MasterLootGen {
     }
 
     public static List<ItemStack> generateLoot(LivingEntity victim, Player killer) {
+        return generateLoot(victim, killer, null);
+    }
+
+    /**
+     * @param mercKiller the mercenary that actually landed the kill, or null. Its find stats stack on
+     *                   top of its owner's; the loot itself is still credited to the owner.
+     */
+    public static List<ItemStack> generateLoot(LivingEntity victim, Player killer, LivingEntity mercKiller) {
 
         LootInfo info = LootInfo.ofMobKilled(killer, victim);
+        if (mercKiller != null) {
+            info.mercEntityData = Load.Unit(mercKiller);
+        }
         info.gatherLootMultipliers();
 
         List<ItemStack> items = generateLoot(info);
@@ -154,7 +165,11 @@ public class MasterLootGen {
     }
 
     public static void genAndDrop(LivingEntity victim, Player killer) {
-        List<ItemStack> items = generateLoot(victim, killer);
+        genAndDrop(victim, killer, null);
+    }
+
+    public static void genAndDrop(LivingEntity victim, Player killer, LivingEntity mercKiller) {
+        List<ItemStack> items = generateLoot(victim, killer, mercKiller);
         for (ItemStack stack : items) {
 
 

@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
@@ -43,6 +44,15 @@ public class SpellCastContext {
         if (caster instanceof Player p) {
             try {
                 this.unit = Load.player(p).getSpellUnitStats(spell);
+            } catch (Exception e) {
+                this.unit = this.data.getUnit();
+            }
+        } else if (caster instanceof MercenaryEntity merc) {
+            // mercenaries socket support gems the same way players do, so the skill has to be scored
+            // with the Unit that folds them in, not the plain one.
+            try {
+                var mercData = merc.getMercData();
+                this.unit = mercData == null ? this.data.getUnit() : mercData.getSpellUnit(merc, spell);
             } catch (Exception e) {
                 this.unit = this.data.getUnit();
             }

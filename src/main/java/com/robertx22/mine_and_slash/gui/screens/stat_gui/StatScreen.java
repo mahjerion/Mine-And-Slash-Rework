@@ -9,8 +9,11 @@ import com.robertx22.mine_and_slash.database.data.stats.types.defense.DodgeRatin
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.gui.bases.BackButton;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
+import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
@@ -49,7 +52,11 @@ public class StatScreen extends BaseScreen implements INamedScreen {
     public void render(GuiGraphics gui, int x, int y, float ticks) {
         gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        if (target != ClientOnly.getPlayer()) {
+        // a mercenary is the one target you have already just been looking at - MercenaryScreen draws
+        // the same model, at a larger scale, on the screen the Stats button is on. a plain mob is the
+        // case this paper doll is actually for: it was inspected out in the world, so this is the only
+        // place you get to see what you are reading the stats of.
+        if (target != ClientOnly.getPlayer() && !(target instanceof MercenaryEntity)) {
             // Show entity being viewed
             int paperDollX = this.guiLeft - 88;
             int paperDollY = this.guiTop + sizeY / 2 + 30;
@@ -88,8 +95,10 @@ public class StatScreen extends BaseScreen implements INamedScreen {
 
 
     public void setupStatButtons() {
-        this.renderables.removeIf(x -> x instanceof EditBox == false);
-        this.children().removeIf(x -> x instanceof EditBox == false);
+        // runs on every scroll and every search keystroke, so the chrome that isn't part of the stat
+        // list - the search box and the back button - has to be spared or it disappears on first use
+        this.renderables.removeIf(x -> !(x instanceof EditBox) && !(x instanceof BackButton));
+        this.children().removeIf(x -> !(x instanceof EditBox) && !(x instanceof BackButton));
 
         //    this.children().clear();
         //  this.renderables.clear();
@@ -251,6 +260,17 @@ public class StatScreen extends BaseScreen implements INamedScreen {
 
         showStats(StatGuiGroupSection.CORE.getStats(target), true);
 
+        // after showStats, which runs setupStatButtons and would otherwise throw the button away.
+        //
+        // this screen is reused for any LivingEntity - the player off the hub, the mercenary via
+        // MercStatsButton, and plain mobs via OpenEntityStatsRequestPacket - so where "back" goes
+        // depends on who you are looking at. A mob was inspected from the world, so it has no parent
+        // screen and gets no button.
+        if (target == ClientOnly.getPlayer()) {
+            addBackToHubButton();
+        } else if (target instanceof MercenaryEntity) {
+            addBackButton(Words.Mercenary.locName(), () -> ClientOnly.setScreen(new MercenaryScreen()));
+        }
     }
 
     @Override

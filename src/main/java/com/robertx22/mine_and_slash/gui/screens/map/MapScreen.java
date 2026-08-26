@@ -83,6 +83,8 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
                 int buttonY = statsPanelBottomY() + PANEL_GAP;
                 publicAddButton(new TeleportToBossButton(buttonX, buttonY));
             }
+
+            addBackToHubButton();
         } catch (Exception e) {
             e.printStackTrace();
         }

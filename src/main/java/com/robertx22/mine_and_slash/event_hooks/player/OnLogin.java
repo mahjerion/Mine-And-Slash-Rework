@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.event_hooks.player;
 
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -53,6 +54,10 @@ public class OnLogin {
 
 
             data.setAllDirtyOnLoginEtc();
+
+            // the mercenary entity is never saved to the world, so it always has to be brought back
+            // from the player's data. same 3 second delay as any other respawn.
+            MercenaryManager.requestRespawn(player);
 
             if (MMORPG.RUN_DEV_TOOLS) {
                 TestManager.RunAllTests(player);

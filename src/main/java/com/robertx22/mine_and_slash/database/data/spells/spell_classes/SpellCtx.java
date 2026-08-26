@@ -50,6 +50,11 @@ public class SpellCtx {
         return positionSource.get(this);
     }
 
+    /** which entity this ctx measures positions from. an action may override it per datapack entry */
+    public PositionSource getPositionSource() {
+        return positionSource;
+    }
+
     public SpellCtx setPositionSource(PositionSource s) {
         this.positionSource = s;
         return this;

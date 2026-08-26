@@ -44,7 +44,10 @@ public class NormalStatTooltip implements IStatTooltipType {
         if (info.shouldShowDescriptions() && !(info.stat instanceof LearnSpellStat)) {
             list.addAll(info.stat.getCutDescTooltip());
 
-            if (ctx.statinfo.stat instanceof IUsableStat usable) {
+            // only the rating stats (armor, dodge, spell dodge) use that diminishing returns curve.
+            // the ones that override getUsableValue to clamp a flat percent instead - resistances,
+            // block chance - have no rating base, and the line is simply untrue for them
+            if (ctx.statinfo.stat instanceof IUsableStat usable && usable.valueNeededToReachMaximumPercentAtLevelOne() > 0) {
                 list.add(Component.literal("Formula: Stat Percent = statNum / ( base + statNum)"));
             }
         }

@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.uncommon.stat_calculation;
 import com.robertx22.mine_and_slash.aoe_data.database.base_stats.BaseStatsAdder;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.stat_compat.StatCompat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.maps.MapItemData;
@@ -48,9 +49,22 @@ public class CommonStatUtils {
 
         try {
 
-            String id = CompatConfig.get().baseStatsDatapack().id;
+            String id;
 
-            if (en instanceof Player == false) {
+            if (en instanceof MercenaryEntity) {
+                // a companion is neither a character nor a monster, so it gets a datapack entry of
+                // its own - a pack can retune merc resources and regen without moving the player's.
+                id = BaseStatsAdder.MERCENARY;
+
+                // the entry only exists once datagen has emitted it. falling through to the empty
+                // default would leave a mercenary on ~1 hp, so read the player entry - the old
+                // behaviour - rather than nothing at all.
+                if (!ExileDB.BaseStats().isRegistered(id)) {
+                    id = CompatConfig.get().baseStatsDatapack().id;
+                }
+            } else if (en instanceof Player) {
+                id = CompatConfig.get().baseStatsDatapack().id;
+            } else {
                 id = BaseStatsAdder.MOB;
             }
 

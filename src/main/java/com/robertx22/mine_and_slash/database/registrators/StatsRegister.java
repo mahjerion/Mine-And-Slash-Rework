@@ -119,6 +119,9 @@ public class StatsRegister implements ExileRegistryInit {
                     add(AllAilmentDamage.getInstance());
                     add(HitDamage.getInstance());
                     add(BlockChance.getInstance());
+                    add(BlockRecovery.getInstance());
+                    add(BlockDamageReduction.getInstance());
+                    add(MaxBlockChance.getInstance());
 
                     add(AuraCapacity.getInstance());
                     add(AuraEffect.getInstance());

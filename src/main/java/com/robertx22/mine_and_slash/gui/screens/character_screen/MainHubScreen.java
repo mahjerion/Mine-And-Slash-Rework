@@ -19,6 +19,9 @@ import com.robertx22.mine_and_slash.database.data.stats.types.core_stats.AllAttr
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.ArmorPenetration;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockChance;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockDamageReduction;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.BlockRecovery;
+import com.robertx22.mine_and_slash.database.data.stats.types.defense.MaxBlockChance;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.DodgeRating;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalPenetration;
 import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
@@ -48,6 +51,8 @@ import com.robertx22.mine_and_slash.gui.screens.map.MapScreen;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.AscendancyTree;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.TalentsScreen;
 import com.robertx22.mine_and_slash.gui.screens.spell.SpellSchoolScreen;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.gui.wiki.reworked.NewWikiScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -159,7 +164,7 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         addTo(StatType.DAMAGE, Arrays.asList(WeaponDamage.getInstance(), SkillDamage.getInstance()));
         addTo(StatType.DAMAGE, OffenseStats.STYLE_DAMAGE.getAll());
         addTo(StatType.DAMAGE, Arrays.asList(OffenseStats.ACCURACY.get(), OffenseStats.CRIT_CHANCE.get(), OffenseStats.CRIT_DAMAGE.get()));
-        addTo(StatType.DAMAGE, Arrays.asList(SpellChangeStats.COOLDOWN_REDUCTION.get(), SpellChangeStats.CAST_SPEED.get()));
+        addTo(StatType.DAMAGE, Arrays.asList(SpellChangeStats.SKILL_SPEED.get(), SpellChangeStats.CAST_SPEED.get(), SpellChangeStats.ATTACK_CAST_SPEED.get(), SpellChangeStats.COOLDOWN_REDUCTION.get()));
 
         addTo(StatType.ELE_DAMAGE, OffenseStats.ELEMENTAL_DAMAGE.getAll().stream().filter(x -> x.getElement().isValid()).collect(Collectors.toList()));
         // addTo(StatType.ELE_DAMAGE, Stats.ELEMENTAL_ANY_WEAPON_DAMAGE.getAll());
@@ -167,7 +172,7 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         addTo(StatType.ELE_DAMAGE, Arrays.asList(ArmorPenetration.getInstance()));
         addTo(StatType.ELE_DAMAGE, new ElementalPenetration(Elements.Elemental).generateAllSingleVariations());
 
-        addTo(StatType.DEFENSE, Arrays.asList(Armor.getInstance(), DodgeRating.getInstance(), BlockChance.getInstance()));
+        addTo(StatType.DEFENSE, Arrays.asList(Armor.getInstance(), DodgeRating.getInstance(), BlockChance.getInstance(), MaxBlockChance.getInstance(), BlockRecovery.getInstance(), BlockDamageReduction.getInstance()));
         addTo(StatType.DEFENSE, Arrays.asList(DefenseStats.DAMAGE_RECEIVED.get()));
         addTo(StatType.DEFENSE, Arrays.asList(DefenseStats.DAMAGE_REDUCTION.get()));
         addTo(StatType.DEFENSE, Arrays.asList(DefenseStats.DAMAGE_REDUCTION_CHANCE.get()));
@@ -236,7 +241,7 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
 
         // TODO MAKE STATIC IDS
         xpos = guiLeft + 28;
-        ypos = guiTop + 21;
+        ypos = guiTop + 22;
 
         publicAddButton(new AllocateStatButton(AllAttributes.STR_ID, xpos, ypos));
         ypos += YSEP;
@@ -276,6 +281,10 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
         leftButtons.add(new OpenInvGuiScreen(Words.Salvaging, "salvage", () -> new SalvageConfigScreen()));
         leftButtons.add(new OpenInvGuiScreen(Words.Configs, "configs", GuiInventoryGrids.ofConfigs()));
         leftButtons.add(new StatScreen(ClientOnly.getPlayer()));
+        // mercenaries are a level gated feature - no button at all until the character unlocks them
+        if (MercenaryManager.isUnlocked(mc.player)) {
+            leftButtons.add(new MercenaryScreen());
+        }
 
         publicAddButton(new FavorButton(guiLeft + sizeX / 2 - FavorButton.FAVOR_BUTTON_SIZE_X / 2, guiTop - FavorButton.FAVOR_BUTTON_SIZE_Y));
         publicAddButton(new ProfessionLevelsButton(guiLeft + sizeX / 2 - ProfessionLevelsButton.SX / 2, guiTop + 147));

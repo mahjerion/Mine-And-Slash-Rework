@@ -1701,6 +1701,10 @@
 	"mmorpg.formatter.special_unique_process.locale_context_for_translator": "currently no use",
 	"mmorpg.formatter.unique_name_format": "%1$s%2$s",
 	"mmorpg.formatter.mob_name_template": "%1$s级%2$s%3$s%4$s%5$s",
+	"mmorpg.formatter.mob_name_no_prefix": "%1$s级%2$s%3$s%4$s",
+	"mmorpg.formatter.mob_name_no_suffix": "%1$s级%2$s%3$s%4$s",
+	"mmorpg.formatter.mob_name_no_affix": "%1$s级%2$s%3$s",
+	"mmorpg.formatter.mob_name_player": "%1$s级%2$s",
 
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 

@@ -128,7 +128,9 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
     }
 
     public boolean canPlayerWear(EntityData data) {
-        if (PlayerUTIL.isFake((Player) data.getEntity())) {
+        // non players wear gear too - mercenaries, and any mob spawned with equipment. the fake
+        // player check only makes sense for an actual player, and casting blindly threw here.
+        if (data.getEntity() instanceof Player p && PlayerUTIL.isFake(p)) {
             return true;
         }
         if (this.getLevel() > data.getLevel()) {

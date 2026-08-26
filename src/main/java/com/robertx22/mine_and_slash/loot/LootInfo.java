@@ -46,6 +46,12 @@ public class LootInfo {
     public LootOrigin lootOrigin;
     public EntityData mobData;
     public EntityData playerEntityData;
+
+    // set only when a mercenary landed the kill. its find stats then stack on top of its owner's
+    // (design section 5). deliberately one directional - the player never benefits from these on a
+    // kill of their own.
+    public EntityData mercEntityData;
+
     public LivingEntity mobKilled;
     public Player player;
     public Level world;
@@ -278,7 +284,16 @@ public class LootInfo {
             lootMods.add(new LootModifier(LootModifierEnum.FAVOR, Load.player(player).favor.getLootExpMulti()));
 
             if (lootOrigin != LootOrigin.LOOT_CRATE) {
-                lootMods.add(new LootModifier(LootModifierEnum.PLAYER_LOOT_QUANTITY, playerEntityData.getUnit().getCalculatedStat(TreasureQuantity.getInstance()).getMultiplier()));
+                float quantity = playerEntityData.getUnit().getCalculatedStat(TreasureQuantity.getInstance()).getMultiplier();
+
+                // when a mercenary landed the kill its own find stats combine with its owner's. same
+                // stat, same modifier row - there is no mercenary-only source of loot quantity, so
+                // showing it as a separate line would suggest one exists.
+                if (mercEntityData != null) {
+                    quantity *= mercEntityData.getUnit().getCalculatedStat(TreasureQuantity.getInstance()).getMultiplier();
+                }
+
+                lootMods.add(new LootModifier(LootModifierEnum.PLAYER_LOOT_QUANTITY, quantity));
             }
         }
 

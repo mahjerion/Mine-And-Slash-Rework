@@ -12,6 +12,7 @@ import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.affixes.Affix;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.chaos_stats.ChaosStat;
@@ -285,6 +286,10 @@ public class ExileDB {
 
     public static ExileRegistryContainer<AuraGem> AuraGems() {
         return Database.getRegistry(ExileRegistryTypes.AURA);
+    }
+
+    public static ExileRegistryContainer<MercenaryClass> Mercenaries() {
+        return Database.getRegistry(ExileRegistryTypes.MERCENARY);
     }
 
 

@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
@@ -30,6 +31,12 @@ public class EntityTypeUtils {
 
     public static EntityClassification getType(LivingEntity entity) {
 
+        // has to be checked before everything else. a mercenary is a TamableAnimal, so isAnimal would
+        // claim it - and the design needs it to count as a player for procs, stat calc and combat
+        // triggers, not as wildlife.
+        if (entity instanceof MercenaryEntity) {
+            return EntityClassification.PLAYER;
+        }
 
         if (isMob(entity)) {
             return EntityClassification.MOB;

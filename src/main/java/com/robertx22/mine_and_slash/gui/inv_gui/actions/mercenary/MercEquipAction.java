@@ -1,0 +1,135 @@
+package com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary;
+
+import com.robertx22.library_of_exile.main.Packets;
+import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
+import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
+import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * One entry in the "pick something for this slot" grid the mercenary screen opens when a slot is
+ * clicked. The design offered either a chest style inventory row or a picker; this is the picker,
+ * which keeps the screen at the mocked up 256x256.
+ * <p>
+ * The action map is keyed by GUID, so the player inventory slot has to travel in the id - one action
+ * per inventory slot, registered up front. Which mercenary slot it is going into travels as extra
+ * data, the same way {@link com.robertx22.mine_and_slash.gui.inv_gui.actions.PickSpellAction} carries
+ * its hotbar index.
+ */
+public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
+
+    /** every slot a player inventory can have, so regenActionMap can cover them all */
+    public static final int MAX_INVENTORY_SLOTS = 41;
+
+    public record Target(String slotType, int index) {
+    }
+
+    // set by the screen just before the grid is built, read by saveExtraData. same one-shot static as
+    // PickSpellAction.SLOT - the grid is constructed and sent in the same tick as the click.
+    public static MercenarySlotType TARGET_TYPE = MercenarySlotType.GEAR;
+    public static int TARGET_INDEX = 0;
+
+    private final int invSlot;
+
+    public MercEquipAction(int invSlot) {
+        this.invSlot = invSlot;
+    }
+
+    @Override
+    public ItemStack getItemStackIcon() {
+        // client side only - the grid is built from the local player's inventory
+        Player p = ClientOnly.getPlayer();
+        if (p == null) {
+            return ItemStack.EMPTY;
+        }
+        return p.getInventory().getItem(invSlot);
+    }
+
+    @Override
+    public void saveExtraData(FriendlyByteBuf buf) {
+        buf.writeUtf(TARGET_TYPE.name());
+        buf.writeInt(TARGET_INDEX);
+    }
+
+    @Override
+    public Target loadExtraData(FriendlyByteBuf buf) {
+        return new Target(buf.readUtf(), buf.readInt());
+    }
+
+    @Override
+    public List<Component> getTooltip(Player p) {
+        List<Component> list = new ArrayList<>();
+        ItemStack stack = p.getInventory().getItem(invSlot);
+        if (!stack.isEmpty()) {
+            list.addAll(stack.getTooltipLines(p, TooltipFlag.NORMAL));
+        }
+        return list;
+    }
+
+    @Override
+    public void doAction(Player p, Object obj) {
+        if (!(obj instanceof Target target)) {
+            return;
+        }
+        MercenarySlotType type;
+        try {
+            type = MercenarySlotType.valueOf(target.slotType());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+
+        MercenaryData data = Load.player(p).mercs.getActive();
+        MyInventory inv = type.inventoryOf(data);
+
+        if (target.index() < 0 || target.index() >= inv.getContainerSize()) {
+            return;
+        }
+
+        ItemStack stack = p.getInventory().getItem(invSlot);
+        if (stack.isEmpty()) {
+            return;
+        }
+        // never trust the client about legality - it picked the grid contents, the server decides
+        if (!type.mayPlace(p, data, target.index(), stack)) {
+            return;
+        }
+
+        // one item per slot: whatever was there goes back to the player before the new one lands, so
+        // a swap can never duplicate or eat a stack.
+        ItemStack previous = inv.getItem(target.index());
+        ItemStack moving = stack.split(1);
+
+        inv.setItem(target.index(), moving);
+        if (!previous.isEmpty()) {
+            MercenarySlotType.giveBack(p, previous);
+        }
+
+        MercenarySlotType.afterChange(p);
+    }
+
+    @Override
+    public void clientAction(Player p, Object obj) {
+        // keep the cursor where it is, then go back to the mercenary screen
+        GuiMousePosition.save();
+        Minecraft.getInstance().setScreen(new MercenaryScreen());
+    }
+
+    @Override
+    public String GUID() {
+        return "merc_equip_" + invSlot;
+    }
+}

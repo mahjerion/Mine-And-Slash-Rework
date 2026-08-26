@@ -4,6 +4,8 @@ import com.robertx22.mine_and_slash.event_hooks.player.OnKeyPress;
 import com.robertx22.mine_and_slash.gui.screens.skill_tree.SkillTreeScreen;
 import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatScreen;
 import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.proxies.OpenGuiWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -54,6 +56,22 @@ public class BaseScreen extends Screen {
 
     public <T extends AbstractWidget> T publicAddButton(T w) {
         return this.addRenderableWidget(w);
+    }
+
+    // The back button hangs above the panel's top left corner, outside the background art.
+    //
+    // Deliberately not called from init(): several screens clearWidgets() *after* super.init(), and
+    // MercenaryScreen rebuilds its widgets from tick(), so an automatic add would be silently wiped.
+    // Each screen calls this at the end of whichever method lays its widgets out.
+    //
+    // The y is clamped because the tallest panels (SkillGemsScreen 256, MercenaryScreen 256) leave
+    // almost no room above themselves on a short window, and a button at a negative y is unclickable.
+    protected BackButton addBackButton(Component tooltip, Runnable onBack) {
+        return publicAddButton(new BackButton(guiLeft, Math.max(2, guiTop - BackButton.SIZE - 2), tooltip, onBack));
+    }
+
+    protected BackButton addBackToHubButton() {
+        return addBackButton(Words.Main_Hub.locName(), OpenGuiWrapper::openMainHub);
     }
 
 }

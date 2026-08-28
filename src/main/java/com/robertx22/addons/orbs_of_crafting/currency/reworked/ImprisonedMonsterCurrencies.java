@@ -1,5 +1,6 @@
 package com.robertx22.addons.orbs_of_crafting.currency.reworked;
 
+import com.robertx22.addons.orbs_of_crafting.currency.base.CodeCurrency;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_mod.ItemMods;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.item_req.ItemReqs;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.keys.MaxUsesKey;
@@ -62,7 +63,7 @@ public class ImprisonedMonsterCurrencies extends ExileKeyHolderSection<ExileCurr
                 .addAlwaysUseModification(restoreMod)
                 .edit(MaxUsesKey.ofUses(ItemReqs.Datas.SEED_USES.toKey()))
                 .potentialCost(0)
-                .weight(0)
+                .weight(CodeCurrency.Weights.NO_DROP)
                 .build(get());
     }
 

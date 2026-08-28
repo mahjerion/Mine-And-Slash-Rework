@@ -67,7 +67,7 @@ public class AncientObeliskCurrencies extends ExileKeyHolderSection<ExileCurrenc
                         .rarity(IRarity.EPIC_ID)
                         .addAlwaysUseModification(ItemMods.INSTANCE.COMMON_TO_EPIC_WITH_TAG.get(info))
                         .potentialCost(15)
-                        .weight(CodeCurrency.Weights.RARE)
+                        .weight(CodeCurrency.Weights.EPIC)
                         .buildCurrency(get());
             });
 
@@ -99,7 +99,7 @@ public class AncientObeliskCurrencies extends ExileKeyHolderSection<ExileCurrenc
                         .addModification(ItemMods.INSTANCE.COMMON_TO_MYTHIC_WITH_TAG.get(info), 75)
                         .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
                         .potentialCost(45)
-                        .weight(0)
+                        .weight(CodeCurrency.Weights.NO_DROP)
                         .buildCurrency(get());
             });
 

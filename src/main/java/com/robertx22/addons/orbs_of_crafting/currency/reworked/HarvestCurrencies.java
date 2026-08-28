@@ -57,7 +57,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
                         .addModification(Modifications.INSTANCE.DESTROY_ITEM, 15)
                         .addModification(ItemMods.INSTANCE.UPGRADE_SPECIFIC_AFFIX_RARITY.get(new RarityKeyInfo(info.tier.rar)), 85)
                         .potentialCost(1)
-                        .weight(5)
+                        .weight(CodeCurrency.Weights.of(info.tier.rar))
                         .buildCurrency(get());
             });
 
@@ -69,7 +69,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.UPGRADE_LOWEST_AFFIX, 50)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 50)
             .potentialCost(1)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
 
@@ -80,7 +80,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.ADD_25_POTENTIAL, 75)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 25)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
 
@@ -92,7 +92,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.ADD_UP_TO_5_GEAR_QUALITY, 75)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 25)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> HARVEST_UNIQUE_STATS = ExileCurrency.Builder.of("entangled_unique_reroll", "Entangled Orb of Imperfection", ItemReqs.INSTANCE.IS_GEAR)
@@ -103,7 +103,7 @@ public class HarvestCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.ADD_10_PERCENT_UNIQUE_STATS, 30)
             .addModification(ItemMods.INSTANCE.CORRUPT_GEAR_NO_AFFIXES, 70)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
     @Override

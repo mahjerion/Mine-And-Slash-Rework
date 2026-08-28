@@ -23,7 +23,7 @@ public class OmenCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(ItemMods.INSTANCE.REROLL_OMEN_STATS, 75)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.COMMON)
+            .weight(CodeCurrency.Weights.RARE)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> OMEN_RARITY_RANDOM_UPGRADE = ExileCurrency.Builder.of("omen_rarity_random_upgrade", "Orb of Knowledge", ItemReqs.INSTANCE.IS_OMEN)
@@ -34,7 +34,7 @@ public class OmenCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_OMEN_RARITY)
             .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_OMEN_RARITY_USES.toKey()))
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
 

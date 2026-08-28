@@ -33,9 +33,20 @@ public class MercenaryCastState {
         return spell != null;
     }
 
-    public void start(Spell spell, LivingEntity target, int castTimeTicks) {
+    /**
+     * How close the mercenary wants to be while this skill is going off, in blocks.
+     * <p>
+     * The combat goal reads it through {@code MercenaryEntity.getActiveEngageRange()} and tightens
+     * its kite band to match. Without it a caster walks in for a five block skill and then flees
+     * back out to its fixed eight block band on the very next tick, spending the whole cast out of
+     * its own range.
+     */
+    public double engageRange;
+
+    public void start(Spell spell, LivingEntity target, int castTimeTicks, double engageRange) {
         this.spell = spell;
         this.target = target;
+        this.engageRange = engageRange;
         // a cast time of 0 would finish on the tick it started and divide by zero in the
         // times_to_cast pacing. instant skills never get here, but a datapack can author anything
         this.totalTicks = Math.max(1, castTimeTicks);
@@ -46,9 +57,21 @@ public class MercenaryCastState {
     public void clear() {
         this.spell = null;
         this.target = null;
+        this.engageRange = 0;
         this.ticksLeft = 0;
         this.ticksDone = 0;
         this.totalTicks = 0;
+    }
+
+    /** the range of whichever phase is live, or 0 when the mercenary has no skill in progress */
+    public double activeEngageRange() {
+        if (spell != null) {
+            return engageRange;
+        }
+        if (approachSpell != null) {
+            return approachEngageRange;
+        }
+        return 0;
     }
 
     // ------------------------------------------------------------------ closing in to cast
@@ -67,23 +90,27 @@ public class MercenaryCastState {
     public LivingEntity approachTarget;
     /** ticks left before the mercenary gives up on getting there and lets another skill have a go */
     public int approachTicksLeft;
-    /** squared distance the skill actually reaches, so the arrival check is a bare compare */
+    /** how close the mercenary is walking to, in blocks */
+    public double approachEngageRange;
+    /** the same distance squared, so the arrival check is a bare compare */
     public double approachRangeSqr;
 
     public boolean isApproaching() {
         return approachSpell != null;
     }
 
-    public void startApproach(Spell spell, LivingEntity target, double rangeSqr, int timeoutTicks) {
+    public void startApproach(Spell spell, LivingEntity target, double engageRange, int timeoutTicks) {
         this.approachSpell = spell;
         this.approachTarget = target;
-        this.approachRangeSqr = rangeSqr;
+        this.approachEngageRange = engageRange;
+        this.approachRangeSqr = engageRange * engageRange;
         this.approachTicksLeft = timeoutTicks;
     }
 
     public void clearApproach() {
         this.approachSpell = null;
         this.approachTarget = null;
+        this.approachEngageRange = 0;
         this.approachRangeSqr = 0;
         this.approachTicksLeft = 0;
     }

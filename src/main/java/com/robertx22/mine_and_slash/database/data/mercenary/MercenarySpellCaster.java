@@ -15,11 +15,13 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -51,6 +53,11 @@ public class MercenarySpellCaster {
     private static final int APPROACH_REPATH_INTERVAL = 5;
     /** a contact skill still needs contact, whatever its components say */
     private static final double MIN_CAST_RANGE = 2.5D;
+    /**
+     * The mercenary engages at this fraction of a skill's actual reach rather than on its exact edge.
+     * A target that takes one step while the cast winds up would otherwise walk straight out of it.
+     */
+    private static final double ENGAGE_FACTOR = 0.8D;
 
     public static void onTick(MercenaryEntity merc) {
 
@@ -92,6 +99,14 @@ public class MercenarySpellCaster {
             return;
         }
 
+        // the projectile speed multiplier is a property of the mercenary, so it is sampled at most
+        // once per tick and shared by every skill scored on that tick - building a SpellCastContext
+        // per skill would fire a full stat event four times over. see projSpeedMulti.
+        double[] projMulti = {-1D};
+
+        Spell walkTo = null;
+        double walkToRange = 0;
+
         for (int i = 0; i < MercenaryClass.EQUIPPED_SKILLS; i++) {
             Spell spell = data.getEquippedSpell(i);
             if (spell == null) {
@@ -109,17 +124,27 @@ public class MercenarySpellCaster {
             // a skill only connects inside its own radius now that it is cast from the mercenary
             // rather than from the enemy. out of range, walk in first rather than burning the
             // cooldown on a swing at empty air.
-            double rangeSqr = castRangeSqr(merc, spell);
+            double engage = engageRange(merc, spell, projMulti);
 
-            if (merc.distanceToSqr(target) > rangeSqr) {
-                cast.startApproach(spell, target, rangeSqr, APPROACH_TIMEOUT_TICKS);
+            if (merc.distanceToSqr(target) <= engage * engage) {
+                beginCast(merc, spell, target, engage);
+                // the list order IS the priority queue, so the first castable skill wins and the
+                // rest wait for the next opening.
                 return;
             }
 
-            beginCast(merc, spell, target);
-            // the list order IS the priority queue, so the first castable skill wins and the rest
-            // wait for the next opening.
-            return;
+            // out of range. remembered rather than acted on straight away, so a skill further down
+            // the list that CAN be cast from here still fires this tick instead of the mercenary
+            // losing two seconds walking in for this one. the first one out of range is the one it
+            // falls back to, which keeps list order deciding between the walks themselves.
+            if (walkTo == null) {
+                walkTo = spell;
+                walkToRange = engage;
+            }
+        }
+
+        if (walkTo != null) {
+            cast.startApproach(walkTo, target, walkToRange, APPROACH_TIMEOUT_TICKS);
         }
     }
 
@@ -161,8 +186,9 @@ public class MercenarySpellCaster {
             aimAt(merc, target);
 
             if (merc.distanceToSqr(target) <= cast.approachRangeSqr) {
+                double engage = cast.approachEngageRange;
                 cast.clearApproach();
-                beginCast(merc, spell, target);
+                beginCast(merc, spell, target, engage);
                 return;
             }
 
@@ -185,34 +211,81 @@ public class MercenarySpellCaster {
     }
 
     /**
-     * How far this skill actually reaches, squared.
+     * How close the mercenary has to be for this skill to connect, in blocks.
      * <p>
      * Read off the skill's own components rather than declared as a new datapack field, so a pack
-     * that retunes a radius moves the mercenary's engagement distance with it and cannot forget to.
-     * A skill that throws something - a projectile, or a meteor summoned at the target - is treated
-     * as reaching as far as the mercenary can see; everything else is bounded by the widest area
-     * its selectors search.
+     * that retunes a radius or a projectile speed moves the mercenary's engagement distance with it
+     * and cannot forget to.
      * <p>
      * {@code AoeSelector} multiplies its radius by the caster's Area stat at runtime, which this
      * estimate does not know about. That errs on the near side: the mercenary closes slightly more
      * than it strictly had to, which costs a step, where the other direction would cost a whiffed
      * cooldown.
      */
-    private static double castRangeSqr(MercenaryEntity merc, Spell spell) {
+    private static double engageRange(MercenaryEntity merc, Spell spell, double[] projMulti) {
 
-        Double cached = RANGE_CACHE.get(spell);
+        Reach reach = reachOf(spell);
 
+        if (reach.unlimited) {
+            // nothing to close on - it lands on the target itself, or it is not aimed at an enemy
+            // at all. cast it from wherever the mercenary happens to be standing.
+            return merc.getAttributeValue(Attributes.FOLLOW_RANGE);
+        }
+
+        double range = reach.onCastRange;
+
+        if (reach.projTravel > 0) {
+            // a projectile reaches as far as it flies before it expires, plus whatever it does when
+            // it gets there. this is the same speed times lifespan that ProjectileCastHelper uses to
+            // size its own enemy search, and the same multiplier SummonProjectileAction applies to
+            // shootSpeed - so a Projectile Speed mercenary really does engage from further out.
+            range = Math.max(range, reach.projTravel * projSpeedMulti(merc, spell, projMulti) + reach.detonationRadius);
+        } else {
+            range = Math.max(range, reach.detonationRadius);
+        }
+
+        return Math.max(range * ENGAGE_FACTOR, MIN_CAST_RANGE);
+    }
+
+    /**
+     * The mercenary's Projectile Speed, sampled at most once per tick.
+     * <p>
+     * A stat effect could in principle be conditioned on a spell tag and so differ between two of
+     * the mercenary's skills, but this number only decides where the mercenary stands, never what
+     * the projectile does, so one sample is close enough - and it saves firing a full
+     * {@code SpellStatsCalculationEvent} once per equipped skill per tick.
+     */
+    private static double projSpeedMulti(MercenaryEntity merc, Spell spell, double[] cache) {
+        if (cache[0] < 0) {
+            try {
+                SpellCastContext ctx = new SpellCastContext(merc, 0, spell);
+                cache[0] = ctx.calcData.data.getNumber(EventData.PROJECTILE_SPEED_MULTI, 1).number;
+            } catch (Exception e) {
+                cache[0] = 1;
+            }
+        }
+        return cache[0];
+    }
+
+    /**
+     * What a skill can reach, worked out once from its components.
+     * <p>
+     * {@code unlimited} covers the two cases with no distance to close: an action that lands on the
+     * target's own position, and a skill with nothing aimed at an enemy anywhere in it. The second
+     * one matters more than it sounds - every self buff and ally heal used to fall through to the
+     * {@code MIN_CAST_RANGE} floor, which walked a kiting caster into melee to buff itself.
+     */
+    private record Reach(boolean unlimited, double onCastRange, double projTravel, double detonationRadius) {
+        static final Reach UNLIMITED = new Reach(true, 0, 0, 0);
+    }
+
+    private static Reach reachOf(Spell spell) {
+        Reach cached = RANGE_CACHE.get(spell);
         if (cached == null) {
-            cached = computeCastRange(spell);
+            cached = computeReach(spell);
             RANGE_CACHE.put(spell, cached);
         }
-
-        double range = cached;
-
-        if (range == RANGED_MARKER) {
-            range = merc.getAttributeValue(Attributes.FOLLOW_RANGE);
-        }
-        return range * range;
+        return cached;
     }
 
     /**
@@ -223,21 +296,27 @@ public class MercenarySpellCaster {
      * entries go with them. An id-keyed cache would happily serve a pre-reload radius forever.
      * Server thread only, from the mercenary tick.
      */
-    private static final Map<Spell, Double> RANGE_CACHE = new WeakHashMap<>();
-    /** stand-in for "as far as it can see", resolved per mercenary from its follow range */
-    private static final double RANGED_MARKER = -1D;
+    private static final Map<Spell, Reach> RANGE_CACHE = new WeakHashMap<>();
 
-    private static double computeCastRange(Spell spell) {
+    private static Reach computeReach(Spell spell) {
 
-        double range = MIN_CAST_RANGE;
+        double onCastRange = 0;
+        double projTravel = 0;
+        boolean huntsAnything = false;
 
         for (ComponentPart part : spell.attached.on_cast) {
 
             for (MapHolder act : part.acts) {
-                // both of these leave the mercenary and travel, so the skill is not range limited
-                if (SpellAction.SUMMON_PROJECTILE.GUID().equals(act.type)
-                        || SpellAction.SUMMON_AT_SIGHT.GUID().equals(act.type)) {
-                    return RANGED_MARKER;
+                if (SpellAction.SUMMON_AT_SIGHT.GUID().equals(act.type)) {
+                    // for anything that isn't a player this drops straight onto the target's own
+                    // position - see SummonAtSightAction - so there is no distance to close
+                    return Reach.UNLIMITED;
+                }
+                if (SpellAction.SUMMON_PROJECTILE.GUID().equals(act.type)) {
+                    huntsAnything = true;
+                    double life = act.getOrDefault(MapField.LIFESPAN_TICKS, 0D);
+                    double speed = act.getOrDefault(MapField.PROJECTILE_SPEED, 0D);
+                    projTravel = Math.max(projTravel, life * speed);
                 }
             }
 
@@ -248,14 +327,40 @@ public class MercenarySpellCaster {
                 if (!huntsEnemies(sel)) {
                     continue;
                 }
+                huntsAnything = true;
                 if (TargetSelector.AOE.GUID().equals(sel.type)) {
-                    range = Math.max(range, sel.getOrDefault(MapField.RADIUS, MIN_CAST_RANGE));
+                    onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.RADIUS, 0D));
                 } else if (TargetSelector.IN_FRONT.GUID().equals(sel.type)) {
-                    range = Math.max(range, sel.getOrDefault(MapField.DISTANCE, MIN_CAST_RANGE));
+                    onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.DISTANCE, 0D));
                 }
             }
         }
-        return range;
+
+        // the widest enemy hunting area on whatever the skill leaves behind. an orb that travels six
+        // blocks and detonates for four can hit something ten blocks away, and a field that never
+        // moves reaches exactly its own radius.
+        double detonation = 0;
+        boolean entitiesHuntEnemies = false;
+
+        for (List<ComponentPart> parts : spell.attached.entity_components.values()) {
+            for (ComponentPart part : parts) {
+                for (MapHolder sel : part.targets) {
+                    if (!huntsEnemies(sel)) {
+                        continue;
+                    }
+                    entitiesHuntEnemies = true;
+                    if (TargetSelector.AOE.GUID().equals(sel.type)) {
+                        detonation = Math.max(detonation, sel.getOrDefault(MapField.RADIUS, 0D));
+                    }
+                }
+            }
+        }
+
+        if (!huntsAnything && !entitiesHuntEnemies) {
+            return Reach.UNLIMITED;
+        }
+
+        return new Reach(false, onCastRange, projTravel, detonation);
     }
 
     /**
@@ -347,12 +452,15 @@ public class MercenarySpellCaster {
     /**
      * Arms the skill and either fires it immediately (an instant) or starts its wind up.
      * <p>
-     * Both cooldowns go on here, at the START of the cast, never at the end. The player path arms them
-     * in {@code onSpellCastFinished} instead, but here they are also what stops a wind up the
-     * mercenary had to abandon - its target died, its owner switched it to Idle - from being re-picked
-     * on the very next tick and locking it into a cast it never finishes.
+     * Both cooldowns go on here, at the START of the cast: they are what stops a wind up the mercenary
+     * had to abandon - its target died, its owner switched it to Idle - from being re-picked on the
+     * very next tick and locking it into a cast it never finishes, and for an instant skill, which
+     * fires and returns without ever entering the cast state, this is the only place they go on.
+     * <p>
+     * The recovery is armed a second time when the cast actually ends, in {@link #armRecovery} - see
+     * the note there for why arming it only here silently skipped it on every long cast.
      */
-    private static void beginCast(MercenaryEntity merc, Spell spell, LivingEntity target) {
+    private static void beginCast(MercenaryEntity merc, Spell spell, LivingEntity target, double engageRange) {
         try {
             SpellCastContext ctx = new SpellCastContext(merc, 0, spell);
             EntityData unit = Load.Unit(merc);
@@ -377,8 +485,27 @@ public class MercenarySpellCaster {
                 return;
             }
 
-            merc.getCastState().start(spell, target, castTime);
+            merc.getCastState().start(spell, target, castTime, engageRange);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * The recovery between skills, armed when a cast actually ends.
+     * <p>
+     * The player path does this in {@code SpellCastingData.onSpellCastFinished} - recovery starts when
+     * the cast ends, never when it began. The mercenary was arming the global cooldown only in
+     * {@link #beginCast}, so a skill whose cast time outruns its recovery spent the whole of it still
+     * winding up: merc_whirlwind is a 100 tick cast with a 20 tick recovery, so the gate reopened at
+     * tick 20 and the next skill went off on the tick after the whirlwind finished. Skills that resolve
+     * instantly were unaffected, which is why only the long ones looked broken.
+     */
+    private static void armRecovery(MercenaryEntity merc, Spell spell) {
+        try {
+            SpellCastContext ctx = new SpellCastContext(merc, 0, spell);
+            Load.Unit(merc).getCooldowns().setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, spell.getCastSpeedTicks(ctx));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -394,6 +521,11 @@ public class MercenarySpellCaster {
             // flipping to Idle has to stop the mercenary mid cast, not one cast later
             if (spell == null || target == null || !target.isAlive() || target.isRemoved()
                     || !merc.isAlive() || merc.getMode() == MercenaryData.CombatMode.IDLE) {
+                if (spell != null) {
+                    // an abandoned cast still owes the recovery, or losing a target mid cast would be
+                    // a free instant skill at whatever the mercenary turns on next
+                    armRecovery(merc, spell);
+                }
                 cast.clear();
                 return;
             }
@@ -422,6 +554,7 @@ public class MercenarySpellCaster {
                 if (timesToCast <= 1) {
                     fire(merc, spell, new SpellCastContext(merc, cast.ticksDone, spell), target);
                 }
+                armRecovery(merc, spell);
                 cast.clear();
             }
         } catch (Exception e) {

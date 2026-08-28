@@ -21,9 +21,9 @@ public class SkillCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
             .addRequirement(ItemReqs.INSTANCE.IS_SKILL_GEM_COMMON_OR_UNCOMMON)
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_SKILL_GEM_RARITY)
-            .rarity(IRarity.RARE_ID)
+            .rarity(IRarity.UNCOMMON)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.RARE)
+            .weight(CodeCurrency.Weights.UNCOMMON)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> AURA_GEM_STAT_REROLL = ExileCurrency.Builder.of("aura_gem_stat_reroll", "Orb of Flames", ItemReqs.INSTANCE.IS_AURA_GEM)
@@ -33,7 +33,7 @@ public class SkillCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
             .rarity(IRarity.MYTHIC_ID)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.MYTHIC)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> SUPPORT_GEM_RARITY_UPGRADE = ExileCurrency.Builder.of("support_gem_rarity_upgrade", "Orb of Shock", ItemReqs.INSTANCE.IS_SUPPORT_GEM)
@@ -43,7 +43,7 @@ public class SkillCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addAlwaysUseModification(ItemMods.INSTANCE.UPGRADE_SKILL_GEM_RARITY)
             .rarity(IRarity.UNCOMMON)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.RARE)
+            .weight(CodeCurrency.Weights.UNCOMMON)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> SUPPORT_GEM_STAT_REROLL = ExileCurrency.Builder.of("support_gem_stat_reroll", "Orb of Tension", ItemReqs.INSTANCE.IS_SUPPORT_GEM)
@@ -53,7 +53,7 @@ public class SkillCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 25)
             .rarity(IRarity.LEGENDARY_ID)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.UBER)
+            .weight(CodeCurrency.Weights.LEGENDARY)
             .build(get());
 
 

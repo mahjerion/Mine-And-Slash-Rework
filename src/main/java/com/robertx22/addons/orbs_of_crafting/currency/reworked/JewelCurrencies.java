@@ -19,17 +19,17 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
     public ExileKey<ExileCurrency, IdKey> JEWEL_CORRUPT = ExileCurrency.Builder.of("jewel_corrupt", "Orb of Mesmerizing Chaos", ItemReqs.INSTANCE.IS_JEWEL)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-            .rarity(IRarity.UNIQUE_ID)
+            .rarity(IRarity.EPIC_ID)
             .addModification(ItemMods.INSTANCE.JEWEL_CORRUPTION, 50)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 50)
             .potentialCost(0)
-            .weight(CodeCurrency.Weights.RARE)
+            .weight(CodeCurrency.Weights.EPIC)
             .build(get());
 
     public ExileKey<ExileCurrency, IdKey> JEWEL_UPGRADE_AFFIX = ExileCurrency.Builder.of("jewel_upgrade_affix", "Orb of Glimmering Light", ItemReqs.INSTANCE.IS_JEWEL)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_CORRUPTED)
             .addRequirement(ItemReqs.INSTANCE.IS_NOT_MIRRORED)
-            .rarity(IRarity.EPIC_ID)
+            .rarity(IRarity.RARE_ID)
             .addModification(ItemMods.INSTANCE.UPGRADE_JEWEL_AFFIX_RARITY, 85)
             .addModification(Modifications.INSTANCE.DESTROY_ITEM, 15)
             .potentialCost(3)
@@ -44,7 +44,7 @@ public class JewelCurrencies extends ExileKeyHolderSection<ExileCurrencies> {
             .addModification(Modifications.INSTANCE.DO_NOTHING, 10)
             .potentialCost(10)
             .edit(MaxUsesKey.ofUses(ItemReqs.Datas.MAX_JEWEL_UPGRADE_USES.toKey()))
-            .weight(CodeCurrency.Weights.MEGA_UBER)
+            .weight(CodeCurrency.Weights.MYTHIC)
             .build(get());
 
 

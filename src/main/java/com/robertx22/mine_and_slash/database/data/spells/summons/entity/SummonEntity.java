@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.spells.entities.AutoAimingProj
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
@@ -38,6 +39,27 @@ public abstract class SummonEntity extends TamableAnimal implements RangedAttack
     }
 
     Goal aggroGoal = null;
+
+    /**
+     * Advances the swing timer, which is the only reason a summon's arm ever moves.
+     * <p>
+     * {@code LivingEntity.swing()} sets {@code swinging = true} and {@code swingTime = -1} and
+     * broadcasts the animate packet, but the thing that walks {@code swingTime} forward into
+     * {@code attackAnim} - the float {@code HumanoidModel.setupAttackAnimation} reads - is
+     * {@code LivingEntity.updateSwingTime()}, and in 1.20.1 the only caller of it anywhere in the
+     * entity tree is {@code Player.tick()}. Neither LivingEntity nor Mob calls it, so a summon could
+     * swing all it liked: swingTime stayed at -1, attackAnim stayed at 0, and the arm never moved.
+     * <p>
+     * Runs on both sides, and the client side is the one that matters - that is where the model reads
+     * attackAnim. aiStep is called from LivingEntity.tick on client and server alike, unlike
+     * serverAiStep. Harmlessly a no-op for the spider and wolf summons, whose models have no arm
+     * swing to drive.
+     */
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        updateSwingTime();
+    }
 
     @Override
     public void tick() {
@@ -84,6 +106,11 @@ public abstract class SummonEntity extends TamableAnimal implements RangedAttack
      * Launches a Wither skull toward (par2, par4, par6)
      */
     private void autoAimingRangedAttack(LivingEntity target) {
+
+        // melee already swings - MeleeAttackGoal does it before doHurtTarget - but nothing swung for a
+        // shot, so a ranged summon fired with a completely still arm. same reason MercenaryEntity
+        // swings in its own performRangedAttack.
+        this.swing(InteractionHand.MAIN_HAND);
 
         SoundUtils.playSound(this, SoundEvents.ARROW_SHOOT, 1, 0.2F);
 

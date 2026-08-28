@@ -210,6 +210,18 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         return this.castState != null && this.castState.isApproaching();
     }
 
+    /**
+     * How close the mercenary currently wants to be to its target, in blocks, or 0 when it has no
+     * skill in progress and its combat goal is free to use its own default band.
+     * <p>
+     * This is how a short ranged skill keeps a kiting mercenary in its own range: MercenarySpellCaster
+     * works the distance out from the skill's components, and the combat goal holds there instead of
+     * at its fixed kite distance.
+     */
+    public double getActiveEngageRange() {
+        return this.castState == null ? 0 : this.castState.activeEngageRange();
+    }
+
     @Override
     protected void registerGoals() {
         refreshCombatGoal();
@@ -286,6 +298,26 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
                 }
                 return target.distanceTo(this) <= AGGRO_RADIUS;
         }
+    }
+
+    /**
+     * Advances the swing timer, which is the only reason a mercenary's arm ever moves.
+     * <p>
+     * {@code LivingEntity.swing()} sets {@code swinging = true} and {@code swingTime = -1} and
+     * broadcasts the animate packet, but the thing that walks {@code swingTime} forward and turns it
+     * into {@code attackAnim} - the float {@code HumanoidModel.setupAttackAnimation} reads - is
+     * {@code LivingEntity.updateSwingTime()}, and in 1.20.1 the only caller of it in the entire
+     * entity tree is {@code Player.tick()}. Neither LivingEntity nor Mob calls it. So a mob can swing
+     * all it likes: swingTime stays at -1, attackAnim stays at 0, and the arm never moves.
+     * <p>
+     * Runs on both sides, and the client side is the one that matters - that is where the model reads
+     * attackAnim. aiStep is called from LivingEntity.tick on client and server alike, unlike
+     * serverAiStep.
+     */
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        updateSwingTime();
     }
 
     @Override

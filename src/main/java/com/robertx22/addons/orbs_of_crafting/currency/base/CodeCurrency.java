@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.loot.req.DropRequirement;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocDesc;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.orbs_of_crafting.misc.LocReqContext;
 import com.robertx22.orbs_of_crafting.misc.ModifyResult;
 import com.robertx22.orbs_of_crafting.misc.ResultItem;
@@ -19,13 +20,42 @@ import java.util.List;
 
 public abstract class CodeCurrency implements IWeighted, IAutoLocName, IAutoLocDesc, IGUID {
 
+    // Currency drops are a flat weighted pick over the whole currency pool (CurrencyLootGen) and
+    // never consult the currency's rarity - the rarity is only ever read for display. So as far as
+    // players experience it, weight IS the rarity, and the two had drifted badly apart. One
+    // constant per IRarity tier, each step roughly 2x rarer than the one below it, so a currency's
+    // .rarity() and its .weight() always name the same tier.
     public static class Weights {
 
         public static int COMMON = 1000;
+        public static int UNCOMMON = 500;
         public static int RARE = 250;
-        public static int UBER = 50;
-        public static int MEGA_UBER = 10;
+        public static int EPIC = 100;
+        public static int LEGENDARY = 40;
+        public static int MYTHIC = 15;
+
+        // one-of-a-kind, deliberately off the ladder
         public static int MIRROR = 1;
+        // crafted-only or encounter-only currencies, never in the drop pool
+        public static int NO_DROP = 0;
+
+        // for currencies whose rarity is data driven (SkillItemTier) rather than a literal
+        public static int of(String rarityId) {
+            switch (rarityId) {
+                case IRarity.COMMON_ID:
+                    return COMMON;
+                case IRarity.UNCOMMON:
+                    return UNCOMMON;
+                case IRarity.EPIC_ID:
+                    return EPIC;
+                case IRarity.LEGENDARY_ID:
+                    return LEGENDARY;
+                case IRarity.MYTHIC_ID:
+                    return MYTHIC;
+                default:
+                    return RARE;
+            }
+        }
     }
 
 

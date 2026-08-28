@@ -55,6 +55,11 @@ public class EventData {
     public static String IS_HIT_AVOIDED = "is_hit_avoided";
     public static String IS_DODGED = "is_dodged";
     public static String IS_BLOCKED = "is_blocked";
+
+    // set as soon as either dodge stat decides an attack, whether the answer was dodge or not, and carried
+    // into every bonus element child. one attack charges the entropy pool exactly once and every element
+    // split of it inherits the same answer - the same thing IS_BLOCKED does for blocks.
+    public static String AVOIDANCE_ROLLED = "avoidance_rolled";
     public static String DISABLE_KNOCKBACK = "disable_knockback";
     public static String PENETRATION = "penetration";
     public static String RESISTED_ALREADY = "resisted_already";

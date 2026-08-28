@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,12 +23,23 @@ import java.util.EnumSet;
  */
 public class MercenaryRangedGoal extends Goal {
 
-    private static final double MELEE_REACH = 2.0D;
-    private static final double MELEE_REACH_SQR = MELEE_REACH * MELEE_REACH;
+    // how far the opportunistic poke below connects. a block further than it used to be, matching the
+    // bonus MercenaryMeleeAttackGoal gives a melee mercenary, so a kiting one doesn't have to be
+    // pressed against something to swing at it.
+    private static final double MELEE_POKE_REACH = 3.0D;
+    private static final double MELEE_POKE_REACH_SQR = MELEE_POKE_REACH * MELEE_POKE_REACH;
 
-    // the band the mercenary tries to hold: flee once the target is inside it, close back in past it
+    // deliberately NOT the poke reach. this is the floor of holdDistance(), and raising it to match
+    // would push a short ranged skill out of its own range - anything sitting on MercenarySpellCaster's
+    // MIN_CAST_RANGE floor of 2.5 would be clamped out to 3 and never connect.
+    private static final double MIN_HOLD_DISTANCE = 2.0D;
+
+    // the distance the mercenary holds when it has no skill in progress telling it otherwise
     private static final double KITE_DISTANCE = 8.0D;
-    private static final double KITE_DISTANCE_SQR = KITE_DISTANCE * KITE_DISTANCE;
+
+    // the band is held, not a line: flee below hold * FLEE_BAND, close back in past hold, and do
+    // nothing in between. a single threshold has the mercenary crossing it and reversing every tick.
+    private static final double FLEE_BAND = 0.75D;
 
     private static final int MELEE_ATTACK_INTERVAL = 20;
     private static final int RANGED_ATTACK_INTERVAL = 20;
@@ -40,6 +52,7 @@ public class MercenaryRangedGoal extends Goal {
 
     private final MercenaryEntity merc;
     private final double speedModifier;
+    private final MercenaryStrafe strafe = new MercenaryStrafe();
     private int meleeCooldown;
     private int rangedCooldown;
     private int fleeRepathCooldown;
@@ -101,19 +114,32 @@ public class MercenaryRangedGoal extends Goal {
         merc.getLookControl().setLookAt(target, 30F, 30F);
         double distSqr = merc.distanceToSqr(target);
 
+        double hold = holdDistance();
+        double holdSqr = hold * hold;
+
         // MercenarySpellCaster owns the navigation while it walks a skill into range. without this
         // the fleeFrom below undoes every step on the tick after it is taken, and a kiting caster
         // can never close on anything - its short range skills would be unusable by design.
         if (!merc.isApproachingForCast()) {
-            if (distSqr <= MELEE_REACH_SQR) {
-                meleeAttack(target);
-            } else if (distSqr < KITE_DISTANCE_SQR) {
-                fleeFrom(target);
-            } else {
+            if (distSqr < holdSqr * FLEE_BAND * FLEE_BAND) {
+                strafe.reset();
+                fleeFrom(target, hold);
+            } else if (distSqr > holdSqr) {
+                strafe.reset();
                 merc.getNavigation().moveTo(target, speedModifier);
+            } else if (!merc.isCastingSpell()) {
+                // parked at the distance it wants, waiting on cooldowns. sway rather than stand
+                // rigid - the band above already owns the distance, so this is purely lateral
+                strafe.tick(merc, target, 0F);
             }
-        } else if (distSqr <= MELEE_REACH_SQR) {
-            // still swinging on the way in - the approach is not a truce
+        } else {
+            strafe.reset();
+        }
+
+        // both attacks are opportunistic and neither one touches navigation. melee used to be an arm
+        // of the movement decision above and stopped the navigation outright, which is what pinned a
+        // mercenary in melee the moment anything cornered it - it stopped walking and never kited again.
+        if (distSqr <= MELEE_POKE_REACH_SQR) {
             meleeAttack(target);
         }
 
@@ -135,8 +161,23 @@ public class MercenaryRangedGoal extends Goal {
         }
     }
 
+    /**
+     * How far the mercenary wants to stand from its target right now.
+     * <p>
+     * A skill being cast or walked into range sets this to its own reach, so a five block skill is
+     * held at five blocks rather than at the default kite distance - otherwise the mercenary closes
+     * in for a short ranged skill and then flees back out of it before the cast even finishes.
+     * Clamped at both ends: never inside melee reach, never further out than it would kite anyway.
+     */
+    private double holdDistance() {
+        double active = merc.getActiveEngageRange();
+        if (active <= 0) {
+            return KITE_DISTANCE;
+        }
+        return Mth.clamp(active, MIN_HOLD_DISTANCE, KITE_DISTANCE);
+    }
+
     private void meleeAttack(LivingEntity target) {
-        merc.getNavigation().stop();
         if (meleeCooldown > 0) {
             return;
         }
@@ -150,7 +191,7 @@ public class MercenaryRangedGoal extends Goal {
         meleeCooldown = MELEE_ATTACK_INTERVAL;
     }
 
-    private void fleeFrom(LivingEntity target) {
+    private void fleeFrom(LivingEntity target, double hold) {
         // let the current retreat run until it finishes or the timer is up, the way vanilla's own
         // kiting goal (AvoidEntityGoal) does - it paths once and simply waits for isDone().
         if (fleeRepathCooldown > 0 && !merc.getNavigation().isDone()) {
@@ -162,7 +203,7 @@ public class MercenaryRangedGoal extends Goal {
 
         // unlike a raw "four blocks directly backwards" vector, this only ever returns somewhere the
         // mercenary can actually stand on and path to, so backing into terrain or off a ledge is out.
-        Vec3 away = DefaultRandomPos.getPosAway(merc, (int) KITE_DISTANCE, 4, target.position());
+        Vec3 away = DefaultRandomPos.getPosAway(merc, Math.max(2, (int) hold), 4, target.position());
         if (away == null) {
             return;
         }

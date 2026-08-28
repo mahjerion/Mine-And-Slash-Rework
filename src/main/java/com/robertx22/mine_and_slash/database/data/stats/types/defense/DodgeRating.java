@@ -1,7 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.stats.types.defense;
 
 import com.robertx22.library_of_exile.util.UNICODE;
-import com.robertx22.library_of_exile.utils.RandomUtils;
+import com.robertx22.mine_and_slash.capability.entity.AvoidanceEntropyData;
 import com.robertx22.mine_and_slash.database.data.stats.IUsableStat;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
@@ -27,7 +27,7 @@ public class DodgeRating extends Stat implements IUsableStat {
 
     @Override
     public String locDescForLangFile() {
-        return "Chance to ignore attack damage";
+        return "Chance to ignore attack damage. Dodges are spread evenly across the hits you take instead of being rolled per hit.";
     }
 
     private DodgeRating() {
@@ -86,7 +86,23 @@ public class DodgeRating extends Stat implements IUsableStat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            effect.data.setHitAvoided(EventData.IS_DODGED);
+
+            DodgeRating dodge = (DodgeRating) stat;
+
+            float totalDodge = Mth.clamp(data.getValue() - effect.data.getNumber(EventData.ACCURACY).number, 0, Integer.MAX_VALUE);
+
+            float chance = dodge.getUsableValue(effect.targetData.getUnit(), (int) totalDodge, effect.sourceData.getLevel()) * 100;
+
+            // mark the decision as made before it's made - the flag means "this attack already got its one
+            // avoidance answer", not "it was dodged", and the element splits inherit it either way
+            effect.data.setBoolean(EventData.AVOIDANCE_ROLLED, true);
+
+            // entropy instead of a per hit roll. same long run rate, but spread evenly - see
+            // AvoidanceEntropyData
+            if (effect.targetData.avoidanceEntropy.rollAvoid(AvoidanceEntropyData.DODGE, effect.target.level()
+                    .getGameTime(), chance)) {
+                effect.data.setHitAvoided(EventData.IS_DODGED);
+            }
             return effect;
         }
 
@@ -96,23 +112,33 @@ public class DodgeRating extends Stat implements IUsableStat {
             if (!effect.canAvoidHit()) {
                 return false;
             }
+            // a block, or the raised vanilla shield, already avoided this one. an outcome costs entropy
+            // now, so don't spend it on a hit that was already going to deal nothing. mirrors the guard
+            // BlockChance has for the same reason.
+            if (effect.data.isHitAvoided()) {
+                return false;
+            }
+            // the inherited case - the parent hit already resolved dodge and this is one element split of
+            // it, so it takes that answer instead of rolling (and charging) a second time
+            if (effect.data.getBoolean(EventData.AVOIDANCE_ROLLED)) {
+                return false;
+            }
             if (effect.GetElement() != Elements.Physical) {
                 return false;
             }
-            if (effect.getAttackType() != AttackType.hit) {
+            // bonus_dmg is allowed on purpose: added flat physical damage on a non physical skill rides in
+            // its own bonus_dmg event (see PhysicalToElement), and the parent of that event isn't physical,
+            // so gating on hit alone let that part of an attack bypass Dodge Rating entirely - the same
+            // bypass PhysicalDamageTakenAs had to widen its gate to fix. a physical parent can't produce a
+            // physical child (same element damage goes into the layer, not a bonus event), so this can't
+            // double charge.
+            if (!effect.getAttackType().isHit() && effect.getAttackType() != AttackType.bonus_dmg) {
                 return false;
             }
             if (effect.isSpell() && effect.getSpell().config.tags.contains(SpellTags.magic)) {
                 return false;
             }
-
-            DodgeRating dodge = (DodgeRating) stat;
-
-            float totalDodge = Mth.clamp(data.getValue() - effect.data.getNumber(EventData.ACCURACY).number, 0, Integer.MAX_VALUE);
-
-            float chance = dodge.getUsableValue(effect.targetData.getUnit(), (int) totalDodge, effect.sourceData.getLevel()) * 100;
-
-            return effect.getAttackType().isAttack() && RandomUtils.roll(chance);
+            return true;
         }
     }
 

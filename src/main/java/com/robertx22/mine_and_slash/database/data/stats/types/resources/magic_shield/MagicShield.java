@@ -72,8 +72,12 @@ public class MagicShield extends Stat {
 
             if (dmgReduced > 0) {
 
-                SoundUtils.playSound(effect.target, SoundEvents.GENERIC_HURT, 0.5F, 1);
-                SoundUtils.playSound(effect.target, SoundEvents.GUARDIAN_HURT, 1, 1);
+                // self inflicted costs read as a resource cost, not as taking a hit, so they skip
+                // the shield sounds the same way they skip the hurt sound
+                if (!effect.isPlayerSelfDamage()) {
+                    SoundUtils.playSound(effect.target, SoundEvents.GENERIC_HURT, 0.5F, 1);
+                    SoundUtils.playSound(effect.target, SoundEvents.GUARDIAN_HURT, 1, 1);
+                }
 
                
                 effect.targetData.getResources().spend(effect.target, ResourceType.magic_shield, dmgReduced);

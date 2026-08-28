@@ -11,6 +11,10 @@ public class AilmentResistance extends Stat {
     public AilmentResistance(Ailment ailment) {
         this.ailment = ailment;
         this.is_perc = true;
+        // the tooltip promises 100% is immunity, so there is nothing above it to buy. uncapped,
+        // a stack past 100 made getReverseMultiplier negative and banked negative ailment damage.
+        // min is left alone - Bone Chill grants NEGATIVE freeze resistance as a debuff
+        this.max = 100;
 
     }
 

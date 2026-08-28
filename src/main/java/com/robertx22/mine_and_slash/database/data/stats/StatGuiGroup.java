@@ -18,7 +18,7 @@ public enum StatGuiGroup implements IAutoLocName {
     AILMENT_CHANCE("ailment_chance", "Ailment Chance"),
     AILMENT_DURATION("ailment_duration", "Ailment Duration"),
     AILMENT_DAMAGE("ailment_damage", "Ailment Damage"),
-    AILMENT_PROC_CHANCE("ailment_proc-_chance", "Ailment Proc Chance"),
+    AILMENT_PROC_CHANCE("ailment_proc_chance", "Ailment Proc Chance"),
     ELE_SPELL_DAMAGE("ele_spell_damage", "Elemental Spell Damage");
 
     public String id;

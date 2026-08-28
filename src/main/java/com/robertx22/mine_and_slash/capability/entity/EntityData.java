@@ -226,6 +226,10 @@ public class EntityData implements ICap, INeededForClient {
     ThreatData threat = new ThreatData();
     public EntityLeechData leech = new EntityLeechData();
 
+    // PoE style dodge entropy counters. transient - pure server side combat scratch state, it never needs
+    // to survive a save or reach a client (see AvoidanceEntropyData)
+    public transient AvoidanceEntropyData avoidanceEntropy = new AvoidanceEntropyData();
+
     public boolean didStatCalcThisTickForPlayer = false;
 
 

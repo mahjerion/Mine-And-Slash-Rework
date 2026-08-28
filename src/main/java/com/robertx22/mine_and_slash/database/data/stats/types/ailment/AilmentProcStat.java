@@ -20,7 +20,9 @@ public class AilmentProcStat extends Stat {
     public AilmentProcStat(Ailment ailment) {
         this.ailment = ailment;
         this.is_perc = true;
-
+        // a roll can never do better than always, and AilmentChance caps itself the same way
+        this.min = 0;
+        this.max = 100;
 
         this.statEffect = new Effect();
         this.gui_group = StatGuiGroup.AILMENT_PROC_CHANCE;
@@ -30,7 +32,10 @@ public class AilmentProcStat extends Stat {
 
         @Override
         public StatPriority GetPriority() {
-            return StatPriority.Damage.FINAL_DAMAGE;
+            // strictly after AilmentChance at FINAL_DAMAGE. both used to sit on the same
+            // priority, and ties keep stat map order, so whether the hit that applied the
+            // ailment also fed the burst it set off was left to chance
+            return StatPriority.Damage.POST_FINAL_DAMAGE_CHECKS;
         }
 
         @Override
@@ -40,14 +45,42 @@ public class AilmentProcStat extends Stat {
 
         @Override
         public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
-            effect.data.setBoolean(EventData.AILMENT_PROCCED, true);
-            effect.targetData.ailments.shatterAccumulated(effect.source, effect.target, ailment, effect.getSpellOrNull());
+            if (effect.targetData.ailments.shatterAccumulated(effect.source, effect.target, ailment, effect.getSpellOrNull())) {
+                // only flag the hit when a burst actually happened - stats and conditions read
+                // this to mean damage was released
+                effect.data.setBoolean(EventData.AILMENT_PROCCED, true);
+            }
             return effect;
         }
 
         @Override
         public boolean canActivate(DamageEvent effect, StatData data, Stat stat) {
-            return effect.getElement() != null && effect.getElement() == ailment.element && (effect.getAttackType().isHit() || effect.getAttackType() == AttackType.bonus_dmg) && RandomUtils.roll(data.getValue());
+            // these guards mirror AilmentChance. without them a dodged or blocked hit still
+            // detonated the whole accumulated pool
+            if (effect.data.getNumber() <= 0) {
+                return false;
+            }
+            if (effect.unconvertedDamagePercent <= 0) {
+                return false;
+            }
+            if (effect.data.getBoolean(EventData.IS_DODGED)) {
+                return false;
+            }
+            if (effect.data.getBoolean(EventData.IS_BLOCKED)) {
+                return false;
+            }
+            if (effect.getElement() == null || effect.getElement() != ailment.element) {
+                return false;
+            }
+            if (!effect.getAttackType().isHit() && effect.getAttackType() != AttackType.bonus_dmg) {
+                return false;
+            }
+            // check the pool before rolling, so an empty one neither burns the roll nor
+            // reports a proc that released nothing
+            if (!effect.targetData.ailments.hasAccumulated(effect.source, ailment)) {
+                return false;
+            }
+            return RandomUtils.roll(data.getValue());
         }
 
     }

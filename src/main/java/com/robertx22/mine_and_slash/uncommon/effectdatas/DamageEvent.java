@@ -990,6 +990,12 @@ public class DamageEvent extends EffectEvent {
                     // it every element split would roll block again on its own and one attack would
                     // end up blocked in pieces.
                     x.data.setBoolean(EventData.IS_BLOCKED, this.data.getBoolean(EventData.IS_BLOCKED));
+                    // one attack gets one avoidance decision. dodge is allowed to run on bonus_dmg (added
+                    // flat physical on a non physical skill arrives as its own event and would otherwise
+                    // bypass Dodge Rating entirely), so without carrying this every element split of an
+                    // already resolved hit would roll again - and each roll charges the entropy counter,
+                    // which would push the realised dodge rate well past the listed one.
+                    x.data.setBoolean(EventData.AVOIDANCE_ROLLED, this.data.getBoolean(EventData.AVOIDANCE_ROLLED));
                     x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
                     x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
                     x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);

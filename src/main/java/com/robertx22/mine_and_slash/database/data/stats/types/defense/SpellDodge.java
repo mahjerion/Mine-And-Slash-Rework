@@ -16,7 +16,7 @@ public class SpellDodge extends Stat implements IUsableStat {
 
     @Override
     public String locDescForLangFile() {
-        return "Chance to ignore magic spell damage. Melee and ranged type spells don't count.";
+        return "Chance to ignore magic spell damage. Melee and ranged type spells don't count. Dodges are spread evenly across the hits you take instead of being rolled per hit.";
     }
 
     private SpellDodge() {

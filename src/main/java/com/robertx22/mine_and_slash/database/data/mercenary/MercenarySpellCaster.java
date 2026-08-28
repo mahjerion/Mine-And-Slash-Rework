@@ -327,10 +327,18 @@ public class MercenarySpellCaster {
                 if (!huntsEnemies(sel)) {
                     continue;
                 }
-                huntsAnything = true;
+                // and only a selector that describes a DISTANCE marks the skill as range limited. a
+                // self or target selector hits what it hits from wherever the caster is standing, so
+                // it says nothing about how close the mercenary has to be. letting one of those set
+                // the flag is what walked a self buff into melee: it marked the skill range limited
+                // and then contributed no range, leaving it on the MIN_CAST_RANGE floor. a self
+                // selector declares no en_predicate either, so huntsEnemies' "assume hostile when
+                // there is no predicate" fallback lets it through in the first place.
                 if (TargetSelector.AOE.GUID().equals(sel.type)) {
+                    huntsAnything = true;
                     onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.RADIUS, 0D));
                 } else if (TargetSelector.IN_FRONT.GUID().equals(sel.type)) {
+                    huntsAnything = true;
                     onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.DISTANCE, 0D));
                 }
             }

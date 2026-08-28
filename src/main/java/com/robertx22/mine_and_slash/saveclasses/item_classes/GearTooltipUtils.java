@@ -58,6 +58,21 @@ public class GearTooltipUtils {
     @Nullable
     public static Function<ItemSet, EquippedSets> SET_COUNT_OVERRIDE = null;
 
+    /**
+     * Who the whole tooltip is written for, when it is not the viewer.
+     * <p>
+     * Same one-shot handoff as {@link #SET_COUNT_OVERRIDE} and cleared in the same {@code finally} -
+     * a leak would render the next tooltip drawn on that frame for the wrong entity. Read by
+     * {@code TooltipMethod} when it builds the {@code TooltipContext}, so it decides the requirement
+     * check marks and the energy cost line together rather than each resolving a viewer of its own.
+     * <p>
+     * Only ever set inside the mercenary screen, and only while the mercenary is actually summoned -
+     * its stats are synced to the client with the entity, so with it dismissed there is nothing to
+     * check against.
+     */
+    @Nullable
+    public static EntityData TOOLTIP_ENTITY_OVERRIDE = null;
+
     public static void BuildTooltip(GearItemData gear, ItemStack stack, List<Component> tooltip, EntityData data) {
 
         if (gear.GetBaseGearType() == null) {
@@ -73,6 +88,8 @@ public class GearTooltipUtils {
                 .accept(new NameBlock(gear.GetDisplayName(exStack)))
                 .accept(new RarityBlock(gear.getRarity()))
                 .accept(new RequirementBlock()
+                        // whoever the tooltip is being written for, not whoever happens to be looking
+                        .setEntityData(data)
                         .setStatRequirement(gear.getRequirement())
                         .setLevelRequirement(gear.getLevel())
                         .warnIfMainHandIsTwoHanded(DualWieldUtils.isDualWieldWeapon(gear)))

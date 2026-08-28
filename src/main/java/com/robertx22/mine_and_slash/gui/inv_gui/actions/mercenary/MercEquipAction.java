@@ -5,7 +5,10 @@ import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
 import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
+import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearTooltipUtils;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
@@ -93,8 +96,21 @@ public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
     public List<Component> getTooltip(Player p) {
         List<Component> list = new ArrayList<>();
         ItemStack stack = p.getInventory().getItem(invSlot);
-        if (!stack.isEmpty()) {
+        if (stack.isEmpty()) {
+            return list;
+        }
+
+        // this grid only ever lists gear the MERCENARY can wear - mayPlace runs meetsAttributeReq
+        // against its stats - so the requirement check marks have to be judged the same way, or every
+        // entry the owner personally falls short of is offered and then marked with a red X.
+        MercenaryEntity merc = ClientMercenary.get();
+
+        GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE = merc == null ? null : Load.Unit(merc);
+        try {
             list.addAll(stack.getTooltipLines(p, TooltipFlag.NORMAL));
+        } finally {
+            // a leak here would write the next tooltip drawn this frame for the mercenary too
+            GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE = null;
         }
         return list;
     }

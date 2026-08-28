@@ -7,7 +7,9 @@ import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
 import com.robertx22.mine_and_slash.gui.inv_gui.InvGuiScreen;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearTooltipUtils;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
@@ -162,11 +164,20 @@ public class MercSlotButton extends AbstractButton {
         MercenaryData mercData = screen.getMercData();
         int mercLevel = screen.getMercLevel();
 
+        // and judge the requirement check marks against the mercenary for the same reason: the equip
+        // rules in MercenarySlotType run on its stats, so a piece it qualifies for must not be marked
+        // with a red X because the owner falls short. null while it is dismissed - its stats only
+        // reach the client along with the entity, so there is nothing to check against and the
+        // owner's numbers are the honest fallback.
+        MercenaryEntity mercEntity = screen.getMercEntity();
+
         GearTooltipUtils.SET_COUNT_OVERRIDE = set -> EquippedSets.ofMerc(mercData, mercLevel, set);
+        GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE = mercEntity == null ? null : Load.Unit(mercEntity);
         try {
             list.addAll(stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.NORMAL));
         } finally {
             GearTooltipUtils.SET_COUNT_OVERRIDE = null;
+            GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE = null;
         }
 
         // separated and yellow, matching the locked-slot hints above. it was dark grey and butted

@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.mixin_ducks.tooltip.ItemTooltip;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.TooltipContext;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearTooltipUtils;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
@@ -42,7 +43,12 @@ public class TooltipMethod {
             if (player == null || player.level() == null) {
                 return tooltip;
             }
-            EntityData unitdata = Load.Unit(player);
+            // the mercenary screen writes its tooltips for the mercenary, not for whoever is looking
+            // at them - its equip rules run against the mercenary's own stats, so the check marks
+            // have to as well. see GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE.
+            EntityData unitdata = GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE != null
+                    ? GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE
+                    : Load.Unit(player);
 
             if (unitdata == null) {
                 return tooltip;

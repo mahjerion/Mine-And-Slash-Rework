@@ -60,6 +60,19 @@ public class RequirementBlock extends AbstractTextBlock {
         return this;
     }
 
+    /**
+     * Whose stats the check marks are judged against.
+     * <p>
+     * Left unset this falls back to whoever is looking, which is right for almost every tooltip in
+     * the game. It is not right inside the mercenary screen: the equip rules there run against the
+     * mercenary ({@code MercenarySlotType.meetsAttributeReq}), so a piece the grid offers precisely
+     * because the mercenary qualifies would still be marked with a red X against the owner.
+     */
+    public RequirementBlock setEntityData(@Nullable EntityData data) {
+        this.playerData = data;
+        return this;
+    }
+
     public RequirementBlock warnIfMainHandIsTwoHanded(boolean warn) {
         this.warnIfMainHandIsTwoHanded = warn;
         return this;

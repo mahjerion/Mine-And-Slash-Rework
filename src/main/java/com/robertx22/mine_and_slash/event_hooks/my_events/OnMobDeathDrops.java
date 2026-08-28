@@ -62,6 +62,20 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                     }
                 }
 
+                // a mercenary kill belongs to its owner. resolved from the death itself rather than
+                // from killerEntity, because the three steps above almost never produce a mercenary:
+                // MercenaryDamageCreditEvent files its damage under the owner, so getHighestDamager
+                // returns the owner, not the mercenary that actually swung.
+                MercenaryEntity mercKiller = resolveMercKiller(mobKilled, onMobDeath);
+
+                // and the mercenary is still the answer to "who killed this" when nothing else was.
+                // must come before the enviro check below: a mercenary's damage also lands in
+                // getEnviroOrMobDmg(), so a solo mercenary kill trips that guard and drops out of the
+                // whole loot and experience block - awarding nothing, to anyone.
+                if (killerEntity == null && mercKiller != null && mercKiller.getOwner() instanceof ServerPlayer mercOwner) {
+                    killerEntity = mercOwner;
+                }
+
                 if (killerEntity == null) {
                     if (EntityInfoComponent.get(mobKilled)
                             .getDamageStats()
@@ -70,13 +84,16 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                     }
                 }
 
-                // a mercenary kill belongs to its owner. without this a mercenary that lands the
-                // finishing blow drops nothing and awards nothing, because every path below is gated
-                // on the killer being a ServerPlayer.
-                MercenaryEntity mercKiller = null;
                 if (killerEntity instanceof MercenaryEntity merc && merc.getOwner() instanceof ServerPlayer owner) {
                     mercKiller = merc;
                     killerEntity = owner;
+                }
+
+                // in a party, the highest damager can be someone else's character while the finishing
+                // blow came from your mercenary. crediting their kill with your mercenary's Bonus
+                // Experience and find stats would be wrong, so it only counts for its own owner.
+                if (mercKiller != null && mercKiller.getOwner() != killerEntity) {
+                    mercKiller = null;
                 }
 
                 if (killerEntity instanceof ServerPlayer) {
@@ -123,6 +140,28 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
 
     }
 
+
+    /**
+     * The mercenary that dealt the killing blow, if there was one.
+     * <p>
+     * {@code DamageSource.getEntity()} already unwraps a projectile to whoever fired it, so this
+     * catches a mercenary's spells as well as its melee. {@code onMobDeath.killer} is the fallback
+     * for the paths that never set a last damage source.
+     */
+    private static MercenaryEntity resolveMercKiller(LivingEntity mobKilled, ExileEvents.OnMobDeath onMobDeath) {
+        try {
+            if (mobKilled.getLastDamageSource() != null
+                    && mobKilled.getLastDamageSource().getEntity() instanceof MercenaryEntity merc) {
+                return merc;
+            }
+        } catch (Exception e) {
+            // getLastDamageSource can throw on a partially loaded entity, same as above
+        }
+        if (onMobDeath.killer instanceof MercenaryEntity merc) {
+            return merc;
+        }
+        return null;
+    }
 
     private static void GiveExp(LivingEntity victim, Player killer, EntityData killerData, EntityData mobData,
                                 float multi, MercenaryEntity mercKiller) {

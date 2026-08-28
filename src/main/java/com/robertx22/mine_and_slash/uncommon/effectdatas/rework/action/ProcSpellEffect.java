@@ -67,10 +67,7 @@ public class ProcSpellEffect extends StatEffect {
         }
 
         if (use_resource_costs) {
-            if (!unit.getResources().hasEnough(spell.getManaCostCtx(ctx))) {
-                return;
-            }
-            if (!unit.getResources().hasEnough(spell.getEnergyCostCtx(ctx))) {
+            if (!unit.getResources().hasEnoughForBoth(spell.getManaCostCtx(ctx), spell.getEnergyCostCtx(ctx))) {
                 return;
             }
             spell.spendResources(ctx);

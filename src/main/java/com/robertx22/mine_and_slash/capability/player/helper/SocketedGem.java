@@ -51,14 +51,11 @@ public class SocketedGem {
 
         }
 
-        if (getSupportDatas().size() > getMaxLinks(p).links) {
-            for (ItemStack s : this.getSupports()) {
-                PlayerUtils.forceUnequipItem(s.copy(), p);
-                s.shrink(100);
-            }
-            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.CANT_EQUIP_THAT_MANY_SUPPORTS));
-
-        }
+        // no link count check here on purpose. a slot's link count follows the skill's rank, and that
+        // rank can vanish for a moment - the weapon granting the skill stops being the selected hotbar
+        // item, a respec empties the cache, a level changes. ejecting on that dumped all five gems into
+        // the player's bag over something that came back a tick later. getActiveSupportDatas clips
+        // instead, so a gem past the unlocked links stays socketed and simply does nothing.
 
 
         HashMap<String, Integer> map = new HashMap<>();
@@ -129,11 +126,33 @@ public class SocketedGem {
         return list;
     }
 
-    public float getManaCostMulti() {
+    /**
+     * The support gems this skill has actually unlocked links for. Positional - support slot i counts
+     * only while i is below the link count, which is the rule the gui already draws with its blocked
+     * slot overlay and the rule the mercenary path uses in StatCalculation.collectMercGemStats. This
+     * is what enforces the link limit now that nothing is ejected for exceeding it.
+     */
+    public List<SkillGemData> getActiveSupportDatas(Player p) {
+        List<SkillGemData> list = new ArrayList<>();
+
+        int unlocked = getMaxLinks(p).links;
+        List<ItemStack> supports = getSupports();
+
+        for (int i = 0; i < Math.min(unlocked, supports.size()); i++) {
+            SkillGemData d = StackSaving.SKILL_GEM.loadFrom(supports.get(i));
+            if (d != null && d.getSupport() != null) {
+                list.add(d);
+            }
+        }
+        return list;
+    }
+
+    public float getManaCostMulti(Player p) {
 
         float multi = 1;
 
-        for (SkillGemData data : this.getSupportDatas()) {
+        // a gem that grants nothing must not charge for it either
+        for (SkillGemData data : this.getActiveSupportDatas(p)) {
             multi *= data.getSupport().manaMulti;
 
         }

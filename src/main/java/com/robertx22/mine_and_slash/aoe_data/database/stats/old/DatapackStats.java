@@ -50,7 +50,7 @@ public class DatapackStats implements ExileRegistryInit {
     }
 
     // vanilla attributes
-    public static Stat MOVE_SPEED = new AttributeStat("move_speed", "Move Speed", UUID.fromString("7e286d81-3fcf-471c-85b8-980072b30907"), Attributes.MOVEMENT_SPEED, true, AttributeModifier.Operation.MULTIPLY_TOTAL, true);
+    public static Stat MOVE_SPEED = new AttributeStat("move_speed", "Move Speed", UUID.fromString("7e286d81-3fcf-471c-85b8-980072b30907"), Attributes.MOVEMENT_SPEED, true, AttributeModifier.Operation.MULTIPLY_BASE, true);
     public static Stat KNOCKBACK_RESIST = new AttributeStat("knockback_resist", "Knockback Resist", UUID.fromString("7e286d81-3fcf-471c-85b8-980072b30905"), Attributes.KNOCKBACK_RESISTANCE, true, AttributeModifier.Operation.ADDITION, true);
 
     // core stats

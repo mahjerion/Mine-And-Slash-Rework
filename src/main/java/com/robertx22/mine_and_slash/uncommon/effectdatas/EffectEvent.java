@@ -353,6 +353,13 @@ public abstract class EffectEvent implements IGUID {
                     if (getSpell() != null) {
                         un = Load.player(p).getSpellUnitStats(getSpell());
                     }
+                } else if (getSpell() != null) {
+                    // a mercenary's support gems live on its per-spell unit, exactly like a
+                    // player's. without this its own spell damage resolved stat effects off the
+                    // bare unit, so every support socketed under a skill produced nothing - leech
+                    // supports most visibly. getSpellUnit falls back to the bare unit for anything
+                    // that isn't a mercenary, so this is a no-op for ordinary mobs.
+                    un = Load.getSpellUnit(en, getSpell());
                 }
             }
         }

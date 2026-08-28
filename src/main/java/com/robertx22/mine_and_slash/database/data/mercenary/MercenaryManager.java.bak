@@ -10,10 +10,7 @@ import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
-import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import net.minecraft.ChatFormatting;
@@ -504,47 +501,5 @@ public class MercenaryManager {
             validateEquipment(owner, data);
         }
         Load.player(owner).playerDataSync.setDirty();
-    }
-    // ---------------------------------------------------------------- regeneration
-
-    /**
-     * One second of resource regeneration for a mercenary.
-     * <p>
-     * The mercenary is granted regeneration by {@code BaseStatsAdder.mercenary()} - Health Regen,
-     * Magic Shield Regen, Mana Regen and Energy Regen all appear in its base stats - but every
-     * {@code RestoreType.regen} event in the mod was raised inside {@code OnServerTick.onEndTick},
-     * which is a player tick handler. Nothing ever fired the event those stats modify, so all of
-     * them were inert and a mercenary's only healing was leech.
-     * <p>
-     * This is {@code OnServerTick}'s regen block with the two player-only parts dropped: no food
-     * gate, because a mercenary has no {@code FoodData}, and no blocking check, because it has no
-     * shield input. The void guard is kept - a mercenary knocked into the void should not heal its
-     * way back out any more than its owner should.
-     */
-    public static void tickRegen(MercenaryEntity merc) {
-        try {
-            if (!merc.isAlive() || merc.level().isClientSide) {
-                return;
-            }
-            if (merc.getY() < (double) (merc.level().getMinBuildHeight() - 64)) {
-                return;
-            }
-
-            var unitdata = Load.Unit(merc);
-
-            // mana and energy are no-ops today - the design gives a mercenary neither, and its
-            // skills cost nothing - but a pack that grants it either would otherwise find them
-            // filled once and never refilled.
-            for (ResourceType type : ResourceType.getUsed()) {
-                if (type.isFull(unitdata)) {
-                    continue;
-                }
-                EventBuilder.ofRestore(merc, merc, type, RestoreType.regen, 0)
-                        .build()
-                        .Activate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -2,7 +2,6 @@ package com.robertx22.mine_and_slash.event_hooks.damage_hooks.reworked;
 
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
-import com.robertx22.mine_and_slash.event_hooks.damage_hooks.MercenaryDamageCreditEvent;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.OnNonPlayerDamageEntityEvent;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.OnPlayerDamageEntityEvent;
 import com.robertx22.mine_and_slash.mixin_ducks.DamageSourceDuck;
@@ -23,10 +22,6 @@ public class NewDamageMain {
                 }
             }
         });
-
-        // files a mercenary's damage under its owner, so the victim's damage scoreboard has a name
-        // on it when OnMobDeathDrops comes to work out who gets the loot and the experience
-        ExileEvents.DAMAGE_AFTER_CALC.register(new MercenaryDamageCreditEvent());
 
         ExileEvents.DAMAGE_AFTER_CALC.register(new EventConsumer<>() {
             @Override

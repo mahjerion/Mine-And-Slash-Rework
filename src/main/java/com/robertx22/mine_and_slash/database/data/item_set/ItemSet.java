@@ -79,9 +79,17 @@ public class ItemSet implements IAutoGson<ItemSet>, JsonExileRegistry<ItemSet>, 
     // grey while it isn't. fallbackLevel is the hovered item's level, used to scale FLAT stats for
     // the preview when none of the set is actually worn.
     public List<Component> getTooltip(Player player, int fallbackLevel) {
+        return getTooltip(EquippedSets.of(player, this), fallbackLevel);
+    }
+
+    /**
+     * The renderer, taking an already resolved count so it can be shared. The mercenary screen
+     * counts its own loadout via {@code EquippedSets.ofMerc} and hands the result in here rather
+     * than duplicating this block.
+     */
+    public List<Component> getTooltip(EquippedSets equipped, int fallbackLevel) {
         List<Component> list = new ArrayList<>();
 
-        EquippedSets equipped = EquippedSets.of(player, this);
         int lvl = equipped.pieces > 0 ? equipped.avgLevel : fallbackLevel;
 
         list.add(Itemtips.SET_PIECES.locName(locName(), equipped.pieces, getSetSize())

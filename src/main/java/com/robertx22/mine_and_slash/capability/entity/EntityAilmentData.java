@@ -153,6 +153,12 @@ public class EntityAilmentData {
 
                 int max = Load.Unit(target).getMobRarity().max_slow_from_chill;
 
+                // max_slow_from_chill is datapack data and the pack sets it as high as 100, well
+                // past the amplifier where vanilla slowness flips into a speed boost, so cap it
+                // in the engine too. the rarity value still applies as a further reduction.
+                if (tier > Ailment.MAX_SAFE_SLOW_TIER) {
+                    tier = Ailment.MAX_SAFE_SLOW_TIER;
+                }
                 if (tier > max) {
                     tier = max;
                 }

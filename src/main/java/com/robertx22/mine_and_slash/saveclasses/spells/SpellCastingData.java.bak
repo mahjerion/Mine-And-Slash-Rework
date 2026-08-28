@@ -29,7 +29,6 @@ import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.uncommon.MathHelper;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
-import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.SpendResourceEvent;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.RepairUtils;
@@ -168,7 +167,7 @@ public class SpellCastingData {
                 wielded.add(x.id);
             }
 
-            mergeHotbarWeaponSpells(p, wielded);
+            mergeHotbarWeaponSpells(p);
 
             for (InsertedSpell x : spells) {
                 if (!wielded.contains(x.id)) {
@@ -208,7 +207,7 @@ public class SpellCastingData {
      * link count and tore all five support gems out of their sockets. Casting is not loosened by this:
      * canCast refuses anything that ended up in carriedOnlySpells.
      */
-    private void mergeHotbarWeaponSpells(Player p, Set<String> wielded) {
+    private void mergeHotbarWeaponSpells(Player p) {
 
         var data = Load.Unit(p);
 
@@ -229,19 +228,14 @@ public class SpellCastingData {
             }
             for (ExactStatData stat : gear.GetAllStats(ExileStack.of(stack))) {
                 if (stat.getStat() instanceof LearnSpellStat learn) {
-                    if (wielded.contains(learn.spell.GUID())) {
-                        // already granted by worn gear or the perk tree, at whatever rank those add up
-                        // to. a stowed weapon keeps a skill alive, it never buys it extra ranks
-                        continue;
-                    }
                     grantSpellRank(learn.spell.GUID(), (int) stat.getFirstValue());
                 }
             }
         }
     }
 
-    // max, never sum: carrying two copies of the same unique must not double the rank, and rank is what
-    // buys support slots
+    // max, never sum: the selected weapon already granted its skill through the unit stats above, and
+    // carrying two copies of the same unique must not double the rank - rank is what buys support slots
     private void grantSpellRank(String id, int rank) {
         for (InsertedSpell x : spells) {
             if (x.id.equals(id)) {
@@ -536,7 +530,8 @@ public class SpellCastingData {
         if (RepairUtils.isItemBroken(ctx.caster.getMainHandItem())) {
             return false;
         }
-        return ctx.data.getResources().hasEnoughForBoth(spell.getManaCostCtx(ctx), spell.getEnergyCostCtx(ctx));
+        return ctx.data.getResources().hasEnough(spell.getManaCostCtx(ctx))
+                && ctx.data.getResources().hasEnough(spell.getEnergyCostCtx(ctx));
     }
 
     // stops a channel part way through a pulse interval. nothing was pre paid, so this costs nothing
@@ -814,7 +809,7 @@ public class SpellCastingData {
             SpendResourceEvent energy = spell.getEnergyCostCtx(ctx);
 
 
-            if (data.getResources().hasEnoughForBoth(mana, energy)) {
+            if (data.getResources().hasEnough(mana) && data.getResources().hasEnough(energy)) {
 
                 var opt = Load.Unit(player).equipmentCache.getWeaponOpt();
 

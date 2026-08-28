@@ -23,7 +23,7 @@ public class Blood extends Stat {
 
     @Override
     public String locDescForLangFile() {
-        return "Blood is a unique resource that works like mana.";
+        return "Blood is a unique resource that works like Mana and Energy.";
     }
 
     @Override

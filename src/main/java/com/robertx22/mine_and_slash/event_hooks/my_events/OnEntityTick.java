@@ -74,6 +74,14 @@ public class OnEntityTick {
                 // and they must not pick up the mob rarity spells below.
                 MercenarySpellCaster.onTick(merc);
 
+                // and their own regeneration, for the same reason: the only regen tick in the mod
+                // lives in OnServerTick's player loop, so a mercenary's Health/Magic Shield Regen
+                // stats were granted and then never once acted on. tickCount staggers this across
+                // entities on its own.
+                if (merc.tickCount % 20 == 0) {
+                    MercenaryManager.tickRegen(merc);
+                }
+
             } else {
 
                 var rar = Load.Unit(entity).getMobRarity();

@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.stats.Stat;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.effects.game_changers.BloodUserEffect;
 import com.robertx22.mine_and_slash.database.data.stats.name_regex.StatNameRegex;
+import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import net.minecraft.ChatFormatting;
@@ -51,6 +52,7 @@ public class BloodUser extends Stat {
     public String locNameForLangFile() {
         return ChatFormatting.GRAY + "You now use " + Blood.getInstance()
                 .getIconNameFormat() + " instead of " + Mana.getInstance()
+                .getIconNameFormat()+ " and " + Energy.getInstance()
                 .getIconNameFormat();
     }
 

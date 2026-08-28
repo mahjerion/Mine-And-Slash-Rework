@@ -35,6 +35,25 @@ public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
     /** every slot a player inventory can have, so regenActionMap can cover them all */
     public static final int MAX_INVENTORY_SLOTS = 41;
 
+    /**
+     * Whether an inventory slot is one the player can hand to a mercenary.
+     * <p>
+     * A vanilla {@code Inventory} indexes 0-35 as the backpack and hotbar, 36-39 as the armour
+     * actually being worn and 40 as the offhand, and {@code getItem} maps into all three lists
+     * transparently. So the picker was offering the player's own equipped armour and shield, and
+     * taking one stripped it off them mid fight. The held weapon is excluded for the same reason -
+     * and only the held one, so switching hotbar slot makes the previous weapon offerable again.
+     * <p>
+     * Shared by the grid builder and by {@code doAction}, so the client filter and the server's
+     * final say cannot drift apart.
+     */
+    public static boolean isOfferableSlot(Player p, int invSlot) {
+        if (invSlot < 0 || invSlot >= net.minecraft.world.entity.player.Inventory.INVENTORY_SIZE) {
+            return false;
+        }
+        return invSlot != p.getInventory().selected;
+    }
+
     public record Target(String slotType, int index) {
     }
 
@@ -96,6 +115,12 @@ public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
         MyInventory inv = type.inventoryOf(data);
 
         if (target.index() < 0 || target.index() >= inv.getContainerSize()) {
+            return;
+        }
+
+        // the grid already filters these out, but the action map has one entry per inventory slot
+        // and a packet naming a worn slot would otherwise strip the player's own armour
+        if (!isOfferableSlot(p, invSlot)) {
             return;
         }
 

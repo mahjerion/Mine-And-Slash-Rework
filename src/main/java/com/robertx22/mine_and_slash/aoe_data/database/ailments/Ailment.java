@@ -61,6 +61,12 @@ public class Ailment implements ExileRegistry<Ailment>, IAutoLocName, IAutoLocDe
         Ailments.ALL.add(this);
     }
 
+    // vanilla slowness is a MULTIPLY_TOTAL modifier of -0.15 * (amplifier + 1), so amplifier 6 is
+    // already -1.05: a NEGATIVE multiplier. any second negative multiplier on the entity (a
+    // move_speed stat past -100%, another cc effect) multiplies the two back into a large POSITIVE
+    // speed instead of stacking the slows. 5 is the last amplifier that stays above -100%.
+    public static final int MAX_SAFE_SLOW_TIER = 5;
+
     public int getSlowTier(float multi) {
 
         if (multi == 0) {
@@ -70,9 +76,9 @@ public class Ailment implements ExileRegistry<Ailment>, IAutoLocName, IAutoLocDe
         int tier = (int) (multi * 10D);
 
         if (multi >= 1) {
-            tier = 50;
+            tier = MAX_SAFE_SLOW_TIER;
         }
-        return tier;
+        return Math.min(tier, MAX_SAFE_SLOW_TIER);
     }
 
 

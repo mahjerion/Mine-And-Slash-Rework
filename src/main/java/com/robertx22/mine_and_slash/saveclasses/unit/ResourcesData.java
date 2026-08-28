@@ -180,4 +180,18 @@ public class ResourcesData {
         return get(ctx.target, ctx.data.getResourceType()) >= ctx.data.getNumber();
     }
 
+    // a Blood Mage has both its mana and its energy cost retyped to blood, so checking the two
+    // events independently would let a spell through on a pool that only covers one of them, then
+    // spend both and clamp blood to 0. when they land on the same resource, check the sum
+    public boolean hasEnoughForBoth(SpendResourceEvent a, SpendResourceEvent b) {
+        if (a.data.getResourceType() != b.data.getResourceType()) {
+            return hasEnough(a) && hasEnough(b);
+        }
+        float total = Math.max(0, a.data.getNumber()) + Math.max(0, b.data.getNumber());
+        if (total <= 0) {
+            return true;
+        }
+        return get(a.target, a.data.getResourceType()) >= total;
+    }
+
 }

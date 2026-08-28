@@ -300,11 +300,21 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         int mana = getCalculatedManaCost(ctx);
         int ene = getCalculatedEnergyCost(ctx);
 
-        if (mana > 0) {
-            list.add(Words.MANA_COST.locName(mana).withStyle(ChatFormatting.BLUE));
-        }
-        if (ene > 0) {
-            list.add(Words.ENE_COST.locName(ene).withStyle(ChatFormatting.GREEN));
+        // a Blood Mage pays both costs out of one blood pool, so show them as one line. this reads
+        // the stat rather than the spend event's resource type on purpose - calculateEffects bails
+        // out client side, so a tooltip-built event is never retyped, but stats are synced
+        if (ctx.data != null && ctx.data.getUnit().isBloodMage()) {
+            int blood = mana + ene;
+            if (blood > 0) {
+                list.add(Words.BLOOD_COST.locName(blood).withStyle(ChatFormatting.DARK_RED));
+            }
+        } else {
+            if (mana > 0) {
+                list.add(Words.MANA_COST.locName(mana).withStyle(ChatFormatting.BLUE));
+            }
+            if (ene > 0) {
+                list.add(Words.ENE_COST.locName(ene).withStyle(ChatFormatting.GREEN));
+            }
         }
         int recovery = getCastSpeedTicks(ctx);
 

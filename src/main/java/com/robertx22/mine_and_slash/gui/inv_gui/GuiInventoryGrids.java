@@ -69,6 +69,10 @@ public class GuiInventoryGrids {
         List<GuiItemData> list = new ArrayList<>();
 
         for (int i = 0; i < p.getInventory().getContainerSize() && i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
+            // skips the armour the player is wearing, their offhand, and the weapon in their hand
+            if (!MercEquipAction.isOfferableSlot(p, i)) {
+                continue;
+            }
             ItemStack stack = p.getInventory().getItem(i);
             if (stack.isEmpty()) {
                 continue;

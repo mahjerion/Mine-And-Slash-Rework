@@ -14,6 +14,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.generated.Elementa
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.DamageAbsorbedByMana;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.BloodUser;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.blood.HealthRestorationToBlood;
+import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.HealthRegen;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.magic_shield.ChaosDoesntBypassMagicShield;
@@ -64,7 +65,8 @@ public class GameChangerPerks implements ExileRegistryInit {
                 new OptScaleExactStat(1, BloodUser.getInstance(), ModType.FLAT),
                 new OptScaleExactStat(50, HealthRestorationToBlood.getInstance(), ModType.FLAT),
                 new OptScaleExactStat(50, DatapackStats.BLOOD_PER_10STR, ModType.FLAT), // todo might be bad
-                new OptScaleExactStat(-100, Mana.getInstance(), ModType.MORE)
+                new OptScaleExactStat(-100, Mana.getInstance(), ModType.MORE),
+                new OptScaleExactStat(-100, Energy.getInstance(), ModType.MORE)
         );
 
         // put this on physical side of the tree

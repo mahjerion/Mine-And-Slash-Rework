@@ -37,8 +37,21 @@ public class SummonAtSightAction extends SpellAction {
         Double height = data.getOrDefault(MapField.HEIGHT, 10D);
 
         // the datapack may name the entity this lands on - the same MapField.POS_SOURCE that
-        // SummonProjectileAction reads - otherwise the context's own source decides.
-        PositionSource source = data.getOrDefault(ctx.getPositionSource());
+        // SummonProjectileAction reads. otherwise "at sight" means whatever the caster is aiming
+        // at, which depends on who is casting: a player aims with the crosshair, so the context's
+        // own source (itself) is right and the raycast below does the work. anything that is not a
+        // player has no crosshair and aims at the thing it is fighting, which the cast hands over
+        // as ctx.target - a mercenary's meteor belongs on the enemy, not on its own head.
+        //
+        // ctx.target == ctx.caster is how SpellCtx.onCast leaves a cast with no separate target
+        // (an ordinary mob's rarity spells), and that keeps its existing behaviour.
+        PositionSource fallback = ctx.getPositionSource();
+
+        if (!(ctx.caster instanceof Player) && ctx.target != null && ctx.target != ctx.caster) {
+            fallback = PositionSource.TARGET;
+        }
+
+        PositionSource source = data.getOrDefault(fallback);
         Entity posEn = source.get(ctx);
         if (posEn == null) {
             // onTick/onExpire leave target null when the source entity isn't a LivingEntity

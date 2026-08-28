@@ -1,13 +1,13 @@
 package com.robertx22.mine_and_slash.gui.screens.mercenary;
 
 import com.robertx22.mine_and_slash.a_libraries.neat.NeatConfig;
-import com.robertx22.mine_and_slash.aoe_data.database.stats.old.DatapackStats;
 import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
+import com.robertx22.mine_and_slash.database.data.stats.types.core_stats.AllAttributes;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
@@ -150,8 +150,19 @@ public class MercenaryScreen extends BaseScreen implements INamedScreen {
                     left + MercGui.ARMOR_SLOT_X, top + MercGui.ARMOR_SLOT_Y + i * MercGui.ARMOR_SLOT_PITCH, MercGui.SLOT_SIZE));
         }
 
-        // core attributes - the three CoreStats the mod has, in the panel colours the art uses
-        Stat[] core = {DatapackStats.STR, DatapackStats.INT, DatapackStats.DEX};
+        // core attributes - the three CoreStats the mod has, in the panel colours the art uses.
+        //
+        // read out of the database rather than off the DatapackStats statics, which is what
+        // MainHubScreen does for the player's own panel. the statics carry the values the mod was
+        // compiled with; the database entry carries whatever the loaded datapack says, which in a
+        // modpack is a different set of numbers. taking the statics here meant the mercenary panel
+        // described base Mine and Slash strength while the player panel two screens away described
+        // the pack's.
+        Stat[] core = {
+                ExileDB.Stats().get(AllAttributes.STR_ID),
+                ExileDB.Stats().get(AllAttributes.INT_ID),
+                ExileDB.Stats().get(AllAttributes.DEX_ID)
+        };
         ChatFormatting[] colors = {ChatFormatting.RED, ChatFormatting.BLUE, ChatFormatting.GREEN};
         for (int i = 0; i < core.length; i++) {
             publicAddButton(new MercCoreStatButton(this, core[i], colors[i],

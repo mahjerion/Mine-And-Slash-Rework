@@ -101,7 +101,20 @@ public class SpellOnHotbarRender {
 
 
             if (spell != null) {
+
+                // a skill kept alive by a weapon stowed elsewhere in the hotbar still holds its slot and
+                // its support gems, but it cannot be cast until that weapon is back in hand. dim it so
+                // the slot reads as "not right now" instead of looking broken
+                boolean dim = Load.player(mc.player).spellCastingData.carriedOnlySpells.contains(spell.GUID());
+                if (dim) {
+                    gui.setColor(0.45F, 0.45F, 0.45F, 1.0F);
+                }
+
                 gui.blit(spell.getIconLoc(), xs, ys, 0, 0, 16, 16, 16, 16);
+
+                if (dim) {
+                    gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                }
 
                 if (spell.config.charges > 0) {
                     drawCharge(xs, ys);

@@ -2,10 +2,12 @@ package com.robertx22.mine_and_slash.gui.screens.mercenary;
 
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.TextUTIL;
+import com.robertx22.mine_and_slash.database.data.item_set.EquippedSets;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
 import com.robertx22.mine_and_slash.gui.inv_gui.InvGuiScreen;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearTooltipUtils;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
@@ -153,8 +155,25 @@ public class MercSlotButton extends AbstractButton {
             return list;
         }
 
-        list.addAll(stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.NORMAL));
-        list.add(Words.MercenaryRightClickClear.locName().withStyle(ChatFormatting.DARK_GRAY));
+        // count set pieces off the mercenary's own loadout for the length of this one call. without
+        // it the item's own tooltip counts what the PLAYER is wearing, so a merc in two pieces of a
+        // set read whatever the owner happened to have on. the bonus was always applied correctly -
+        // only the number shown was the wrong entity's.
+        MercenaryData mercData = screen.getMercData();
+        int mercLevel = screen.getMercLevel();
+
+        GearTooltipUtils.SET_COUNT_OVERRIDE = set -> EquippedSets.ofMerc(mercData, mercLevel, set);
+        try {
+            list.addAll(stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.NORMAL));
+        } finally {
+            GearTooltipUtils.SET_COUNT_OVERRIDE = null;
+        }
+
+        // separated and yellow, matching the locked-slot hints above. it was dark grey and butted
+        // straight onto the end of a full gear tooltip, where it read as more item text - testers
+        // did not find right click at all and asked for a feature that was already here.
+        list.add(Component.empty());
+        list.add(Words.MercenaryRightClickClear.locName().withStyle(ChatFormatting.YELLOW));
         return list;
     }
 

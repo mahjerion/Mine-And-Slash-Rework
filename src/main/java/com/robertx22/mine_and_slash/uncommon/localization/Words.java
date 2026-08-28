@@ -213,6 +213,7 @@ public enum Words implements IAutoLocName {
     CAST_TIME("Cast Time: %1$ss"),
     MANA_COST("Mana Cost: %1$s"),
     ENE_COST("Energy Cost: %1$s"),
+    BLOOD_COST("Blood Cost: %1$s"),
     COOLDOWN("Cooldown: %1$ss"),
     RECOVERY("Recovery: %1$ss"),
     // deliberately not "Proc Cooldown" - Cooldown Reduction does not shorten this one
@@ -398,7 +399,7 @@ public enum Words implements IAutoLocName {
     MercenaryEmptyAura("Empty Aura Slot"),
     MercenaryClickToEquip("Click to Equip"),
     MercenaryPickForSlot("Click to choose what goes here"),
-    MercenaryRightClickClear("Right click to take it back"),
+    MercenaryRightClickClear("Right-Click to Unequip"),
     MercenaryLockedSupport("Locked Support Gem Slot"),
     MercenaryLockedSupportTip("Unlocks %1$s levels after this skill does."),
     MercenarySkillLockedTip("Unlocks at mercenary level %1$s."),

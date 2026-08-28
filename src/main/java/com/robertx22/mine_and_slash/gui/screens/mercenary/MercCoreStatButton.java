@@ -30,8 +30,6 @@ public class MercCoreStatButton extends AbstractButton {
     private final Stat stat;
     private final ChatFormatting color;
 
-    private int lastValue = Integer.MIN_VALUE;
-    private boolean tooltipDirty = true;
 
     public MercCoreStatButton(MercenaryScreen screen, Stat stat, ChatFormatting color, int x, int y) {
         super(x, y, MercGui.CORE_BOX_W, MercGui.CORE_BOX_H, Component.empty());
@@ -52,10 +50,6 @@ public class MercCoreStatButton extends AbstractButton {
     @Override
     public void renderWidget(GuiGraphics gui, int mx, int my, float partial) {
         int value = getValue();
-        if (value != lastValue) {
-            lastValue = value;
-            tooltipDirty = true;
-        }
 
         // no background blit - the art already draws a panel behind each of these three boxes, so all
         // this has to contribute is the number, centred in it.
@@ -68,9 +62,12 @@ public class MercCoreStatButton extends AbstractButton {
                 getY() + height / 2 - 4,
                 0xFFFFFF, true);
 
-        if (tooltipDirty) {
+        // only while hovered, but then every frame, the same as MercSlotButton. caching on "the
+        // number changed" missed the two cases that matter: the mercenary being summoned while the
+        // panel is already open, which turns "not summoned" into real numbers without moving the
+        // total, and shift/alt expansion inside the stat lines.
+        if (isHovered()) {
             setTooltip(Tooltip.create(TextUTIL.mergeList(buildTooltip())));
-            tooltipDirty = false;
         }
     }
 

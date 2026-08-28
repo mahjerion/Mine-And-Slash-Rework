@@ -50,6 +50,9 @@ public enum MercenarySlotType {
             if (gear.getLevel() > data.lvl) {
                 return false;
             }
+            if (!meetsAttributeReq(owner, gear)) {
+                return false;
+            }
             if (!fitsSlot(gear, slot)) {
                 return false;
             }
@@ -128,6 +131,28 @@ public enum MercenarySlotType {
     public abstract MyInventory inventoryOf(MercenaryData data);
 
     public abstract boolean mayPlace(Player owner, MercenaryData data, int index, ItemStack stack);
+
+    /**
+     * The strength/dexterity/intelligence gate on a piece of gear.
+     * <p>
+     * The level requirement above was the only one a mercenary was ever held to, so it could wear a
+     * staff asking for two hundred Intelligence as long as it was high enough level. This is the
+     * second half of {@code GearItemData.canPlayerWear} - the half {@code UnequipGear} enforces on
+     * every player - applied to the mercenary rather than to its owner.
+     * <p>
+     * It needs the live entity, because the attributes come out of a stat calculation and a stored
+     * loadout has none. Resolved the same way the AURA branch resolves its spirit check, and
+     * skipped entirely when the mercenary is not out: refusing to let anyone gear up a dismissed
+     * mercenary would be worse than letting {@code MercenaryManager.validateEquipment} hand the item
+     * back the next time it spawns, which it already does for everything else that stops being legal.
+     */
+    private static boolean meetsAttributeReq(Player owner, GearItemData gear) {
+        MercenaryEntity merc = owner.level().isClientSide ? ClientMercenary.get() : MercenaryManager.getMerc(owner);
+        if (merc == null) {
+            return true;
+        }
+        return gear.getRequirement().meetsReq(gear.getLevel(), Load.Unit(merc));
+    }
 
     private static boolean fitsSlot(GearItemData gear, EquipmentSlot slot) {
         BaseGearType type = gear.GetBaseGearType();

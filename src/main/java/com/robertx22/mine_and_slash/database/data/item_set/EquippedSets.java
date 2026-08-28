@@ -1,7 +1,9 @@
 package com.robertx22.mine_and_slash.database.data.item_set;
 
 import com.robertx22.mine_and_slash.a_libraries.curios.MyCuriosUtils;
+import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.itemstack.CustomItemData;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.GearData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -84,6 +86,55 @@ public class EquippedSets {
             counter.add(getUniqueId(stack), gear.getLevel());
         }
         return counter.build();
+    }
+
+    /**
+     * The same count for a mercenary's stored loadout instead of a player's worn gear.
+     * <p>
+     * A mercenary's gear lives in {@code MercenaryData.getGear()} and never touches the owner's
+     * equipment slots, so {@link #of(Player)} counted the player's own set pieces and printed them
+     * on the mercenary's tooltip. The bonus itself was always right - the server path
+     * {@link #of(List)} works off the mercenary's own gear like any other entity's - so this only
+     * brings the number shown into line with the stats already being granted.
+     * <p>
+     * Deliberately outside the client cache below, which is keyed on the player's tick and would
+     * hand a mercenary's count back to the player's own tooltip on the same frame.
+     */
+    public static List<EquippedSets> ofMerc(MercenaryData data, int mercLevel) {
+        Counter counter = new Counter();
+        if (data == null) {
+            return counter.build();
+        }
+
+        MyInventory inv = data.getGear();
+
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack == null || stack.isEmpty()) {
+                continue;
+            }
+            GearItemData gear = StackSaving.GEARS.loadFrom(stack);
+            if (gear == null || !gear.isValidItem()) {
+                continue;
+            }
+            if (gear.getLevel() > mercLevel) {
+                continue;
+            }
+            if (stack.isDamageableItem() && RepairUtils.isItemBroken(stack)) {
+                continue;
+            }
+            counter.add(getUniqueId(stack), gear.getLevel());
+        }
+        return counter.build();
+    }
+
+    public static EquippedSets ofMerc(MercenaryData data, int mercLevel, ItemSet set) {
+        for (EquippedSets x : ofMerc(data, mercLevel)) {
+            if (x.set.GUID().equals(set.GUID())) {
+                return x;
+            }
+        }
+        return new EquippedSets(set, 0, 1);
     }
 
     // tooltips rebuild every frame; scanning every equipment slot that often is wasteful,

@@ -37,7 +37,7 @@ public class BloodUserEffect extends InCodeStatEffect<SpendResourceEvent> {
 
     @Override
     public boolean canActivate(SpendResourceEvent effect, StatData data, Stat stat) {
-        if (effect.data.getResourceType() == ResourceType.mana) {
+        if (effect.data.getResourceType() == ResourceType.mana ||  effect.data.getResourceType() == ResourceType.energy) {
             return true;
         }
         return false;

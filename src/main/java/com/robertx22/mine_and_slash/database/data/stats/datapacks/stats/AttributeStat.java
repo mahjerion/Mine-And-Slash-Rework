@@ -57,6 +57,15 @@ public class AttributeStat extends BaseDatapackStat {
             val = val / 100F;
         }
 
+        // both multiplying operations read the value as a fraction of 1, so anything past -1 means
+        // "take away more than all of it". vanilla applies that literally and the running attribute
+        // value goes negative, which any second negative multiplier on the entity (vanilla slowness,
+        // a cc effect) flips back into a large POSITIVE value. -1 is already a full shutdown - the
+        // attribute floors at its own minimum from there.
+        if (operation != AttributeModifier.Operation.ADDITION) {
+            val = Math.max(val, -1F);
+        }
+
         AttributeModifier mod = new AttributeModifier(
                 uuid,
                 attributeId,

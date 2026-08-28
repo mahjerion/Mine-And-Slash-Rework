@@ -177,7 +177,10 @@ public class OnServerTick {
                                 energy.Activate();
                             }
                         } else {
-                            if (unitdata.getResources().getEnergy() < 1) {
+                            // onTickBlock pays the block cost through BloodUserEffect, so a Blood Mage
+                            // blocks on blood. checking raw energy here would strand them at 0 forever
+                            ResourceType blockRes = unitdata.getUnit().isBloodMage() ? ResourceType.blood : ResourceType.energy;
+                            if (unitdata.getResources().get(player, blockRes) < 1) {
                                 player.getCooldowns().addCooldown(player.getOffhandItem().getItem(), 20 * 3);
                                 player.getCooldowns().addCooldown(player.getMainHandItem().getItem(), 20 * 3);
                                 player.stopUsingItem();

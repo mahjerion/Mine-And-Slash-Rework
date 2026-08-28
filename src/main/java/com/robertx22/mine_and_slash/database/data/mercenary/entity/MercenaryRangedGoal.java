@@ -101,12 +101,20 @@ public class MercenaryRangedGoal extends Goal {
         merc.getLookControl().setLookAt(target, 30F, 30F);
         double distSqr = merc.distanceToSqr(target);
 
-        if (distSqr <= MELEE_REACH_SQR) {
+        // MercenarySpellCaster owns the navigation while it walks a skill into range. without this
+        // the fleeFrom below undoes every step on the tick after it is taken, and a kiting caster
+        // can never close on anything - its short range skills would be unusable by design.
+        if (!merc.isApproachingForCast()) {
+            if (distSqr <= MELEE_REACH_SQR) {
+                meleeAttack(target);
+            } else if (distSqr < KITE_DISTANCE_SQR) {
+                fleeFrom(target);
+            } else {
+                merc.getNavigation().moveTo(target, speedModifier);
+            }
+        } else if (distSqr <= MELEE_REACH_SQR) {
+            // still swinging on the way in - the approach is not a truce
             meleeAttack(target);
-        } else if (distSqr < KITE_DISTANCE_SQR) {
-            fleeFrom(target);
-        } else {
-            merc.getNavigation().moveTo(target, speedModifier);
         }
 
         // fires at any range with line of sight - performRangedAttack itself is a no-op when the

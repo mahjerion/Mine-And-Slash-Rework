@@ -88,6 +88,12 @@ public enum BarGuiType {
         public ResourceLocation getTexture(EntityData data, Player en) {
             return SlashRef.id("textures/gui/overlay/energy.png");
         }
+
+        @Override
+        public boolean shouldRenderCustom(EntityData data, Player en) {
+            // a Blood Mage has max energy pinned to 0, which would render a 0/0 bar with a NaN fill
+            return getMax(data, en) > 0;
+        }
     },
 
     MAGIC_SHIELD {

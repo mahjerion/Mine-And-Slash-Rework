@@ -51,7 +51,7 @@ public class SpellStatsCalculationEvent extends EffectEvent {
         if (caster instanceof Player p) {
             var gem = Load.player(p).getSkillGemInventory().getSpellGem(spell);
             if (gem != null) {
-                manamultilvl *= gem.getManaCostMulti();
+                manamultilvl *= gem.getManaCostMulti(p);
             }
         }
         this.data.setupNumber(EventData.CAST_TICKS, spell.config.getCastTimeTicks());

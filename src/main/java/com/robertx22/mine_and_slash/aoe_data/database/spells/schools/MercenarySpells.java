@@ -154,6 +154,11 @@ public class MercenarySpells implements ExileRegistryInit {
 
                 .weaponReq(CastingWeapon.MAGE_WEAPON)
                 .onCast(PartBuilder.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 1D, 1D))
+                // lands on the enemy with no POS_SOURCE of its own: SummonAtSightAction defaults a
+                // non player caster to its target, since a mercenary has no crosshair to aim by.
+                // stating it here would have worked too, but only for this entry - the modpack
+                // ships its own mercenary spell set that overrides this file, and those want the
+                // same thing without having to declare it.
                 .onCast(PartBuilder.justAction(SpellAction.SUMMON_AT_SIGHT.create(SlashEntities.SIMPLE_PROJECTILE.get(), 1D, 7D)))
                 .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(Blocks.MAGMA_BLOCK, 200D)
                         .put(MapField.ENTITY_NAME, "block")
@@ -200,10 +205,11 @@ public class MercenarySpells implements ExileRegistryInit {
                                 " After a certain duration you will be teleported to its location.")
 
                 .onCast(PartBuilder.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 1D, 1D))
-                // pinned to the caster: a mercenary casts with the position source set to its target
-                // (MercenarySpellCaster), which for every other skill is what you want - but this
-                // circle buffs whoever stands in it and teleports the caster to it ten seconds later,
-                // so dropped on the enemy it would drag a kiting elementalist into melee.
+                // pinned to the caster, and still worth stating outright: this circle buffs whoever
+                // stands in it and teleports the caster to it ten seconds later, so dropped on the
+                // enemy it would drag a kiting elementalist into melee. redundant with the caster
+                // default a mercenary now casts with, but it is the one skill where being wrong
+                // here is a movement bug rather than a cosmetic one.
                 .onCast(PartBuilder.justAction(SpellAction.SUMMON_AT_SIGHT.create(SlashEntities.SIMPLE_PROJECTILE.get(), 1D, 0D)
                         .put(MapField.POS_SOURCE, PositionSource.CASTER.name())))
                 .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(SlashBlocks.GLYPH.get(), 20D * 10)

@@ -197,6 +197,19 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         return this.castState != null && this.castState.isCasting();
     }
 
+    /**
+     * True while the mercenary is walking into range of a skill it has already picked.
+     * <p>
+     * Unlike {@link #isCastingSpell()} this does NOT suppress attacks - the mercenary is still
+     * fighting on the way in. What it does suppress is the combat goals' own movement, because
+     * MercenarySpellCaster owns the navigation for the duration; without that,
+     * {@code MercenaryRangedGoal.fleeFrom} would undo every step of the approach on the tick after
+     * it was taken, and a kiting elementalist could never reach anything with Frost Nova.
+     */
+    public boolean isApproachingForCast() {
+        return this.castState != null && this.castState.isApproaching();
+    }
+
     @Override
     protected void registerGoals() {
         refreshCombatGoal();

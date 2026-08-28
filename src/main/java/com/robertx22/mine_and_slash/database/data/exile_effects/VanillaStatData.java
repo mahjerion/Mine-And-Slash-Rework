@@ -42,18 +42,16 @@ public class VanillaStatData {
      */
     public void applyVanillaStats(LivingEntity en, int stacks, float strMulti) {
 
-        float amount = val * stacks;
+        float amount = val * stacks * strMulti;
 
         // a MULTIPLY_TOTAL past -1 is already a full shutdown (the attribute floors at its own
         // minimum, 0 for the speed/damage ones every effect here uses), so clamping loses nothing.
-        // without it there's no headroom for strMulti to scale into - the -10 the cc effects use
-        // is still deeply negative after a 75% cut - and two of them stacked multiply back into a
-        // large POSITIVE multiplier instead of stacking their reductions.
+        // it has to happen AFTER strMulti, or an attacker with +effect strength scales the -10 the
+        // cc effects use straight back past -1, and two negative multipliers on one attribute
+        // multiply back into a large POSITIVE one instead of stacking their reductions.
         if (type == ModType.MORE) {
             amount = Math.max(amount, -1F);
         }
-
-        amount *= strMulti;
 
         AttributeModifier mod = new AttributeModifier(UUID.fromString(uuid), "", amount, type.operation);
         Attribute attri = getAttribute();

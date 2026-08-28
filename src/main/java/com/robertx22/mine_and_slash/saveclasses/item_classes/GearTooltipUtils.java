@@ -40,11 +40,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.robertx22.mine_and_slash.gui.texts.ExileTooltips.EMPTY_LINE;
 
 public class GearTooltipUtils {
+
+    /**
+     * Who the "(x/y) set pieces" line is counted for, when it is not the viewer.
+     * <p>
+     * Client only and set for the length of one {@code getTooltipLines} call, the same one-shot
+     * static handoff {@code MercEquipAction.TARGET_TYPE} uses to get a slot into a grid that is
+     * built and consumed on the same tick. Null means "count the player's own gear", which is every
+     * tooltip in the game except a mercenary's.
+     */
+    @Nullable
+    public static Function<ItemSet, EquippedSets> SET_COUNT_OVERRIDE = null;
 
     public static void BuildTooltip(GearItemData gear, ItemStack stack, List<Component> tooltip, EntityData data) {
 
@@ -255,7 +267,15 @@ public class GearTooltipUtils {
         // insertion order inside ADDITIONAL, so accepting it here lands it above the shift-only info.
         ItemSet itemSet = gear.isUnique() ? ItemSet.ofUnique(EquippedSets.getUniqueId(stack)) : null;
         if (itemSet != null) {
-            etip.accept(new AdditionalBlock(itemSet.getTooltip(ClientOnly.getPlayer(), gear.getLevel())));
+            // whose set is being counted. normally the viewer's own, but the mercenary screen sets
+            // this around its getTooltipLines call, because a merc's gear lives in its own stored
+            // loadout and never touches the player's equipment slots - so hovering a merc's unique
+            // used to print the count of the set the PLAYER was wearing.
+            EquippedSets equipped = SET_COUNT_OVERRIDE == null
+                    ? EquippedSets.of(ClientOnly.getPlayer(), itemSet)
+                    : SET_COUNT_OVERRIDE.apply(itemSet);
+
+            etip.accept(new AdditionalBlock(itemSet.getTooltip(equipped, gear.getLevel())));
         }
 
         etip.accept(new AdditionalBlock(() -> {

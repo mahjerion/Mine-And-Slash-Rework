@@ -180,7 +180,10 @@ public class StatCalculation {
 
         if (skillGem > -1 && skillGem <= GemInventoryHelper.MAX_SKILL_GEMS) {
             var gem = playerData.getSkillGemInventory().getHotbarGem(skillGem);
-            for (SkillGemData d : gem.getSupportDatas()) {
+            // clipped to the links this skill has actually unlocked, the same way collectMercGemStats
+            // below is. gems over that count are no longer thrown out of the socket, so this is the
+            // only thing keeping them from applying for free.
+            for (SkillGemData d : gem.getActiveSupportDatas(p)) {
                 if (d.getSupport() != null) {
                     statContexts.add(new SimpleStatCtx(StatContext.StatCtxType.SUPPORT_GEM, d.getSupport().GetAllStats(data, d)));
                 }

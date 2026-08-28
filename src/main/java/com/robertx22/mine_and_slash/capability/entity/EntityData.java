@@ -519,7 +519,9 @@ public class EntityData implements ICap, INeededForClient {
             // and stats are calc on tick..
             Load.Unit(p).equipmentCache.setAllDirty();
         } else {
-            if (event.data.getNumber() > resources.getEnergy()) {
+            // read the resource the event actually spends, not raw energy - calculateEffects above
+            // retypes this to blood for a Blood Mage, whose max energy is pinned at 0
+            if (!resources.hasEnough(event)) {
                 data.setCanceled(true);
                 return;
             }
@@ -672,7 +674,7 @@ public class EntityData implements ICap, INeededForClient {
 
             data.setSpellUnitsDirty();
 
-            Load.player(p).spellCastingData.calcSpellLevels(unit);
+            Load.player(p).spellCastingData.calcSpellLevels(unit, p);
             Load.player(p).getSkillGemInventory().removeAurasIfCantWear(p);
 
             UnequipGear.check(p);
@@ -781,7 +783,8 @@ public class EntityData implements ICap, INeededForClient {
                 Load.Unit(p).equipmentCache.setAllDirty();
                 Load.Unit(p).recalcStats_DONT_CALL();
             } else {
-                if (event.data.getNumber() > resources.getEnergy()) {
+                // same as unarmedAttack: the event may have been retyped to blood by now
+                if (!resources.hasEnough(event)) {
                     data.setCanceled(true);
                     return;
                 }

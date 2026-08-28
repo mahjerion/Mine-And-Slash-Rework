@@ -82,6 +82,7 @@ public enum Chats implements IAutoLocName {
     WRONG_CASTING_WEAPON("That weapon type Can't cast this spell"),
     NOT_MNS_WEAPON("You need a Mine and Slash Weapon (Imbued with Stats) to Cast spells."),
     CANT_CAST_WITH_BROKEN_WEAPON("Can not cast spells with a broken weapon."),
+    MUST_HOLD_GRANTING_WEAPON("You must be holding the item that grants this skill."),
     CAST_FAILED("[Cast Fail]: "),
     STACKS_DONT_MULTIPLY_STATS("[Buff Stacks Don't multiply Stats]"),
     SOULLESS_GEAR_INFO("This Gear Lacks a Soul\nSouls contain Mine and Slash Stats"),

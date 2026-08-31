@@ -7,7 +7,6 @@ import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.ProcSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.WaterSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.stats.base.EffectCtx;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.PositionSource;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.action.MissingResourceScalingEffect;
 import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.mana.Mana;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
@@ -19,6 +18,9 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.number_provider.
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.number_provider.NumberProvider;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
+// (NEW) Import for new Leeching and Healing Helpers
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.condition.HasExileEffectCondition;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,6 +210,26 @@ public class StatEffects implements ExileRegistryInit {
             }
         }
     }
+
+        /** While leeching (any resource) on Source side. */
+        public static HasExileEffectCondition whileLeeching() {
+                return new HasExileEffectCondition(ModEffects.LEECHING_STATE);
+                }
+
+        /** While regenerating (any resource) on Source side. */
+        public static HasExileEffectCondition whileRegen() {
+                return new HasExileEffectCondition(ModEffects.REGEN_STATE);
+                }
+
+        /** While leeching a specific resource on Source side. */
+        public static HasExileEffectCondition whileLeeching(ResourceType rt) {
+                return new HasExileEffectCondition(ModEffects.LEECHING_STATE_BY_RES.get(rt));
+                }
+
+        /** While regenerating a specific resource on Source side. */
+        public static HasExileEffectCondition whileRegen(ResourceType rt) {
+                return new HasExileEffectCondition(ModEffects.REGEN_STATE_BY_RES.get(rt));
+                }
 
 
     // Resource scaling config for missing resource percentage

@@ -1,0 +1,23 @@
+{
+    "key": "25PERCENT_HEALTH",
+    "resource": "health",
+    "enabled": true,
+    "priority": 0,
+    "threshold": {
+      "mode": "PERCENT_OF_MAX",
+      "value": 25,
+      "multiply_by_level": false,
+      "percent_of": "health"
+    },
+    "cooldown_ticks": 0,
+    "locks": {
+      "effects": [],
+      "drop_progress_while_locked": true,
+      "drop_progress_on_proc": true
+    },
+    "on_proc": [
+      {
+        
+      }
+    ]
+  }

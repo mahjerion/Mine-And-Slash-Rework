@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.saveclasses.unit;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.energy.Energy;
+import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.SpendResourceEvent;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.ModType;
@@ -114,25 +115,125 @@ public class ResourcesData {
         modify(en, Use.SPEND, type, amount);
     }
 
+    // (START NEW) Overload with RestoreType — callers who know the type should use this
+    public void restore(LivingEntity en, ResourceType type, float amount,
+                    com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType rtype) {
+                        if (amount <= 0) return;
+
+                        float applied = applyRestoreAndReturnApplied(en, type, amount); // NEW
+                        if (applied <= 0) return; // nothing actually restored (e.g., full health)
+
+                        // Fire the unified event with the true applied amount
+                        com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceRestore.trigger(en, type, applied, rtype);
+                    }
+
+    // Overload without RestoreType
     public void restore(LivingEntity en, ResourceType type, float amount) {
-        modify(en, Use.RESTORE, type, amount);
+        // Default to regen when no context is provided
+        restore(en, type, amount,
+        com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType.regen);
     }
 
-    public void modify(LivingEntity en, Use use, ResourceType type, float amount) {
-        if (amount == 0) {
-            return;
+    // Returns the LEECH actual amount that was applied (0 if capped)
+    public float restoreAndReturnApplied(LivingEntity en, ResourceType type, float amount,
+                                        com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType rtype) {
+        if (amount <= 0) return 0f;
+        float applied = applyRestoreAndReturnApplied(en, type, amount);
+        if (applied > 0f) {
+            com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceRestore.trigger(en, type, applied, rtype);
         }
-        if (type == ResourceType.mana) {
-            mana = getModifiedValue(en, type, use, amount);
-        } else if (type == ResourceType.blood) {
-            blood = getModifiedValue(en, type, use, amount);
-        } else if (type == ResourceType.energy) {
-            energy = getModifiedValue(en, type, use, amount);
-        } else if (type == ResourceType.magic_shield) {
-            magic_shield = getModifiedValue(en, type, use, amount);
-        } else if (type == ResourceType.health) {
+        return applied;
+    }
+
+    // Returns the REGEN actual amount that was applied (0 if capped)
+    private float applyRestoreAndReturnApplied(LivingEntity en, ResourceType type, float amount) {
+        float applied = applyAndReturnAppliedClamped(en, type, amount); // unified path
+        cap(en, type);   // harmless no-op if already clamped
+        sync(en);
+        return applied;
+    }
+
+    // Returns the current value for non-Health resources (Health uses HealthUtils)
+    private float getCurrent(ResourceType type, LivingEntity en) {
+        return switch (type) {
+            case mana          -> mana;
+            case blood         -> blood;
+            case energy        -> energy;
+            case magic_shield  -> magic_shield;
+            case health        -> HealthUtils.getCurrentHealth(en);
+        };
+    }
+
+    private void setCurrent(ResourceType type, float value) {
+        switch (type) {
+            case mana         -> mana = value;
+            case blood        -> blood = value;
+            case energy       -> energy = value;
+            case magic_shield -> magic_shield = value;
+            case health       -> { /* health is applied via heal() below */ }
+        }
+    }
+
+    /**
+    * Compute applied AFTER clamping to max, then write the new value.
+    * Health heals via HealthUtils; others assign the clamped value.
+    */
+    private float applyAndReturnAppliedClamped(LivingEntity en, ResourceType type, float amount) {
+        if (amount <= 0f) return 0f;
+
+        float before = getCurrent(type, en);
+        float max    = getMax(en, type);           // you already have this method
+        float after  = Math.max(0f, Math.min(before + amount, max));
+        float applied = Math.max(0f, after - before);
+
+        if (applied <= 0f) return 0f;
+
+        if (type == ResourceType.health) {
+            HealthUtils.heal(en, applied);         // apply only what fits
+        } else {
+            setCurrent(type, after);               // write clamped value
+        }
+        return applied;
+    } 
+    // ===(END NEW)===
+
+
+    public void modify(LivingEntity en, Use use, ResourceType type, float amount) {
+        if (amount == 0f) return;
+
+        // Health restore goes through vanilla heal (keeps heart UI etc.)
+        if (type == ResourceType.health) {
             if (use == Use.RESTORE) {
                 HealthUtils.heal(en, amount);
+                cap(en, type);
+                sync(en);
+            } else {
+                // Optional: warn if someone tries to "spend" health via this path
+                // en.sendSystemMessage(Component.literal("[WARN] modify() called with SPEND health"));
+            }
+            return; // done with health either way
+        }
+
+         // --- non-health resources (mana, energy, blood, magic_shield) ---
+        float before = get(en, type);
+        float newVal = getModifiedValue(en, type, use, amount);
+
+        if (type == ResourceType.mana) {
+            mana = newVal;
+        } else if (type == ResourceType.blood) {
+            blood = newVal;
+        } else if (type == ResourceType.energy) {
+            energy = newVal;
+        } else if (type == ResourceType.magic_shield) {
+            magic_shield = newVal;
+        } // health spend/drain is handled via damage events
+
+        // Notify spend tracker only on SPEND for non-health
+        if (use == Use.SPEND) {
+            float spent = Math.max(0f, before - Math.max(newVal, 0f));
+            if (spent > 0f) {
+                OnResourceLost.trigger(en, type, spent, OnResourceLost.LossSource.SpendOrDrain
+                );
             }
         }
         cap(en, type);

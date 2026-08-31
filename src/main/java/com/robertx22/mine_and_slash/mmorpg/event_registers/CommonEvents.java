@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.DatabaseCaches;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
+import com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.reworked.NewDamageMain;
 import com.robertx22.mine_and_slash.event_hooks.entity.OnMobSpawn;
@@ -75,6 +76,14 @@ public class CommonEvents {
                     .add(Attributes.FOLLOW_RANGE, 32)
                     .build());
 
+        });
+
+        ForgeEvents.registerForgeEvent(LivingDamageEvent.class, evt -> {
+            if (!(evt.getEntity() instanceof ServerPlayer sp)) return;
+            float applied = evt.getAmount();
+            if (applied > 0f) {
+                OnResourceLost.trigger(sp, ResourceType.health, applied, OnResourceLost.LossSource.Damage);
+            }
         });
 
 

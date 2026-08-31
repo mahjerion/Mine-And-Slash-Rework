@@ -740,6 +740,17 @@ public class DamageEvent extends EffectEvent {
             dmg = DamageAbsorbedByMana.modifyEntityDamage(this, dmg);
             dmg = MagicShield.modifyEntityDamage(this, info, dmg);
         }
+        
+        // (START NEW) trigger resource lost event for health
+        if (target instanceof ServerPlayer sp) {
+            com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost.trigger(
+                sp,
+                com.robertx22.mine_and_slash.saveclasses.unit.ResourceType.health,
+                dmg,
+                com.robertx22.mine_and_slash.event_hooks.my_events.OnResourceLost.LossSource.Damage
+            );
+        }
+        // (END NEW)
 
         float vanillaDamage = HealthUtils.realToVanilla(target, dmg);
 

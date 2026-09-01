@@ -82,7 +82,7 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
 
             if (DungeonStatsStore.isBossTeleportUnlocked()) {
                 int buttonX = guiLeft + STATS_PANEL_CENTER_X - TeleportToBossButton.WIDTH / 2;
-                int buttonY = ticketsPanelBottomY() + PANEL_GAP;
+                int buttonY = statsPanelBottomY() + PANEL_GAP;
                 publicAddButton(new TeleportToBossButton(buttonX, buttonY));
             }
 
@@ -196,22 +196,10 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
         }
     }
 
-    private int ticketsPanelBoxHeight() {
-        return mc.font.lineHeight + STATS_PANEL_PADDING * 2;
-    }
-
-    // bottom Y of the tickets panel, or of the stats panel when there is no ticket data to show -
-    // so the teleport-to-boss button stacks correctly either way.
-    private int ticketsPanelBottomY() {
-        if (syncedMap() == null) {
-            return statsPanelBottomY();
-        }
-        return statsPanelBottomY() + PANEL_GAP + ticketsPanelBoxHeight();
-    }
-
-    // "Entry Tickets  n / m", directly under the kill%/loot% panel. Drawn as its own nine-patch box
-    // rather than as a fourth line of the stats panel, because DungeonStatsOverlay.renderAt takes
-    // exactly three components and lives in dungeon_realm.
+    // "Entry Tickets  n / m", hanging below the panel rather than inside it - the lower half of
+    // the background art is already taken by the map bar. Drawn as its own nine-patch box rather
+    // than as a fourth line of the stats panel, because DungeonStatsOverlay.renderAt takes exactly
+    // three components and lives in dungeon_realm.
     private void renderEntryTicketsPanel(GuiGraphics gui) {
         MapData map = syncedMap();
         if (map == null) {
@@ -231,11 +219,14 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
                 .withStyle(color);
 
         int boxW = font.width(line) + STATS_PANEL_PADDING * 2;
-        int boxH = ticketsPanelBoxHeight();
+        int boxH = font.lineHeight + STATS_PANEL_PADDING * 2;
 
-        int centerX = guiLeft + STATS_PANEL_CENTER_X;
+        int centerX = guiLeft + sizeX / 2;
         int x = centerX - boxW / 2;
-        int y = statsPanelBottomY() + PANEL_GAP;
+
+        // clamped like BaseScreen's back button: at gui scale 4 on a short window there is no room
+        // under the panel at all, and a box drawn past the bottom edge is simply invisible.
+        int y = Math.min(guiTop + sizeY + PANEL_GAP, this.height - boxH - 2);
 
         DungeonStatsOverlay.renderNinePatchWithFallback(gui, x, y, boxW, boxH);
         gui.drawCenteredString(font, line, centerX, y + STATS_PANEL_PADDING, 0xFFFFFFFF);

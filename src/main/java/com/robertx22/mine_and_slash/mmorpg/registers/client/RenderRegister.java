@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.spells.entities.renders.Ranger
 import com.robertx22.mine_and_slash.database.data.spells.summons.render.ModSkeletonRender;
 import com.robertx22.mine_and_slash.database.data.spells.summons.render.ModSpiderRender;
 import com.robertx22.mine_and_slash.database.data.spells.summons.render.ModWolfRender;
+import com.robertx22.mine_and_slash.database.data.wizard.render.WizardRenderer;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,12 @@ public class RenderRegister {
         x.registerEntityRenderer(SlashEntities.LIGHTNING_GOLEM.get(), ctx -> new ModSkeletonRender(SlashRef.id("textures/entity/lightning_golem.png"), ctx));
 
         x.registerEntityRenderer(SlashEntities.MERCENARY.get(), MercenaryRenderer::new);
+
+        // all four share one renderer - it reads the texture off the wizard's own datapack entry
+        x.registerEntityRenderer(SlashEntities.FIRE_WIZARD.get(), WizardRenderer::new);
+        x.registerEntityRenderer(SlashEntities.ICE_WIZARD.get(), WizardRenderer::new);
+        x.registerEntityRenderer(SlashEntities.LIGHTNING_WIZARD.get(), WizardRenderer::new);
+        x.registerEntityRenderer(SlashEntities.CHAOS_WIZARD.get(), WizardRenderer::new);
 
  
         x.registerEntityRenderer(SlashEntities.SIMPLE_PROJECTILE.get(), (d) -> new MySpriteRenderer<>(d, Minecraft.getInstance()

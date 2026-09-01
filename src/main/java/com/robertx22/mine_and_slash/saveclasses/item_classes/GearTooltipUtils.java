@@ -92,6 +92,7 @@ public class GearTooltipUtils {
                         .setEntityData(data)
                         .setStatRequirement(gear.getRequirement())
                         .setLevelRequirement(gear.getLevel())
+                        .setBoundStack(stack)
                         .warnIfMainHandIsTwoHanded(DualWieldUtils.isDualWieldWeapon(gear)))
                 .accept(new StatBlock() {
                     @Nonnull

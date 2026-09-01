@@ -4,6 +4,11 @@
 build/
 out/
 classes/
+# ...but that build output rule also swallowed the mercenary class ICONS, which is why
+# fighter.png and elementalist.png have never been committed - a fresh clone had no merc class
+# icons at all. un-ignore the directory itself; a ! rule on the files alone cannot work, because
+# git never descends into an excluded directory.
+!src/main/resources/assets/mmorpg/textures/gui/mercenary/classes/
 src/generated
 
 # eclipse

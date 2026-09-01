@@ -6,6 +6,8 @@ import com.robertx22.mine_and_slash.characters.PlayerStats;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenarySpellCaster;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.database.data.wizard.WizardSpellCaster;
+import com.robertx22.mine_and_slash.database.data.wizard.entity.WizardEntity;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -81,6 +83,13 @@ public class OnEntityTick {
                 if (merc.tickCount % 20 == 0) {
                     MercenaryManager.tickRegen(merc);
                 }
+
+            } else if (entity instanceof WizardEntity wizard) {
+                // wizards drive their own skills, on their own interval, and must not fall through
+                // to the mob rarity spells below - those fire blind with no target or range check,
+                // which on a mob whose whole design is aimed casting would read as random damage
+                // arriving from nowhere.
+                WizardSpellCaster.onTick(wizard);
 
             } else {
 

@@ -46,8 +46,12 @@ public class OnNonPlayerDamageEntityEvent extends EventConsumer<ExileEvents.OnDa
 
         if (!(event.source.getEntity() instanceof Player)) {
             if (event.source.getEntity() instanceof LivingEntity en && Load.Unit(en).isSummon()) {
-                LivingEntity caster = Load.Unit(en).getSummonClass().getOwner();
-                if (caster != null) {
+                // the SUMMONER, not the owner: a mercenary's pet has to swing with the mercenary's
+                // stats, and crediting the hit to the mercenary is also what routes the kill back
+                // to the owning player, via MercenaryDamageCreditEvent. resolves to the owner for
+                // an ordinary player summon, exactly as before.
+                LivingEntity caster = Load.Unit(en).summonedPetData.getSummoner(en);
+                if (caster != null && caster != en) {
                     PetAttackUTIL.tryAttack(en, caster, event.mob);
                     event.damage = 0;
                     event.canceled = true;

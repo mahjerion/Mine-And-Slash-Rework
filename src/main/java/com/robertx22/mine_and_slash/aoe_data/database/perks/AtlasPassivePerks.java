@@ -177,9 +177,9 @@ public class AtlasPassivePerks {
                 new OptScaleExactStat(30, ProphecyCoinFind.getInstance(), ModType.FLAT));
         PerkBuilder.gameChanger("keystone_shrine_twin_blessing", "Villager's Blessing",
                 new OptScaleExactStat(1, ShrineDoubleBuff.getInstance(), ModType.FLAT));
-        PerkBuilder.gameChanger("keystone_imprisoned_monster_twin_captives", "Gem",
+        PerkBuilder.gameChanger("keystone_imprisoned_monster_twin_captives", "Doppelgangers",
                 new OptScaleExactStat(1, ImprisonedMonsterDoubleSpawn.getInstance(), ModType.FLAT));
-        PerkBuilder.gameChanger("keystone_obelisk_greater_trial", "Doppelgangers",
+        PerkBuilder.gameChanger("keystone_obelisk_greater_trial", "Challenger",
                 new OptScaleExactStat(25, ObeliskMobToughness.getInstance(), ModType.FLAT),
                 new OptScaleExactStat(30, ObeliskExtraDrops.getInstance(), ModType.FLAT));
         PerkBuilder.gameChanger("keystone_harvest_bountiful_aftermath", "Bountiful Aftermath",

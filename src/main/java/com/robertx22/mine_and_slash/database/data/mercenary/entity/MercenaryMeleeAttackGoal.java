@@ -1,5 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.mercenary.entity;
 
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenarySpellCaster;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
@@ -16,22 +18,14 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
 
     /**
-     * How much further than vanilla a mercenary reaches, in blocks.
-     * <p>
-     * Squared distances are not additive, so {@link #getAttackReachSqr} converts out of squared space
-     * and back rather than adding to the squared value.
-     */
-    private static final double BONUS_REACH = 1.0D;
-
-    /**
      * How close the mercenary wants to be, as a fraction of its reach, squared - so about 0.7 of it.
      * <p>
      * Once inside this it stops navigating and holds, which is the whole point: vanilla
      * {@code MeleeAttackGoal} paths to the target's own block and ends up body to body no matter how
-     * far the mercenary can actually reach. Standing off at 0.7 of a reach that is itself a block
-     * longer than vanilla's leaves a comfortable margin before the attack check fails - unlike the
-     * first attempt at this, which held at the outer edge of an unextended reach and left the
-     * mercenary unable to land anything unless something pinned it in place.
+     * far the mercenary can actually reach. Standing off at 0.7 of a reach that is itself several
+     * blocks longer than vanilla's leaves a comfortable margin before the attack check fails -
+     * unlike the first attempt at this, which held at the outer edge of an unextended reach and
+     * left the mercenary unable to land anything unless something pinned it in place.
      */
     private static final double STANDOFF = 0.5D;
 
@@ -41,11 +35,20 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
      */
     private static final int STRAFE_STOP_BEFORE_SWING = 4;
 
+    /**
+     * How often the mercenary throws its weapon's ranged basic attack while it is still walking in.
+     * The same interval {@link MercenaryRangedGoal} uses, so a staff plinks at one rate whichever
+     * combat goal is driving it.
+     */
+    private static final int RANGED_ATTACK_INTERVAL = 20;
+
     private final MercenaryEntity merc;
     // MeleeAttackGoal keeps its own copy private, and the strafe below stops the navigation it owns
     private final double speedModifier;
 
     private final MercenaryStrafe strafe = new MercenaryStrafe();
+
+    private int rangedCooldown;
 
     public MercenaryMeleeAttackGoal(MercenaryEntity merc, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(merc, speedModifier, followingTargetEvenIfNotSeen);
@@ -70,6 +73,10 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
     public void tick() {
         super.tick();
 
+        if (rangedCooldown > 0) {
+            rangedCooldown--;
+        }
+
         LivingEntity target = merc.getTarget();
         if (target == null) {
             strafe.reset();
@@ -88,6 +95,13 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
 
         if (distSqr > reachSqr * STANDOFF) {
             strafe.reset();
+            // a weapon that grants a ranged basic attack - a staff's Bolt - is thrown on the way in
+            // rather than saved for a range this goal is trying to leave. vanilla RangedBowAttackGoal
+            // sits alongside this one but demands an actual bow, so nothing else covers a caster
+            // weapon in a melee mercenary's hand.
+            if (distSqr > reachSqr) {
+                tryRangedBasicAttack(target);
+            }
             // still closing, and vanilla pathing owns that. it only repaths when the target itself
             // has moved though, and a previous tick's hold stopped whatever path it had - without
             // this the mercenary can stand there while its target strolls off.
@@ -112,17 +126,50 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     /**
-     * Vanilla's reach plus {@link #BONUS_REACH}, so a mercenary doesn't have to be nose to nose.
+     * Vanilla's reach plus {@link MercenaryEntity#bonusMeleeReach()}, so a mercenary doesn't have to
+     * be nose to nose - and reaches further again with a two handed melee weapon.
      * <p>
      * Derived from super rather than hard coded: vanilla's formula already scales with both bodies'
-     * widths, and a mercenary should reach a block further than whatever that works out to against a
+     * widths, and a mercenary should reach further than whatever that works out to against a
      * particular target. This is the one method both {@code checkAndPerformAttack} and
-     * {@code canUse}'s no-path fallback consult, so overriding it covers everything.
+     * {@code canUse}'s no-path fallback consult, so overriding it covers everything - including the
+     * standoff below, which is a fraction of it and so follows the weapon automatically.
      */
     @Override
     protected double getAttackReachSqr(LivingEntity target) {
-        double reach = Math.sqrt(super.getAttackReachSqr(target)) + BONUS_REACH;
+        double reach = Math.sqrt(super.getAttackReachSqr(target)) + merc.bonusMeleeReach();
         return reach * reach;
+    }
+
+    /**
+     * The walk-in plink, for a melee mercenary carrying a weapon whose class grants a ranged skill.
+     * <p>
+     * Held back until the skill can actually cross the gap - otherwise a mercenary that spots
+     * something forty blocks away spends the whole approach firing bolts that expire in mid air.
+     * {@code performRangedAttack} is a no-op for a weapon that grants nothing, so an ordinary sword
+     * mercenary pays only the range check.
+     */
+    private void tryRangedBasicAttack(LivingEntity target) {
+        if (rangedCooldown > 0) {
+            return;
+        }
+        Spell basic = merc.weaponBasicAttackSpell();
+        if (basic == null) {
+            return;
+        }
+        if (!merc.getSensing().hasLineOfSight(target)) {
+            return;
+        }
+        double range = MercenarySpellCaster.basicAttackRange(merc, basic);
+        if (merc.distanceToSqr(target) > range * range) {
+            // spend the interval anyway. basicAttackRange samples a stat event to read the
+            // mercenary's Projectile Speed, and the whole walk in is spent out of reach - re-asking
+            // every tick of it would be the most expensive thing this goal does.
+            rangedCooldown = RANGED_ATTACK_INTERVAL;
+            return;
+        }
+        merc.performRangedAttack(target, 1.0F);
+        rangedCooldown = RANGED_ATTACK_INTERVAL;
     }
 
     @Override

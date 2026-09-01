@@ -13,9 +13,9 @@ import java.util.UUID;
 
 public class ProphecyGeneration {
 
-    // base coin cost every individual offer's cost is derived from (amount and rolled modifiers'
-    // cost_multi then scale it further) - also the base the reroll cost scales from, see
-    // PlayerProphecies.getRerollCost()
+    // base coin cost every individual offer's cost is derived from (the start's own costMulti, the
+    // amount and the rolled modifiers' cost_multi then scale it further) - also the base the reroll
+    // cost scales from, see PlayerProphecies.getRerollCost()
     public static final float BASE_COST = 10;
 
     public static ProphecyData generate(Player p) {
@@ -44,6 +44,9 @@ public class ProphecyGeneration {
         var start = ExileDB.ProphecyStarts().random();
 
         data.start = start.GUID();
+
+        // per-roll-type surcharge, 1 for every start but the omen one
+        cost *= start.costMulti();
 
         var b = start.create(lvl, tier);
 

@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.exile_effects.adders.ModEf
 import com.robertx22.mine_and_slash.aoe_data.database.spells.PartBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellBuilder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.SummonType;
 import com.robertx22.mine_and_slash.database.data.spells.components.SpellConfiguration;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.AggroAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction;
@@ -27,6 +28,7 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.EntityFinder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.Arrays;
@@ -59,6 +61,11 @@ public class MercenarySpells implements ExileRegistryInit {
     public static String MERC_METEOR = "merc_meteor";
     public static String MERC_MAGE_CIRCLE = "merc_mage_circle";
     public static String MERC_FROST_NOVA = "merc_frost_nova";
+
+    public static String MERC_ARROW_BARRAGE = "merc_arrow_barrage";
+    public static String MERC_FIRE_TRAP = "merc_fire_trap";
+    public static String MERC_SUMMON_WOLF = "merc_summon_wolf";
+    public static String MERC_WOLF_BASIC = "merc_wolf_basic";
 
     @Override
     public void registerAll() {
@@ -227,6 +234,105 @@ public class MercenarySpells implements ExileRegistryInit {
 
                 .onTick("block", PartBuilder.groundEdgeParticles(ParticleTypes.WITCH, 3D, 1.2D, 0.5D)
                         .addCondition(EffectCondition.EVERY_X_TICKS.create(3D)))
+                .defaultAndMaxLevel(1)
+                .levelReq(1)
+                .weight(0)
+                .build();
+
+        // ------------------------------------------------------------------ hunter
+        //
+        // every hunter skill requires a ranged weapon, traps and the summon included. that gate is
+        // real - MercenarySpellCaster.hasCastingWeapon enforces it per cast, and REQUIRE_SHOOTABLE
+        // wants an actual MnS gear item with the ranged_weapon slot tag, not merely a vanilla bow -
+        // so a hunter with nothing equipped casts nothing at all. deliberate, not an oversight.
+
+        // authored as a multicast rather than the player version's channel: a channel's
+        // cast_time_ticks is the gap between pulses and needs an input held down, which a mercenary
+        // has no equivalent of, so MercenarySpellCaster.castTimeTicksFor treats one as instant and a
+        // channelled barrage would fire exactly one arrow. times_to_cast is the mechanism its
+        // tickCast actually paces.
+        SpellBuilder.of(MERC_ARROW_BARRAGE, PlayStyle.DEX, SpellConfiguration.Builder.multiCast(0, 20 * 8, 20, 6), "Arrow Barrage",
+                        Arrays.asList(SpellTags.projectile, SpellTags.damage, SpellTags.PHYSICAL))
+                .manualDesc("Your mercenary shoots out arrows in rapid succession, each dealing " +
+                        SpellCalcs.ARROW_STORM.getLocDmgTooltip(Elements.Physical))
+                .weaponReq(CastingWeapon.RANGED)
+                .animations(SpellAnimations.SHOOT_ARROW_FAST, SpellAnimations.CAST_FINISH)
+
+                .onCast(PartBuilder.playSound(SoundEvents.ARROW_SHOOT, 1D, 1D))
+                .onCast(PartBuilder.justAction(SpellAction.SUMMON_PROJECTILE.createArrow(1D)))
+                .onHit(PartBuilder.particleOnTick(3D, ParticleTypes.CLOUD, 3D, 0.1D))
+                .onHit(PartBuilder.playSound(SoundEvents.ARROW_HIT, 1D, 1D))
+                .onHit(PartBuilder.damage(SpellCalcs.ARROW_STORM, Elements.Physical))
+                .onTick(PartBuilder.particleOnTick(5D, ParticleTypes.CRIT, 5D, 0.1D))
+
+                .defaultAndMaxLevel(1)
+                .levelReq(1)
+                .weight(0)
+                .build();
+
+        // the player trap throws a 100 tick projectile. MercenarySpellCaster.computeReach sizes
+        // engagement as LIFESPAN_TICKS * PROJECTILE_SPEED * ENGAGE_FACTOR, so lifting that number
+        // unchanged would have the mercenary lobbing traps from ~40 blocks out. 20 ticks puts it at
+        // a sane ~8. a plain cooldown rather than charges, too: a mercenary has no ChargeData, so
+        // authoring charges here only yields one cast per regen anyway.
+        SpellBuilder.of(MERC_FIRE_TRAP, PlayStyle.DEX, SpellConfiguration.Builder.instant(0, 20 * 10)
+                                .setSwingArm(), "Fire Trap",
+                        Arrays.asList(SpellTags.damage, SpellTags.area, SpellTags.trap, SpellTags.FIRE))
+                .manualDesc("Your mercenary throws out a trap that stays on the ground and activates when an enemy approaches, dealing "
+                        + SpellCalcs.RANGER_TRAP.getLocDmgTooltip() + " " + Elements.Fire.getIconNameDmg() + " in an area around itself.")
+                .weaponReq(CastingWeapon.RANGED)
+
+                .onCast(PartBuilder.playSound(SoundEvents.SNOWBALL_THROW, 1D, 1D))
+                .onCast(PartBuilder.justAction(SpellAction.SUMMON_PROJECTILE.create(Items.IRON_INGOT, 1D, 0.5D, SlashEntities.SIMPLE_PROJECTILE.get(), 20D, true)))
+                .onExpire(PartBuilder.justAction(SpellAction.SUMMON_BLOCK.create(SlashBlocks.TRAP.get(), 30 * 20D)
+                        .put(MapField.ENTITY_NAME, "trap")
+                        .put(MapField.FIND_NEAREST_SURFACE, true)
+                        .put(MapField.IS_BLOCK_FALLING, false)))
+
+                .onTick("trap", PartBuilder.aoeParticles(ParticleTypes.FLAME, 5D, 1D)
+                        .addCondition(EffectCondition.IS_ENTITY_IN_RADIUS.enemiesInRadius(1D))
+                        .addActions(SpellAction.EXPIRE.create())
+                        .addActions(SpellAction.SPECIFIC_ACTION.create("explode"))
+                        .tick(2D))
+
+                .addSpecificAction("explode", PartBuilder.damageInAoe(SpellCalcs.RANGER_TRAP, Elements.Fire, 3D))
+                .addSpecificAction("explode", PartBuilder.aoeParticles(ParticleTypes.FLAME, 30D, 3D))
+                .addSpecificAction("explode", PartBuilder.playSound(SoundEvents.GENERIC_EXPLODE, 1D, 1D))
+
+                .defaultAndMaxLevel(1)
+                .levelReq(1)
+                .weight(0)
+                .build();
+
+        // BEAST rather than NONE on purpose: the summon type is what the beast damage stats are
+        // conditioned on (EventData.SUMMON_TYPE), so NONE would quietly cut the wolf off from a
+        // whole stat category. it stays out of the owner's cap by not counting towards it, which is
+        // the field that exists for exactly that - see SummonPetAction.updatePlayerSummons.
+        SpellBuilder.of(MERC_SUMMON_WOLF, PlayStyle.DEX, SpellConfiguration.Builder.instant(0, 20 * 30)
+                                .setSummonBasicAttack(MERC_WOLF_BASIC)
+                                .setSummonType(SummonType.BEAST)
+                                .setSummonAggroRadius(15), "Summon Wolf",
+                        Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.beast, SpellTags.has_pet_ability, SpellTags.PHYSICAL))
+                .manualDesc("Your mercenary summons a Spirit Wolf to fight alongside it.")
+                .weaponReq(CastingWeapon.RANGED)
+
+                .summons(SlashEntities.SPIRIT_WOLF.get(), 20 * 30, 1, SummonType.BEAST, false)
+
+                .defaultAndMaxLevel(1)
+                .levelReq(1)
+                .weight(0)
+                .build();
+
+        // the wolf's bite. borrows the summon skill's support gems so a support socketed under
+        // Summon Wolf reaches it - MercenaryData.getSpellUnit follows that redirect.
+        SpellBuilder.of(MERC_WOLF_BASIC, PlayStyle.DEX, SpellConfiguration.Builder.instant(0, 1)
+                                .setUsesSupportGemsFrom(MERC_SUMMON_WOLF), "Wolf Attack",
+                        Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.beast, SpellTags.PHYSICAL))
+                .manualDesc("Attack dealing " + SpellCalcs.PET_BASIC.getLocDmgTooltip() + " "
+                        + Elements.Physical.getIconNameDmg() + " to a single enemy.")
+                .weaponReq(CastingWeapon.ANY_WEAPON)
+                .onHit(PartBuilder.damage(SpellCalcs.PET_BASIC, Elements.Physical))
+
                 .defaultAndMaxLevel(1)
                 .levelReq(1)
                 .weight(0)

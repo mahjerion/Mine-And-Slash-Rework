@@ -9,6 +9,7 @@ crossbow
 epic
 epic_gem
 epic_jewel
+epic_omen
 leather_boots
 leather_chest
 leather_helmet
@@ -16,9 +17,11 @@ leather_pants
 legendary
 legendary_gem
 legendary_jewel
+legendary_omen
 mythic
 mythic_gem
 mythic_jewel
+mythic_omen
 necklace
 plate_boots
 plate_chest
@@ -27,6 +30,7 @@ plate_pants
 rare
 rare_gem
 rare_jewel
+rare_omen
 ring
 shield
 staff

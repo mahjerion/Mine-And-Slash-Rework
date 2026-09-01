@@ -29,6 +29,12 @@ public class ProphecyModifiers implements ExileRegistryInit {
         of(IRarity.LEGENDARY_ID + "_jewel", 500, ProphecyModifierType.JEWEL_RARITY, IRarity.LEGENDARY_ID, 3).levelReq(40).tierReq(25);
         of(IRarity.MYTHIC_ID + "_jewel", 100, ProphecyModifierType.JEWEL_RARITY, IRarity.MYTHIC_ID, 4).levelReq(50).tierReq(50);
 
+        // omens - same table as jewels; OmenProphecy.costMulti() is what makes an omen offer pricier
+        of(IRarity.RARE_ID + "_omen", 500, ProphecyModifierType.OMEN_RARITY, IRarity.RARE_ID, 1.5F);
+        of(IRarity.EPIC_ID + "_omen", 1000, ProphecyModifierType.OMEN_RARITY, IRarity.EPIC_ID, 2F).levelReq(25).tierReq(20);
+        of(IRarity.LEGENDARY_ID + "_omen", 500, ProphecyModifierType.OMEN_RARITY, IRarity.LEGENDARY_ID, 3).levelReq(40).tierReq(25);
+        of(IRarity.MYTHIC_ID + "_omen", 100, ProphecyModifierType.OMEN_RARITY, IRarity.MYTHIC_ID, 4).levelReq(50).tierReq(50);
+
         of(IRarity.RARE_ID + "_gem", 500, ProphecyModifierType.SKILL_GEM_RARITY, IRarity.RARE_ID, 1.5F);
         of(IRarity.EPIC_ID + "_gem", 1000, ProphecyModifierType.SKILL_GEM_RARITY, IRarity.EPIC_ID, 2F).levelReq(25).tierReq(20);
         of(IRarity.LEGENDARY_ID + "_gem", 500, ProphecyModifierType.SKILL_GEM_RARITY, IRarity.LEGENDARY_ID, 3).levelReq(40).tierReq(25);

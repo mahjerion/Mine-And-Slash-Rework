@@ -133,7 +133,11 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
         int spawned = 0;
         for (int i = 0; i < monsterCount; i++) {
             RandomSource random = level.random;
-            EntityType<?> type = mobList != null ? mobList.getRandomMob().getType() : EntityType.ZOMBIE;
+            // getRandomMob also comes back null when every mob on the list belongs to a mod that
+            // is not installed. Same zombie fallback as a missing list rather than skipping: an
+            // encounter that spawns nothing is a free reward - see MobList.getRandomMob.
+            var entry = mobList != null ? mobList.getRandomMob() : null;
+            EntityType<?> type = entry != null ? entry.getType() : EntityType.ZOMBIE;
             Entity entity = type.create(level);
             if (!(entity instanceof Mob mob)) {
                 continue;

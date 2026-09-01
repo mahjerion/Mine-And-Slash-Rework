@@ -70,3 +70,13 @@ totem_mana
 unknown
 whirlwind
 wish
+witch_chain_lightning
+witch_chilling_field
+witch_fire_nova
+witch_fireball
+witch_frostball
+witch_frozen_orb
+witch_lightning_spear
+witch_lightning_totem
+witch_meteor
+witch_poison_ball

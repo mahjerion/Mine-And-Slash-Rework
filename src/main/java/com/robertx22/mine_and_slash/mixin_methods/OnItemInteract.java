@@ -73,6 +73,9 @@ public class OnItemInteract {
                         if (cost.getItem() == ctx.currency.getItem()) {
                             if (ctx.currency.getCount() >= cost.getCount()) {
                                 if (data.uniq.getCraftedTier().canUpgradeMore()) {
+                                    if (ctx.refuseIfStacked()) {
+                                        return new Result(true);
+                                    }
                                     data.uniq.upgradeUnique(data);
 
                                     StackSaving.JEWEL.saveTo(jewel, data);
@@ -101,6 +104,10 @@ public class OnItemInteract {
                     if (!StackSaving.GEARS.has(ctx.target) && !StackSaving.OMEN.has(ctx.target)) {
                         ctx.player.sendSystemMessage(Chats.NOT_GEAR_OR_LACKS_SOUL.locName().withStyle(ChatFormatting.RED));
                         return new Result(false);
+                    }
+
+                    if (ctx.refuseIfStacked()) {
+                        return new Result(true);
                     }
 
                     RarityStoneItem essence = (RarityStoneItem) ctx.currency.getItem();
@@ -132,12 +139,15 @@ public class OnItemInteract {
                         var res = data.canInsertIntoStack(ctx.target);
 
                         if (res.can) {
-                            if (ctx.target.getCount() == 1) {
-                                ItemStack result = data.insertAsUnidentifiedOn(ctx.target.copy(), ctx.player);
-                                ctx.consumeCurrency(1);
-                                ctx.replaceTarget(result);
-                                return new Result(true).ding();
+                            // this used to silently do nothing on a stack, which read as the click
+                            // being ignored. refuseIfStacked tells the player why instead
+                            if (ctx.refuseIfStacked()) {
+                                return new Result(true);
                             }
+                            ItemStack result = data.insertAsUnidentifiedOn(ctx.target.copyWithCount(1), ctx.player);
+                            ctx.consumeCurrency(1);
+                            ctx.replaceTarget(result);
+                            return new Result(true).ding();
                         } else {
                             if (res.answer != null) {
                                 ctx.player.sendSystemMessage(res.answer);
@@ -156,7 +166,10 @@ public class OnItemInteract {
             public Result tryApply(ClickContext ctx) {
                 if (ctx.currency.getItem() instanceof IItemAsCurrency c) {
                     if (!ctx.target.isEmpty()) {
-                        LocReqContext req = new LocReqContext(ctx.player, ctx.target.copy(), ctx.currency);
+                        if (ctx.refuseIfStacked()) {
+                            return new Result(true);
+                        }
+                        LocReqContext req = new LocReqContext(ctx.player, ctx.target.copyWithCount(1), ctx.currency);
 
                         var effect = c.currencyEffect(ctx.currency);
                         var can = effect.canItemBeModified(req);
@@ -186,6 +199,9 @@ public class OnItemInteract {
                         try {
 
                             if (se.canExtract(gear.getRarity())) {
+                                if (ctx.refuseIfStacked()) {
+                                    return new Result(true);
+                                }
                                 StatSoulData soul = new StatSoulData();
                                 soul.slot = gear.GetBaseGearType().getGearSlot().GUID();
                                 var ex = ExileStack.of(ctx.target);
@@ -221,6 +237,9 @@ public class OnItemInteract {
                     GearItemData gear = StackSaving.GEARS.loadFrom(ctx.target);
 
                     if (gear != null && !ServerContainer.get().isSoulCleanBanned(ctx.target.getItem())) {
+                        if (ctx.refuseIfStacked()) {
+                            return new Result(true);
+                        }
                         try {
                             ItemStack cleaned = ctx.target.copy();
                             cleaned.getOrCreateTag().remove(StackSaving.GEARS.GUID());

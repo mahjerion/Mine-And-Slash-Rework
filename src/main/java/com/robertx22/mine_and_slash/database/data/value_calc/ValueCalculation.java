@@ -5,6 +5,7 @@ import com.robertx22.library_of_exile.registry.ExileRegistryType;
 import com.robertx22.library_of_exile.registry.IAutoGson;
 import com.robertx22.library_of_exile.registry.JsonExileRegistry;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.stats.StatScaling;
 import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
 import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.Health;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +75,34 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
         return "[calc:" + id + "]";
     }
 
+    /**
+     * The damage a monster brings to a skill of its own, on top of whatever its stats scale.
+     * <p>
+     * A monster has no Weapon Damage stat at all - {@code mmorpg_base_stats/mob.json} grants
+     * accuracy, armor, resists and flat added elemental damage, but never Weapon Damage - so the
+     * weapon scaling above multiplies zero and this term is where a mob cast skill's damage
+     * actually comes from. {@link com.robertx22.mine_and_slash.capability.entity.EntityData#getMobBaseDamage}
+     * is not a stat on anything either: it reads only the entity's level, standing in for what a
+     * generic vanilla monster hits for at that level.
+     * <p>
+     * Multiplied by the calc's damage effectiveness, which is the whole point of moving it here from
+     * {@link ScalingCalc}. It used to be added raw, and {@code getCalculatedValue} runs once per
+     * damage activation - so a six pulse field collected six times a single nova's worth of it, no
+     * matter what the two skills were authored to do, and the multi above did nothing on a monster.
+     * Effectiveness is otherwise only a multiplier on flat added damage stats, so it is free to be
+     * the per hit knob here without double counting.
+     * <p>
+     * Mercenaries are excluded. They have a real Weapon Damage stat off their base stats, class and
+     * gear, and are meant to score damage exactly like a player does - the same carve out
+     * {@code EntityData.mobBasicAttack} already makes for their basic attack, for the same reason.
+     */
+    private float mobBaseDamage(LivingEntity caster, MaxLevelProvider provider) {
+        if (caster instanceof Player || caster instanceof MercenaryEntity) {
+            return 0;
+        }
+        return Load.Unit(caster).getMobBaseDamage() * getDamageEffectiveness(caster, provider);
+    }
+
     private int getCalculatedScalingValue(LivingEntity caster, LivingEntity target, MaxLevelProvider provider) {
 
         var opt = getAllScalingValues().stream().filter(x -> x.getStat() == WeaponDamage.getInstance()).findFirst();
@@ -80,6 +110,7 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
         float dmg = 0;
         if (opt.isPresent()) {
             dmg = opt.get().getCalculatedValue(caster, provider);
+            dmg += mobBaseDamage(caster, provider);
         }
 
 

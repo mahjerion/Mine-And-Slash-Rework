@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.saveclasses.unit;
 
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.BoundItemUtils;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
@@ -116,6 +117,13 @@ public class GearData {
         }
 
         if (gear.lvl > data.getLevel()) {
+            return false;
+        }
+
+        // uniques reconstructed from the sticker book are bound to whoever made them. this is the only
+        // place the binding is enforced, and it is enough: every stat path (armor, weapon, curios,
+        // mercenaries) reaches gear through CachedEntityStats, which filters on isUsableBy.
+        if (!BoundItemUtils.canUse(stack, data.getEntity())) {
             return false;
         }
 

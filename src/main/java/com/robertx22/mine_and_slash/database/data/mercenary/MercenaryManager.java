@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
@@ -317,6 +318,7 @@ public class MercenaryManager {
         // null means "none out yet" - the gap between a dismiss and the respawn, during which this
         // entity may still legitimately be the one about to be adopted. never discard on null.
         if (claimed != null && !claimed.equals(merc.getUUID())) {
+            despawnSummons(merc);
             merc.discard();
         }
     }
@@ -324,9 +326,26 @@ public class MercenaryManager {
     public static void dismiss(Player player) {
         MercenaryEntity merc = getMerc(player);
         if (merc != null) {
+            despawnSummons(merc);
             merc.discard();
         }
         Load.player(player).mercs.spawnedId = null;
+    }
+
+    /**
+     * A mercenary that leaves takes its pets with it - the same rule
+     * {@code SummonPetAction.despawnSummonsOfSpell} applies to a skill leaving the hotbar.
+     * <p>
+     * The pets are owned by the player, so nothing else would ever clean them up: they are not
+     * registered against the mercenary in any way the owner side despawn paths can see, and they
+     * would simply stand around until their duration ran out.
+     */
+    public static void despawnSummons(MercenaryEntity merc) {
+        try {
+            SummonPetAction.despawnSummonsOf(merc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable

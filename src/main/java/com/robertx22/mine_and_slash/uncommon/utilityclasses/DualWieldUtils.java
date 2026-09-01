@@ -53,6 +53,26 @@ public class DualWieldUtils {
         return wep != null && !wep.can_dual_wield;
     }
 
+    // a two handed MELEE weapon, which is what a mercenary's extra reach and its bigger basic attack
+    // aoe key off. deliberately not isTwoHandedWeapon: that counts bow and crossbow, which are two
+    // handed but have no melee swing to widen. trident is included - OPTIONALLY_RANGED, but it is
+    // still a two hander you hit things with.
+    public static boolean isTwoHandedMeleeWeapon(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return false;
+        }
+        GearItemData gear = StackSaving.GEARS.loadFrom(stack);
+        if (gear == null) {
+            return false;
+        }
+        BaseGearType type = gear.GetBaseGearType();
+        if (type == null || !type.getTags().contains(SlotTags.weapon_family)) {
+            return false;
+        }
+        WeaponTypes wep = type.weaponType();
+        return wep != null && !wep.can_dual_wield && !wep.isProjectile;
+    }
+
     // a two handed weapon occupies both hands, so a weapon in the offhand alongside one isn't
     // wielded at all and grants nothing. offhand_family items (shield/tome/totem) are unaffected.
     public static boolean mainHandBlocksOffhandWeapon(LivingEntity en) {

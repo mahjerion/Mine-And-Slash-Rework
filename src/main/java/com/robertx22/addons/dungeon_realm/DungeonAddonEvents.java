@@ -580,6 +580,15 @@ public class DungeonAddonEvents {
             return false;
         }
 
+        // Entry Tickets. A courtesy refusal only - the authoritative charge and seal live in
+        // MapEntryTickets.onArrival, which is the one place that sees EVERY arrival (a foreign mod's
+        // teleport never reaches this event). Checking here just saves the player a pointless round
+        // trip into the map and straight back out.
+        if (!p.isCreative() && !mapData.hasEntryTicketsLeft()) {
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.MAP_DEVICE_USE_ERROR, Chats.MAP_OUT_OF_ENTRY_TICKETS));
+            return false;
+        }
+
         return true;
     }
 }

@@ -35,6 +35,7 @@ public enum Itemtips implements IAutoLocName {
     PROF_TOOL_EXP_TIP("Exp: %1$s/%2$s"),
     SOUL_TIER_TIP("Soul tier determine the level range of generated gear"),
     MAP_TIER_TIP("Map tier indicate the difficulty and loot quality of this map"),
+    MAP_ENTRY_TICKETS("Entry Tickets: %1$s"),
     SHIFT_TIP("[Shift]: Detail"),
     ALT_TIP("[Alt]: Desc"),
     CTRL_TIP("[Ctrl]: Hide"),
@@ -96,7 +97,9 @@ public enum Itemtips implements IAutoLocName {
     UNIQUE_STATS("Unique Stats: "),
     JEWEL_STATS("Jewel Stats: "),
     SUFFIX_STATS("Suffix Stats: "),
-    MAP_LEAGUE_SPAWN("Can Spawn: ");
+    MAP_LEAGUE_SPAWN("Can Spawn: "),
+    BOUND_TO("Bound to %1$s"),
+    BOUND_TO_OTHER("Bound to %1$s - grants you no stats");
 
     private String localization = "";
 

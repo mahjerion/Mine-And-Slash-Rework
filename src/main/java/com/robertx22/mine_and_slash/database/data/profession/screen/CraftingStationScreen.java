@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
 import com.robertx22.mine_and_slash.database.data.profession.all.Professions;
 import com.robertx22.mine_and_slash.database.data.profession.items.ProfTierMatItem;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.gui.screens.unique_collection.OpenUniqueBookButton;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.RarityItems;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
@@ -78,6 +79,11 @@ public abstract class CraftingStationScreen extends AbstractContainerScreen<Craf
         super.init();
         if (!prof.GUID().equals(Professions.SALVAGING)) {
             this.addRenderableWidget(new LockButton(leftPos + 79, topPos + 33, this));
+        } else {
+            // hangs above the panel's top left corner, outside the art - the same shelf RecipeButton
+            // uses, which is free here because no recipe is registered to the salvaging profession
+            this.addRenderableWidget(new OpenUniqueBookButton(leftPos, topPos - OpenUniqueBookButton.SIZE - 2,
+                    () -> getSyncedData().getBlockPos()));
         }
         this.addRenderableWidget(new CraftButton(leftPos + 79, topPos + 51, this));
 

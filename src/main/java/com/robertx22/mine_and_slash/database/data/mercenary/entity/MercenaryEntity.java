@@ -1,17 +1,22 @@
 package com.robertx22.mine_and_slash.database.data.mercenary.entity;
 
 import com.robertx22.library_of_exile.utils.SoundUtils;
-import com.robertx22.library_of_exile.utils.geometry.MyPosition;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryCastState;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
-import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
-import com.robertx22.mine_and_slash.database.data.spells.entities.AutoAimingProj;
+import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
-import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
+import com.robertx22.mine_and_slash.database.data.StatMod;
+import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
+import com.robertx22.mine_and_slash.database.data.mercenary.MercenarySpellCaster;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.database.data.stats.types.LearnSpellStat;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
+import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,6 +38,7 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
@@ -42,8 +48,14 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.WeakHashMap;
 
 /**
  * A hired companion. Deliberately a sibling of
@@ -67,6 +79,20 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
 
     /** how far the mercenary will look for something to fight on its own */
     public static final int AGGRO_RADIUS = 10;
+
+    /**
+     * How much further than vanilla a mercenary reaches with a melee swing, in blocks.
+     * <p>
+     * Derived from vanilla's own formula rather than replacing it - see
+     * {@link MercenaryMeleeAttackGoal#getAttackReachSqr} - so it still scales with both bodies'
+     * widths. A two hander is a longer weapon and reaches further again.
+     */
+    public static final double BONUS_MELEE_REACH = 2.0D;
+    public static final double BONUS_MELEE_REACH_TWO_HANDED = 4.0D;
+
+    /** how far a melee basic attack splashes past the thing it actually hit, in blocks */
+    public static final double BASIC_ATTACK_AOE_RADIUS = 1.0D;
+    public static final double BASIC_ATTACK_AOE_RADIUS_TWO_HANDED = 2.0D;
 
     public MercenaryEntity(EntityType<? extends TamableAnimal> type, Level level) {
         super(type, level);
@@ -232,7 +258,16 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 
-        // in Idle these still run, but canAttack rejects everything, so they never produce a target
+        // in Idle these still run, but canAttack rejects everything, so they never produce a target.
+        //
+        // being hit is the one thing that never used to move a mercenary off its current target:
+        // TargetGoal.canContinueToUse holds a live target indefinitely, and none of the three goals
+        // below fire when the MERCENARY is the one attacked - only when its owner is. Priority 2 so
+        // self defence outranks all of them. Safe in every combat mode: TargetingConditions.test
+        // consults canAttack(), which returns false in Idle and in Defensive explicitly allows
+        // getLastHurtByMob(). Naturally rate limited too - vanilla's canUse only fires on a NEW
+        // hurt timestamp, so standing in an aoe doesn't make it flip target every tick.
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, this::canAttack));
@@ -359,6 +394,93 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         return super.getName();
     }
 
+    // ------------------------------------------------------------------ melee
+
+    /** the mainhand is a two handed melee weapon, so the swing is both longer and wider */
+    public boolean holdsTwoHandedMelee() {
+        return DualWieldUtils.isTwoHandedMeleeWeapon(getMainHandItem());
+    }
+
+    public double bonusMeleeReach() {
+        return holdsTwoHandedMelee() ? BONUS_MELEE_REACH_TWO_HANDED : BONUS_MELEE_REACH;
+    }
+
+    public double basicAttackAoeRadius() {
+        return holdsTwoHandedMelee() ? BASIC_ATTACK_AOE_RADIUS_TWO_HANDED : BASIC_ATTACK_AOE_RADIUS;
+    }
+
+    // set while the splash below is running, so a splash hit can't splash again and recurse
+    private boolean inBasicAttackSplash = false;
+
+    /**
+     * A melee basic attack clips everything in a small ring around whatever it actually hit.
+     * <p>
+     * Overridden here rather than in a goal because both combat goals land a melee hit and they do
+     * it by different routes - {@link MercenaryMeleeAttackGoal} through vanilla's
+     * {@code checkAndPerformAttack}, {@link MercenaryRangedGoal#meleeAttack} by calling this
+     * directly. One override covers both.
+     * <p>
+     * Suppressed while holding a bow or crossbow: that poke is a fallback for a cornered archer, not
+     * a swing, and it has no blade to sweep with.
+     */
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        boolean hit = super.doHurtTarget(target);
+
+        if (hit && !inBasicAttackSplash && !level().isClientSide && !holdsRangedWeapon()) {
+            splashOnto(target);
+        }
+        return hit;
+    }
+
+    /**
+     * The extra targets of one melee swing.
+     * <p>
+     * Each one takes a full {@code doHurtTarget}, so the splash goes through exactly the same damage
+     * pipeline as the hit that caused it and needs no damage maths of its own.
+     * <p>
+     * {@code EntityData.mobBasicAttack} stamps a short cooldown on the ATTACKER after every basic
+     * attack, which exists to stop one swing registering twice. Left alone it would also cancel
+     * every splash target after the first, since they all land on the same tick - so it is cleared
+     * for the duration of the splash and re-armed once at the end.
+     */
+    private void splashOnto(Entity primary) {
+        double radius = basicAttackAoeRadius();
+        LivingEntity owner = getOwner();
+
+        if (owner == null) {
+            return;
+        }
+
+        AABB box = primary.getBoundingBox().inflate(radius);
+        var cooldowns = Load.Unit(this).getCooldowns();
+        int armed = cooldowns.getCooldownTicks(EntityData.BASIC_ATTACK_COOLDOWN_ID);
+
+        inBasicAttackSplash = true;
+        try {
+            for (LivingEntity other : level().getEntitiesOfClass(LivingEntity.class, box)) {
+                if (other == primary || other == this || !other.isAlive()) {
+                    continue;
+                }
+                // the same ownership question canAttack asks, so the splash can never catch the
+                // owner, their teammates or anybody's pets
+                if (!AllyOrEnemy.summonShouldAttack.is(owner, other)) {
+                    continue;
+                }
+                // inflate() gives a box, not a sphere - check the real distance so a corner of the
+                // box isn't quietly a longer reach than the radius advertises
+                if (other.distanceToSqr(primary) > radius * radius) {
+                    continue;
+                }
+                cooldowns.setOnCooldown(EntityData.BASIC_ATTACK_COOLDOWN_ID, 0);
+                super.doHurtTarget(other);
+            }
+        } finally {
+            inBasicAttackSplash = false;
+            cooldowns.setOnCooldown(EntityData.BASIC_ATTACK_COOLDOWN_ID, armed);
+        }
+    }
+
     // ------------------------------------------------------------------ ranged
 
     private boolean holdsRangedWeapon() {
@@ -366,33 +488,128 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         return main.getItem() instanceof BowItem || main.getItem() instanceof CrossbowItem;
     }
 
+    /**
+     * The ranged basic attack the mercenary's weapon CLASS grants it, or null for a weapon that
+     * grants none.
+     * <p>
+     * A staff is {@code WeaponRange.MELEE} with the same {@link
+     * com.robertx22.mine_and_slash.database.data.gear_types.weapons.mechanics.NormalWeaponMechanic}
+     * as an axe, so a caster mercenary kiting at range had nothing to do between skill cooldowns.
+     * What a staff does have is a skill it hands its wielder - the modpack's Bolt - and that is what
+     * a mercenary throws instead.
+     * <p>
+     * There is no "this weapon comes with a spell" field in the mod: gear grants a skill by carrying
+     * a {@link LearnSpellStat}, whose GUID is {@code "learn_" + spellId} and whose value is the rank
+     * ({@code DerivedRegistries} registers one per spell). So the question "what does this weapon
+     * class give you" is answered by walking the base type's own stat mods.
+     * <p>
+     * Deliberately the BASE GEAR TYPE and not the item's rolled stats. A Poet's Pen carries
+     * {@code learn_kinetic_blast} as a unique stat, and reading the item would promote Kinetic Blast
+     * to the basic attack instead of leaving it the proc it is meant to be. Read off the base type
+     * a Poet's Pen answers Bolt, because its {@code base_gear} is staff.
+     */
+    @Nullable
+    public Spell weaponBasicAttackSpell() {
+        try {
+            GearItemData gear = StackSaving.GEARS.loadFrom(getMainHandItem());
+            if (gear == null || !gear.isValidItem()) {
+                return null;
+            }
+            BaseGearType type = gear.GetBaseGearType();
+            if (type == null || !type.isWeapon()) {
+                return null;
+            }
+            Spell spell = grantedSpellOf(type);
+            if (spell == null) {
+                return null;
+            }
+            // the same weapon gate a slotted skill passes through - see
+            // MercenarySpellCaster.hasCastingWeapon. Bolt is MAGE_WEAPON and a staff is one, so this
+            // is really a guard against a pack granting a skill its own weapon can't cast.
+            if (!spell.getConfig().castingWeapon.predicate.predicate.test(this)) {
+                return null;
+            }
+            return spell;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Cached per base gear type - it is a function of datapack data that cannot change while loaded.
+     * <p>
+     * Keyed on the BaseGearType instance rather than its id, and weak, so a datapack reload
+     * invalidates it for free: the reload builds new objects and the old entries become unreachable.
+     * Same trick, for the same reason, as {@code MercenarySpellCaster.RANGE_CACHE}. The Optional is
+     * there so "this weapon grants nothing" is cached too, which is the overwhelmingly common answer.
+     * Server thread only - every caller is a combat goal or the ranged attack they drive.
+     */
+    private static final Map<BaseGearType, Optional<Spell>> GRANTED_SPELL_CACHE = new WeakHashMap<>();
+
+    @Nullable
+    private static Spell grantedSpellOf(BaseGearType type) {
+        Optional<Spell> cached = GRANTED_SPELL_CACHE.get(type);
+        if (cached != null) {
+            return cached.orElse(null);
+        }
+        Spell found = null;
+        for (StatMod mod : type.baseStats()) {
+            if (mod.stat == null || !ExileDB.Stats().isRegistered(mod.stat)) {
+                continue;
+            }
+            if (ExileDB.Stats().get(mod.stat) instanceof LearnSpellStat learn) {
+                found = learn.spell;
+                break;
+            }
+        }
+        GRANTED_SPELL_CACHE.put(type, Optional.ofNullable(found));
+        return found;
+    }
+
+    /**
+     * A bow's arrow, or - for a weapon that grants one - the ranged basic attack skill of its class.
+     * <p>
+     * The arrow used to spawn {@code AUTO_AIMING_SKELETON_SKULL}, a straight lift of
+     * {@code SummonEntity.autoAimingRangedAttack} written for a summoned wither skeleton. It rendered
+     * as a wither skull, and {@code AutoAimingProj.onHitEntity} deals a hardcoded 8 damage plus
+     * Wither, reading none of the mercenary's stats. A real arrow goes through the normal projectile
+     * damage path instead, so a hunter's bow scales off the mercenary.
+     */
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
-        if (!holdsRangedWeapon()) {
-            return;
-        }
         // the mercenary is mid cast - it doesn't get to shoot as well. covers RangedBowAttackGoal on a
         // melee mercenary too, which has no idea a spell is going off
         if (isCastingSpell()) {
             return;
         }
+
+        if (!holdsRangedWeapon()) {
+            Spell basic = weaponBasicAttackSpell();
+            if (basic != null) {
+                MercenarySpellCaster.castWeaponBasicAttack(this, basic, target);
+            }
+            return;
+        }
+
         // melee already swings - MeleeAttackGoal does it before doHurtTarget - but nothing swings for
         // a bow shot, so the mercenary fired with a completely still arm.
         this.swing(InteractionHand.MAIN_HAND);
 
         SoundUtils.playSound(this, SoundEvents.ARROW_SHOOT, 1, 0.2F);
 
-        AutoAimingProj en = SlashEntities.AUTO_AIMING_SKELETON_SKULL.get().create(level());
-        if (en == null) {
+        AbstractArrow arrow = getArrow(new ItemStack(Items.ARROW), distanceFactor);
+        if (arrow == null) {
             return;
         }
-        en.setOwner(this);
-        en.setPosRaw(getX(), getEyeY(), getZ());
-        en.setDeltaMovement(ProjectileCastHelper.positionToVelocity(new MyPosition(getEyePosition()), new MyPosition(target.getEyePosition())));
-        en.target = target;
-        en.speed = 2;
+        // vanilla AbstractSkeleton's own aim: lead the shot slightly upward by the horizontal
+        // distance so it arcs onto the target instead of dropping short.
+        double dx = target.getX() - this.getX();
+        double dy = target.getY(0.3333D) - arrow.getY();
+        double dz = target.getZ() - this.getZ();
+        double horizontal = Math.sqrt(dx * dx + dz * dz);
+        arrow.shoot(dx, dy + horizontal * 0.2D, dz, 1.6F, 1.0F);
 
-        this.level().addFreshEntity(en);
+        this.level().addFreshEntity(arrow);
     }
 
     protected AbstractArrow getArrow(ItemStack arrowStack, float velocity) {

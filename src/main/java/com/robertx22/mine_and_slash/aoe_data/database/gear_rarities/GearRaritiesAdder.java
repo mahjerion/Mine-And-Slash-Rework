@@ -36,6 +36,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.weight = 5000;
             x.item_tier_power = 1;
             x.item_tier = 0;
+            x.map_lives = 11;
 
             x.pot = new GearRarity.Potential(5);
             x.item_value_multi = 1;
@@ -64,6 +65,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.min_affixes = 2;
             x.weight = 2000;
             x.item_tier = 1;
+            x.map_lives = 10;
             x.item_model_data_num = 2;
             x.item_tier_power = 1.25F;
             x.item_value_multi = 1.25F;
@@ -91,6 +93,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.lootable_gear_tier = GearRarity.LootableGearTier.MID;
             x.pot = new GearRarity.Potential(25);
             x.item_tier = 2;
+            x.map_lives = 9;
             x.item_model_data_num = 3;
             x.min_affixes = 3;
             x.weight = 500;
@@ -120,7 +123,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.pot = new GearRarity.Potential(50);
             x.min_affixes = 4;
             x.weight = 100;
-            x.map_lives = 4;
+            x.map_lives = 8;
             x.item_tier = 3;
             x.item_model_data_num = 4;
             x.item_tier_power = 1.7F;
@@ -152,7 +155,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.pot = new GearRarity.Potential(75);
             x.min_affixes = 5;
             x.weight = 50;
-            x.map_lives = 3;
+            x.map_lives = 7;
             x.item_tier = 4;
             x.item_model_data_num = 5;
             x.item_tier_power = 2;
@@ -187,7 +190,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.pot = new GearRarity.Potential(100);
             x.min_affixes = 6;
             x.weight = 25;
-            x.map_lives = 3;
+            x.map_lives = 6;
             x.item_tier = 5;
             x.item_model_data_num = 6;
             x.item_tier_power = 3;
@@ -212,6 +215,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.item_tier_power = 2;
             x.item_value_multi = 2;
             x.item_tier = 5;
+            x.map_lives = 11; // inert: UNIQUE is filtered out of MapItemData.rarityForTier
             x.setUniqueFields();
             x.announce_in_chat = true;
             x.is_unique_item = true;
@@ -235,6 +239,7 @@ public class GearRaritiesAdder extends ExileRegistryEventClass {
             x.item_tier_power = 2;
             x.item_value_multi = 2;
             x.item_tier = 10;
+            x.map_lives = 11; // inert: RUNED is filtered out of MapItemData.rarityForTier
             x.setRunewordFields();
             x.announce_in_chat = false;
             x.can_have_runewords = true;

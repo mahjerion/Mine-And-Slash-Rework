@@ -1,7 +1,6 @@
 package com.robertx22.mine_and_slash.database.data.value_calc;
 
 import com.robertx22.mine_and_slash.database.data.stats.Stat;
-import com.robertx22.mine_and_slash.database.data.stats.types.offense.WeaponDamage;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
@@ -10,7 +9,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,9 +76,9 @@ public class ScalingCalc {
                 .getCalculatedStat(stat)
                 .getValue());
 
-        if (getStat() == WeaponDamage.getInstance() && en instanceof Player == false) {
-            val += Load.Unit(en).getMobBaseDamage(); // todo what?
-        }
+        // a monster's flat base damage used to be added here, once per scaling, unmultiplied. it now
+        // lives in ValueCalculation.getCalculatedScalingValue, which is the only place that can see
+        // the calc's damage effectiveness - see the note there for why that matters.
         return val;
 
     }

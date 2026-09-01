@@ -40,6 +40,13 @@ public abstract class ProphecyStart implements ExileRegistry<ProphecyStart>, IAu
 
     public abstract boolean acceptsModifier(ProphecyModifierType type);
 
+    // the only per-roll-type price knob there is - ProphecyGeneration otherwise prices every
+    // start identically (base cost x amount x the rolled modifiers' cost_multi). 1 leaves the
+    // offer at base price, so overriding this is opt-in and no existing start changes.
+    public float costMulti() {
+        return 1F;
+    }
+
     public abstract ItemBlueprint create(int lvl, int tier);
 
     @Override

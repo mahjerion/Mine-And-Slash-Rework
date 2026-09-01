@@ -62,6 +62,17 @@ public class SpellBuilder {
         return this;
     }
 
+    /**
+     * Keeps the skill out of the in game wiki. Pair it with {@code weight(0)} - that combination is
+     * what {@link com.robertx22.mine_and_slash.uncommon.interfaces.IWikiHideable} describes for
+     * content that stays registered but isn't player content: a monster's skill is castable and
+     * documented in its own tooltip, but it is not something anyone can find, learn or socket.
+     */
+    public SpellBuilder hideFromWiki() {
+        this.spell.hide_from_wiki = true;
+        return this;
+    }
+
     public SpellBuilder addStat(StatMod stat) {
         this.spell.statsForSkillGem.add(stat);
         return this;

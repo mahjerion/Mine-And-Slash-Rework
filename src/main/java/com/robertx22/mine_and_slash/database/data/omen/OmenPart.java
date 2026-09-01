@@ -14,7 +14,10 @@ public class OmenPart extends BlueprintPart<Omen, OmenBlueprint> {
     @Override
     protected Omen generateIfNull() {
         int lvl = this.blueprint.info.level;
-        return DroppableOmens(lvl).random();
+        var omen = DroppableOmens(lvl).random();
+        // the drop path guards this with OmenLootGen.condition(), but the prophecy reward roll has no
+        // such hook - the coins are already spent by then, so never hand back a null to NPE on
+        return omen != null ? omen : ExileDB.Omens().random();
     }
 
     public static FilterListWrap<Omen> DroppableOmens(int lvl) {

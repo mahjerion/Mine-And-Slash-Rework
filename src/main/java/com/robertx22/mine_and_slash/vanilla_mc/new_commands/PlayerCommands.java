@@ -6,6 +6,7 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.PlayerData;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.UniqueSalvageHelper;
 import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.loot.LootInfo;
 import com.robertx22.mine_and_slash.loot.blueprints.WatcherEyeBlueprint;
@@ -269,6 +270,52 @@ public class PlayerCommands {
             });
 
         }, "Sets Mine and Slash Profession level");
+
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
+            PlayerWrapper PLAYER = new PlayerWrapper();
+            IntWrapper NUMBER = new IntWrapper("amount");
+
+            x.addLiteral("shards", PermWrapper.OP);
+            x.addLiteral("give", PermWrapper.OP);
+
+            x.addArg(PLAYER);
+            x.addArg(NUMBER);
+
+            x.action(e -> {
+                var p = PLAYER.get(e);
+                var num = NUMBER.get(e);
+
+                Load.player(p).uniqueCollection.addShards(num);
+                // sets the capability dirty AND pushes the client mirror - the collection deliberately
+                // isn't part of the PlayerData sync tag, so playerDataSync alone would not update the GUI
+                UniqueSalvageHelper.sync(p);
+
+                p.sendSystemMessage(Chats.SHARDS_BALANCE.locName(Load.player(p).uniqueCollection.shards));
+            });
+
+        }, "Gives Philosopher's Shards, the currency for reconstructing uniques in the Unique Collection");
+
+        CommandBuilder.of(CommandRefs.ID, dis, x -> {
+            PlayerWrapper PLAYER = new PlayerWrapper();
+            IntWrapper NUMBER = new IntWrapper("amount");
+
+            x.addLiteral("shards", PermWrapper.OP);
+            x.addLiteral("take", PermWrapper.OP);
+
+            x.addArg(PLAYER);
+            x.addArg(NUMBER);
+
+            x.action(e -> {
+                var p = PLAYER.get(e);
+                var num = NUMBER.get(e);
+
+                Load.player(p).uniqueCollection.removeShards(num);
+                UniqueSalvageHelper.sync(p);
+
+                p.sendSystemMessage(Chats.SHARDS_BALANCE.locName(Load.player(p).uniqueCollection.shards));
+            });
+
+        }, "Takes away Philosopher's Shards. Floors at 0, so a large amount empties the balance");
 
         CommandBuilder.of(CommandRefs.ID, dis, x -> {
             PlayerWrapper PLAYER = new PlayerWrapper();

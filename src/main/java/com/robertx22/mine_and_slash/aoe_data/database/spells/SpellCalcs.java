@@ -49,11 +49,15 @@ public class SpellCalcs {
             .spellScaling(0.2F, 0.5F)
             .build();
 
+    // 1.0 rather than the 5 these used to carry. a monster's flat base damage is multiplied by
+    // damage effectiveness now (ValueCalculation.mobBaseDamage), and since a monster has no Weapon
+    // Damage stat that term IS a boss nova's damage - at 5 it would have quintupled overnight.
+    // 1.0 leaves both hitting for what they always did. Raise `base` if bosses want more, not this.
     public static ValueCalculation BOSS_CLOSE_NOVA = ValueCalcBuilder.of("close_nova")
-            .spellScaling(5, 5)
+            .spellScaling(1, 1)
             .build();
     public static ValueCalculation BOSS_MINION_EXPLOSION = ValueCalcBuilder.of("minion_explosion")
-            .spellScaling(5, 5)
+            .spellScaling(1, 1)
             .build();
 
     public static ValueCalculation POISON_BALL = ValueCalcBuilder.of("poisonball")
@@ -285,5 +289,44 @@ public class SpellCalcs {
     public static ValueCalculation SMOKE_BOMB = ValueCalcBuilder.of("lose_aggro")
             .spellScaling(2, 4)
             .build();
+
+    // --------------------------------------------------------------------- wizard mobs
+    //
+    // One calc per witch_* skill, all of them flatWeaponScaling: base zero, everything pinned
+    // min == max. The wizards are monsters, so the Weapon Damage scaling multiplies a stat they
+    // don't have and the number below is really the damage effectiveness - which is what scales
+    // their flat mob damage, in ValueCalculation.mobBaseDamage.
+    //
+    // Sized by HITS PER CAST, not by the player skill they were copied from, because that term is
+    // collected once per damage activation. The budget is WIZARD_HIT_BUDGET of it per cast, split
+    // by however many times the skill lands - so a single fireball and a field that pulses six
+    // times deal the same total, and the choice between them is about area and dodging rather than
+    // about which one happens to tick more. Tune the budget to move every wizard at once, or one
+    // divisor to move one skill.
+
+    /** total damage effectiveness one wizard cast is worth, however many hits it lands */
+    private static final float WIZARD_HIT_BUDGET = 2F;
+
+    private static ValueCalculation witch(String id, float hitsPerCast) {
+        return ValueCalcBuilder.of(id).flatWeaponScaling(WIZARD_HIT_BUDGET / hitsPerCast, 0).build();
+    }
+
+    public static ValueCalculation WITCH_FIREBALL = witch("witch_fireball", 1);
+    public static ValueCalculation WITCH_FIRE_NOVA = witch("witch_fire_nova", 1);
+    public static ValueCalculation WITCH_METEOR = witch("witch_meteor", 1);
+
+    public static ValueCalculation WITCH_FROSTBALL = witch("witch_frostball", 1);
+    // the orb drifts for three seconds pulsing once a second, and detonates at the end
+    public static ValueCalculation WITCH_FROZEN_ORB = witch("witch_frozen_orb", 4);
+    // an air block that lives six seconds and ticks once a second
+    public static ValueCalculation WITCH_CHILLING_FIELD = witch("witch_chilling_field", 6);
+
+    public static ValueCalculation WITCH_LIGHTNING_SPEAR = witch("witch_lightning_spear", 1);
+    // three chains, so three things hit - or one thing hit once, when a player is alone
+    public static ValueCalculation WITCH_CHAIN_LIGHTNING = witch("witch_chain_lightning", 3);
+    // same six seconds at once a second as the field
+    public static ValueCalculation WITCH_LIGHTNING_TOTEM = witch("witch_lightning_totem", 6);
+
+    public static ValueCalculation WITCH_POISON_BALL = witch("witch_poison_ball", 1);
 
 }

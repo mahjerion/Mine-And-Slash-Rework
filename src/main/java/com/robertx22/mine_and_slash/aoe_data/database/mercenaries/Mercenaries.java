@@ -11,6 +11,7 @@ public class Mercenaries implements ExileRegistryInit {
 
     public static String FIGHTER = "fighter";
     public static String ELEMENTALIST = "elementalist";
+    public static String HUNTER = "hunter";
 
     @Override
     public void registerAll() {
@@ -60,7 +61,31 @@ public class Mercenaries implements ExileRegistryInit {
         elementalist.skills.put(MercenarySpells.MERC_FROST_NOVA, new PointData(2, 1));
         elementalist.skills.put(MercenarySpells.MERC_MAGE_CIRCLE, new PointData(3, 2));
 
+        MercenaryClass hunter = new MercenaryClass();
+        hunter.id = HUNTER;
+        hunter.locname = "Hunter";
+        hunter.icon = "hunter";
+        hunter.texture = "mmorpg:textures/entity/hunter.png";
+        // a bow class holds its distance, same as the elementalist
+        hunter.ai_behavior = MercenaryClass.AiBehavior.RANGED;
+
+        hunter.base_stats.put(DatapackStats.STR.GUID(), 3F);
+        hunter.base_stats.put(DatapackStats.DEX.GUID(), 5F);
+        hunter.base_stats.put(DatapackStats.INT.GUID(), 3F);
+
+        hunter.stats_per_level.put(DatapackStats.DEX.GUID(), 1F);
+
+        hunter.stats_per_10_lvl.put(DatapackStats.STR.GUID(), 3F);
+        hunter.stats_per_10_lvl.put(DatapackStats.DEX.GUID(), 5F);
+        hunter.stats_per_10_lvl.put(DatapackStats.INT.GUID(), 3F);
+
+        // the y row picks the unlock level out of lvl_reqs: row 0 is level 1, row 2 is level 10.
+        hunter.skills.put(MercenarySpells.MERC_ARROW_BARRAGE, new PointData(0, 0));
+        hunter.skills.put(MercenarySpells.MERC_FIRE_TRAP, new PointData(2, 1));
+        hunter.skills.put(MercenarySpells.MERC_SUMMON_WOLF, new PointData(1, 2));
+
         fighter.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
         elementalist.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
+        hunter.addToSerializables(MMORPG.SERIAZABLE_REGISTRATION_INFO);
     }
 }

@@ -3,5 +3,6 @@ This registry can't be modified or added to.
 aura_gem
 gear
 jewel
+omen
 rune
 support_gem

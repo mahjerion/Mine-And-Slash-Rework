@@ -50,6 +50,23 @@ public class ValueCalcBuilder {
 
     }
 
+    /**
+     * A flat, level independent calc for a skill only a monster casts.
+     * <p>
+     * Differs from {@link #spellScaling} in the two ways a mob cast skill needs. Every value is
+     * pinned min == max, because {@code LeveledValue.getValue} short circuits on that and a mob
+     * skill is authored {@code default_lvl 1 / max_lvl 1} - interpolating would hand it about a
+     * ninth of the range. And {@code base} is given outright rather than derived as
+     * {@code 2*min .. 6*max}, so it can be set to zero: a monster has no Weapon Damage stat, so
+     * {@code multi} multiplies nothing and {@code dmg_effectiveness} is the real per hit knob -
+     * see {@code ValueCalculation.mobBaseDamage}.
+     */
+    public ValueCalcBuilder flatWeaponScaling(float multi, float base) {
+        this.calc.dmg_effectiveness = new ScalingCalc(Health.getInstance(), new LeveledValue(multi, multi));
+        this.calc.base = new LeveledValue(base, base);
+        return statScaling(WeaponDamage.getInstance(), multi, multi);
+    }
+
     public ValueCalcBuilder statScaling(Stat stat, float min, float max) {
         calc.stat_scalings.add(new ScalingCalc(stat, new LeveledValue(min, max)));
         return this;

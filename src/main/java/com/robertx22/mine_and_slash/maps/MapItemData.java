@@ -285,6 +285,15 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                         additional.add(TooltipUtils.tier(this.tier).withStyle(ChatFormatting.GOLD));
                         additional.add(Component.literal("[" + Itemtips.SOUL_TIER_TIP.locName().getString() + "]").withStyle(ChatFormatting.BLUE));
                     }
+
+                    // Entry Tickets: how many times this map can be entered in total, across every
+                    // player. The item is consumed by stack.shrink(1) the moment the map starts, so
+                    // this is always the starting pool for its rarity - the live remaining count is
+                    // shown in chat on entry and on the Map screen inside the map.
+                    int tickets = getRarity().map_lives;
+                    if (tickets > 0) {
+                        additional.add(Itemtips.MAP_ENTRY_TICKETS.locName(tickets).withStyle(ChatFormatting.AQUA));
+                    }
                     return additional;
                 }))
                 //handle possibleRarities

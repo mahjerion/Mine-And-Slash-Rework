@@ -10,6 +10,8 @@ import com.robertx22.mine_and_slash.mmorpg.ModErrors;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashBlockEntities;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.UniqueSalvageHelper;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ICommonDataItem;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.ISalvagable;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
@@ -367,7 +369,21 @@ public class ProfessionBlockEntity extends BlockEntity {
 
                     this.addExp(data.getSalvageExpReward());
 
+                    // deliberately outside the extraSalvageChance loop above: shards are granted once
+                    // per item, so the salvaging profession multiplies rarity stones only. it feeds
+                    // shards through the base constant in ShardMath instead, which is a much smaller
+                    // swing than doubling the payout for every unique in the game.
+                    // no isUnique() check: that compares the rarity id to "unique", which a datapack
+                    // is free to change. the helper keys off the UNIQUE_ID stamped on the stack, which
+                    // is what actually makes an item a unique, and no-ops for anything else.
+                    // consumed BEFORE the shard payout: the helper syncs and sends a packet, and
+                    // anything that throws in there would escape before the shrink and leave the
+                    // player holding the item as well as the shards.
                     stack.shrink(1);
+
+                    if (data instanceof GearItemData gear) {
+                        UniqueSalvageHelper.onUniqueSalvaged(p, ex, gear, true);
+                    }
 
                     this.setChanged();
 

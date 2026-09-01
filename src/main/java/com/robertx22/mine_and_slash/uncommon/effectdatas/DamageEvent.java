@@ -855,12 +855,24 @@ public class DamageEvent extends EffectEvent {
                 for (Entry<String, ExileEffectInstanceData> e : targetData.getStatusEffectsData().exileMap.entrySet().stream().toList()) {
                     if (!e.getValue().shouldRemove()) {
                         var data = e.getValue();
-                        var sd = data.calcSpell;
-                        var ctx = SpellCtx.onEntityBasicAttacked(this.source, sd, target).setSourceEffect(data);
                         ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
-                        if (eff.spell != null) {
-                            eff.spell.tryActivate(SpellCtx.ON_ENTITY_ATTACKED, ctx); // i can use this kind of as event
+                        if (eff.spell == null || !eff.spell.entity_components.containsKey(SpellCtx.ON_ENTITY_ATTACKED)) {
+                            continue; // nothing to detonate - don't pay for the caster lookup below
                         }
+
+                        // the burst belongs to whoever primed the target, not whoever lit the fuse.
+                        // these effects (encased/enflamed, thorn) scale their damage off ctx.caster's
+                        // Weapon Damage, so reading the attacker meant a mercenary's trap detonated
+                        // for the owner's numbers when the owner landed the hit, and a player's trap
+                        // collapsed to mercenary numbers when the mercenary poked it first. the
+                        // instance already records who applied it - use that, and only fall back to
+                        // the attacker when the applier is gone (logged out, dead, other dimension).
+                        LivingEntity applier = data.getCaster(target.level());
+                        LivingEntity effectCaster = applier != null && applier.isAlive() ? applier : this.source;
+
+                        var sd = data.calcSpell;
+                        var ctx = SpellCtx.onEntityBasicAttacked(effectCaster, sd, target).setSourceEffect(data);
+                        eff.spell.tryActivate(SpellCtx.ON_ENTITY_ATTACKED, ctx); // i can use this kind of as event
                     }
                 }
             }
@@ -868,9 +880,17 @@ public class DamageEvent extends EffectEvent {
 
             if (source instanceof Player p) {
 
-                p.setLastHurtMob(target); // this allows summons to know who to attack
+                // a blood mage's health cost, a self_damage skill and an allow_self_damage component
+                // are all resource costs, not a fight - so neither of these two applies when the
+                // player hit themselves. Marking them in combat for ten seconds on every tick of one
+                // of those held the flag up permanently, and MercenaryManager.onPlayerTick returns
+                // before the respawn countdown even decrements while it is set, so the mercenary
+                // never came back. The damage number below is still sent - self damage should show.
+                if (!isPlayerSelfDamage()) {
+                    p.setLastHurtMob(target); // this allows summons to know who to attack
 
-                sourceData.getCooldowns().setOnCooldown(CooldownsData.IN_COMBAT, 20 * 10);
+                    sourceData.getCooldowns().setOnCooldown(CooldownsData.IN_COMBAT, 20 * 10);
+                }
                 if (target instanceof Mob) {
                     // the player is the source in both cases so the threat scales off the same unit that
                     // scaled the damage - for a minion that's the owner's pet spell unit, which routes

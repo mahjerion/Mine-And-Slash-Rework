@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.database.data.mercenary.entity;
 
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenarySpellCaster;
+import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,17 +18,28 @@ import java.util.EnumSet;
  * <p>
  * Keeps its distance from the target rather than closing in - the real damage for a caster comes from
  * {@link MercenarySpellCaster}, which runs independently of movement and casts regardless of range - and
- * only throws a melee hit when the target ends up inside melee reach anyway. That covers both a target
- * that corners the mercenary despite the kiting, and a ranged-behaviour mercenary with no actual ranged
- * weapon equipped, which otherwise would just stand at range doing nothing between spell casts.
+ * only throws a melee hit when the target ends up inside melee reach anyway. That covers a target that
+ * corners the mercenary despite the kiting.
+ * <p>
+ * Between skill cooldowns it fires whatever basic attack its weapon offers: an arrow from a bow, or
+ * the skill the weapon's own class grants - a staff's Bolt, see
+ * {@link MercenaryEntity#weaponBasicAttackSpell()}. Before that existed a staff mercenary had neither,
+ * and simply stood at its kite distance doing nothing.
  */
 public class MercenaryRangedGoal extends Goal {
 
-    // how far the opportunistic poke below connects. a block further than it used to be, matching the
-    // bonus MercenaryMeleeAttackGoal gives a melee mercenary, so a kiting one doesn't have to be
-    // pressed against something to swing at it.
-    private static final double MELEE_POKE_REACH = 3.0D;
-    private static final double MELEE_POKE_REACH_SQR = MELEE_POKE_REACH * MELEE_POKE_REACH;
+    // roughly what vanilla's own width-scaled reach works out to against a normal sized target.
+    // MercenaryMeleeAttackGoal derives its number from super instead, which this goal has no super
+    // to ask - so the mercenary's weapon bonus is added to this stand-in rather than to nothing.
+    private static final double VANILLA_MELEE_REACH = 2.0D;
+
+    // how far the opportunistic poke below connects: the same bonus a melee mercenary gets, so a
+    // kiting one doesn't have to be pressed against something to swing at it, and a two hander
+    // reaches further here too.
+    private double meleePokeReachSqr() {
+        double reach = VANILLA_MELEE_REACH + merc.bonusMeleeReach();
+        return reach * reach;
+    }
 
     // deliberately NOT the poke reach. this is the floor of holdDistance(), and raising it to match
     // would push a short ranged skill out of its own range - anything sitting on MercenarySpellCaster's
@@ -139,13 +151,13 @@ public class MercenaryRangedGoal extends Goal {
         // both attacks are opportunistic and neither one touches navigation. melee used to be an arm
         // of the movement decision above and stopped the navigation outright, which is what pinned a
         // mercenary in melee the moment anything cornered it - it stopped walking and never kited again.
-        if (distSqr <= MELEE_POKE_REACH_SQR) {
+        if (distSqr <= meleePokeReachSqr()) {
             meleeAttack(target);
         }
 
-        // fires at any range with line of sight - performRangedAttack itself is a no-op when the
-        // mercenary isn't actually holding a ranged weapon, which is exactly the fallback wanted for a
-        // caster: keep kiting and let its spells do the work between melee opportunities.
+        // a bow shot, or the ranged basic attack the mercenary's weapon class grants it - a staff's
+        // Bolt. performRangedAttack is still a no-op for a weapon that offers neither, which is the
+        // fallback wanted for a caster holding something odd: keep kiting and let its skills work.
         if (merc.getSensing().hasLineOfSight(target)) {
             tryRangedAttack(target);
         }
@@ -222,6 +234,20 @@ public class MercenaryRangedGoal extends Goal {
         // burn the interval on a shot that never left the bow
         if (merc.isCastingSpell()) {
             return;
+        }
+        // a weapon granted basic attack - a staff's Bolt - is a short lived projectile, unlike an
+        // arrow. hold fire past its reach rather than throwing one that expires in mid air. an
+        // actual bow has no such limit and is left alone.
+        Spell basic = merc.weaponBasicAttackSpell();
+        if (basic != null) {
+            double range = MercenarySpellCaster.basicAttackRange(merc, basic);
+            if (merc.distanceToSqr(target) > range * range) {
+                // spend the interval anyway. basicAttackRange samples a stat event to read the
+                // mercenary's Projectile Speed, so re-asking every tick while a target sits just out
+                // of reach would be the most expensive thing this goal does.
+                rangedCooldown = RANGED_ATTACK_INTERVAL;
+                return;
+            }
         }
         merc.performRangedAttack(target, 1.0F);
         rangedCooldown = RANGED_ATTACK_INTERVAL;

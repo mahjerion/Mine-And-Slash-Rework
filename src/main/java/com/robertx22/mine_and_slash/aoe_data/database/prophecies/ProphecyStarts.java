@@ -11,6 +11,7 @@ public class ProphecyStarts implements ExileRegistryInit {
         new GearProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new RuneProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new JewelProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
+        new OmenProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new AuraGemProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
         new SupportGemProphecy().registerToExileRegistry(MMORPG.HARDCODED_REGISTRATION_INFO);
     }

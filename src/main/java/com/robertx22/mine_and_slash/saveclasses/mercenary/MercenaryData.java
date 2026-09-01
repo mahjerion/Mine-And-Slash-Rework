@@ -219,7 +219,15 @@ public class MercenaryData {
             return cached;
         }
 
-        int slot = slotOfSpell(id);
+        // a spell can borrow another spell's support gems - a pet's basic attack borrows the summon
+        // skill's, which is the only way a support socketed under Summon Wolf reaches the wolf's
+        // bite. PlayerData.getSpellUnitStats makes the same redirect; without it here the borrowing
+        // spell is never found in a slot and silently falls through to the plain Unit below.
+        String slotId = spell.config.usesSupportGemsFromAnotherSpell()
+                ? spell.config.getSpellUsedForSuppGems().GUID()
+                : id;
+
+        int slot = slotOfSpell(slotId);
         if (slot < 0 || allStatsWithoutSuppGems == null || allStatsWithoutSuppGems.isEmpty()) {
             return Load.Unit(merc).getUnit();
         }

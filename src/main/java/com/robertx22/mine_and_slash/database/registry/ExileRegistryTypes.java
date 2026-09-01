@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.database.data.affixes.Affix;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGem;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
+import com.robertx22.mine_and_slash.database.data.wizard.WizardType;
 import com.robertx22.mine_and_slash.database.data.auto_item.AutoItem;
 import com.robertx22.mine_and_slash.database.data.base_stats.BaseStatsConfig;
 import com.robertx22.mine_and_slash.database.data.chaos_stats.ChaosStat;
@@ -125,6 +126,9 @@ public class ExileRegistryTypes {
 
     // must load after SPELL (17): a mercenary class lists the spell guids it teaches
     public static ExileRegistryType MERCENARY = ExileRegistryType.register(SlashRef.MODID, "mercenary", 54, MercenaryClass.SERIALIZER, SyncTime.ON_LOGIN);
+    // must load after SPELL (17) too, for the same reason - a wizard lists the spells it casts.
+    // synced on login because the renderer reads the texture off it client side.
+    public static ExileRegistryType WIZARD = ExileRegistryType.register(SlashRef.MODID, "wizard", 55, WizardType.SERIALIZER, SyncTime.ON_LOGIN);
 
     public static ExileRegistryType ORB_EXTEND = ExileRegistryType.register(SlashRef.MODID, "orb_extension", 100, ExtendedOrb.SERIALIZER, SyncTime.ON_LOGIN);
 

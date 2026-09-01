@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.DimensionConfig;
 import com.robertx22.mine_and_slash.database.data.EntityConfig;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.rarities.MobRarity;
 import com.robertx22.mine_and_slash.database.data.stats.types.SummonStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
@@ -17,6 +18,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.resources.health.H
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
+import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.MiscStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -38,18 +40,36 @@ public class MobStatUtils {
     public static List<StatContext> addSummonStats(TamableAnimal en) {
         List<ExactStatData> stats = new ArrayList<>();
 
-        LivingEntity caster = en.getOwner();
+        // whoever CAST this pet, which is the mercenary for a mercenary's pet. the owner is always
+        // the player either way, so reading the owner here would have given a mercenary's wolf the
+        // player's summon stats - or, before the summoner existed at all, nobody's.
+        var petData = Load.Unit(en).summonedPetData;
+        LivingEntity caster = petData.getSummoner(en);
+        var spell = petData.getSourceSpell();
+
+        // a pet whose source spell a datapack has since removed. it keeps its mob base stats and
+        // inherits nothing, which beats throwing out of the middle of a stat calculation.
+        if (spell == null) {
+            return Arrays.asList(new MiscStatCtx(stats));
+        }
+
+        // the same pair of branches SpellCastContext makes, so the Unit a pet inherits from and the
+        // Unit its source spell was scored with can never disagree
+        Unit unit = null;
 
         if (caster instanceof Player player) {
-            var spell = Load.Unit(en).summonedPetData.getSourceSpell();
-            var data = Load.player(player).getSpellUnitStats(spell);
+            unit = Load.player(player).getSpellUnitStats(spell);
+        } else if (caster instanceof MercenaryEntity merc) {
+            var mercData = merc.getMercData();
+            unit = mercData == null ? Load.Unit(merc).getUnit() : mercData.getSpellUnit(merc, spell);
+        }
 
-            for (Map.Entry<String, StatData> e : data.getStats().stats.entrySet()) {
+        if (unit != null) {
+            for (Map.Entry<String, StatData> e : unit.getStats().stats.entrySet()) {
                 if (e.getValue().GetStat() instanceof SummonStat sstat) {
                     stats.add(sstat.giveToSummon(e.getValue()));
                 }
             }
-
         }
         return Arrays.asList(new MiscStatCtx(stats));
 

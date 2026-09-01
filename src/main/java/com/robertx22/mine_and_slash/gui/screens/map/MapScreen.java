@@ -11,7 +11,9 @@ import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.IAlertScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.uncommon.localization.Words;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.MapCompletePacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -80,7 +82,7 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
 
             if (DungeonStatsStore.isBossTeleportUnlocked()) {
                 int buttonX = guiLeft + STATS_PANEL_CENTER_X - TeleportToBossButton.WIDTH / 2;
-                int buttonY = statsPanelBottomY() + PANEL_GAP;
+                int buttonY = ticketsPanelBottomY() + PANEL_GAP;
                 publicAddButton(new TeleportToBossButton(buttonX, buttonY));
             }
 
@@ -116,6 +118,7 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
                     mc.getWindow().getGuiScaledHeight() / 2 - sizeY / 2, 0, 0, sizeX, sizeY);
 
             renderStatsPanel(gui);
+            renderEntryTicketsPanel(gui);
             renderLeagueContentPanel(gui);
 
             ItemStack mapStack = resolveMapStack();
@@ -169,6 +172,73 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
     private int statsPanelBottomY() {
         int centerY = guiTop + STATS_PANEL_CENTER_Y + 10;
         return centerY + statsPanelBoxHeight() / 2;
+    }
+
+    // The live Entry Ticket pool for the run the player is standing in. Sourced from
+    // MapCompletePacket.SYNCED_DATA - OnServerTick already ships the whole MapData to the client
+    // every 10 seconds while inside a map, and MapEntryTickets pushes an extra one the moment a
+    // ticket is spent, so this needs no packet of its own.
+    //
+    // Null when there is nothing real to show: the static starts life as a blank MapData, and a
+    // blank one never has a playerUuid, whereas MapData.newMap always sets one.
+    private MapData syncedMap() {
+        try {
+            var synced = MapCompletePacket.SYNCED_DATA;
+            if (synced == null || synced.data == null || synced.data.playerUuid.isEmpty()) {
+                return null;
+            }
+            if (synced.data.maxEntryTickets() <= 0) {
+                return null; // this rarity opted out of the mechanic entirely
+            }
+            return synced.data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int ticketsPanelBoxHeight() {
+        return mc.font.lineHeight + STATS_PANEL_PADDING * 2;
+    }
+
+    // bottom Y of the tickets panel, or of the stats panel when there is no ticket data to show -
+    // so the teleport-to-boss button stacks correctly either way.
+    private int ticketsPanelBottomY() {
+        if (syncedMap() == null) {
+            return statsPanelBottomY();
+        }
+        return statsPanelBottomY() + PANEL_GAP + ticketsPanelBoxHeight();
+    }
+
+    // "Entry Tickets  n / m", directly under the kill%/loot% panel. Drawn as its own nine-patch box
+    // rather than as a fourth line of the stats panel, because DungeonStatsOverlay.renderAt takes
+    // exactly three components and lives in dungeon_realm.
+    private void renderEntryTicketsPanel(GuiGraphics gui) {
+        MapData map = syncedMap();
+        if (map == null) {
+            return;
+        }
+
+        var font = mc.font;
+
+        int left = map.entryTicketsLeft();
+        int max = map.maxEntryTickets();
+
+        // amber at one ticket left, red once the map is sealed - the point where leaving is final
+        ChatFormatting color = left <= 0 ? ChatFormatting.RED : (left == 1 ? ChatFormatting.GOLD : ChatFormatting.AQUA);
+
+        Component line = Words.MAP_ENTRY_TICKETS.locName()
+                .append(Component.literal(": " + left + " / " + max))
+                .withStyle(color);
+
+        int boxW = font.width(line) + STATS_PANEL_PADDING * 2;
+        int boxH = ticketsPanelBoxHeight();
+
+        int centerX = guiLeft + STATS_PANEL_CENTER_X;
+        int x = centerX - boxW / 2;
+        int y = statsPanelBottomY() + PANEL_GAP;
+
+        DungeonStatsOverlay.renderNinePatchWithFallback(gui, x, y, boxW, boxH);
+        gui.drawCenteredString(font, line, centerX, y + STATS_PANEL_PADDING, 0xFFFFFFFF);
     }
 
     // mimics the standard DungeonStatsOverlay HUD (rarity name + kill%/loot%), placed in the

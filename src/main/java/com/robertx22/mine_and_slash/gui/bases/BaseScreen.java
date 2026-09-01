@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.proxies.OpenGuiWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -37,7 +38,10 @@ public class BaseScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 
         // todo make this less wack
-        if (KeybindsRegister.HUB_SCREEN_KEY.matches(keyCode, scanCode) && !StatScreen.SEARCH.isFocused() && !SkillTreeScreen.SEARCH.isFocused()) {
+        // the two named search boxes are statics that outlive their screens, hence the explicit checks.
+        // the getFocused() test covers the general case: any screen whose text field currently has focus
+        // shouldn't be closed by someone typing that letter into it.
+        if (KeybindsRegister.HUB_SCREEN_KEY.matches(keyCode, scanCode) && !StatScreen.SEARCH.isFocused() && !SkillTreeScreen.SEARCH.isFocused() && !(this.getFocused() instanceof EditBox)) {
             Minecraft.getInstance().setScreen(null);
             OnKeyPress.cooldown = 5;
             return false;

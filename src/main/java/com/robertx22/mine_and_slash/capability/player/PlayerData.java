@@ -20,6 +20,7 @@ import com.robertx22.mine_and_slash.gui.screens.stat_gui.StatCalcInfoData;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.prophecy.PlayerProphecies;
 import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
+import com.robertx22.mine_and_slash.saveclasses.unique_collection.UniqueCollectionData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
@@ -100,6 +101,7 @@ public class PlayerData implements ICap {
     private static final String OMENS_FILLED = "ofi";
     private static final String SUMMONED = "summoned";
     private static final String ATLAS_DATA = "atlas";
+    private static final String UNIQUE_COLLECTION = "uniquecoll";
     private static final String CHAR_EQUIPMENT = "chareq";
     private static final String CHAR_GEMS = "chargems";
     private static final String CHAR_AURAS = "charauras";
@@ -136,6 +138,11 @@ public class PlayerData implements ICap {
     public PlayerPointsData points = new PlayerPointsData();
     public MiscSyncData miscInfo = new MiscSyncData();
     public AtlasData atlas = new AtlasData();
+
+    // the unique sticker book. lives here rather than on CharacterData on purpose: switching characters
+    // swaps talents, stats and mercs, but the collection and its shards are account wide.
+    public UniqueCollectionData uniqueCollection = new UniqueCollectionData();
+
     public JewelData jewelData;
 
     private MyInventory skillGemInv = new MyInventory(GemInventoryHelper.TOTAL_SLOTS);
@@ -205,6 +212,12 @@ public class PlayerData implements ICap {
         CompoundTag nbt = new CompoundTag();
         writeCommon(nbt);
         writeCharacterItems(nbt);
+        // server side only. the unlocked set is a few hundred registry guids, and writeCommon is resent
+        // in full every time anything on PlayerData changes - profession exp ticks constantly while
+        // salvaging - so it would put several KB on the wire per tick for data that changes maybe once
+        // an hour. the client gets it through SyncUniqueCollectionPacket instead, which means
+        // PlayerData.uniqueCollection is blank on the client: read ClientUniqueCollection there.
+        LoadSave.Save(uniqueCollection, nbt, UNIQUE_COLLECTION);
         return nbt;
     }
 
@@ -352,6 +365,8 @@ public class PlayerData implements ICap {
         this.miscInfo = loadOrBlank(MiscSyncData.class, new MiscSyncData(), nbt, MISC_INFO, new MiscSyncData());
         this.summonedData = loadOrBlank(SummonedData.class, new SummonedData(), nbt, SUMMONED, new SummonedData());
         this.atlas = loadOrBlank(AtlasData.class, new AtlasData(), nbt, ATLAS_DATA, new AtlasData());
+        // absent from the client tag by design (see buildNBT) - the client mirror is ClientUniqueCollection
+        this.uniqueCollection = loadOrBlank(UniqueCollectionData.class, new UniqueCollectionData(), nbt, UNIQUE_COLLECTION, new UniqueCollectionData());
         this.mercs = loadOrBlank(MercenaryStorageData.class, new MercenaryStorageData(), nbt, MERCS, new MercenaryStorageData());
 
         // must come after `mercs` is assigned above - the stacks hang off those objects

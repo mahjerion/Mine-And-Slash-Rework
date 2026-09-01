@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.aoe_data.database.spell_schools.SpellSchools
 import com.robertx22.mine_and_slash.aoe_data.database.spells.impl.IntSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.unique_gears.UniqueGearReg;
 import com.robertx22.mine_and_slash.aoe_data.database.mercenaries.Mercenaries;
+import com.robertx22.mine_and_slash.aoe_data.database.wizards.Wizards;
 import com.robertx22.mine_and_slash.database.data.aura.AuraGems;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
 import com.robertx22.mine_and_slash.database.data.loot_chest.GearLootChest;
@@ -67,6 +68,7 @@ public class ExileDBInit {
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.SUPPORT_GEM, SupportGems.PROJ_COUNT));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.AURA, AuraGems.health_reg.id));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.MERCENARY, Mercenaries.FIGHTER).setIsDatapack());
+        Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.WIZARD, Wizards.FIRE).setIsDatapack());
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.MAP_AFFIX, MapAffixes.crit));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.LOOT_CHEST, new GearLootChest().GUID()));
         Database.addRegistry(new ExileRegistryContainer<>(ExileRegistryTypes.RECIPE, ""));

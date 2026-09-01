@@ -2,11 +2,14 @@ package com.robertx22.mine_and_slash.database.data.mercenary.entity;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 
 /**
  * The small side to side shuffle a mercenary does while it is standing in front of something with
  * nothing to do. Shared by both combat goals: the melee one uses it in contact with its target, the
- * ranged one inside its hold band, and neither of them looked alive without it.
+ * ranged one inside its hold band, and neither of them looked alive without it. Typed to {@code Mob}
+ * rather than the mercenary because nothing in here is companion specific - the wizard monsters use
+ * it from {@code WizardCombatGoal} for the same reason.
  * <p>
  * Deliberately a sway, not an orbit. The sidestep input is small and the direction reverses every
  * few ticks, so the lateral travel cancels itself out and the mercenary stays over roughly one spot
@@ -47,7 +50,7 @@ public class MercenaryStrafe {
      *                goal uses it to stay inside its attack reach; the ranged goal owns distance
      *                through its own band and passes 0.
      */
-    public void tick(MercenaryEntity merc, LivingEntity target, float forward) {
+    public void tick(Mob merc, LivingEntity target, float forward) {
 
         // required, not optional. Mob.serverAiStep runs the goals BEFORE navigation.tick(), so an
         // active path overwrites the strafe operation on MoveControl every tick and nothing moves.

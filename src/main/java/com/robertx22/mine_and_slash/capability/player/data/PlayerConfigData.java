@@ -2,6 +2,8 @@ package com.robertx22.mine_and_slash.capability.player.data;
 
 import com.robertx22.library_of_exile.utils.SoundUtils;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.UniqueSalvageHelper;
+import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.database.data.profession.Profession;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -242,8 +244,19 @@ public class PlayerConfigData {
                         Load.player(player).professions.addExp(player, salvagingProfession.GUID(), data.getAutoSalvageExpReward(), false);
                     }
 
+                    // consume the input BEFORE paying out. the other way round, anything that throws
+                    // in the payout (the helper syncs and sends a packet) escapes before the shrink
+                    // and leaves the player holding the item AND the shards.
                     boolean shouldAutoSalvageDrop = Load.player(player).config.isConfigEnabled(Config.AUTO_SALVAGE_DROP);
                     stack.shrink(stack.getCount() + 100);
+
+                    // auto salvage pays full shards, but silently - bulk pickup would flood chat. only
+                    // a first time unlock is worth interrupting the player for, and that is announced
+                    // inside the helper regardless of this flag.
+                    if (data instanceof GearItemData gear) {
+                        UniqueSalvageHelper.onUniqueSalvaged(player, ex, gear, false);
+                    }
+
                     data.getSalvageResult(ex).forEach(e -> {
                         Backpacks backpacks = Load.backpacks(player).getBackpacks();
 

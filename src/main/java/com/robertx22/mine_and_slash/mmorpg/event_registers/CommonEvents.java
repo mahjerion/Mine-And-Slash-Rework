@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.event_registers;
 
+import com.robertx22.mine_and_slash.maps.MapEntryTickets;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.database.DatabaseCaches;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.monster.Zombie;
@@ -50,6 +52,8 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.eventbus.api.EventPriority;
+
+import java.util.Arrays;
 
 public class CommonEvents {
 
@@ -74,6 +78,21 @@ public class CommonEvents {
                     .add(Attributes.ATTACK_DAMAGE, 1)
                     .add(Attributes.FOLLOW_RANGE, 32)
                     .build());
+
+            // wizards. max health is a seed only - the real pool comes from the Health stat, rolled
+            // off the map's tier like any other monster. FOLLOW_RANGE is doing real work though:
+            // WizardSpellCaster.engageRange returns it for a skill with no distance to close, and
+            // clamps every other skill's computed reach to it, so this is the wizard's true maximum
+            // engagement distance. Speed is under a player's walk, so kiting buys it seconds rather
+            // than letting it outrun anyone forever.
+            for (var wizard : Arrays.asList(SlashEntities.FIRE_WIZARD, SlashEntities.ICE_WIZARD,
+                    SlashEntities.LIGHTNING_WIZARD, SlashEntities.CHAOS_WIZARD)) {
+                x.put(wizard.get(), Monster.createMonsterAttributes()
+                        .add(Attributes.MOVEMENT_SPEED, 0.26)
+                        .add(Attributes.MAX_HEALTH, 26)
+                        .add(Attributes.FOLLOW_RANGE, 24)
+                        .build());
+            }
 
         });
 
@@ -132,6 +151,9 @@ public class CommonEvents {
                 // the mercenary itself died. it keeps its experience (design section 5) and comes back
                 // once its owner is out of combat.
                 if (event.getEntity() instanceof MercenaryEntity deadMerc && deadMerc.getOwner() instanceof Player owner) {
+                    // its pets die with it, the same as on a dismiss. they are owned by the player,
+                    // so no owner side despawn path can see them as the mercenary's.
+                    MercenaryManager.despawnSummons(deadMerc);
                     Load.player(owner).mercs.spawnedId = null;
                     MercenaryManager.requestRespawn(owner);
                 }
@@ -297,6 +319,11 @@ public class CommonEvents {
                 // the client rebuilds the player entity and its capabilities on a dimension change,
                 // so the client's PlayerData is blank until we push it again
                 Load.player(p).forceNextSync();
+
+                // Entry Tickets. This is the one hook that sees EVERY arrival into a map dimension,
+                // including teleports from other mods that never touch the map device - see
+                // MapEntryTickets.onArrival for why the charge happens here and not at the button.
+                MapEntryTickets.onArrival(p, event.getFrom().location());
             }
         });
 

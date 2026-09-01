@@ -407,7 +407,10 @@ public class GearItemData implements ICommonDataItem<GearRarity> {
 
         if (!stack.get(StackKeys.CUSTOM).getOrCreate().data.get(CustomItemData.KEYS.SALVAGING_DISABLED)) {
             if (this.isUnique()) {
-                return Arrays.asList(new ItemStack(RandomUtils.randomFromList(RarityItems.RARITY_STONE.values().stream().toList()).get(), RandomUtils.RandomRange(2, 9)));
+                // cut down from 2-9 when Philosopher's Shards became the point of salvaging a unique.
+                // the stone roll picks a uniformly random rarity, so this was also the game's main
+                // mythic stone faucet, and a 2-9 jackpot is exactly what made hoarding uniques worth it.
+                return Arrays.asList(new ItemStack(RandomUtils.randomFromList(RarityItems.RARITY_STONE.values().stream().toList()).get(), RandomUtils.RandomRange(1, 3)));
             }
             int amount = 1;
 

@@ -10,6 +10,7 @@ import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.SetBackpackContentPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.SetBackpackSlotPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.unique_collection.SyncUniqueCollectionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.interaction.ExileInteractionResultPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellClientEntityCastingSpell;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellClientEntityIsCastingSpellPacket;
@@ -36,6 +37,7 @@ public class S2CPacketRegister {
         Packets.registerServerToClient(MMORPG.NETWORK, new OpenEntityStatsReplyPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new SetBackpackContentPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new SetBackpackSlotPacket(), i++);
+        Packets.registerServerToClient(MMORPG.NETWORK, new SyncUniqueCollectionPacket(), i++);
 
 
     }

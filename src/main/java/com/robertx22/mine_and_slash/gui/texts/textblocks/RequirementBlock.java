@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.gui.texts.textblocks;
 
 import com.google.common.collect.ImmutableList;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.BoundItemUtils;
 import com.robertx22.mine_and_slash.gui.texts.ExileTooltips;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRequirement;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -12,6 +13,7 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.DualWieldUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,6 +33,11 @@ public class RequirementBlock extends AbstractTextBlock {
 
     @Nullable
     public List<? extends Component> customComponents;
+
+    // the stack itself, only so the bound-to line can be judged against the same viewer the check marks
+    // are. null for everything that isn't a reconstructed unique.
+    @Nullable
+    private ItemStack boundStack;
 
     // set for offhand-capable weapons: warn that a two handed main hand suppresses their stats
     private boolean warnIfMainHandIsTwoHanded = false;
@@ -78,6 +85,17 @@ public class RequirementBlock extends AbstractTextBlock {
         return this;
     }
 
+    /**
+     * Renders the account binding on a unique reconstructed from the sticker book. Lives in this block
+     * rather than an AdditionalBlock so the warning lands beside the level check - the place the game
+     * already uses to say "you can't use this" - and so it is judged against the same viewer, which
+     * matters in the mercenary screen where the merc, not the owner, is the one wearing it.
+     */
+    public RequirementBlock setBoundStack(@Nullable ItemStack stack) {
+        this.boundStack = stack;
+        return this;
+    }
+
     @Override
     public List<? extends Component> getAvailableComponents() {
         ImmutableList.Builder<Component> builder = ImmutableList.builder();
@@ -95,6 +113,21 @@ public class RequirementBlock extends AbstractTextBlock {
             }
             if (Screen.hasAltDown()) {
                 builder.add(Chats.LEVEL_EXPLANATION.locName());
+            }
+        }
+
+        if (boundStack != null && BoundItemUtils.isBound(boundStack)) {
+            String owner = BoundItemUtils.getOwnerName(boundStack);
+            if (BoundItemUtils.canUse(boundStack, this.playerData.getEntity())) {
+                builder.add(Component.literal("")
+                        .append(Component.literal(CHECK_YES_ICON).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD))
+                        .append(Component.literal(" "))
+                        .append(Itemtips.BOUND_TO.locName(owner).withStyle(ChatFormatting.GOLD)));
+            } else {
+                builder.add(Component.literal("")
+                        .append(Component.literal(NO_ICON).withStyle(ChatFormatting.RED, ChatFormatting.BOLD))
+                        .append(Component.literal(" "))
+                        .append(Itemtips.BOUND_TO_OTHER.locName(owner).withStyle(ChatFormatting.RED)));
             }
         }
 

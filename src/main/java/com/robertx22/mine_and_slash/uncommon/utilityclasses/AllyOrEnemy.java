@@ -277,7 +277,8 @@ public enum AllyOrEnemy {
     // when a summon or a mercenary is the one casting, ally-ness has to be judged from its owner's
     // point of view. the non player branch in `enemies` calls every player - the owner included -
     // an enemy and every ordinary monster an ally, which is exactly backwards for an owned entity.
-    static Entity resolveOwner(Entity caster) {
+    // public because SummonPetAction needs the same walk to decide who a mercenary's pet belongs to
+    public static Entity resolveOwner(Entity caster) {
         if (caster instanceof Player) {
             return caster;
         }

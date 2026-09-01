@@ -3,6 +3,7 @@ package com.robertx22.mine_and_slash.event_hooks.player;
 import com.robertx22.library_of_exile.utils.Watch;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.UniqueSalvageHelper;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.items.SlashItems;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -52,6 +53,10 @@ public class OnLogin {
 
             Load.player(player).config.onLoginFillDefaults();
 
+            // the sticker book rides its own packet rather than the PlayerData sync (see
+            // PlayerData.buildNBT), so it has to be pushed once here or the client mirror stays empty
+            // until the player's first salvage.
+            UniqueSalvageHelper.sync(player);
 
             data.setAllDirtyOnLoginEtc();
 

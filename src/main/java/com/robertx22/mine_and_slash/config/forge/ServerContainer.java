@@ -54,6 +54,8 @@ public class ServerContainer {
         DEATH_PENALTY_START_LEVEL = b.defineInRange("DEATH_PENALTY_START_LEVEL", 25, 0, Integer.MAX_VALUE);
         MERCENARY_UNLOCK_LEVEL = b.comment("Character level at which Mercenaries unlock. Below it the Mercenary button is hidden on the Hub and no mercenary spawns. Set to 1 for mercenaries from the start.")
                 .defineInRange("mercenary_unlock_level", 5, 1, Integer.MAX_VALUE);
+        MERCENARY_HEAL_SKILL_HP_THRESHOLD = b.comment("Fraction of its health a Mercenary has to be at or below before it will use a skill whose only job is healing itself, such as Meditate or Hunter's Potion. Above it the skill is skipped and the next one in the priority queue casts instead. 1.0 lets it heal at any time.")
+                .defineInRange("mercenary_heal_skill_hp_threshold", 0.5D, 0D, 1D);
         LEVEL_DISTANCE_PENALTY_LEEWAY = b.defineInRange("LEVEL_DISTANCE_PENALTY_LEEWAY", 2, 0, Integer.MAX_VALUE);
         PERC_OFFHAND_WEP_STAT = b.defineInRange("PERC_OFFHAND_WEP_STAT", 25, 0, 100);
 
@@ -122,6 +124,15 @@ public class ServerContainer {
 
 
         ITEM_LEVEL_VARIANCE = b.defineInRange("ITEM_LEVEL_VARIANCE", 3, 0, 100);
+
+        SHARD_BASE_COST = b.comment("Philosopher's Shard pricing. Craft cost is (this + player level) * (weight factor + min_drop_lvl/10 + min_tier/10).")
+                .defineInRange("SHARD_BASE_COST", 100D, 0, 100000);
+        SHARD_SALVAGE_MIN_PERCENT = b.comment("Lowest share of an item's own craft cost that salvaging it pays back, in percent.")
+                .defineInRange("SHARD_SALVAGE_MIN_PERCENT", 8D, 0, 100);
+        SHARD_SALVAGE_MAX_PERCENT = b.comment("Highest share of an item's own craft cost that salvaging it pays back, in percent.")
+                .defineInRange("SHARD_SALVAGE_MAX_PERCENT", 10D, 0, 100);
+        SHARD_SALVAGE_BONUS_PER_PROF_LEVEL = b.comment("Added to the shard base constant per salvaging profession level, as a fraction. 0.005 means a level 50 salvager pays out as if the base were 125.")
+                .defineInRange("SHARD_SALVAGE_BONUS_PER_PROF_LEVEL", 0.005D, 0, 1);
         MOB_LEVEL_VARIANCE = b.defineInRange("MOB_LEVEL_VARIANCE", 3, 0, 100);
 
         PROPHECY_OFFERS_PER_REROLL = b.defineInRange("PROPHECY_OFFERS_PER_REROLL", 18, 1, 18);
@@ -129,6 +140,7 @@ public class ServerContainer {
         PROPHECY_MAX_REROLLS_PER_MAP = b.defineInRange("PROPHECY_MAX_REROLLS_PER_MAP", 3, 0, 1000);
         PROPHECY_GEAR_TYPE_CHANCE = b.defineInRange("PROPHECY_GEAR_TYPE_CHANCE", 15, 0, 100);
         PROPHECY_JEWEL_RARITY_CHANCE = b.defineInRange("PROPHECY_JEWEL_RARITY_CHANCE", 75, 0, 100);
+        PROPHECY_OMEN_RARITY_CHANCE = b.defineInRange("PROPHECY_OMEN_RARITY_CHANCE", 75, 0, 100);
         PROPHECY_SKILL_GEM_RARITY_CHANCE = b.defineInRange("PROPHECY_SKILL_GEM_RARITY_CHANCE", 75, 0, 100);
         PROPHECY_GEAR_RARITY = b.defineInRange("PROPHECY_GEAR_RARITY", 75, 0, 100);
         PROPHECY_SEARCH_RADIUS = b.defineInRange("PROPHECY_SEARCH_RADIUS", 6, 0, 100);
@@ -297,10 +309,16 @@ public class ServerContainer {
     public ForgeConfigSpec.BooleanValue REMOVE_ATK_SPEED_COOLDOWN;
     public ForgeConfigSpec.BooleanValue REMOVE_DRAW_SPEED_COOLDOWN;
 
+    public ForgeConfigSpec.DoubleValue SHARD_BASE_COST;
+    public ForgeConfigSpec.DoubleValue SHARD_SALVAGE_MIN_PERCENT;
+    public ForgeConfigSpec.DoubleValue SHARD_SALVAGE_MAX_PERCENT;
+    public ForgeConfigSpec.DoubleValue SHARD_SALVAGE_BONUS_PER_PROF_LEVEL;
+
     public ForgeConfigSpec.IntValue MIN_LEVEL_MAP_DROPS;
     public ForgeConfigSpec.IntValue MIN_SLIME_SIZE_FOR_LOOT;
     public ForgeConfigSpec.IntValue DEATH_PENALTY_START_LEVEL;
     public ForgeConfigSpec.IntValue MERCENARY_UNLOCK_LEVEL;
+    public ForgeConfigSpec.DoubleValue MERCENARY_HEAL_SKILL_HP_THRESHOLD;
 
     public ForgeConfigSpec.IntValue LEVEL_DISTANCE_PENALTY_LEEWAY;
     public ForgeConfigSpec.IntValue PERC_OFFHAND_WEP_STAT;
@@ -357,6 +375,7 @@ public class ServerContainer {
 
     public ForgeConfigSpec.IntValue PROPHECY_GEAR_TYPE_CHANCE;
     public ForgeConfigSpec.IntValue PROPHECY_JEWEL_RARITY_CHANCE;
+    public ForgeConfigSpec.IntValue PROPHECY_OMEN_RARITY_CHANCE;
     public ForgeConfigSpec.IntValue PROPHECY_SKILL_GEM_RARITY_CHANCE;
     public ForgeConfigSpec.IntValue PROPHECY_GEAR_RARITY;
     public ForgeConfigSpec.IntValue PROPHECY_SEARCH_RADIUS;

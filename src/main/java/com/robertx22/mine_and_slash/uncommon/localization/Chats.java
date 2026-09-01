@@ -68,6 +68,8 @@ public enum Chats implements IAutoLocName {
     NOT_ENOUGH_FAVOR_TO_REROLL_PROPHECY("Not enough Prophecy Coins to reroll the offers. You can gain more Coins by killing map mobs while under Prophecy Curses."),
     NO_PROPHECY_REROLLS_LEFT("You've used all your Prophecy Reward rerolls for this Map."),
     RESISTS_TOO_LOW_FOR_MAP("You lack Resistances to Open/Enter this Map."),
+    MAP_ENTRY_TICKET_SPENT("Entry Ticket used. %1$s of %2$s remaining in this Map."),
+    MAP_OUT_OF_ENTRY_TICKETS("This Map is sealed. It has no Entry Tickets left."),
     MAX_MAP_RARITY_FOR_LVL("This map is at maximum possible rarity for it's level."),
     MAX_MAP_RARITY("This map is at maximum possible rarity."),
     ALREADY_CASTING("Already Casting a Spell"),
@@ -213,7 +215,17 @@ public enum Chats implements IAutoLocName {
     LEVEL_UP_MESSAGE_UP("Leveled Up!"),
     LEVEL_UP_MESSAGE_DOWN("%1$s Level: %2$s > %3$s!"),
     SHRINE_BUFF_RECEIVED("You have received the Shrine's blessing: %1$s"),
-    SHRINE_BUFF_RECEIVED_TWO("You have received the Shrine's blessing: %1$s and %2$s");
+    SHRINE_BUFF_RECEIVED_TWO("You have received the Shrine's blessing: %1$s and %2$s"),
+
+    SHARDS_GAINED("+%1$s Philosopher's Shards"),
+    SHARDS_BALANCE("You now have %1$s Philosopher's Shards"),
+    UNIQUE_UNLOCKED("%1$s unlocked for crafting!"),
+    UNIQUE_NOT_UNLOCKED("You haven't salvaged that Unique yet."),
+    UNIQUE_NOT_CRAFTABLE("That Unique can't be reconstructed."),
+    UNIQUE_LEVEL_TOO_LOW("You must be level %1$s to reconstruct that Unique."),
+    NOT_ENOUGH_SHARDS("Not enough Philosopher's Shards. Need %1$s, you have %2$s."),
+    NO_ROOM_FOR_UNIQUE("No room in your inventory."),
+    TOO_FAR_FROM_STATION("You must be at a Salvaging Station.");
 
     private String localization = "";
 

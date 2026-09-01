@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanc
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.entities.CalculatedSpellData;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import net.minecraft.util.Mth;
@@ -87,7 +88,15 @@ public class SpellStatsCalculationEvent extends EffectEvent {
         // source sums into one percent first, so two +50% rolls give +100% rather than compounding.
         float pct = data.getNumber(EventData.CAST_SPEED_PERCENT).number;
 
-        if (getSpell().config.isChannel()) {
+        // keyed on the TAG, not config.isChannel(). Every other channel stat - channel_spell_dmg,
+        // channel_cdr, channel_cast_time, the two channelling support gems - is conditioned on the
+        // tag alone, and this one being the odd double-gated exception left a skill that is a
+        // channel in every way except the boolean with the identity but not the speed. That case is
+        // real: a mercenary cannot use a true channel at all (castTimeTicksFor forces one to fire
+        // instantly, since there is no held input), so its channels are authored as tagged
+        // multicasts. Nothing existing shifts - every spell carrying the tag today also sets the
+        // boolean.
+        if (getSpell().is(SpellTags.channel)) {
             // a channel's beat belongs to Channel Speed. the general pot still bleeds through at a
             // fraction, so ordinary gear is not dead weight for a channel build - and because this
             // weights the pot rather than naming stats, a per tag roll like Fire Skill Speed counts too

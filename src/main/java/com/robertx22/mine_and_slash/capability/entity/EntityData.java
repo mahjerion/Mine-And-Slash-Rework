@@ -815,23 +815,22 @@ public class EntityData implements ICap, INeededForClient {
         return num;
     }
 
+    /**
+     * The cooldown that stops one swing registering as two basic attacks. Named because
+     * {@code MercenaryEntity.splashOnto} has to clear it - every target of an aoe swing lands on the
+     * same tick, so left armed it would cancel all of them but the first.
+     */
+    public static final String BASIC_ATTACK_COOLDOWN_ID = "basic_attack";
+
     public void mobBasicAttack(AttackInformation data) {
 
 
-        if (this.cooldowns.isOnCooldown("basic_attack")) {
+        if (this.cooldowns.isOnCooldown(BASIC_ATTACK_COOLDOWN_ID)) {
             data.setCanceled(true);
             return;
         }
 
-        cooldowns.setOnCooldown("basic_attack", 5);
-
-
-        float multi = (float) (ServerContainer.get().VANILLA_MOB_DMG_AS_EXILE_DMG.get().floatValue());
-
-        float num = (float) ((data.getAmount() * CompatConfig.get().mobPercentBonusDamage() / 100f) + CompatConfig.get().mobFlatDmg());
-
-        num *= multi;
-
+        cooldowns.setOnCooldown(BASIC_ATTACK_COOLDOWN_ID, 5);
 
         PlayStyle style = PlayStyle.STR;
 
@@ -839,7 +838,25 @@ public class EntityData implements ICap, INeededForClient {
             style = PlayStyle.DEX;
         }
 
-        num = StatScaling.MOB_DAMAGE.scale(num, getLevel()); // this should be scaled last
+        float num;
+
+        if (entity instanceof MercenaryEntity) {
+            // a mercenary is a companion, not a monster. the mob formula below scales the VANILLA
+            // attack damage attribute by StatScaling.MOB_DAMAGE - an uncapped per level multiplier
+            // (x25.75 at level 100) that exists to make monsters keep pace - and never once reads
+            // the mercenary's own Weapon Damage. So its basic attack had no relationship to the
+            // number its own screen advertises, and grew with its level twice over. Its Weapon
+            // Damage stat is the right answer, the same one unarmedAttack uses for a player.
+            num = getUnit().getCalculatedStat(WeaponDamage.getInstance()).getValue();
+        } else {
+            float multi = (float) (ServerContainer.get().VANILLA_MOB_DMG_AS_EXILE_DMG.get().floatValue());
+
+            num = (float) ((data.getAmount() * CompatConfig.get().mobPercentBonusDamage() / 100f) + CompatConfig.get().mobFlatDmg());
+
+            num *= multi;
+
+            num = StatScaling.MOB_DAMAGE.scale(num, getLevel()); // this should be scaled last
+        }
 
         DamageEvent dmg = EventBuilder.ofDamage(data, entity, data.getTargetEntity(), num)
                 .setupDamage(AttackType.hit, WeaponTypes.none, style)

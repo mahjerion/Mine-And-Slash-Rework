@@ -42,6 +42,12 @@ public class SummonPetAction extends SpellAction {
             return;
         }
 
+        // the owner has to be a Player - vanilla resolves an owner uuid through getPlayerByUUID and
+        // nothing else - so a mercenary's pet is owned by the mercenary's owner and merely summoned
+        // by the mercenary. resolveOwner already encodes exactly that walk.
+        if (!(AllyOrEnemy.resolveOwner(ctx.caster) instanceof Player ownerPlayer)) {
+            return; // an unowned caster has nobody to hand the pet to
+        }
 
         int amount = data.getOrDefault(MapField.COUNT, 1D).intValue();
 
@@ -54,7 +60,7 @@ public class SummonPetAction extends SpellAction {
 
             en.finalizeSpawn((ServerLevel) ctx.world, ctx.world.getCurrentDifficultyAt(ctx.getBlockPos()), MobSpawnType.MOB_SUMMONED, null, null);
 
-            en.tame((Player) ctx.caster);
+            en.tame(ownerPlayer);
 
             var pos = ctx.caster.position(); // todo
 
@@ -67,10 +73,10 @@ public class SummonPetAction extends SpellAction {
 
 
             boolean counts = data.getOrDefault(MapField.COUNTS_TOWARDS_MAX_SUMMONS, true);
-            Load.Unit(en).summonedPetData.setup(ctx.calculatedSpellData.getSpell(), duration, (int) aggroRadius, counts);
+            Load.Unit(en).summonedPetData.setup(ctx.calculatedSpellData.getSpell(), duration, (int) aggroRadius, counts, ctx.caster, ownerPlayer);
 
 
-            Load.Unit(en).SetMobLevelAtSpawn((Player) ctx.caster);
+            Load.Unit(en).SetMobLevelAtSpawn(ownerPlayer);
 
             Load.Unit(en).setLevel(Load.Unit(ctx.caster).getLevel());
 
@@ -83,7 +89,19 @@ public class SummonPetAction extends SpellAction {
         // BONUS_TOTAL_SUMMONS is the cap of this spell's summon type, the max_x_summons stats are
         // conditioned on EventData.SUMMON_TYPE so only the matching type's stats added into it
         int typeCap = (int) ctx.calculatedSpellData.data.getNumber(EventData.BONUS_TOTAL_SUMMONS, 0).number;
-        updatePlayerSummons(ctx.caster, ctx.calculatedSpellData.getSpell().config.summonType, typeCap);
+        SummonType cappedType = ctx.calculatedSpellData.getSpell().config.summonType;
+
+        if (ctx.caster != ownerPlayer) {
+            // a mercenary's cast must never enforce a cap on its OWNER's pets. typeCap above is read
+            // off the mercenary's own BONUS_TOTAL_SUMMONS, so passing the real type here would cull
+            // a summoner player's wolves down to whatever budget their mercenary happens to have -
+            // three wolves out, hire a Hunter, lose two of them on its first summon. NONE skips the
+            // culling entirely and leaves the call doing only the registry rebuild, which is the
+            // part a mercenary's pet actually needs (see SummonedPetData.registeredWithOwner).
+            cappedType = SummonType.NONE;
+        }
+
+        updatePlayerSummons(ownerPlayer, cappedType, typeCap);
     }
 
     private static int getDuration(SpellCtx ctx, MapHolder data) {
@@ -117,6 +135,40 @@ public class SummonPetAction extends SpellAction {
 
         despawn(p, x -> true);
         Load.player(p).clearSummons();
+    }
+
+    /**
+     * A dismissed mercenary takes its pets with it - the same rule
+     * {@link #despawnSummonsOfSpell} applies when a skill leaves the hotbar.
+     * <p>
+     * Searched from the summoner rather than the owner, because a mercenary that just died or was
+     * dismissed is where its pets actually are; the owner may be anywhere. The pets are owned by
+     * the owner, so the registry entry has to be cleaned off the owner, not off the mercenary.
+     */
+    public static void despawnSummonsOf(LivingEntity summoner) {
+        if (summoner == null || summoner.level().isClientSide) {
+            return;
+        }
+
+        boolean any = false;
+
+        for (SummonEntity en : EntityFinder.start(summoner, SummonEntity.class, summoner.blockPosition()).searchFor(AllyOrEnemy.all).radius(SEARCH_RADIUS).build()) {
+            var data = Load.Unit(en).summonedPetData;
+
+            if (!data.isSummonedBy(summoner)) {
+                continue;
+            }
+            if (en.getOwner() instanceof Player owner) {
+                Load.player(owner).removeSummon(data.spell, en.getUUID());
+            }
+
+            data.discard(en);
+            any = true;
+        }
+
+        if (any) {
+            SoundUtils.playSound(summoner, SoundEvents.GENERIC_DEATH);
+        }
     }
 
     private static void despawn(Player p, Predicate<SummonedPetData> predicate) {
@@ -157,8 +209,13 @@ public class SummonPetAction extends SpellAction {
             summonsNearby.add(nearby);
 
             // a summon can be of the capped type but exempt from it, ie burst summons
-            // limited by their duration and cooldown instead of by a cap slot
-            if (data.counts_towards_max_summons && data.getSummonType() == cappedType) {
+            // limited by their duration and cooldown instead of by a cap slot.
+            // a pet somebody ELSE summoned - a mercenary's, which is owned by this player but cast
+            // by the mercenary - never occupies this player's slots either, whatever the pack says
+            // about counts_towards_max_summons.
+            boolean summonedByCaster = data.summoner_uuid.isEmpty() || data.isSummonedBy(caster);
+
+            if (data.counts_towards_max_summons && summonedByCaster && data.getSummonType() == cappedType) {
                 ofCappedType.add(nearby);
             }
         }

@@ -20,8 +20,10 @@ import com.robertx22.mine_and_slash.aoe_data.database.runes.Runes;
 import com.robertx22.mine_and_slash.aoe_data.database.item_sets.ItemSets;
 import com.robertx22.mine_and_slash.aoe_data.database.runewords.Runewords;
 import com.robertx22.mine_and_slash.aoe_data.database.mercenaries.Mercenaries;
+import com.robertx22.mine_and_slash.aoe_data.database.wizards.Wizards;
 import com.robertx22.mine_and_slash.aoe_data.database.spell_schools.SpellSchoolsAdder;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.MercenarySpells;
+import com.robertx22.mine_and_slash.aoe_data.database.spells.schools.WitchSpells;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.SpellCalcs;
 import com.robertx22.mine_and_slash.aoe_data.database.spells.Spells;
 import com.robertx22.mine_and_slash.aoe_data.database.stat_compats.StatCompats;
@@ -72,6 +74,9 @@ public class GeneratedData {
         new SpellSchoolsAdder().registerAll();
         new MercenarySpells().registerAll();
         new Mercenaries().registerAll();
+        // same ordering rule as the mercenary pair above: a wizard names the spell guids it casts
+        new WitchSpells().registerAll();
+        new Wizards().registerAll();
 
 
         new GearSlots().registerAll();

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.mercenary;
 
 import com.robertx22.mine_and_slash.capability.entity.CooldownsData;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
+import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.components.ComponentPart;
@@ -14,12 +15,14 @@ import com.robertx22.mine_and_slash.database.data.spells.spell_classes.CastingWe
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
+import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -117,6 +120,11 @@ public class MercenarySpellCaster {
             if (!isUsable(merc, data, spell)) {
                 continue;
             }
+            // a self heal at full health is a wasted cooldown. `continue` rather than `return` on
+            // purpose - the skill is skipped and the slot behind it gets its turn on this same tick.
+            if (heldForFullHealth(merc, spell)) {
+                continue;
+            }
             if (unit.getCooldowns().isOnCooldown(spell.GUID())) {
                 continue;
             }
@@ -146,6 +154,47 @@ public class MercenarySpellCaster {
         if (walkTo != null) {
             cast.startApproach(walkTo, target, walkToRange, APPROACH_TIMEOUT_TICKS);
         }
+    }
+
+    /**
+     * One shot of the ranged basic attack the mercenary's weapon grants it - a staff's Bolt.
+     * <p>
+     * Kept here rather than on the entity because this is the class that owns casting a spell from a
+     * non player, and the body below is the same {@link #fire} primitive every other mercenary cast
+     * goes through. It is paced entirely by its callers (the combat goals, on their existing ranged
+     * interval), which is why there is no cooldown of any kind in here:
+     * <ul>
+     * <li>not {@code GLOBAL_COOLDOWN} - {@link #onTick} returns early while that is up, so charging a
+     * basic attack to it would starve the mercenary's four real skills;</li>
+     * <li>not {@code spell.GUID()} either, for the reason {@code ProcSpellEffect.procCooldownKey}
+     * documents: a basic attack must not grey out or lock the same skill if it is also slotted.</li>
+     * </ul>
+     * No {@code isUsable} check: this skill is deliberately not on the mercenary class's grid. The
+     * half of that gate which does apply - the casting weapon predicate - is checked in
+     * {@code MercenaryEntity.weaponBasicAttackSpell()}, where the weapon is already in hand.
+     */
+    public static void castWeaponBasicAttack(MercenaryEntity merc, Spell spell, LivingEntity target) {
+        try {
+            SpellCastContext ctx = new SpellCastContext(merc, 0, spell);
+
+            // swings even for a skill authored swing_arm: false, which Bolt is. That flag is set
+            // because a player gets the spell's own Player Animator animation, which a mob has no
+            // equivalent of - the same reason beginCast swings at all, and the arrow path too.
+            merc.swing(InteractionHand.MAIN_HAND);
+
+            fire(merc, spell, ctx, target);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * How far a weapon granted basic attack actually reaches, so a goal can hold fire rather than
+     * lob one at something it cannot cross. Read off the skill's own components, the same way the
+     * approach logic sizes a slotted skill - Bolt's 6 tick, 2.5 speed projectile answers ~12 blocks.
+     */
+    public static double basicAttackRange(MercenaryEntity merc, Spell spell) {
+        return engageRange(merc, spell, new double[]{-1D});
     }
 
     /**
@@ -274,9 +323,17 @@ public class MercenarySpellCaster {
      * target's own position, and a skill with nothing aimed at an enemy anywhere in it. The second
      * one matters more than it sounds - every self buff and ally heal used to fall through to the
      * {@code MIN_CAST_RANGE} floor, which walked a kiting caster into melee to buff itself.
+     * <p>
+     * {@code huntsEnemy} separates those two, because they are only the same question for movement.
+     * {@link #heldForFullHealth} needs to know whether the skill is aimed at anything hostile at
+     * all, and "lands on the target's own position" very much is.
      */
-    private record Reach(boolean unlimited, double onCastRange, double projTravel, double detonationRadius) {
-        static final Reach UNLIMITED = new Reach(true, 0, 0, 0);
+    private record Reach(boolean unlimited, boolean huntsEnemy, double onCastRange, double projTravel,
+                         double detonationRadius) {
+        /** aimed at an enemy, but with no distance to close - it lands on the target itself */
+        static final Reach ON_TARGET = new Reach(true, true, 0, 0, 0);
+        /** nothing in the skill is aimed at an enemy: a self buff, an ally heal */
+        static final Reach HELPS_ONLY = new Reach(true, false, 0, 0, 0);
     }
 
     private static Reach reachOf(Spell spell) {
@@ -310,7 +367,7 @@ public class MercenarySpellCaster {
                 if (SpellAction.SUMMON_AT_SIGHT.GUID().equals(act.type)) {
                     // for anything that isn't a player this drops straight onto the target's own
                     // position - see SummonAtSightAction - so there is no distance to close
-                    return Reach.UNLIMITED;
+                    return Reach.ON_TARGET;
                 }
                 if (SpellAction.SUMMON_PROJECTILE.GUID().equals(act.type)) {
                     huntsAnything = true;
@@ -365,10 +422,10 @@ public class MercenarySpellCaster {
         }
 
         if (!huntsAnything && !entitiesHuntEnemies) {
-            return Reach.UNLIMITED;
+            return Reach.HELPS_ONLY;
         }
 
-        return new Reach(false, onCastRange, projTravel, detonation);
+        return new Reach(false, true, onCastRange, projTravel, detonation);
     }
 
     /**
@@ -389,6 +446,36 @@ public class MercenarySpellCaster {
             // no predicate declared at all - assume it is aimed at something
             return true;
         }
+    }
+
+    /**
+     * Whether this is a self-maintenance skill the mercenary has no reason to spend yet.
+     * <p>
+     * A mercenary used to drink its Hunter's Potion and sit down to Meditate the instant they came
+     * off cooldown, at full health, and then have nothing left when it actually needed them.
+     * <p>
+     * Derived from the skill rather than declared as a new datapack field, so the modpack's own
+     * mercenary spell set is covered without editing thirty files - and so a pack that writes a new
+     * heal gets the behaviour for free. Held back when the skill is tagged {@code heal} AND nothing
+     * in it hunts an enemy: that second half is what keeps a damage skill which happens to also heal
+     * (the pack's Frost Nova) firing normally, and it reuses the reach analysis the approach logic
+     * already computes and caches per spell.
+     * <p>
+     * The threshold is {@code ServerContainer.MERCENARY_HEAL_SKILL_HP_THRESHOLD}.
+     */
+    private static boolean heldForFullHealth(MercenaryEntity merc, Spell spell) {
+        if (!spell.is(SpellTags.heal)) {
+            return false;
+        }
+        if (reachOf(spell).huntsEnemy()) {
+            // it is aimed at something hostile, so it is a damage skill that happens to also heal
+            return false;
+        }
+        float max = merc.getMaxHealth();
+        if (max <= 0) {
+            return false;
+        }
+        return merc.getHealth() / max > ServerContainer.get().MERCENARY_HEAL_SKILL_HP_THRESHOLD.get();
     }
 
     private static boolean isUsable(MercenaryEntity merc, MercenaryData data, Spell spell) {
@@ -523,20 +610,23 @@ public class MercenarySpellCaster {
     private static void tickCast(MercenaryEntity merc, MercenaryCastState cast) {
         try {
             Spell spell = cast.spell;
-            LivingEntity target = cast.target;
 
-            // a wind up is not a commitment: it dies with the thing it was aimed at, and an owner
-            // flipping to Idle has to stop the mercenary mid cast, not one cast later
-            if (spell == null || target == null || !target.isAlive() || target.isRemoved()
-                    || !merc.isAlive() || merc.getMode() == MercenaryData.CombatMode.IDLE) {
+            // only two things stop a cast now: the mercenary dying, and its owner switching it to
+            // Idle. Losing the target used to end it too, which quietly threw away most of every
+            // multicast - a 100 tick, ten pulse whirlwind that killed its target on pulse three
+            // stopped there and the next skill went off instead. Nothing else can interrupt: onTick
+            // returns above while a cast runs, so no skill coming off cooldown reaches this.
+            if (spell == null || !merc.isAlive() || merc.getMode() == MercenaryData.CombatMode.IDLE) {
                 if (spell != null) {
-                    // an abandoned cast still owes the recovery, or losing a target mid cast would be
-                    // a free instant skill at whatever the mercenary turns on next
+                    // an abandoned cast still owes the recovery, or stopping mid cast would be a
+                    // free instant skill at whatever the mercenary turns on next
                     armRecovery(merc, spell);
                 }
                 cast.clear();
                 return;
             }
+
+            LivingEntity target = liveTarget(merc, cast);
 
             cast.ticksLeft--;
             cast.ticksDone++;
@@ -572,6 +662,56 @@ public class MercenarySpellCaster {
     }
 
     /**
+     * Who the running cast is aimed at right now, re-acquiring if the original died.
+     * <p>
+     * A multicast outlives its first victim by design - that is the whole point of the change in
+     * {@link #tickCast} - so the pulses that are left need somewhere to go. Preference order is the
+     * mercenary's own current target (whatever its target goals have moved on to), then the nearest
+     * thing it is allowed to hit inside the skill's engage range.
+     * <p>
+     * Null is a legitimate answer: nothing hostile is left. The cast still runs to the end, because a
+     * self centred area skill like whirlwind never needed a target to land, and the recovery is owed
+     * either way. The result is deliberately not written back into {@code cast.target} - re-asking
+     * each tick is what lets it pick up whatever wanders in next.
+     */
+    @Nullable
+    private static LivingEntity liveTarget(MercenaryEntity merc, MercenaryCastState cast) {
+        LivingEntity target = cast.target;
+
+        if (target != null && target.isAlive() && !target.isRemoved()) {
+            return target;
+        }
+
+        LivingEntity current = merc.getTarget();
+        if (current != null && current.isAlive() && !current.isRemoved()) {
+            return current;
+        }
+
+        LivingEntity owner = merc.getOwner();
+        if (owner == null) {
+            return null;
+        }
+
+        double range = Math.max(cast.engageRange, MIN_CAST_RANGE);
+        LivingEntity nearest = null;
+        double nearestSqr = range * range;
+
+        for (LivingEntity other : merc.level().getEntitiesOfClass(
+                LivingEntity.class, merc.getBoundingBox().inflate(range))) {
+
+            if (other == merc || !other.isAlive() || !AllyOrEnemy.summonShouldAttack.is(owner, other)) {
+                continue;
+            }
+            double distSqr = merc.distanceToSqr(other);
+            if (distSqr <= nearestSqr) {
+                nearestSqr = distSqr;
+                nearest = other;
+            }
+        }
+        return nearest;
+    }
+
+    /**
      * The cast itself - the point the skill's own components actually run.
      * <p>
      * The position source is deliberately left at the default {@code SOURCE_ENTITY}, which for
@@ -586,7 +726,7 @@ public class MercenarySpellCaster {
      * {@code c.target} still points at what the mercenary is fighting, so targeted selectors and
      * homing projectiles lock on the same as before.
      */
-    private static void fire(MercenaryEntity merc, Spell spell, SpellCastContext ctx, LivingEntity target) {
+    private static void fire(MercenaryEntity merc, Spell spell, SpellCastContext ctx, @Nullable LivingEntity target) {
         // aiming: point the mercenary at what it is fighting, so projectiles leave it on the right
         // heading instead of flying wherever it happened to be facing.
         aimAt(merc, target);
@@ -598,16 +738,43 @@ public class MercenarySpellCaster {
         spell.attached.onCast(c);
     }
 
-    private static void aimAt(MercenaryEntity merc, LivingEntity target) {
+    /**
+     * Point the mercenary at what it is casting on.
+     * <p>
+     * Pitch matters as much as yaw and used not to be set: {@code ProjectileCastHelper} reads
+     * {@code caster.getXRot()} in its constructor, and a mob's xRot is only ever moved by LookControl,
+     * which eases towards a target over several ticks. So the first projectile after acquiring
+     * something flew on a stale pitch, and one aimed up or down a slope never had the right one.
+     * Setting it here fixes that for every mercenary projectile skill, not just the basic attack.
+     * <p>
+     * Null once a running multicast has outlived everything hostile near it - see liveTarget. There
+     * is simply nothing to turn towards, and the mercenary keeps whatever heading it had.
+     */
+    private static void aimAt(MercenaryEntity merc, @Nullable LivingEntity target) {
+        if (target == null) {
+            return;
+        }
         merc.getLookControl().setLookAt(target, 30F, 30F);
         merc.setYRot(yawTowards(merc, target));
+        merc.setXRot(pitchTowards(merc, target));
         merc.yHeadRot = merc.getYRot();
         merc.yBodyRot = merc.getYRot();
+        merc.xRotO = merc.getXRot();
     }
 
     private static float yawTowards(LivingEntity from, LivingEntity to) {
         double dx = to.getX() - from.getX();
         double dz = to.getZ() - from.getZ();
         return (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90F);
+    }
+
+    // eye to eye, so a projectile leaves at head height and arrives at head height rather than
+    // aiming at the target's feet
+    private static float pitchTowards(LivingEntity from, LivingEntity to) {
+        double dx = to.getX() - from.getX();
+        double dy = to.getEyeY() - from.getEyeY();
+        double dz = to.getZ() - from.getZ();
+        double horizontal = Math.sqrt(dx * dx + dz * dz);
+        return (float) -Math.toDegrees(Math.atan2(dy, horizontal));
     }
 }

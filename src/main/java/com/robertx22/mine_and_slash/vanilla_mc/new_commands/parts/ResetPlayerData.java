@@ -6,7 +6,9 @@ import com.robertx22.mine_and_slash.capability.player.data.StatPointsData;
 import com.robertx22.mine_and_slash.characters.CharStorageData;
 import com.robertx22.mine_and_slash.characters.CharacterEquipment;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.PlayerPointsType;
+import com.robertx22.mine_and_slash.database.data.unique_items.collection.UniqueSalvageHelper;
 import com.robertx22.mine_and_slash.saveclasses.atlas.AtlasData;
+import com.robertx22.mine_and_slash.saveclasses.unique_collection.UniqueCollectionData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -87,6 +89,16 @@ public enum ResetPlayerData {
             Load.player(p).atlas = new AtlasData();
             PlayerPointsType.ATLAS.fullReset(p); // un-allocate the atlas passive tree
             Load.player(p).points.get(PlayerPointsType.ATLAS).resetBonusPoints(); // take back the points it granted
+        }
+    },
+    // the unique sticker book and its shards. account wide rather than per character, so this wipes
+    // the collection for every alt at once - which is the only thing that would make sense, since
+    // that is how it is earned.
+    UNIQUE_COLLECTION() {
+        @Override
+        public void reset(Player p) {
+            Load.player(p).uniqueCollection = new UniqueCollectionData();
+            UniqueSalvageHelper.sync(p);
         }
     };
 

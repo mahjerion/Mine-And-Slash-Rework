@@ -364,6 +364,7 @@ public enum Words implements IAutoLocName {
     Level("Level"),
 
     Map("Map"),
+    MAP_ENTRY_TICKETS("Entry Tickets"),
     MapDESC("Items used to travel to a Dungeon Dimension using the Map Device."),
 
     Maps("Maps"),
@@ -439,6 +440,23 @@ public enum Words implements IAutoLocName {
     SUMMON_BASE_DURATION("Base Duration"),
     SUMMON_UNKNOWN_ENTITY("Unknown"),
     UNIT_SECOND("s"),
+
+    UNIQUE_COLLECTION("Unique Collection"),
+    PHILOSOPHERS_SHARDS("Philosopher's Shards"),
+    RECONSTRUCT("Reconstruct at Level %1$s"),
+    SHARD_COST("Cost: %1$s Shards"),
+    COLLECTION_PROGRESS("%1$s / %2$s Collected"),
+    FILTER_STATUS("Status"),
+    FILTER_STATUS_ALL("All"),
+    FILTER_STATUS_UNLOCKED("Collected"),
+    FILTER_STATUS_LOCKED("Not Collected"),
+    FILTER_STATUS_AFFORDABLE("Can Afford"),
+    FILTER_DROP_LEVEL("Drop Level"),
+    FILTER_MAP_TIER("Map Tier"),
+    FILTER_DROP_LEVEL_RANGE("Level %1$s+"),
+    FILTER_MAP_TIER_RANGE("Tier %1$s+"),
+    FILTER_MAP_TIER_ANY("Any Tier"),
+    UNIQUE_NOT_COLLECTED("Not Collected - salvage one to unlock"),
     ;
 
 

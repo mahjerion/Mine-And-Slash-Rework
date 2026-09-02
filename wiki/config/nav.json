@@ -1,0 +1,26 @@
+{
+  "index":      "https://claude.ai/code/artifact/6a75bcf7-67a4-4277-889e-fc255365249c",
+
+  "affix":      "https://claude.ai/code/artifact/7ea51883-4abe-4fea-a8a3-72b243c58c98",
+  "implicit":   "https://claude.ai/code/artifact/e363328e-91d6-4c46-b426-e95bcb0d0195",
+  "enchant":    "https://claude.ai/code/artifact/a1044c4c-bad6-41f4-9898-a759db8fe26f",
+  "jewel":      "https://claude.ai/code/artifact/737b850e-3873-48a2-9053-e5e03e180213",
+  "corruption": "https://claude.ai/code/artifact/7918723d-07e3-457a-a56a-916859090b42",
+  "watcher":    "https://claude.ai/code/artifact/1fb1278f-5168-45bd-906a-d6d268fd5d05",
+  "tool":       "https://claude.ai/code/artifact/6143a6c8-8ffd-4e4d-aa96-af1a06d71c48",
+
+  "gear-bases": "https://claude.ai/code/artifact/8ffc2e55-af6c-40b7-8c70-64ceb904ebf9",
+  "uniques":    "https://claude.ai/code/artifact/1b8a6994-67ce-460c-81ac-fe7c5e2c9585",
+  "omens":      "https://claude.ai/code/artifact/8c427a94-e011-4f3e-bf7c-dc018e10c0b3",
+
+  "sockets":    "https://claude.ai/code/artifact/86d7720e-83f5-4e18-9dde-ec6a63fb6bd2",
+  "recipes":    "https://claude.ai/code/artifact/3177f0f0-6a4d-470f-8176-ef09a126b990",
+
+  "support":    "https://claude.ai/code/artifact/40b3c0b6-5898-45ba-91ac-ff9ac0d5f1a2",
+  "effects":    "https://claude.ai/code/artifact/03a5f56a-dec3-4b8b-b1a5-6a2c8a410c66",
+
+  "monsters":   "https://claude.ai/code/artifact/b372b1fb-cfe9-48b5-a793-8c3f5a264955",
+  "maps":       "https://claude.ai/code/artifact/0cfd5f8f-b882-4c03-a5e7-7ec0d6f7c267",
+
+  "stats":      "https://claude.ai/code/artifact/7a3fc0d2-838f-482d-81cb-222316d8f70a"
+}

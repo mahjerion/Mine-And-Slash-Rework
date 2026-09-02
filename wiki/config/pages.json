@@ -1,0 +1,620 @@
+[
+  {
+    "id": "affix",
+    "section": "Affixes",
+    "navLabel": "Affixes",
+    "file": "affixes",
+    "favicon": "⚔️",
+    "title": "Affix Compendium",
+    "h1": "Affix Compendium",
+    "blurb": "Prefixes and suffixes, the slots they roll on and the orb pools that can force them.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Prefixes &amp; Suffixes",
+    "source": "mmorpg_affixes",
+    "dek": "Every prefix and suffix the pack can roll onto gear, with the slot tags that decide where each one can land and the <span class=\"chip cat-style\">style</span> pool that decides which guaranteed-tag orb can force it. A struck-through <span class=\"chip chip-excl cat-other\"><span class=\"x\">not</span> chip</span> marks a slot the affix is barred from despite matching a wider family tag. Slot filters are alternatives; a style filter narrows on top of them, so <em>Might + Sword</em> means Might affixes that can land on a sword.",
+    "filterTitle": "Filter by style and slot",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Affix" },
+        { "type": "chips", "head": "Applies To" },
+        { "type": "style", "head": "Style" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "prefix", "title": "Prefixes", "noun": "prefixes", "countLabel": "Prefixes" },
+        { "cat": "suffix", "title": "Suffixes", "noun": "suffixes", "countLabel": "Suffixes" }
+      ],
+      "legend": [
+        { "k": "WEIGHT", "cat": "", "html": "How often the affix is picked out of its pool. Higher rolls more often. The bar is relative to the heaviest weight in this pool." },
+        { "k": "STYLE", "cat": "style", "html": "<strong>Might</strong>, <strong>Finesse</strong> and <strong>Ingenuity</strong> are the crafting pools the guaranteed-tag orbs draw from: the Strength, Dexterity and Intelligence orbs that turn a Common item Epic (or Mythic, perfected) while guaranteeing one affix from that pool. 136 affixes carry a single tag, 9 carry two and 5 carry all three." },
+        { "k": "NO STYLE", "cat": "", "html": "Three affixes carry no style tag and so can never be forced by an orb: <strong>Enhanced</strong>, <strong>of Flight</strong> and <strong>of Learning</strong>. Those are the elytra and helmet specials, the only three that can appear more than once on an item." },
+        { "k": "FILTERING", "cat": "", "html": "Slot tags are alternatives: picking several shows any affix matching <em>at least one</em>, the same OR logic the game uses for <code>GearSlot</code> requirements. Style narrows on top: pick <em>Ingenuity</em> and <em>Any Jewelry</em> to see what an Intelligence orb can force onto a ring." },
+        { "k": "NOT SHOWN", "cat": "", "html": "Weight-0 affixes can never roll and are omitted; on this page that is only the placeholder <code>unknown</code> prefix." }
+      ]
+    }
+  },
+  {
+    "id": "implicit",
+    "section": "Affixes",
+    "navLabel": "Implicits",
+    "file": "implicits",
+    "favicon": "🗿",
+    "title": "Implicit Compendium",
+    "h1": "Implicit Compendium",
+    "blurb": "The named gear bases and the innate line each one rolls with.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Implicits",
+    "source": "mmorpg_affixes/implicit",
+    "dek": "The innate line every gear base rolls with, before any prefix or suffix. Each entry <em>is</em> a named base: a Sword can come out as a Dusk Blade or a Twilight Blade, and the implicit is what tells them apart. The Base Type column lists every tag the item has to carry; a struck-through <span class=\"chip chip-excl cat-other\"><span class=\"x\">not</span> chip</span> narrows it further.",
+    "filterTitle": "Filter by base type",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Base" },
+        { "type": "chips", "head": "Base Type" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "implicit", "title": "Implicits", "noun": "implicits", "countLabel": "Bases" }
+      ],
+      "legend": [
+        { "k": "NAME", "cat": "", "html": "The name the game gives the base, which is not always what the id suggests. <code>arcane_staff</code> is the <strong>Sun Staff</strong>." },
+        { "k": "BASE TYPE", "cat": "", "html": "The item must have <em>every</em> tag listed, not just one of them. That is stricter than the way prefixes and suffixes are gated." },
+        { "k": "WEIGHT", "cat": "", "html": "How often this base is picked among the bases available for that weapon or armor type." },
+        { "k": "NOT SHOWN", "cat": "", "html": "Six weight-0 bases (Glacial Staff, Lightning Staff, Oakwood Staff, Thorn Rapier, Twilight Blade, Wildfire Staff) exist in the data but can never generate." }
+      ]
+    }
+  },
+  {
+    "id": "enchant",
+    "section": "Affixes",
+    "navLabel": "Enchants",
+    "file": "enchants",
+    "favicon": "✨",
+    "title": "Enchant Compendium",
+    "h1": "Enchant Compendium",
+    "blurb": "The enchantment line an item can carry alongside its rolled affixes.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Enchants",
+    "source": "mmorpg_affixes/enchant",
+    "dek": "The enchantment line an item can carry alongside its rolled affixes. Every entry is gated to a slot family: weapon, armor, offhand, jewelry, or a specific piece. The shared enchantment tag is left out of the chips below.",
+    "filterTitle": "Filter by slot",
+    "config": {
+      "ignore": ["enchantment"],
+      "columns": [
+        { "type": "name", "head": "Enchant" },
+        { "type": "chips", "head": "Applies To" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "enchant", "title": "Enchants", "noun": "enchants", "countLabel": "Enchants" }
+      ],
+      "legend": [
+        { "k": "NAME", "cat": "", "html": "Enchants carry no display name in the lang file, so the id is title-cased instead. The raw id sits under each name." },
+        { "k": "WEIGHT", "cat": "", "html": "Every enchant that can roll shares weight 1000, so within a slot they are equally likely." },
+        { "k": "SENTENCE ROWS", "cat": "", "html": "Some stats have no short label; the game shows a full line instead. Those render here as one sentence with the roll range inlined." },
+        { "k": "NOT SHOWN", "cat": "", "html": "Eight weight-0 entries can never roll and are omitted, including the generic <code>enchantment_*</code> defence and attribute rows." }
+      ]
+    }
+  },
+  {
+    "id": "jewel",
+    "section": "Affixes",
+    "navLabel": "Jewels",
+    "file": "jewels",
+    "favicon": "💎",
+    "title": "Jewel Compendium",
+    "h1": "Jewel Compendium",
+    "blurb": "Jewel affixes, corruption mods and the crafted unique pool.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Jewels",
+    "source": "mmorpg_affixes/jewel",
+    "dek": "Everything a jewel can carry, in the three pools that feed it. <strong>Jewel affixes</strong> are the normal rolls, gated by the jewel's attribute colour. <strong>Corruption</strong> mods are what a corrupting orb can stamp on. They have no tag requirement, so any jewel is fair game. <strong>Crafted unique</strong> mods are the pool for hand-crafted unique jewels.",
+    "filterTitle": "Filter by jewel type",
+    "config": {
+      "noTagsLabel": "Any Jewel",
+      "columns": [
+        { "type": "name", "head": "Modifier" },
+        { "type": "chips", "head": "Applies To" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "jewel", "title": "Jewel Affixes", "noun": "jewel affixes", "countLabel": "Affixes" },
+        { "cat": "jewel_corruption", "title": "Corruption Mods", "noun": "corruption mods", "countLabel": "Corruptions" },
+        { "cat": "crafted_jewel_unique", "title": "Crafted Unique Mods", "noun": "crafted unique mods", "countLabel": "Crafted" }
+      ],
+      "legend": [
+        { "k": "JEWEL TYPE", "cat": "jewel", "html": "<strong>Any Jewel</strong> rolls on all three colours; <strong>Strength / Dexterity / Intelligence Jewel</strong> are locked to that colour." },
+        { "k": "CORRUPTION", "cat": "", "html": "Corruption mods carry no tag requirement at all. The pool is the same for every jewel, so the column reads \"Any Jewel\" throughout." },
+        { "k": "WEIGHT", "cat": "", "html": "Jewel affixes and corruptions are all weight 1000. The crafted-unique pool is tiered (500 / 1000 / 5000), so the bar is worth reading there." }
+      ]
+    }
+  },
+  {
+    "id": "corruption",
+    "section": "Affixes",
+    "navLabel": "Corruption",
+    "file": "corruption",
+    "favicon": "☠️",
+    "title": "Corruption Compendium",
+    "h1": "Corruption Compendium",
+    "blurb": "What corrupting a piece of gear can stamp onto it, and at what odds.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Corruption",
+    "source": "mmorpg_affixes/chaos_stat",
+    "dek": "What corrupting a piece of gear can stamp onto it. Corruption marks the item, zeroes its remaining potential, may add sockets, and rolls one or two of the modifiers below, each still gated by the item's own slot tags.",
+    "extra": "    <dl class=\"tier-note\">\n      <dt>Upgraded</dt><dd>1 corrupted modifier, no extra socket. Weight 5000 on both normal and unique gear.</dd>\n      <dt>Elevated</dt><dd>2 corrupted modifiers, no extra socket. Weight 1000.</dd>\n      <dt>Ascended</dt><dd>1 corrupted modifier and +1 socket. Weight 500 on normal gear, 250 on uniques and runewords.</dd>\n    </dl>",
+    "filterTitle": "Filter by slot",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Modifier" },
+        { "type": "chips", "head": "Applies To" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "chaos_stat", "title": "Corrupted Modifiers", "noun": "modifiers", "countLabel": "Modifiers" }
+      ],
+      "legend": [
+        { "k": "TIERS", "cat": "", "html": "The three outcomes above decide how many modifiers you get and whether the item gains a socket. That is a separate roll from which modifier you land on." },
+        { "k": "WEIGHT", "cat": "", "html": "Two tiers only: <strong>1000</strong> for the common pool and <strong>50</strong> for the rare ones, so a weight-50 modifier is twenty times harder to hit." },
+        { "k": "ATTRIBUTE", "cat": "attribute", "html": "<strong>Strength / Dexterity / Intelligence Gear</strong> gate a modifier to items that already scale with that attribute." },
+        { "k": "MORE", "cat": "", "html": "A <span class=\"badge more\">more</span> badge is a multiplicative modifier, applied after everything additive, which makes it far stronger than the same number as a percent." }
+      ]
+    }
+  },
+  {
+    "id": "watcher",
+    "section": "Affixes",
+    "navLabel": "Watcher's Eye",
+    "file": "watchers-eye",
+    "favicon": "👁️",
+    "title": "Watcher's Eye Compendium",
+    "h1": "Watcher's Eye Compendium",
+    "blurb": "Conditional jewel modifiers, each tied to one augment.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Watcher's Eye",
+    "source": "mmorpg_affixes/watcher_eye",
+    "dek": "The conditional modifiers on a Watcher's Eye. Each is tied to an augment: the stats only apply while that augment is active, so the jewel is worth exactly as much as the augments you actually run. These entries carry no slot tags at all. The augment <em>is</em> the requirement.",
+    "filterTitle": "Filter by augment",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Modifier" },
+        { "type": "text", "head": "Required Augment", "field": "aura" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "watcher_eye", "title": "Eye Modifiers", "noun": "modifiers", "countLabel": "Modifiers" }
+      ],
+      "legend": [
+        { "k": "AUGMENT", "cat": "aura", "html": "The augment that must be running for the modifier to do anything. Filter by augment to see what a Watcher's Eye is worth for a given build." },
+        { "k": "NAME", "cat": "", "html": "The lang file marks every one of these as \"Unused\", so the id is title-cased instead." },
+        { "k": "MORE", "cat": "", "html": "A <span class=\"badge more\">more</span> badge is a multiplicative modifier, applied after everything additive." }
+      ]
+    }
+  },
+  {
+    "id": "tool",
+    "section": "Affixes",
+    "navLabel": "Tool Affixes",
+    "file": "tool-affixes",
+    "favicon": "⛏️",
+    "title": "Tool Compendium",
+    "h1": "Tool Compendium",
+    "blurb": "Modifiers on the pickaxes, hoes, shears and rods you gather with.",
+    "eyebrow": "Craft to Exile 2 &middot; Affixes &middot; Profession Tools",
+    "source": "mmorpg_affixes/tool",
+    "dek": "Modifiers on profession tools: the pickaxes, hoes, shears and rods you gather with. Each is gated to one profession, and they trade in the same three currencies: extra experience, double and triple drops, and the tiered-drop chance that decides material quality. The shared tool tag is left out of the chips below.",
+    "filterTitle": "Filter by profession",
+    "config": {
+      "ignore": ["tool"],
+      "columns": [
+        { "type": "name", "head": "Modifier" },
+        { "type": "chips", "head": "Profession" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "tool", "title": "Tool Modifiers", "noun": "modifiers", "countLabel": "Modifiers" }
+      ],
+      "legend": [
+        { "k": "PROFESSION", "cat": "tool", "html": "Mining, Farming, Husbandry and Fishing each have their own tool and their own pool." },
+        { "k": "WEIGHT", "cat": "", "html": "1000 for the common modifiers, 500 for the triple-drop rolls." },
+        { "k": "NOT SHOWN", "cat": "", "html": "Fishing Bar Size and Fishing Line Strength sit in the data at weight 0 and can never roll." }
+      ]
+    }
+  },
+
+  {
+    "id": "gear-bases",
+    "section": "Gear",
+    "navLabel": "Gear Bases",
+    "file": "gear-bases",
+    "favicon": "⚙️",
+    "title": "Gear Base Types",
+    "h1": "Gear Base Types",
+    "blurb": "Every slot the game can roll, its attribute scaling and the item ladder behind it.",
+    "eyebrow": "Craft to Exile 2 &middot; Gear &middot; Base Types",
+    "source": "mmorpg_base_gear_types",
+    "dek": "The gear slots the game generates items for. Each carries the base stats every item of that slot starts with, the attribute it scales off, and the ladder of actual Minecraft items it can spawn as, one per rarity step, with the weight that decides how often each appears.",
+    "filterTitle": "Filter by tag",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Base Type" },
+        { "type": "chips", "head": "Tags" },
+        { "type": "facts", "head": "Requirements" },
+        { "type": "stats", "head": "Base Stats" },
+        { "type": "items", "head": "Item Ladder" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "base", "title": "Base Types", "noun": "base types", "countLabel": "Base Types" }
+      ],
+      "legend": [
+        { "k": "SCALING", "cat": "", "html": "The attribute requirement grows with item level at this rate. <code>0.4</code> strength scaling means a level 100 axe wants roughly 40 Strength." },
+        { "k": "ITEM LADDER", "cat": "", "html": "The actual item ids this slot can spawn as, each with the minimum rarity that unlocks it and its pick weight. Higher-tier models are enormously weighted so a Mythic almost always uses the top model." },
+        { "k": "WEIGHT", "cat": "", "html": "How often this base type is chosen when the game rolls a random piece of gear." },
+        { "k": "NOT RANDOM", "cat": "", "html": "Trident, Elytra and Head sit at weight 0. They exist as slots but are never rolled as random drops." }
+      ]
+    }
+  },
+  {
+    "id": "uniques",
+    "section": "Gear",
+    "navLabel": "Uniques & Sets",
+    "file": "uniques",
+    "favicon": "🏆",
+    "title": "Uniques & Sets",
+    "h1": "Uniques &amp; Sets",
+    "blurb": "Every unique item, where it drops from, and the set bonuses that chain them.",
+    "eyebrow": "Craft to Exile 2 &middot; Gear &middot; Uniques &amp; Sets",
+    "source": "mmorpg_unique_gears + mmorpg_sets",
+    "dek": "Every unique in the pack, with the base it occupies, the league or content that drops it, and its fixed stat ranges. <strong>Sets</strong> below list the uniques that belong together and the bonus each piece count unlocks. Filter by <span class=\"chip cat-league\">source</span> to see what a given league can actually give you.",
+    "filterTitle": "Filter by source and base",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Unique" },
+        { "type": "text", "head": "Source", "field": "league" },
+        { "type": "chips", "head": "Base" },
+        { "type": "facts", "head": "Drop" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        {
+          "cat": "unique", "title": "Uniques", "noun": "uniques", "countLabel": "Uniques"
+        },
+        {
+          "cat": "set", "title": "Sets", "noun": "sets", "countLabel": "Sets",
+          "columns": [
+            { "type": "name", "head": "Set" },
+            { "type": "chips", "head": "Members" },
+            { "type": "facts", "head": "Size" },
+            { "type": "groups", "head": "Set Bonuses" }
+          ]
+        }
+      ],
+      "legend": [
+        { "k": "SOURCE", "cat": "league", "html": "<strong>Base</strong> uniques drop from ordinary content. The rest are gated to a league or activity: Harvest, Imprisoned Monster, Obelisk, Pinnacle, Prophecy, Strongbox and Uber." },
+        { "k": "WEIGHT", "cat": "", "html": "Relative drop chance within the unique pool. The spread is wide, from 200 to 10000, so the bar is the quickest read of how rare something is." },
+        { "k": "SETS", "cat": "", "html": "A set bonus applies once you are wearing the listed number of its uniques. Bonuses stack as you add pieces." },
+        { "k": "NOT SHOWN", "cat": "", "html": "51 uniques are flagged in the data as deliberately undocumented. They are the older duplicates the pack keeps beside the live entries." }
+      ]
+    }
+  },
+
+  {
+    "id": "sockets",
+    "section": "Crafting",
+    "navLabel": "Sockets",
+    "file": "sockets",
+    "favicon": "💠",
+    "title": "Gems, Runes & Runewords",
+    "h1": "Gems, Runes &amp; Runewords",
+    "blurb": "What you can socket into gear, and the rune sequences that spell a runeword.",
+    "eyebrow": "Craft to Exile 2 &middot; Crafting &middot; Sockets",
+    "source": "mmorpg_gems + mmorpg_runes + mmorpg_runeword",
+    "dek": "Everything that goes into a socket. <strong>Gems</strong> and <strong>runes</strong> give a different stat depending on what you socket them into, so each shows all three outcomes. <strong>Runewords</strong> are exact rune sequences: socket those runes in that order into a matching base and the item gains the listed stats on top.",
+    "filterTitle": "Filter by type",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Gem" },
+        { "type": "text", "head": "Rarity", "field": "rarity" },
+        { "type": "num", "head": "Tier", "field": "tier" },
+        { "type": "groups", "head": "By Socket" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "gem", "title": "Gems", "noun": "gems", "countLabel": "Gems" },
+        {
+          "cat": "rune", "title": "Runes", "noun": "runes", "countLabel": "Runes",
+          "columns": [
+            { "type": "name", "head": "Rune" },
+            { "type": "num", "head": "Tier", "field": "tier" },
+            { "type": "facts", "head": "Level" },
+            { "type": "groups", "head": "By Socket" },
+            { "type": "weight", "head": "Weight" }
+          ]
+        },
+        {
+          "cat": "runeword", "title": "Runewords", "noun": "runewords", "countLabel": "Runewords",
+          "columns": [
+            { "type": "name", "head": "Runeword" },
+            { "type": "items", "head": "Rune Sequence" },
+            { "type": "chips", "head": "Slots" },
+            { "type": "stats", "head": "Grants" }
+          ]
+        }
+      ],
+      "legend": [
+        { "k": "BY SOCKET", "cat": "", "html": "The same gem or rune gives one stat in armor, another in jewelry and another in a weapon. All three are listed because the choice of where to socket it is the decision." },
+        { "k": "TIER", "cat": "tier", "html": "Gems and runes both come in tiers. Higher tiers give more, and gems are upgraded by combining lower ones." },
+        { "k": "RUNE SEQUENCE", "cat": "", "html": "Order matters: the runes must be socketed in the sequence listed, into a base that has at least that many sockets and matches one of the listed slots." },
+        { "k": "NOT RANDOM", "cat": "", "html": "The tier-7 gems and seven of the runes sit at weight 0. They exist and work, but never drop on their own; you make them by upgrading." }
+      ]
+    }
+  },
+  {
+    "id": "recipes",
+    "section": "Crafting",
+    "navLabel": "Recipes",
+    "file": "profession-recipes",
+    "favicon": "🧪",
+    "title": "Profession Recipes",
+    "h1": "Profession Recipes",
+    "blurb": "Every alchemy, cooking, enchanting and gear-crafting recipe with its materials.",
+    "eyebrow": "Craft to Exile 2 &middot; Crafting &middot; Professions",
+    "source": "mmorpg_profession_recipe",
+    "dek": "Every profession recipe in the pack: what it consumes, what it makes, which profession and tier it belongs to, and the experience it pays. Filter by profession and tier together to see exactly what a given profession level opens up. Item ids are shown raw because that is what you search for in JEI.",
+    "filterTitle": "Filter by profession and tier",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Recipe" },
+        { "type": "text", "head": "Profession", "field": "profession" },
+        { "type": "num", "head": "Tier", "field": "tier" },
+        { "type": "items", "head": "Materials" },
+        { "type": "text", "head": "Output", "field": "result", "mono": true },
+        { "type": "num", "head": "EXP", "field": "exp" }
+      ],
+      "sections": [
+        { "cat": "recipe", "title": "Recipes", "noun": "recipes", "countLabel": "Recipes" }
+      ],
+      "legend": [
+        { "k": "PROFESSION", "cat": "profession", "html": "Alchemy (590), Cooking (432), Gear Crafting (300) and Enchanting (290), counted across both the mod defaults and the pack overrides." },
+        { "k": "TIER", "cat": "tier", "html": "Tier 0 to 5. A recipe's tier gates when you can learn it and feeds the experience penalty for crafting below your level." },
+        { "k": "EXP", "cat": "", "html": "Profession experience per craft. Crafting experience is capped at your character level. It is a separate pipeline from gathering experience." },
+        { "k": "MATERIALS", "cat": "", "html": "<code>×N</code> is the count consumed. An entry tagged <em>tag</em> accepts any item in that item tag rather than one exact item." }
+      ]
+    }
+  },
+
+  {
+    "id": "support",
+    "section": "Skills",
+    "navLabel": "Supports & Augments",
+    "file": "supports-and-augments",
+    "favicon": "🔮",
+    "title": "Support Gems & Augments",
+    "h1": "Support Gems &amp; Augments",
+    "blurb": "Skill supports with their mana multipliers, and the reservation cost of every augment.",
+    "eyebrow": "Craft to Exile 2 &middot; Skills &middot; Supports &amp; Augments",
+    "source": "mmorpg_support_gem + mmorpg_aura",
+    "dek": "<strong>Support gems</strong> slot into a skill and change how it behaves, paying for it with a mana multiplier on every cast. <strong>Augments</strong> are the persistent auras. Each reserves a slice of your resource pool for as long as it runs, which is the real cost of stacking them.",
+    "filterTitle": "Filter by attribute",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Support Gem" },
+        { "type": "text", "head": "Attribute", "field": "style" },
+        { "type": "facts", "head": "Cost" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "support", "title": "Support Gems", "noun": "support gems", "countLabel": "Supports" },
+        {
+          "cat": "augment", "title": "Augments", "noun": "augments", "countLabel": "Augments",
+          "columns": [
+            { "type": "name", "head": "Augment" },
+            { "type": "text", "head": "Attribute", "field": "style" },
+            { "type": "facts", "head": "Cost" },
+            { "type": "stats", "head": "Grants" }
+          ]
+        }
+      ],
+      "legend": [
+        { "k": "MANA MULTI", "cat": "", "html": "A support gem multiplies the skill's mana cost. Two supports at 1.3× and 1.4× make the skill cost 1.82× its base, so cost compounds fast." },
+        { "k": "RESERVATION", "cat": "", "html": "The share of your resource pool an augment holds while active. Reservation is why you cannot simply run every augment at once." },
+        { "k": "ATTRIBUTE", "cat": "attribute", "html": "STR / DEX / INT decide which gem colour the support or augment belongs to." },
+        { "k": "NOT RANDOM", "cat": "", "html": "Enlighten and Magic Find sit at weight 0. They exist but are not part of the random support-gem drop pool." }
+      ]
+    }
+  },
+  {
+    "id": "effects",
+    "section": "Skills",
+    "navLabel": "Effects",
+    "file": "effects",
+    "favicon": "🌀",
+    "title": "Effect Compendium",
+    "h1": "Effect Compendium",
+    "blurb": "Every buff, curse and ailment, with what it does while it is on you.",
+    "eyebrow": "Craft to Exile 2 &middot; Skills &middot; Buffs &amp; Ailments",
+    "source": "mmorpg_exile_effect",
+    "dek": "Every buff, curse and ailment the game can apply. The stats listed are what the effect changes while it is active; where an effect stacks, the stat column is what one stack is worth. Filter by <span class=\"chip cat-effect\">kind</span> to separate what helps you from what is being done to you.",
+    "filterTitle": "Filter by kind and tag",
+    "config": {
+      "noTagsLabel": "Untagged",
+      "columns": [
+        { "type": "name", "head": "Effect" },
+        { "type": "text", "head": "Kind", "field": "type" },
+        { "type": "chips", "head": "Tags" },
+        { "type": "facts", "head": "Details" },
+        { "type": "stats", "head": "While Active" }
+      ],
+      "sections": [
+        { "cat": "effect", "title": "Effects", "noun": "effects", "countLabel": "Effects" }
+      ],
+      "legend": [
+        { "k": "KIND", "cat": "effect", "html": "Positive effects are buffs you want; negative ones are curses and ailments. A handful are neutral markers used by other systems." },
+        { "k": "STACKS", "cat": "", "html": "Max stacks is how many copies can sit on a target at once. When stacks scale stats, the listed values are per stack." },
+        { "k": "BEHAVIOUR", "cat": "", "html": "Some effects also run a spell component: particles, periodic damage, a proc. That is noted rather than expanded; the component tree is not readable as a table." },
+        { "k": "NOT SHOWN", "cat": "", "html": "Three golem buffs carry <code>hide_from_wiki</code> and are deliberately undocumented." }
+      ]
+    }
+  },
+
+  {
+    "id": "monsters",
+    "section": "World",
+    "navLabel": "Mobs & Dimensions",
+    "file": "mobs-and-dimensions",
+    "favicon": "👹",
+    "title": "Mobs & Dimensions",
+    "h1": "Mobs &amp; Dimensions",
+    "blurb": "Per-mob multipliers, rarity tiers, elite affixes, and the level band of every world.",
+    "eyebrow": "Craft to Exile 2 &middot; World &middot; Mobs &amp; Dimensions",
+    "source": "mmorpg_entity + mmorpg_mob_rarity + mmorpg_mob_affix + mmorpg_dimension",
+    "dek": "How dangerous any given monster is, and where. <strong>Entity scaling</strong> sets per-mod, per-type and per-mob multipliers for the health, damage, experience and loot a mob carries before anything else applies. <strong>Rarities</strong> multiply that again and decide how many affixes an elite gets; <strong>mob affixes</strong> are what those rolls can be. <strong>Dimensions</strong> set the level band and mob strength of every world, which is what decides where you can usefully go next.",
+    "filterTitle": "Filter by scope and kind",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Entity" },
+        { "type": "text", "head": "Scope", "field": "scope" },
+        { "type": "facts", "head": "Multipliers" },
+        { "type": "stats", "head": "Extra Stats" }
+      ],
+      "sections": [
+        { "cat": "entity", "title": "Entity Scaling", "noun": "entities", "countLabel": "Entities" },
+        {
+          "cat": "rarity", "title": "Monster Rarities", "noun": "rarities", "countLabel": "Rarities",
+          "columns": [
+            { "type": "name", "head": "Rarity" },
+            { "type": "facts", "head": "Multipliers" },
+            { "type": "stats", "head": "Extra Stats" },
+            { "type": "weight", "head": "Weight" }
+          ]
+        },
+        {
+          "cat": "mobaffix", "title": "Mob Affixes", "noun": "mob affixes", "countLabel": "Mob Affixes",
+          "columns": [
+            { "type": "name", "head": "Affix" },
+            { "type": "text", "head": "Kind", "field": "type" },
+            { "type": "stats", "head": "Grants" },
+            { "type": "weight", "head": "Weight" }
+          ]
+        },
+        {
+          "cat": "dimension", "title": "Dimensions", "noun": "dimensions", "countLabel": "Dimensions",
+          "columns": [
+            { "type": "name", "head": "Dimension" },
+            { "type": "text", "head": "Id", "field": "dimension", "mono": true },
+            { "type": "facts", "head": "Scaling" },
+            { "type": "stats", "head": "Extra Stats" }
+          ]
+        }
+      ],
+      "legend": [
+        { "k": "SCOPE", "cat": "scope", "html": "<strong>All mobs in mod</strong> applies to everything from that mod; <strong>Mob types</strong> to a behaviour class such as animal or ambient; <strong>Specific mobs</strong> to one entity id. The narrowest match wins." },
+        { "k": "MULTIPLIERS", "cat": "", "html": "Applied to the mob's health, damage, stat budget, experience and loot. An experience or loot multiplier of 0 means the mob gives none at all, which is how passive animals are kept out of the reward loop." },
+        { "k": "RARITY WEIGHT", "cat": "", "html": "How often a spawning mob rolls that rarity. Weight 0 means the rarity is never rolled. Bosses and uniques are placed deliberately." },
+        { "k": "MOB AFFIXES", "cat": "", "html": "Elites roll one or more of these on top of their rarity multipliers. Nine sit at weight 0 and are reserved for scripted encounters." },
+        { "k": "DIMENSIONS", "cat": "", "html": "Each dimension sets the level band mobs spawn at, a mob tier, and multipliers on strength, experience and drops. Where a deep-area range is listed, mobs get stronger the further from spawn you go." }
+      ]
+    }
+  },
+  {
+    "id": "maps",
+    "section": "World",
+    "navLabel": "Map Affixes",
+    "file": "map-affixes",
+    "favicon": "🗺️",
+    "title": "Map Affixes",
+    "h1": "Map Affixes",
+    "blurb": "What a map rolls to make itself harder, and the resistances some of them demand.",
+    "eyebrow": "Craft to Exile 2 &middot; World &middot; Map Affixes",
+    "source": "mmorpg_map_affix",
+    "dek": "What a map rolls to make itself harder and more rewarding. Each affix names what it acts on (the monsters, you, or the map itself), and several demand a resistance floor before the map is survivable, listed under Requirements. Dimension scaling lives on <strong>Mobs &amp; Dimensions</strong>; the Omens that used to sit here have their own page under Gear.",
+    "filterTitle": "Filter by target and element",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Map Affix" },
+        { "type": "text", "head": "Affects", "field": "affected" },
+        { "type": "facts", "head": "Requirements" },
+        { "type": "stats", "head": "Effect" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "mapaffix", "title": "Map Affixes", "noun": "map affixes", "countLabel": "Map Affixes" }
+      ],
+      "legend": [
+        { "k": "AFFECTS", "cat": "affected", "html": "Whether the affix changes the monsters, the player, or the map itself." },
+        { "k": "RESISTANCE", "cat": "element", "html": "Several affixes demand a resistance floor before the map is safe. The number is the extra resistance the map expects on top of your usual cap." },
+        { "k": "WEIGHT", "cat": "", "html": "How often the affix is rolled when a map generates its modifiers. Three sit at weight 0 and can never appear." },
+        { "k": "ELSEWHERE", "cat": "", "html": "Dimension level bands and mob multipliers are on <strong>Mobs &amp; Dimensions</strong>. Omens are equipped curios, not map modifiers, and live under <strong>Gear</strong>." }
+      ]
+    }
+  },
+  {
+    "id": "omens",
+    "section": "Gear",
+    "navLabel": "Codexes",
+    "file": "codexes",
+    "favicon": "📿",
+    "title": "Codexes",
+    "h1": "Codexes",
+    "blurb": "The Codices you equip, and the gear checklist each one pays out against.",
+    "eyebrow": "Craft to Exile 2 &middot; Gear &middot; Codexes",
+    "source": "mmorpg_omen",
+    "dek": "A <strong>Codex</strong> is worn like a ring or a necklace, and it is the only gear whose value depends on the rest of your gear. Each one drops with a checklist: a number of pieces at given rarities, and specific slots that must be a given rarity. The more of that checklist you satisfy, the more of its stats it pays out, and the more demanding the checklist it rolled, the higher its ceiling. The stats below are the base modifier set each Codex draws from; the checklist and the extra corrupted affixes are rolled per item, so they differ on every copy and cannot be listed here.",
+    "filterTitle": "Filter by affix pool",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Codex" },
+        { "type": "chips", "head": "Affix Pools" },
+        { "type": "facts", "head": "Drop" },
+        { "type": "stats", "head": "Grants" },
+        { "type": "weight", "head": "Weight" }
+      ],
+      "sections": [
+        { "cat": "omen", "title": "Codexes", "noun": "Codexes", "countLabel": "Codexes" }
+      ],
+      "legend": [
+        { "k": "CHECKLIST", "cat": "", "html": "Every Codex rolls rarity quotas (\"2 Epic, 3 Rare\") plus per-slot rarity requirements. Its stat budget is roughly <code>(quota total + slot count) &times; 10</code>, scaled by the Codex's own rarity, and it pays out in proportion to how many equipped pieces currently satisfy it." },
+        { "k": "AFFIX POOLS", "cat": "group", "html": "On top of the base stats, a Codex rolls affixes from these pools: the same <strong>Corruption</strong> and <strong>Jewel Corruption</strong> modifier lists documented on their own pages." },
+        { "k": "DROPS FROM", "cat": "", "html": "A Codex only drops once you are past a fraction of the max level: <code>lvl_req &times; 100</code>. Increased Omen Find raises the drop rate." },
+        { "k": "WEIGHT", "cat": "", "html": "Relative chance of getting that Codex when one drops. All nine are equally weighted at 1000." }
+      ]
+    }
+  },
+
+  {
+    "id": "stats",
+    "section": "Reference",
+    "navLabel": "Stat Dictionary",
+    "file": "stat-dictionary",
+    "favicon": "📖",
+    "title": "Stat Dictionary",
+    "h1": "Stat Dictionary",
+    "blurb": "Every stat in the game, what it means and how it is clamped.",
+    "eyebrow": "Craft to Exile 2 &middot; Reference &middot; Stats",
+    "source": "mmorpg_stat",
+    "dek": "Every stat the game defines, with its in-game description where one exists, the group it belongs to, and the range it is clamped to. <strong>Derived</strong> stats are not rolled on gear at all. They convert one stat into another, and their formula is listed instead of a clamp. This is the reference the other pages point at: when a chip elsewhere says \"Accuracy\", this is what Accuracy actually does.",
+    "filterTitle": "Filter by group",
+    "config": {
+      "columns": [
+        { "type": "name", "head": "Stat" },
+        { "type": "text", "head": "Group", "field": "group" },
+        { "type": "text", "head": "Description", "field": "desc", "wrap": true },
+        { "type": "facts", "head": "Details" }
+      ],
+      "sections": [
+        { "cat": "stat", "title": "Stats", "noun": "stats", "countLabel": "Stats" }
+      ],
+      "legend": [
+        { "k": "GROUP", "cat": "attribute", "html": "Main, Elemental, Weapon, Restoration and Misc are the game's own groupings. <strong>Derived</strong> covers every stat defined as a conversion rather than a value." },
+        { "k": "DERIVED", "cat": "", "html": "A derived stat reads \"X per N Y\". For example <code>accuracy_per_10_dexterity</code> grants Accuracy for every 10 Dexterity you have. You never see these on an item; they are the plumbing behind attributes and conversions." },
+        { "k": "CLAMP", "cat": "", "html": "The hard floor and ceiling the stat is held to after everything is summed. <em>Uncapped</em> means the ceiling is effectively infinite." },
+        { "k": "GUI", "cat": "rarity", "html": "Stats hidden from the GUI still work. They are internal plumbing the character sheet does not list. Filter on it to see only what a player can actually read in game." },
+        { "k": "MISSING TEXT", "cat": "", "html": "21 stats have no lang name and fall back to a title-cased id; 417 have no description. Both are gaps in the lang file, not in the game." }
+      ]
+    }
+  }
+]

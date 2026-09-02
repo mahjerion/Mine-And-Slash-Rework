@@ -69,7 +69,7 @@ public class MagicShieldHeal extends Stat {
 
         @Override
         public StatPriority GetPriority() {
-            return StatPriority.Damage.AFTER_DAMAGE_BONUSES;
+            return StatPriority.Damage.BEFORE_DAMAGE_LAYERS;
         }
 
         @Override

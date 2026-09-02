@@ -35,13 +35,6 @@ public class RestoreResourceAction extends StatEffect {
         float val = num_provider.getValue(event, event.getSide(statSource), data);
         val *= event.data.getNumber(EventData.ATTACK_COOLDOWN).number; // todo test
 
-        if (this.restore_type == RestoreType.leech) {
-            event.sourceData.leech.addLeech(type, val);
-
-            // todo show this in chat msg feature or somehow on gui?
-            return;
-        }
-
         EventBuilder<RestoreResourceEvent> restore = EventBuilder.ofRestore(event.source, event.getSide(side), type, restore_type, val);
         if (event.data.isSpellEffect()) {
             restore.setSpell(event.getSpell());

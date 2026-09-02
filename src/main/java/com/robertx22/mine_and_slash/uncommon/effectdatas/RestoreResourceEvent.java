@@ -54,6 +54,13 @@ public class RestoreResourceEvent extends EffectEvent {
             }
         }
 
+        if (data.getRestoreType() == RestoreType.leech) {
+            this.targetData.leech.addLeech(data.getResourceType(), num);
+
+            // todo show this in chat msg feature or somehow on gui?
+            return;
+        }
+
         this.targetData.getResources().restore(target, data.getResourceType(), num);
 
         if (this.data.getResourceType() == ResourceType.health) {

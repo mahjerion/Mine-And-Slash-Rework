@@ -330,7 +330,7 @@ public class ResourceStats {
     public static DataPackStatAccessor<EmptyAccessor> INCREASED_LEECH = DatapackStatBuilder
             .ofSingle("inc_leech", Elements.ALL)
             .worksWithEvent(RestoreResourceEvent.ID)
-            .setPriority(StatPriority.Damage.FINAL_DAMAGE)
+            .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
             .setSide(EffectSides.Source)
             .addCondition(StatConditions.IS_RESTORE_TYPE.get(RestoreType.leech))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)

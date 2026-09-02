@@ -7,7 +7,6 @@ import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.RestoreResourceEvent;
-import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
 
 public class HealthRestorationToBloodEffect extends InCodeStatEffect<RestoreResourceEvent> {
@@ -22,7 +21,7 @@ public class HealthRestorationToBloodEffect extends InCodeStatEffect<RestoreReso
 
     @Override
     public StatPriority GetPriority() {
-        return StatPriority.Damage.FINAL_DAMAGE;
+        return StatPriority.Damage.BEFORE_DAMAGE_LAYERS;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class HealthRestorationToBloodEffect extends InCodeStatEffect<RestoreReso
 
         float bloodrestored = effect.data.getNumber() * data.getValue() / 100F;
 
-        RestoreResourceEvent restore = EventBuilder.ofRestore(effect.source, effect.target, ResourceType.blood, RestoreType.regen, bloodrestored)
+        RestoreResourceEvent restore = EventBuilder.ofRestore(effect.source, effect.target, ResourceType.blood, effect.data.getRestoreType(), bloodrestored)
                 .build();
 
         restore.Activate();

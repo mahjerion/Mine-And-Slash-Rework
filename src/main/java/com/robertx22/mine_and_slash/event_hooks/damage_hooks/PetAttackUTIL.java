@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEnti
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.data.spells.summons.SummonSpellCaster;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,6 +49,12 @@ public class PetAttackUTIL {
                     basic.attached.tryActivate(Spell.DEFAULT_EN_NAME, SpellCtx.onHit(caster, summon, target, ctx.calcData)); // todo this should be reworked.
                     // pet ability should gain the stats of the pet used to summon it, this is a nasty hack
                 }
+
+                // outside the cancast branch on purpose: the extra spells are the summon's own, not the
+                // owner's, so an owner out of mana should not also silence them. this is the single
+                // trigger for every summon type - a skeleton's arrow reaches here too, because
+                // AutoAimingProj damages with the skeleton as the source entity.
+                SummonSpellCaster.tryCastOnHit(summon, caster, target);
 
             }
         } else {

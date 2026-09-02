@@ -14,8 +14,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 
-
-// todo add full ele affix, and sometiemes do aoe attack
+/**
+ * The shared half of the three elemental golems: a full-element mob affix, and being rendered small.
+ * <p>
+ * What a golem CASTS is deliberately not here any more. It used to be an abstract {@code aoeSpell()}
+ * returning one hard-coded spell id per subclass, which meant a datapack could neither retune it nor
+ * add a second spell, and no other summon could have the behaviour at all. That list now lives on the
+ * summon skill, as {@code SpellConfiguration.summon_spells}, and is fired by {@code SummonSpellCaster}.
+ */
 public abstract class GolemSummon extends SummonEntity {
 
 
@@ -23,34 +29,7 @@ public abstract class GolemSummon extends SummonEntity {
         super(pEntityType, pLevel);
     }
 
-
-    /*
-    @Override
-    public boolean doHurtTarget(Entity pEntity) {
-        if (super.doHurtTarget(pEntity)) {
-            if (!this.level().isClientSide) {
-                if (getOwner() instanceof Player en) {
-                    int chance = (int) (5 + Load.Unit(en).getUnit().getCalculatedStat(GolemSpellChance.getInstance()).getValue());
-                    if (RandomUtils.roll(chance)) {
-                        var spell = ExileDB.Spells().get(this.aoeSpell());
-                        // todo this doesnt affect summon damage.. hm
-                        var c = (new SpellCastContext(en, 0, spell));
-                        spell.getAttached().onCast(SpellCtx.onCast(en, c.calcData).setSourceEntity(this));
-                    }
-                }
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-     */
-
     public abstract String affix();
-
-    public abstract String aoeSpell();
 
     public abstract Elements ele();
 

@@ -10,6 +10,10 @@ import com.robertx22.mine_and_slash.tags.imp.SpellTag;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SpellConfiguration {
 
     // a skill's recovery is what paces it now, so these are the whole pacing vocabulary:
@@ -43,6 +47,29 @@ public class SpellConfiguration {
     public SummonType summonType = SummonType.NONE;
     public String charge_name = "";
     public String summon_basic_atk = "";
+
+    /**
+     * Spell GUIDs a summon spawned by this skill may cast, on top of its {@link #summon_basic_atk}.
+     * <p>
+     * The list replaces what used to be {@code GolemSummon.aoeSpell()} - a hard-coded abstract method
+     * that no datapack could reach and that only golems had at all. Keyed on the summon SKILL rather
+     * than on the summoned entity type, so two skills spawning the same mob can hand it different
+     * spells, and so a pack that invents a new summon skill gets this for free without a new entity
+     * class. Order is irrelevant: the pick is uniformly random, like {@code WizardType.spells}.
+     */
+    public List<String> summon_spells = new ArrayList<>();
+
+    /**
+     * Percent chance, per hit the summon lands, that it casts one of {@link #summon_spells}.
+     * <p>
+     * 0 means the summon never casts on its own - which is deliberately what the three golems ship
+     * with, because their whole cast rate has always come from the owner's Golem Spell Chance stat
+     * and moving the spell into the datapack must not quietly hand them a free baseline.
+     */
+    public int summon_spell_chance = 0;
+
+    /** the shortest gap between two such casts by one summon, so a fast attacker cannot chain them */
+    public int summon_spell_cd_ticks = 20;
     private int cast_time_ticks = 0;
     public int cooldown_ticks = 20;
     // the post-cast recovery of this skill, and the global cooldown it puts every other skill on.
@@ -112,6 +139,37 @@ public class SpellConfiguration {
 
     public Spell getSummonBasicSpell() {
         return ExileDB.Spells().get(summon_basic_atk);
+    }
+
+    public boolean hasSummonSpells() {
+        return summon_spells != null && !summon_spells.isEmpty();
+    }
+
+    /**
+     * The extra spells a summon of this skill can actually cast right now.
+     * <p>
+     * Silently drops ids the spell registry doesn't know, exactly as {@code WizardType.getSpells()}
+     * does: a pack can name a skill it never added, or remove one a summon still lists, and the pet
+     * should keep fighting with what is left rather than throwing out of the middle of a damage event.
+     */
+    public List<Spell> getSummonSpells() {
+        List<Spell> list = new ArrayList<>();
+        if (summon_spells == null) {
+            return list;
+        }
+        for (String id : summon_spells) {
+            Spell spell = ExileDB.Spells().get(id);
+            if (spell != null) {
+                list.add(spell);
+            }
+        }
+        return list;
+    }
+
+    public SpellConfiguration setSummonSpells(int chancePercent, String... spellIds) {
+        this.summon_spell_chance = chancePercent;
+        this.summon_spells = new ArrayList<>(Arrays.asList(spellIds));
+        return this;
     }
 
     public boolean usesCharges() {

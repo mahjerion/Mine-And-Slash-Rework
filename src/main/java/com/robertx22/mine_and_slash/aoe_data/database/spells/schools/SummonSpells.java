@@ -45,7 +45,7 @@ public class SummonSpells implements ExileRegistryInit {
     public void registerAll() {
 
         SpellBuilder.of(SUMMON_FIRE_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.FIRE_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonBasicAttack(PetSpells.FIRE_GOLEM).setSummonSpells(0, FireSpells.FIRE_NOVA_ID).setSummonType(SummonType.GOLEM)
                                 .setSummonAggroRadius(15), "Summon Fire Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.FIRE))
 
@@ -61,7 +61,7 @@ public class SummonSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(SUMMON_COLD_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.FROST_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonBasicAttack(PetSpells.FROST_GOLEM).setSummonSpells(0, WaterSpells.FROST_NOVA_AOE).setSummonType(SummonType.GOLEM)
                                 .setSummonAggroRadius(15), "Summon Frost Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.COLD))
                 .manualDesc("Summon a Golem that can cast Frost Nova to aid you in combat.")
@@ -75,7 +75,7 @@ public class SummonSpells implements ExileRegistryInit {
                 .build();
 
         SpellBuilder.of(SUMMON_LIGHTNING_GOLEM, PlayStyle.INT, SpellConfiguration.Builder.nonInstant(40, 20 * 60, 30)
-                                .setSummonBasicAttack(PetSpells.LIGHTNING_GOLEM).setSummonType(SummonType.GOLEM)
+                                .setSummonBasicAttack(PetSpells.LIGHTNING_GOLEM).setSummonSpells(0, LightningSpells.LIGHTNING_NOVA).setSummonType(SummonType.GOLEM)
                                 .setSummonAggroRadius(15), "Summon Lightning Golem",
                         Arrays.asList(SpellTags.summon, SpellTags.damage, SpellTags.golem, SpellTags.has_pet_ability, SpellTags.LIGHTNING))
                 .manualDesc("Summon a Golem that can cast Lightning Nova to aid you in combat .")

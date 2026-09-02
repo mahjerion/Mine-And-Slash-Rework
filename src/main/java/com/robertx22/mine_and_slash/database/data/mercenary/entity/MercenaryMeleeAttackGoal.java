@@ -30,6 +30,22 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
     private static final double STANDOFF = 0.5D;
 
     /**
+     * How far inside {@link #STANDOFF} something has to get before the mercenary gives ground, as a
+     * plain fraction of the standoff distance.
+     * <p>
+     * The band is held, not a line: back off below {@code standoff * BACK_OFF_BAND}, walk in above
+     * the standoff, and do neither in between. A single threshold has the mercenary crossing it and
+     * reversing every tick. Same constant, and the same value, as {@link MercenaryRangedGoal}'s
+     * {@code FLEE_BAND} - the two goals are solving the same problem at different distances.
+     * <p>
+     * Against a normal sized target that works out to backing off below 1.8 blocks with a one hander
+     * and 2.9 with a two hander. Both are outside a vanilla mob's own ~1.4 block reach, so the
+     * mercenary starts giving ground before the thing in front of it can swing, which is the point -
+     * the reach the weapon grants is worth nothing if the fight ends up nose to nose anyway.
+     */
+    private static final double BACK_OFF_BAND = 0.75D;
+
+    /**
      * Stop shuffling this many ticks before the next swing is due, so the mercenary is planted rather
      * than drifting on the one tick the attack check actually runs.
      */
@@ -47,6 +63,7 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
     private final double speedModifier;
 
     private final MercenaryStrafe strafe = new MercenaryStrafe();
+    private final MercenaryRetreat retreat = new MercenaryRetreat();
 
     private int rangedCooldown;
 
@@ -80,21 +97,26 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
         LivingEntity target = merc.getTarget();
         if (target == null) {
             strafe.reset();
+            retreat.reset();
             return;
         }
 
         // a cast should read as committed, and MercenarySpellCaster owns the navigation while it
-        // walks a skill into range - holding position here would smear that approach
+        // walks a skill into range - holding position here would smear that approach, and giving
+        // ground would undo it outright
         if (merc.isCastingSpell() || merc.isApproachingForCast()) {
             strafe.reset();
+            retreat.reset();
             return;
         }
 
         double reachSqr = getAttackReachSqr(target);
         double distSqr = merc.distanceToSqr(target);
+        double holdSqr = reachSqr * STANDOFF;
 
-        if (distSqr > reachSqr * STANDOFF) {
+        if (distSqr > holdSqr) {
             strafe.reset();
+            retreat.reset();
             // a weapon that grants a ranged basic attack - a staff's Bolt - is thrown on the way in
             // rather than saved for a range this goal is trying to leave. vanilla RangedBowAttackGoal
             // sits alongside this one but demands an actual bow, so nothing else covers a caster
@@ -111,8 +133,21 @@ public class MercenaryMeleeAttackGoal extends MeleeAttackGoal {
             return;
         }
 
+        // crowded. this is the half that was missing: the standoff above only ever decided how far
+        // the mercenary would walk IN, so anything that kept walking towards it simply closed the
+        // gap itself and the fight ended up nose to nose - throwing away the whole reach the weapon
+        // grants. Give ground instead, and keep swinging while doing it: the retreat only ever
+        // operates inside the standoff, which is 0.7 of reach, so super's own reach check still
+        // passes on every tick of it.
+        if (distSqr < holdSqr * BACK_OFF_BAND * BACK_OFF_BAND) {
+            strafe.reset();
+            retreat.tick(merc, target, Math.sqrt(holdSqr), speedModifier);
+            return;
+        }
+
         // close enough. holding is the point - left alone, super keeps pathing to the target's own
         // block and the mercenary ends up hugging it.
+        retreat.reset();
         merc.getNavigation().stop();
 
         if (getTicksUntilNextAttack() <= STRAFE_STOP_BEFORE_SWING) {

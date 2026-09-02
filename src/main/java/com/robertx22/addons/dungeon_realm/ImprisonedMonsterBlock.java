@@ -184,11 +184,16 @@ public class ImprisonedMonsterBlock extends BaseEntityBlock {
             be.monstersRemaining++;
             be.spawnedCount++;
             spawned++;
-            // last resort for a room where nothing above found space - strictly after the tagging and
-            // the counter bump, because unstuckFromWalls kills a mob it can't free, and that death has
-            // to come back through the hook and decrement this block. Tagged too late, the encounter
-            // would sit there waiting forever on a captive that no longer exists.
-            UnstuckMobs.unstuckFromWalls(mob);
+            // last resort for a room where nothing above found space. unstuckFromWalls no longer kills a
+            // mob it cannot free - that phantom death is what players heard bursting on map entry - so the
+            // decrement that used to arrive through the LivingDeathEvent hook has to happen here instead.
+            // Without it the encounter would sit waiting forever on a captive that is not in the world.
+            if (!UnstuckMobs.unstuckFromWalls(mob)) {
+                mob.discard();
+                be.monstersRemaining = Math.max(0, be.monstersRemaining - 1);
+                be.setChanged();
+                spawned--;
+            }
         }
 
         return spawned;

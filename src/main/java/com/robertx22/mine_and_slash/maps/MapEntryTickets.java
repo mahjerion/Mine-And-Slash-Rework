@@ -56,6 +56,12 @@ public class MapEntryTickets {
             }
             MapData map = opt.get();
 
+            // Uber and Pinnacle maps skip the whole mechanic: no counter, no seal, and no
+            // "Entry Ticket used" line spammed at the party every time someone walks back in.
+            if (map.unlimitedEntries) {
+                return;
+            }
+
             // Arriving from another map dimension is how a league side area rolled INSIDE this map
             // gets back - an Obelisk or Harvest encounter lives in its own dimension, so stepping out
             // of one fires this event. That is not a new entry, but only for someone already on this

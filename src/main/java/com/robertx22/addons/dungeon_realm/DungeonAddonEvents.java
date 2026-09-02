@@ -7,6 +7,7 @@ import com.robertx22.dungeon_realm.database.DungeonDatabase;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNode;
 import com.robertx22.dungeon_realm.database.atlas.AtlasNodeUtils;
 import com.robertx22.dungeon_realm.database.holders.DungeonMapBlocks;
+import com.robertx22.dungeon_realm.item.DungeonItemNbt;
 import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.library_of_exile.database.league.League;
 import com.robertx22.library_of_exile.dimension.MapDimensions;
@@ -43,7 +44,6 @@ import com.robertx22.mine_and_slash.loot.league.LootLeagueResolvers;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.maps.MapItemData;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
-import com.robertx22.mine_and_slash.uncommon.UnstuckMobs;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
@@ -53,10 +53,12 @@ import com.robertx22.mine_and_slash.uncommon.utilityclasses.OnScreenMessageUtils
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
@@ -185,6 +187,14 @@ public class DungeonAddonEvents {
 
                         var mapdata = MapData.newMap(event.p, map);
 
+                        // Uber/Pinnacle maps are exempt from Entry Tickets. Captured now, off the
+                        // item that is about to be consumed - the same `uber || pinnacle` test
+                        // MapBonusContentsData uses to give this instance its boss arena.
+                        var dungeonItem = DungeonItemNbt.DUNGEON_MAP.loadFrom(event.stack);
+                        if (dungeonItem != null && (dungeonItem.uber || dungeonItem.pinnacle)) {
+                            mapdata.unlimitedEntries = true;
+                        }
+
                         WorldData.get(event.p.level()).map.setData(event.p, mapdata, event.mapInfo.structure, event.startChunkPos.getMiddleBlockPosition(5));
 
                         Load.Unit(event.p).getCooldowns().setOnCooldown("start_map", ServerContainer.get().MAP_START_COOLDOWN_SECONDS.get() * 20);
@@ -230,7 +240,19 @@ public class DungeonAddonEvents {
                     }
 
                 });
-                UnstuckMobs.unstuckFromWalls(event.mob);
+                // put the mob somewhere it actually fits BEFORE it enters the level. MobBuilder.summon
+                // drops every mob of a pack on the identical data block position, and this hook runs while
+                // the mob is still detached, so the placement search also spreads a pack out.
+                //
+                // this used to be UnstuckMobs.unstuckFromWalls, whose failure branch killed the mob outright.
+                // Nobody could see that death - the mob was not in the level yet - but its hurt and death
+                // sounds carry by position and vanilla loot still dropped, which is the burst of invisible
+                // deaths players heard on map entry, with no Mine and Slash drops because the mob's rarity
+                // and stats are applied further down in summon(). It also left mobSpawnCount counting mobs
+                // that could never be killed, so map completion could not reach 100%.
+                if (event.mob instanceof Mob mob && mob.level() instanceof ServerLevel sl) {
+                    DungeonAddonUtil.placeDungeonMob(sl, mob, mob.blockPosition(), mob.getRandom());
+                }
             }
         });
 

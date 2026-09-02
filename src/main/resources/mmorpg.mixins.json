@@ -14,6 +14,7 @@
     "FallingBlockEntityMixin",
     "LivingEntityMixin",
     "LootTableMixin",
+    "MercenaryKillCreditMixin",
     "ObeliskMobTierStatsMixin",
     "PlayerAnimMixin",
     "PlayerSaveInvalidateCacheMixin",

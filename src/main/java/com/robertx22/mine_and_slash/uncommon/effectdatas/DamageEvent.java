@@ -155,6 +155,20 @@ public class DamageEvent extends EffectEvent {
         return ID;
     }
 
+    /**
+     * Whether this entity is scored by the monster rulebook rather than the player one.
+     * <p>
+     * A monster has no gear to score damage off, so {@link #addMobDamageMultipliers} hands it a
+     * level based catch up multiplier instead. A mercenary is a companion: it scores its damage off
+     * its own Weapon Damage, gear and class stats exactly like the player who hired it, so applying
+     * the monster multipliers on top paid it twice - x8.33 at level 100 on CTE2's numbers. Same
+     * carve out {@link com.robertx22.mine_and_slash.database.data.value_calc.ValueCalculation}'s
+     * mob base damage and {@code StatCalculation.collectStatsWithCtx} already make.
+     */
+    private static boolean isMonster(LivingEntity en) {
+        return !(en instanceof Player) && !(en instanceof MercenaryEntity);
+    }
+
     public void addMobDamageMultipliers() {
 
         try {
@@ -163,10 +177,10 @@ public class DamageEvent extends EffectEvent {
                 return;// temp fix for mobs doing too much ailment proc dmg
             }
 
-            if (source instanceof Player == false) {
+            if (isMonster(source)) {
 
 
-                if (target instanceof Player) {
+                if (!isMonster(target)) {
                     if (sourceData.getLevel() > targetData.getLevel()) {
                         float penalty = LootUtils.getLevelDistancePunishmentMulti(sourceData.getLevel(), targetData.getLevel());
 
@@ -196,14 +210,14 @@ public class DamageEvent extends EffectEvent {
                 }
 
                 if (isSourceInMapWorld()) {
-                    if (target instanceof Player) {
+                    if (!isMonster(target)) {
                         this.addMoreMulti(() -> Words.MAP_RES_REQ_LACK_DMG_MULTI.locName(), EventData.NUMBER, getMapResReqDmgMulti(balance));
                     }
                 }
 
             } else {
                 if (targetData.getLevel() > sourceData.getLevel()) {
-                    if (target instanceof Player == false) {
+                    if (isMonster(target)) {
                         float penalty = LootUtils.getLevelDistancePunishmentMulti(sourceData.getLevel(), targetData.getLevel());
                         if (penalty < 1) {
                             this.addMoreMulti(() -> Words.DMG_TO_HIGH_LVL_MOB_DMG_MULTI.locName(), EventData.NUMBER, penalty);
@@ -735,11 +749,16 @@ public class DamageEvent extends EffectEvent {
         sendDamageMessage(info);
 
 
-        if (target instanceof Player p) { // todo this code sucks
-            // a getter should not modify anything
-            dmg = DamageAbsorbedByMana.modifyEntityDamage(this, dmg);
-            dmg = MagicShield.modifyEntityDamage(this, info, dmg);
-        }
+        // deliberately not gated on the target being a player. both of these are already entity
+        // agnostic - they read targetData's resources and calculated stats and return the damage
+        // untouched when the resource or the stat is zero - so a mob that has neither pays one map
+        // lookup and nothing else. Gated, a mercenary's Magic Shield was granted by its base stats,
+        // refilled every second by MercenaryManager.tickRegen, synced to the client and drawn on the
+        // merc hud, and then never spent: a bar that could only ever be full. Ungated it also works
+        // for summons and for any mob a datapack hands a shield to, which is the point.
+        // a getter should not modify anything
+        dmg = DamageAbsorbedByMana.modifyEntityDamage(this, dmg);
+        dmg = MagicShield.modifyEntityDamage(this, info, dmg);
 
         float vanillaDamage = HealthUtils.realToVanilla(target, dmg);
 

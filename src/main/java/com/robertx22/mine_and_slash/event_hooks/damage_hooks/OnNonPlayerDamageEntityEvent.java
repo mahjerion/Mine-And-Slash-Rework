@@ -26,16 +26,18 @@ public class OnNonPlayerDamageEntityEvent extends EventConsumer<ExileEvents.OnDa
         if (event.source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
             return;
         }
+        // ahead of the "the damage came from a living entity" guard below, not behind it: IN_WALL has no
+        // causing entity, so that guard returned first and this rescue was unreachable for as long as it
+        // has existed. A mob pushed into a wall after it spawned gets one attempt to free itself; the
+        // library's enviro-damage immunity is what keeps it alive in the meantime.
+        if (event.mob instanceof Player == false && event.source.is(DamageTypes.IN_WALL)) {
+            if (WorldUtils.isMapWorldClass(event.mob.level(), event.mob.blockPosition())) {
+                UnstuckMobs.unstuckFromWalls(event.mob);
+                return;
+            }
+        }
         if (event.source.getEntity() instanceof LivingEntity == false) {
             return;
-        }
-        if (event.mob instanceof Player == false) {
-            if (WorldUtils.isMapWorldClass(event.mob.level(), event.mob.blockPosition())) {
-                if (event.source.is(DamageTypes.IN_WALL)) {
-                    UnstuckMobs.unstuckFromWalls(event.mob);
-                    return;
-                }
-            }
         }
         if (DmgSourceUtils.isMyDmgSource(event.source)) {
             return;

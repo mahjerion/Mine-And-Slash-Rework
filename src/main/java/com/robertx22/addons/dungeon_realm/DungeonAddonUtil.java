@@ -41,13 +41,30 @@ public class DungeonAddonUtil {
      * The encounters used to place mobs at "encounter pos + random offset, at y + 1" with no space
      * check at all. y + 1 is the layer the encounter's own {@link BonusEncounterTopperBlock} occupies
      * - a full solid cube - so a good share of every pack spawned straight into it, and the rest could
-     * land in the room's walls.
+     * land in the room's walls. That column is therefore skipped here.
      * <p>
-     * Callers should still run UnstuckMobs.unstuckFromWalls after addFreshEntity, the same way regular
-     * dungeon mobs are handled in PREPARE_DUNGEON_MOB_SPAWN, as a last resort for the rooms where
-     * nothing here works out.
+     * Callers should still run UnstuckMobs.unstuckFromWalls after addFreshEntity, as a last resort for
+     * the rooms where nothing here works out.
      */
     public static void placeEncounterMob(ServerLevel level, Mob mob, BlockPos origin, RandomSource random) {
+        placeMob(level, mob, origin, random, true);
+    }
+
+    /**
+     * The same search for an ordinary data-block mob. Nothing occupies the origin column for those -
+     * ProcessMapChunks.generateData has already taken the invisible data block out of the world - so
+     * that column is a perfectly good spot and is included.
+     * <p>
+     * MobBuilder.summon puts every mob of a pack on the identical BlockPos, which is the main reason
+     * so many of them read as "in a wall" at all. This runs from PREPARE_DUNGEON_MOB_SPAWN, where the
+     * pack members placed by earlier iterations are already in the level, so {@code noCollision} below
+     * sees them and the pack fans out instead of stacking.
+     */
+    public static void placeDungeonMob(ServerLevel level, Mob mob, BlockPos origin, RandomSource random) {
+        placeMob(level, mob, origin, random, false);
+    }
+
+    private static void placeMob(ServerLevel level, Mob mob, BlockPos origin, RandomSource random, boolean skipOriginColumn) {
         // jitter the search start: SpawnPointHelper is a deterministic BFS, so seeding every guardian
         // of a pack from the encounter block itself would resolve all of them onto one spot
         BlockPos start = origin.offset(random.nextInt(5) - 2, 0, random.nextInt(5) - 2);
@@ -60,7 +77,7 @@ public class DungeonAddonUtil {
         List<BlockPos> candidates = new ArrayList<>();
         for (int dx = -SPAWN_SEARCH_RADIUS; dx <= SPAWN_SEARCH_RADIUS; dx++) {
             for (int dz = -SPAWN_SEARCH_RADIUS; dz <= SPAWN_SEARCH_RADIUS; dz++) {
-                if (dx == 0 && dz == 0) {
+                if (skipOriginColumn && dx == 0 && dz == 0) {
                     continue; // the encounter block's own column, where the topper sits
                 }
                 for (int dy : SPAWN_SEARCH_HEIGHTS) {

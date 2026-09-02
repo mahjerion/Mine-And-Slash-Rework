@@ -34,6 +34,16 @@ public class MapData {
     // survive, so a transient field there would be wiped exactly when it is needed.
     public Set<String> paidPlayers = new HashSet<>();
 
+    // Uber and Pinnacle maps opt out of the ticket pool entirely. They are crafted with an upgrade
+    // rather than rolled, and the boss arena is the whole point of the run, so a death must never
+    // lock you out of one.
+    //
+    // Captured here at map start from the map item's dungeon_realm NBT rather than derived on demand:
+    // the item is consumed by stack.shrink(1) as the run begins, and this field rides the same gson
+    // sync to the client that the ticket count does. A MapData written before this field existed
+    // deserializes to false - a normal, ticketed map, which is the safe default.
+    public boolean unlimitedEntries = false;
+
     // the size of this map's ticket pool, from its rarity. 0 or less means the rarity opted out and
     // the map can never be sealed.
     public int maxEntryTickets() {
@@ -47,7 +57,7 @@ public class MapData {
 
     public int entryTicketsLeft() {
         int max = maxEntryTickets();
-        if (max <= 0) {
+        if (unlimitedEntries || max <= 0) {
             return Integer.MAX_VALUE;
         }
         return Math.max(0, max - entriesUsed);

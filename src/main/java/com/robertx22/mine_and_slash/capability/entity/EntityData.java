@@ -176,6 +176,12 @@ public class EntityData implements ICap, INeededForClient {
 
     public DamageEvent lastDamageTaken = null;
 
+    // the mercenary whose kill this was, stamped by MercenaryKillCreditMixin at the head of die().
+    // Only there to survive the source rewrite that mixin performs: OnMobDeathDrops used to find the
+    // mercenary through the death's damage source, which now names the owner instead, and mobs with
+    // set_health_damage_override never set lastDamageSource at all. Read once, during this death.
+    public transient MercenaryEntity lastKillCreditedMerc = null;
+
     transient LivingEntity entity;
 
     // the resolved EntityConfig is constant for a given entity type, but resolving it (ExileDB.getEntityConfig)

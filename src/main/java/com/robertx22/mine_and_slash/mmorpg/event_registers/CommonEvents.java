@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.summons.entity.SummonEntity;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.LivingHurtUtils;
+import com.robertx22.mine_and_slash.mixin_ducks.DamageSourceDuck;
 import com.robertx22.mine_and_slash.event_hooks.damage_hooks.reworked.NewDamageMain;
 import com.robertx22.mine_and_slash.event_hooks.entity.OnMobSpawn;
 import com.robertx22.mine_and_slash.event_hooks.entity.OnTrackEntity;
@@ -136,18 +137,6 @@ public class CommonEvents {
 
             if (event.getEntity() != null) {
 
-                // a mercenary kill is credited to its owner for everything vanilla: loot tables,
-                // advancements, and quest mods that watch kill credit. this fires before die(), which
-                // is where getKillCredit() and dropAllDeathLoot() read the field.
-                //
-                // note it deliberately does NOT make the owner the damage source, so the on-kill proc
-                // branch below still doesn't fire - the design wants participation, not on-kill stats.
-                if (event.getSource().getEntity() instanceof MercenaryEntity merc
-                        && merc.getOwner() instanceof Player owner
-                        && !(event.getEntity() instanceof Player)) {
-                    event.getEntity().setLastHurtByPlayer(owner);
-                }
-
                 // the mercenary itself died. it keeps its experience (design section 5) and comes back
                 // once its owner is out of combat.
                 if (event.getEntity() instanceof MercenaryEntity deadMerc && deadMerc.getOwner() instanceof Player owner) {
@@ -158,7 +147,13 @@ public class CommonEvents {
                     MercenaryManager.requestRespawn(owner);
                 }
 
-                if (event.getSource().getEntity() instanceof Player p) {
+                // the getCreditedMerc() test is the mercenary carve-out. MercenaryKillCreditMixin has
+                // already rewritten the source of a mercenary's kill to name the owner as the causing
+                // entity, so that a merc kill counts for loot tables, advancements and quest mods -
+                // but the design wants participation only, never on-kill stats, and without this the
+                // rewrite would start firing them. Set on that substitute source and nothing else.
+                if (event.getSource().getEntity() instanceof Player p
+                        && ((DamageSourceDuck) event.getSource()).getCreditedMerc() == null) {
                     LivingEntity target = event.getEntity();
                     if (!Load.Unit(target).getCooldowns().isOnCooldown("onkill")) {
                         DamageEvent dmg = Load.Unit(target).lastDamageTaken;

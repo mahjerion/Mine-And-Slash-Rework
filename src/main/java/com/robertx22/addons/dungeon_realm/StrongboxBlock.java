@@ -176,11 +176,15 @@ public class StrongboxBlock extends BaseEntityBlock {
             entityData.strongboxPos = pos.asLong();
             be.guardiansRemaining++;
             be.spawnedCount++;
-            // last resort for a room where nothing above found space - strictly after the tagging and
-            // the counter bump, because unstuckFromWalls kills a mob it can't free, and that death has
-            // to come back through the hook and decrement this box. Tagged too late, the box would sit
-            // there waiting forever on a guardian that no longer exists.
-            UnstuckMobs.unstuckFromWalls(mob);
+            // last resort for a room where nothing above found space. unstuckFromWalls no longer kills a
+            // mob it cannot free - that phantom death is what players heard bursting on map entry - so the
+            // decrement that used to arrive through the LivingDeathEvent hook has to happen here instead.
+            // Without it the box would sit waiting forever on a guardian that is not in the world.
+            if (!UnstuckMobs.unstuckFromWalls(mob)) {
+                mob.discard();
+                be.guardiansRemaining = Math.max(0, be.guardiansRemaining - 1);
+                be.setChanged();
+            }
         }
     }
 

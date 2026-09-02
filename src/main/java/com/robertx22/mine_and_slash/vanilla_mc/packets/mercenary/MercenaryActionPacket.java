@@ -9,6 +9,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -105,6 +106,13 @@ public class MercenaryActionPacket extends MyPacket<MercenaryActionPacket> {
             case CYCLE_MODE -> {
                 data.mode = data.mode.next();
                 Load.player(p).playerDataSync.setDirtyAndSync(p);
+                // announced from here rather than from the keybind handler for two reasons: this side
+                // holds the authoritative new mode - the client copy is still a sync behind at the
+                // moment of the press - and the screen's own mode button gets the same feedback free.
+                // both lang keys already exist, the mode tooltip is built from this exact pair.
+                p.displayClientMessage(Words.MercenaryCombatMode.locName()
+                        .append(": ")
+                        .append(data.mode.locName().withStyle(data.mode.format)), true);
             }
             case TOGGLE_DISABLED -> {
                 // on the storage rather than on `data`, which is per mercenary class - switching

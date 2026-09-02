@@ -27,6 +27,11 @@ public class KeybindsRegister {
 
     public static KeyMapping SHOW_ENTITY_STATS = new ExileKeyMapping(prefix + "show_entity_stats", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_EQUAL, CATEGORY);
 
+    // cycles the active mercenary between Aggressive, Defensive and Idle without opening the hub.
+    // IN_GAME like the other action binds - it should not fire from a menu, and MercenaryScreen
+    // listens for it explicitly instead (vanilla only feeds KeyMapping state with no screen open).
+    public static KeyMapping CYCLE_MERC_MODE = new ExileKeyMapping(prefix + "cycle_merc_mode", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY);
+
     public static KeyMapping OPEN_MASTER_BACKPACK = new ExileKeyMapping(
             prefix + "open_master_backpack",
             KeyConflictContext.IN_GAME,
@@ -56,6 +61,7 @@ public class KeybindsRegister {
                 HOTBAR_SWAP,
                 QUICK_DRINK_POTION,
                 SHOW_ENTITY_STATS,
+                CYCLE_MERC_MODE,
                 OPEN_MASTER_BACKPACK
         ));
         for (SpellKeybind k : SpellKeybind.ALL) {

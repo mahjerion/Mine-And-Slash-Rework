@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mixins;
 
+import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.mixin_ducks.DamageSourceDuck;
 import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,18 @@ public class DamageSourceMixin implements DamageSourceDuck {
     private float originalHP = 1;
 
     private boolean mnsOverride = false;
+
+    private MercenaryEntity creditedMerc = null;
+
+    @Override
+    public void setCreditedMerc(MercenaryEntity merc) {
+        this.creditedMerc = merc;
+    }
+
+    @Override
+    public MercenaryEntity getCreditedMerc() {
+        return creditedMerc;
+    }
 
     @Override
     public void setMnsDamage(float dmg) {

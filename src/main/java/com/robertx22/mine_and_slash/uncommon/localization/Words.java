@@ -365,6 +365,7 @@ public enum Words implements IAutoLocName {
 
     Map("Map"),
     MAP_ENTRY_TICKETS("Entry Tickets"),
+    MAP_ENTRY_TICKETS_UNLIMITED("Unlimited"),
     MapDESC("Items used to travel to a Dungeon Dimension using the Map Device."),
 
     Maps("Maps"),

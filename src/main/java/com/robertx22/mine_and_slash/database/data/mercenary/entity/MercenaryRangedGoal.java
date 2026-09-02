@@ -7,8 +7,6 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
@@ -56,18 +54,12 @@ public class MercenaryRangedGoal extends Goal {
     private static final int MELEE_ATTACK_INTERVAL = 20;
     private static final int RANGED_ATTACK_INTERVAL = 20;
 
-    // how long a retreat path is allowed to run before a new one is asked for. every moveTo to a raw
-    // position is a fresh A* over a region snapshot - the flee point slides along with the mercenary,
-    // so PathNavigation's "same target as last time" cache almost never hits and re-pathing every tick
-    // both costs real time and keeps resetting the path out from under the mercenary's feet.
-    private static final int FLEE_REPATH_INTERVAL = 10;
-
     private final MercenaryEntity merc;
     private final double speedModifier;
     private final MercenaryStrafe strafe = new MercenaryStrafe();
+    private final MercenaryRetreat retreat = new MercenaryRetreat();
     private int meleeCooldown;
     private int rangedCooldown;
-    private int fleeRepathCooldown;
 
     public MercenaryRangedGoal(MercenaryEntity merc, double speedModifier) {
         this.merc = merc;
@@ -101,7 +93,7 @@ public class MercenaryRangedGoal extends Goal {
     public void start() {
         meleeCooldown = 0;
         rangedCooldown = 0;
-        fleeRepathCooldown = 0;
+        retreat.reset();
         merc.setAggressive(true);
     }
 
@@ -130,22 +122,25 @@ public class MercenaryRangedGoal extends Goal {
         double holdSqr = hold * hold;
 
         // MercenarySpellCaster owns the navigation while it walks a skill into range. without this
-        // the fleeFrom below undoes every step on the tick after it is taken, and a kiting caster
+        // the retreat below undoes every step on the tick after it is taken, and a kiting caster
         // can never close on anything - its short range skills would be unusable by design.
         if (!merc.isApproachingForCast()) {
             if (distSqr < holdSqr * FLEE_BAND * FLEE_BAND) {
                 strafe.reset();
-                fleeFrom(target, hold);
+                retreat.tick(merc, target, hold, speedModifier);
             } else if (distSqr > holdSqr) {
                 strafe.reset();
+                retreat.reset();
                 merc.getNavigation().moveTo(target, speedModifier);
             } else if (!merc.isCastingSpell()) {
                 // parked at the distance it wants, waiting on cooldowns. sway rather than stand
                 // rigid - the band above already owns the distance, so this is purely lateral
+                retreat.reset();
                 strafe.tick(merc, target, 0F);
             }
         } else {
             strafe.reset();
+            retreat.reset();
         }
 
         // both attacks are opportunistic and neither one touches navigation. melee used to be an arm
@@ -167,9 +162,6 @@ public class MercenaryRangedGoal extends Goal {
         }
         if (rangedCooldown > 0) {
             rangedCooldown--;
-        }
-        if (fleeRepathCooldown > 0) {
-            fleeRepathCooldown--;
         }
     }
 
@@ -201,29 +193,6 @@ public class MercenaryRangedGoal extends Goal {
         merc.swing(InteractionHand.MAIN_HAND);
         merc.doHurtTarget(target);
         meleeCooldown = MELEE_ATTACK_INTERVAL;
-    }
-
-    private void fleeFrom(LivingEntity target, double hold) {
-        // let the current retreat run until it finishes or the timer is up, the way vanilla's own
-        // kiting goal (AvoidEntityGoal) does - it paths once and simply waits for isDone().
-        if (fleeRepathCooldown > 0 && !merc.getNavigation().isDone()) {
-            return;
-        }
-        // set before the checks below on purpose: a cornered mercenary with nowhere to go shouldn't
-        // re-roll getPosAway (ten random attempts of its own) on every single tick.
-        fleeRepathCooldown = FLEE_REPATH_INTERVAL;
-
-        // unlike a raw "four blocks directly backwards" vector, this only ever returns somewhere the
-        // mercenary can actually stand on and path to, so backing into terrain or off a ledge is out.
-        Vec3 away = DefaultRandomPos.getPosAway(merc, Math.max(2, (int) hold), 4, target.position());
-        if (away == null) {
-            return;
-        }
-        // and refuse a "retreat" that doesn't actually gain any ground
-        if (target.distanceToSqr(away) < target.distanceToSqr(merc)) {
-            return;
-        }
-        merc.getNavigation().moveTo(away.x, away.y, away.z, speedModifier);
     }
 
     private void tryRangedAttack(LivingEntity target) {

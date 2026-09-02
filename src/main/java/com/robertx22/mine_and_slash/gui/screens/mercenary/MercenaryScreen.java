@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.gui.screens.mercenary;
 
+import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.a_libraries.neat.NeatConfig;
 import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
@@ -12,6 +13,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.bases.BaseScreen;
 import com.robertx22.mine_and_slash.gui.bases.INamedScreen;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.mmorpg.registers.client.KeybindsRegister;
 import com.robertx22.mine_and_slash.saveclasses.PointData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
@@ -20,6 +22,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Words;
 import com.robertx22.mine_and_slash.uncommon.stat_calculation.MercenaryStatUtils;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenaryActionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -97,6 +100,24 @@ public class MercenaryScreen extends BaseScreen implements INamedScreen {
     protected void init() {
         super.init();
         rebuild();
+    }
+
+    /**
+     * The stance keybind, repeated here because vanilla only feeds KeyMapping state while no screen
+     * is open - so OnKeyPress is dead the moment this screen goes up, and the one place the mode is
+     * actually displayed would be the one place the key did nothing.
+     * <p>
+     * Same shape BaseScreen already uses for the hub key. No EditBox on this screen, so it needs none
+     * of the focus guards that one carries, and nothing here has to refresh: MercModeButton re-reads
+     * the live mode every frame, so the icon follows the sync on its own.
+     */
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (KeybindsRegister.CYCLE_MERC_MODE.matches(keyCode, scanCode)) {
+            Packets.sendToServer(MercenaryActionPacket.cycleMode());
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

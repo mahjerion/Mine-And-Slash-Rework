@@ -123,15 +123,16 @@ public class DodgeRating extends Stat implements IUsableStat {
             if (effect.data.getBoolean(EventData.AVOIDANCE_ROLLED)) {
                 return false;
             }
-            if (effect.GetElement() != Elements.Physical) {
-                return false;
-            }
-            // bonus_dmg is allowed on purpose: added flat physical damage on a non physical skill rides in
-            // its own bonus_dmg event (see PhysicalToElement), and the parent of that event isn't physical,
-            // so gating on hit alone let that part of an attack bypass Dodge Rating entirely - the same
-            // bypass PhysicalDamageTakenAs had to widen its gate to fix. a physical parent can't produce a
-            // physical child (same element damage goes into the layer, not a bonus event), so this can't
-            // double charge.
+            // no element gate on purpose: Dodge Rating answers for attacks the way Spell Dodge
+            // answers for magic. a natively elemental non magic hit (flame_strike is fire + melee,
+            // tidal_strike is cold + melee) used to fall between the two - refused here on element
+            // and there on the missing magic tag - and was dodgeable by nothing at all.
+            //
+            // bonus_dmg is kept for safety rather than need now. with no element gate the parent
+            // event is always eligible and always resolves first - calculateEffects() finishes
+            // before activate() builds a single child - so every element split inherits the parent's
+            // answer through AVOIDANCE_ROLLED above. that flag, not the element, is what stops one
+            // attack from charging the entropy pool once per split.
             if (!effect.getAttackType().isHit() && effect.getAttackType() != AttackType.bonus_dmg) {
                 return false;
             }

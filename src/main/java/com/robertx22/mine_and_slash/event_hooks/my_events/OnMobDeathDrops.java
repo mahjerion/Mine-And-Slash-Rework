@@ -149,6 +149,12 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
      * for the paths that never set a last damage source.
      */
     private static MercenaryEntity resolveMercKiller(LivingEntity mobKilled, ExileEvents.OnMobDeath onMobDeath) {
+        // the authoritative answer, stamped at the head of die() by MercenaryKillCreditMixin. The two
+        // routes below are the pre-mixin ones and can no longer see a mercenary on their own: the
+        // death's source now names the owner, so onMobDeath.killer is the owner too.
+        if (Load.Unit(mobKilled).lastKillCreditedMerc != null) {
+            return Load.Unit(mobKilled).lastKillCreditedMerc;
+        }
         try {
             if (mobKilled.getLastDamageSource() != null
                     && mobKilled.getLastDamageSource().getEntity() instanceof MercenaryEntity merc) {

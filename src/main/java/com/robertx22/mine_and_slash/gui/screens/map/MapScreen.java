@@ -187,7 +187,7 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
             if (synced == null || synced.data == null || synced.data.playerUuid.isEmpty()) {
                 return null;
             }
-            if (synced.data.maxEntryTickets() <= 0) {
+            if (!synced.data.unlimitedEntries && synced.data.maxEntryTickets() <= 0) {
                 return null; // this rarity opted out of the mechanic entirely
             }
             return synced.data;
@@ -196,7 +196,8 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
         }
     }
 
-    // "Entry Tickets  n / m", hanging below the panel rather than inside it - the lower half of
+    // "Entry Tickets: n / m" (or ": Unlimited" on an Uber/Pinnacle map, which is exempt from the
+    // mechanic), hanging below the panel rather than inside it - the lower half of
     // the background art is already taken by the map bar. Drawn as its own nine-patch box rather
     // than as a fourth line of the stats panel, because DungeonStatsOverlay.renderAt takes exactly
     // three components and lives in dungeon_realm.
@@ -208,15 +209,26 @@ public class MapScreen extends BaseScreen implements INamedScreen, IAlertScreen 
 
         var font = mc.font;
 
-        int left = map.entryTicketsLeft();
-        int max = map.maxEntryTickets();
+        Component line;
 
-        // amber at one ticket left, red once the map is sealed - the point where leaving is final
-        ChatFormatting color = left <= 0 ? ChatFormatting.RED : (left == 1 ? ChatFormatting.GOLD : ChatFormatting.AQUA);
+        if (map.unlimitedEntries) {
+            // an Uber/Pinnacle map cost a fragment to make; this reads as a perk of that, so purple
+            // rather than a step on the aqua/gold/red drain ramp below.
+            line = Words.MAP_ENTRY_TICKETS.locName()
+                    .append(Component.literal(": "))
+                    .append(Words.MAP_ENTRY_TICKETS_UNLIMITED.locName())
+                    .withStyle(ChatFormatting.LIGHT_PURPLE);
+        } else {
+            int left = map.entryTicketsLeft();
+            int max = map.maxEntryTickets();
 
-        Component line = Words.MAP_ENTRY_TICKETS.locName()
-                .append(Component.literal(": " + left + " / " + max))
-                .withStyle(color);
+            // amber at one ticket left, red once the map is sealed - the point where leaving is final
+            ChatFormatting color = left <= 0 ? ChatFormatting.RED : (left == 1 ? ChatFormatting.GOLD : ChatFormatting.AQUA);
+
+            line = Words.MAP_ENTRY_TICKETS.locName()
+                    .append(Component.literal(": " + left + " / " + max))
+                    .withStyle(color);
+        }
 
         int boxW = font.width(line) + STATS_PANEL_PADDING * 2;
         int boxH = font.lineHeight + STATS_PANEL_PADDING * 2;

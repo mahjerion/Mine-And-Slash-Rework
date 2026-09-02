@@ -290,8 +290,14 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                     // player. The item is consumed by stack.shrink(1) the moment the map starts, so
                     // this is always the starting pool for its rarity - the live remaining count is
                     // shown in chat on entry and on the Map screen inside the map.
+                    //
+                    // Uber and Pinnacle maps are exempt and enter freely - same condition
+                    // MapBonusContentsData uses to give the instance its boss arena.
                     int tickets = getRarity().map_lives;
-                    if (tickets > 0) {
+                    if (dungeonData != null && (dungeonData.uber || dungeonData.pinnacle)) {
+                        additional.add(Itemtips.MAP_ENTRY_TICKETS.locName(Words.MAP_ENTRY_TICKETS_UNLIMITED.locName())
+                                .withStyle(ChatFormatting.LIGHT_PURPLE));
+                    } else if (tickets > 0) {
                         additional.add(Itemtips.MAP_ENTRY_TICKETS.locName(tickets).withStyle(ChatFormatting.AQUA));
                     }
                     return additional;

@@ -32,8 +32,11 @@ public class EffectAndCondition extends AutoHashClass {
     }
 
     public enum Condition implements IGUID {
-        HIT("hit", "Hit", () -> Arrays.asList(StatConditions.ATTACK_TYPE_MATCHES.get(AttackType.hit))),
-        CRIT("crit", "Crit", () -> Arrays.asList(StatConditions.IS_BOOLEAN.get(EventData.CRIT), StatConditions.ATTACK_TYPE_MATCHES.get(AttackType.hit)));
+        // a dodged hit still runs the whole stat sweep - only activate() short circuits on it
+        // (DamageEvent.activate) - so without this gate a missed attack still handed out its
+        // charge. same condition the *_when_hit datapack stats already carry.
+        HIT("hit", "Hit", () -> Arrays.asList(StatConditions.ATTACK_TYPE_MATCHES.get(AttackType.hit), StatConditions.IS_FALSE.get(EventData.IS_DODGED))),
+        CRIT("crit", "Crit", () -> Arrays.asList(StatConditions.IS_BOOLEAN.get(EventData.CRIT), StatConditions.ATTACK_TYPE_MATCHES.get(AttackType.hit), StatConditions.IS_FALSE.get(EventData.IS_DODGED)));
 
         public String id;
         public String name;

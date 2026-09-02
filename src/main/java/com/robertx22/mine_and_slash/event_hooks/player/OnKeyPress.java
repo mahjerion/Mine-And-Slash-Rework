@@ -15,6 +15,7 @@ import com.robertx22.mine_and_slash.vanilla_mc.packets.OpenEntityStatsRequestPac
 import com.robertx22.mine_and_slash.vanilla_mc.packets.QuickUsePotionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.UnsummonPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenBackpackPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenaryActionPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellServerToCastSpellPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -68,6 +69,14 @@ public class OnKeyPress {
 
         if (KeybindsRegister.QUICK_DRINK_POTION.consumeClick()) {
             Packets.sendToServer(new QuickUsePotionPacket());
+        }
+
+        // deliberately consumeClick and not the isDown chain above: that chain is one mutually
+        // exclusive else-if sharing a single cooldown, so a cycle bind parked in it would be eaten
+        // by whichever branch ran first. edge triggered means exactly one step per press.
+        // MercenaryScreen.keyPressed carries the same call for when the screen is open.
+        if (KeybindsRegister.CYCLE_MERC_MODE.consumeClick()) {
+            Packets.sendToServer(MercenaryActionPacket.cycleMode());
         }
 
         // with hotbar swapping off there are 8 keybinds and no second bar to swap to, so swapping would

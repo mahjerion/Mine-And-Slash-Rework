@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.uncommon.effectdatas.DamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.OnMobKilledByDamageEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.RestoreResourceEvent;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.AttackType;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.Elements;
 import com.robertx22.mine_and_slash.uncommon.interfaces.EffectSides;
@@ -88,6 +89,10 @@ public class ResourceStats {
             .setPriority(StatPriority.Damage.AFTER_DAMAGE_BONUSES)
             .setSide(EffectSides.Source)
             .addCondition(x -> StatConditions.ATTACK_TYPE_MATCHES.get(x.attackType))
+            // this leeches a flat amount from stat data, not a share of the damage, so a dodged
+            // hit refunded the resource in full. dots keep working - they are never dodged, so
+            // the flag is false and the condition just passes.
+            .addCondition(StatConditions.IS_FALSE.get(EventData.IS_DODGED))
             //.addCondition(x -> StatConditions.IS_NOT_SUMMON_ATTACK) // todo why did i do this?
             .addEffect(e -> StatEffects.LEECH_RESTORE_RESOURCE_BASED_ON_STAT_DATA.get(e.resource))
             .setLocName(x -> "Leech " + x.resource.locname + " on " + x.attackType.locname)

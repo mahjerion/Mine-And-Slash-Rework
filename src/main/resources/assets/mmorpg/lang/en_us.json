@@ -1941,6 +1941,48 @@
 "_comment": " [CATEGORY]: FORMATTER - NAMES",
 
 
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+	"mmorpg.gear_type.bow": "Bow",
+	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
+	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
+	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
+	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
+	"mmorpg.gear_type.crossbow": "Crossbow",
+	"mmorpg.gear_type.leather_boots": "Leather Boots",
+	"mmorpg.gear_type.leather_chest": "Leather Chest",
+	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
+	"mmorpg.gear_type.leather_pants": "Leather Pants",
+	"mmorpg.gear_type.necklace": "Necklace",
+	"mmorpg.gear_type.plate_boots": "Plate Boots",
+	"mmorpg.gear_type.plate_chest": "Plate Chest",
+	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
+	"mmorpg.gear_type.plate_pants": "Plate Pants",
+	"mmorpg.gear_type.ring": "Ring",
+	"mmorpg.gear_type.shield": "Tower Shield",
+	"mmorpg.gear_type.staff": "Staff",
+	"mmorpg.gear_type.sword": "Sword",
+	"mmorpg.gear_type.tome": "Tome",
+	"mmorpg.gear_type.totem": "Totem",
+	"mmorpg.gear_type.trident": "Trident",
+	"mmorpg.gearslot.boots": "Boots",
+	"mmorpg.gearslot.bow": "Bow",
+	"mmorpg.gearslot.chest": "Chest",
+	"mmorpg.gearslot.crossbow": "Crossbow",
+	"mmorpg.gearslot.helmet": "Helmet",
+	"mmorpg.gearslot.necklace": "Necklace",
+	"mmorpg.gearslot.pants": "Pants",
+	"mmorpg.gearslot.ring": "Ring",
+	"mmorpg.gearslot.shield": "Shield",
+	"mmorpg.gearslot.staff": "Staff",
+	"mmorpg.gearslot.sword": "Sword",
+	"mmorpg.gearslot.tome": "Tome",
+	"mmorpg.gearslot.totem": "Totem",
+	"mmorpg.gearslot.trident": "Trident",
+
+"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
+
+
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
 
 	"mmorpg.unique_gear.air_disaster.name": "Aria of Disaster",
@@ -1996,48 +2038,6 @@
 	"mmorpg.unique_gear.witch_brew.name": "Witch's Brew",
 
 "_comment": " [CATEGORY]: UNIQUE ITEMS - NAMES",
-
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
-
-	"mmorpg.gear_type.bow": "Bow",
-	"mmorpg.gear_type.cloth_boots": "Cloth Boots",
-	"mmorpg.gear_type.cloth_chest": "Cloth Chest",
-	"mmorpg.gear_type.cloth_helmet": "Cloth Helmet",
-	"mmorpg.gear_type.cloth_pants": "Cloth Pants",
-	"mmorpg.gear_type.crossbow": "Crossbow",
-	"mmorpg.gear_type.leather_boots": "Leather Boots",
-	"mmorpg.gear_type.leather_chest": "Leather Chest",
-	"mmorpg.gear_type.leather_helmet": "Leather Helmet",
-	"mmorpg.gear_type.leather_pants": "Leather Pants",
-	"mmorpg.gear_type.necklace": "Necklace",
-	"mmorpg.gear_type.plate_boots": "Plate Boots",
-	"mmorpg.gear_type.plate_chest": "Plate Chest",
-	"mmorpg.gear_type.plate_helmet": "Plate Helmet",
-	"mmorpg.gear_type.plate_pants": "Plate Pants",
-	"mmorpg.gear_type.ring": "Ring",
-	"mmorpg.gear_type.shield": "Tower Shield",
-	"mmorpg.gear_type.staff": "Staff",
-	"mmorpg.gear_type.sword": "Sword",
-	"mmorpg.gear_type.tome": "Tome",
-	"mmorpg.gear_type.totem": "Totem",
-	"mmorpg.gear_type.trident": "Trident",
-	"mmorpg.gearslot.boots": "Boots",
-	"mmorpg.gearslot.bow": "Bow",
-	"mmorpg.gearslot.chest": "Chest",
-	"mmorpg.gearslot.crossbow": "Crossbow",
-	"mmorpg.gearslot.helmet": "Helmet",
-	"mmorpg.gearslot.necklace": "Necklace",
-	"mmorpg.gearslot.pants": "Pants",
-	"mmorpg.gearslot.ring": "Ring",
-	"mmorpg.gearslot.shield": "Shield",
-	"mmorpg.gearslot.staff": "Staff",
-	"mmorpg.gearslot.sword": "Sword",
-	"mmorpg.gearslot.tome": "Tome",
-	"mmorpg.gearslot.totem": "Totem",
-	"mmorpg.gearslot.trident": "Trident",
-
-"_comment": " [CATEGORY]: GEAR SLOTS - NAMES",
 
 
 "_comment": " [CATEGORY]: GEAR ITEMS - NAMES",
@@ -2171,6 +2171,7 @@
 	"mmorpg.chat.level_up_message_down": "%1$s Level: %2$s > %3$s!",
 	"mmorpg.chat.level_up_message_up": "Leveled Up!",
 	"mmorpg.chat.map_device_desc": "Used to Enter Endgame Dungeon Dimension.\n\nClick with an Adventure Map Item\n\nNOTE: Not the vanilla map item",
+	"mmorpg.chat.map_device_no_map_loaded": "No map has been loaded into this device.",
 	"mmorpg.chat.map_device_use_error": "[Map Device Use Fail]: ",
 	"mmorpg.chat.map_entry_ticket_spent": "Entry Ticket used. %1$s of %2$s remaining in this Map.",
 	"mmorpg.chat.map_exploration_rarity": "%1$s Exploration %2$s",
@@ -2267,6 +2268,7 @@
 	"mmorpg.chat.soulless_gear_more_info": "Souls Are Crafted with MNS Professions or Drop from Mobs",
 	"mmorpg.chat.spell_is_on_cd": "Spell is on cooldown",
 	"mmorpg.chat.stacks_dont_multiply_stats": "[Buff Stacks Don't multiply Stats]",
+	"mmorpg.chat.supports_past_links_returned": "That skill slot no longer has links for all of its Support Gems, so the extras were returned to you.",
 	"mmorpg.chat.this_is_only_usable_inside_a_map": "Only usable inside the Map.",
 	"mmorpg.chat.this_item_cant_be_used_more_than_x_times": "This item has already reached maximum uses: (%1$s)",
 	"mmorpg.chat.too_far_from_station": "You must be at a Salvaging Station.",
@@ -3003,6 +3005,16 @@
 	"mmorpg.word.major": "Major",
 	"mmorpg.word.mana_cost": "Mana Cost: %1$s",
 	"mmorpg.word.map": "Map",
+	"mmorpg.word.map_device_exit": "Exit",
+	"mmorpg.word.map_device_free_run": "A free run is ready to start",
+	"mmorpg.word.map_device_initiate": "Initiate Map",
+	"mmorpg.word.map_device_join": "Join Map",
+	"mmorpg.word.map_device_no_map": "Place a Map in the slot first",
+	"mmorpg.word.map_device_relic_stats": "Relic Bonuses",
+	"mmorpg.word.map_device_relic_uses": "%1$s Relic - %2$s",
+	"mmorpg.word.map_device_right_click_return": "Right-Click to take it back",
+	"mmorpg.word.map_device_slot_map_hint": "Click to place a Map",
+	"mmorpg.word.map_device_slot_relic_hint": "Click to place a Relic",
 	"mmorpg.word.map_downgrade_cooldown": "Map Downgrade option is on cooldown for %1$s seconds",
 	"mmorpg.word.map_entry_tickets": "Entry Tickets",
 	"mmorpg.word.map_entry_tickets_unlimited": "Unlimited",
@@ -3202,18 +3214,6 @@
 "_comment": " [CATEGORY]: WORDS - NAMES",
 
 
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-	"mmorpg.chaos_stat.normal_high": "Ascended",
-	"mmorpg.chaos_stat.normal_low": "Upgraded",
-	"mmorpg.chaos_stat.normal_med": "Elevated",
-	"mmorpg.chaos_stat.unique_high": "Ascended",
-	"mmorpg.chaos_stat.unique_low": "Upgraded",
-	"mmorpg.chaos_stat.unique_med": "Elevated",
-
-"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
-
-
 "_comment": " [CATEGORY]: OMENS - NAMES",
 
 	"mmorpg.omen.blood": "Omen of Blood",
@@ -3226,6 +3226,18 @@
 	"mmorpg.omen.waves": "Omen of Waves",
 
 "_comment": " [CATEGORY]: OMENS - NAMES",
+
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
+
+	"mmorpg.chaos_stat.normal_high": "Ascended",
+	"mmorpg.chaos_stat.normal_low": "Upgraded",
+	"mmorpg.chaos_stat.normal_med": "Elevated",
+	"mmorpg.chaos_stat.unique_high": "Ascended",
+	"mmorpg.chaos_stat.unique_low": "Upgraded",
+	"mmorpg.chaos_stat.unique_med": "Elevated",
+
+"_comment": " [CATEGORY]: CHAOS STAT - NAMES",
 
 
 "_comment": " [CATEGORY]: LOOTMODIFIER - NAMES",

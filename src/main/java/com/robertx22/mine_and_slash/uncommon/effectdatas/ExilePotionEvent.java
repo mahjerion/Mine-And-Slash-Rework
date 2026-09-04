@@ -42,6 +42,37 @@ public class ExilePotionEvent extends EffectEvent {
         this.data.setBoolean(EventData.EFFECT_IS_INFINITE, infinite);
     }
 
+    /**
+     * What {@link ExileEffectInstanceData#str_multi} would be if the effect were applied right now,
+     * from the caster's and holder's CURRENT stats. The multiplier used to be written once at apply
+     * time and never looked at again, so a player could stack Effect Strength gear, cast an infinite
+     * buff, take the gear off and keep the boosted buff forever. Everything else about a buff (caster
+     * level, spell level) is already read live on every stat calc; this makes the multiplier match.
+     * <p>
+     * Runs only the stat pass ({@link #calculateEffects()}), never {@link #activate()}, so it is a pure
+     * calculation. The event is deliberately NOT tied to its spell (no EventData.SPELL): with isSpell()
+     * false the caster's stats are read off its base Unit instead of a per-spell Unit, which would be a
+     * whole extra stat calc per active buff. Nothing grants Effect Strength through support gems or a
+     * skill gem's innate stats, so nothing is lost. If that ever changes, this is the line to flip.
+     */
+    public static float calcCurrentStrengthMulti(LivingEntity caster, LivingEntity target, ExileEffect effect, ExileEffectInstanceData inst) {
+        if (caster.level().isClientSide) {
+            // calculateEffects is a no-op on the client and would leave the number at 1
+            return inst.str_multi;
+        }
+        ExilePotionEvent event = new ExilePotionEvent(inst.calcSpell, Load.Unit(caster).getLevel(), effect, GiveOrTake2.give, caster, target, 0, false);
+        event.spellid = inst.spell_id;
+        event.data.getNumber(EventData.STACKS).number = Math.max(1, inst.stacks);
+
+        event.calculateEffects();
+
+        if (event.data.isCanceled()) {
+            // an immunity stat fired. keep what the buff has rather than zeroing it
+            return inst.str_multi;
+        }
+        return event.data.getNumber();
+    }
+
     @Override
     protected void activate() {
 

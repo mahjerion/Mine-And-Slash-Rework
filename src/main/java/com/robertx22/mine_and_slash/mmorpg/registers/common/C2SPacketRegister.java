@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.common;
 
+import com.robertx22.addons.map_device.MapDeviceActionPacket;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.a_libraries.jei.LockRecipePacket;
 import com.robertx22.mine_and_slash.capability.player.data.Backpacks;
@@ -53,6 +54,7 @@ public class C2SPacketRegister {
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new CancelItemUsePacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new MercenaryActionPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new CraftUniquePacket(), i++);
+        Packets.registerClientToServerPacket(MMORPG.NETWORK, new MapDeviceActionPacket(), i++);
 
 
         // Packets.registerClientToServerPacket(MMORPG.NETWORK, new SetupHotbarPacket(), i++);

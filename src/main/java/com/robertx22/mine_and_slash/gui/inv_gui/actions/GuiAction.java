@@ -14,6 +14,7 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ResetGearTy
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleAutoSalvageRarity;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearTypeSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleMapLayoutSalvage;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.map_device.MapDeviceEquipAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -114,6 +115,10 @@ public abstract class GuiAction<T> implements IGUID {
         // by GUID on the server, so the slot has to be part of the id rather than extra data.
         for (int i = 0; i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
             of(new MercEquipAction(i));
+        }
+        // same idea for the map device's map and relic slots
+        for (int i = 0; i < MapDeviceEquipAction.MAX_INVENTORY_SLOTS; i++) {
+            of(new MapDeviceEquipAction(i));
         }
 
     }

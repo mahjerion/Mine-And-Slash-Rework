@@ -50,6 +50,8 @@ public class PickSpellAction extends GuiAction {
         int slot = (int) data;
 
         Load.player(p).spellCastingData.setHotbar(p, slot, spell.GUID());
+        // so the slot the skill just left hands its supports back now, not on the 10s sweep
+        Load.Unit(p).setEquipsChanged();
 
         Load.player(p).playerDataSync.setDirtyAndSync(p);
     }

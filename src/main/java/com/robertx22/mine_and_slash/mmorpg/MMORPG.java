@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mmorpg;
 
 import com.robertx22.addons.ancient_obelisks.ObeliskAddonEvents;
 import com.robertx22.addons.dungeon_realm.DungeonAddonEvents;
+import com.robertx22.addons.map_device.MapDeviceEvents;
 import com.robertx22.addons.the_harvest.HarvestAddonEvents;
 import com.robertx22.addons.orbs_of_crafting.currency.reworked.addon.OrbAddonEvents;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
@@ -225,6 +226,7 @@ public class MMORPG {
         MapEvents.init();
         ProfessionEvents.init();
         OrbAddonEvents.register();
+        MapDeviceEvents.init();
 
         PlayerStats.register();
         PlayerStats.initialize();

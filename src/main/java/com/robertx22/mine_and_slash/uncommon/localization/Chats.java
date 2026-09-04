@@ -101,6 +101,7 @@ public enum Chats implements IAutoLocName {
 
     CANT_EQUIP_THAT_MANY_SUPPORTS("You can't equip that many Support Gems! You can increase the number of slots by leveling the skill and by increasing your player level!."),
     CANT_USE_MULTIPLE_SAME_SUPPORTS("You can't use Multiples of those Support Gems."),
+    SUPPORTS_PAST_LINKS_RETURNED("That skill slot no longer has links for all of its Support Gems, so the extras were returned to you."),
 
     NONE_MAGE("Non Mage weapons can use."),
     CREATE_NEW_CHARACTER("Creates New Character\n\nName Must be Unique"),
@@ -179,6 +180,7 @@ public enum Chats implements IAutoLocName {
     EQUIP_JEWEL_ERROR("[Jewel Equip Fail]: "),
     EQUIP_SUPP_ERROR("[Support Gem Equip Fail]: "),
     MAP_DEVICE_USE_ERROR("[Map Device Use Fail]: "),
+    MAP_DEVICE_NO_MAP_LOADED("No map has been loaded into this device."),
     INVALID_MAP_ITEM("Invalid Map item"),
     PROPHECY_ALTAR_USE_ERROR("[Prophecy Altar Use Fail]: "),
     LEARN_ERROR("[Learn Fail]: "),

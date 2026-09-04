@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.uncommon.effectdatas.ExilePotionEvent;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
@@ -118,6 +119,43 @@ public class EntityStatusEffectsData {
 
     public List<ExileEffect> getEffects() {
         return exileMap.keySet().stream().map(x -> ExileDB.ExileEffects().get(x)).collect(Collectors.toList());
+    }
+
+    /**
+     * Re-reads every active effect's strength multiplier from the caster's and holder's current stats
+     * and stores it back into the instance. Called right after a stat calc, so the stats it reads are
+     * the ones that just finished.
+     *
+     * @return true if any multiplier moved, ie the POTION_EFFECT stat context is now stale
+     */
+    public boolean refreshStrengthMultis(LivingEntity en) {
+
+        if (exileMap.isEmpty()) {
+            return false;
+        }
+
+        boolean changed = false;
+
+        for (Map.Entry<String, ExileEffectInstanceData> e : exileMap.entrySet()) {
+            ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
+            ExileEffectInstanceData inst = e.getValue();
+            LivingEntity caster = inst.getCaster(en.level());
+
+            if (eff == null || caster == null) {
+                // a buff with no loaded caster already contributes no stats (getExactStats), leave it
+                continue;
+            }
+
+            float live = ExilePotionEvent.calcCurrentStrengthMulti(caster, en, eff, inst);
+
+            if (Math.abs(live - inst.str_multi) > 0.001F) {
+                inst.str_multi = live;
+                eff.refreshVanillaStats(en, inst);
+                changed = true;
+            }
+        }
+
+        return changed;
     }
 
     public StatContext getStats(LivingEntity en) {

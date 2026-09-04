@@ -245,6 +245,20 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
 
     }
 
+    /**
+     * Re-applies the vanilla attribute modifiers with the instance's current stacks and strength
+     * multiplier. onApply only runs for the first stack, so without this the vanilla side of an effect
+     * stays frozen at whatever the first application had while the mns stats move with it.
+     * applyVanillaStats removes the old modifier before adding, so calling this repeatedly is safe.
+     */
+    public void refreshVanillaStats(LivingEntity entity, ExileEffectInstanceData data) {
+        if (mc_stats.isEmpty() || data == null) {
+            return;
+        }
+        int stacks = data.stacks;
+        mc_stats.forEach(x -> x.applyVanillaStats(entity, stacks, data.str_multi));
+    }
+
     public ExileEffectInstanceData getSavedData(LivingEntity en) {
         return Load.Unit(en).getStatusEffectsData().get(this);
     }

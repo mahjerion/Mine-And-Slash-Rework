@@ -1,6 +1,8 @@
 package com.robertx22.mine_and_slash.vanilla_mc.packets.proxies;
 
+import com.robertx22.addons.map_device.MapDeviceClientState;
 import com.robertx22.library_of_exile.registry.Database;
+import com.robertx22.mine_and_slash.gui.screens.map_device.MapDeviceScreen;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.gui.card_picker.CardPickScreen;
 import com.robertx22.mine_and_slash.gui.screens.atlas_map.AtlasMapScreen;
@@ -92,6 +94,23 @@ public class OpenGuiWrapper {
             return;
         }
         net.minecraft.client.Minecraft.getInstance().setScreen(new AtlasMapScreen());
+    }
+
+    /**
+     * A map device snapshot arrived. Refresh the device screen if it is the one open, open it if nothing
+     * is, and leave any other screen (the item picker, say) alone - the snapshot is kept for when the
+     * player comes back to the device.
+     */
+    public static void openOrRefreshMapDevice(MapDeviceClientState state) {
+        MapDeviceClientState.last = state;
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.screen instanceof MapDeviceScreen screen && screen.getState().pos.equals(state.pos)) {
+            screen.setState(state);
+            return;
+        }
+        if (mc.screen == null) {
+            mc.setScreen(new MapDeviceScreen(state));
+        }
     }
 
     public static void openWikiRunewords() {

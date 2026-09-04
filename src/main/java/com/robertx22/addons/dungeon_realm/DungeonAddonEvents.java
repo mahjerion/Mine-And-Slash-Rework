@@ -508,13 +508,6 @@ public class DungeonAddonEvents {
             }
         });
 
-        DungeonExileEvents.OPEN_ATLAS_MAP.register(new EventConsumer<OpenAtlasMapEvent>() {
-            @Override
-            public void accept(OpenAtlasMapEvent event) {
-                Packets.sendToClient(event.player, new OpenGuiPacket(OpenGuiPacket.GuiType.ATLAS_MAP));
-            }
-        });
-
         DungeonExileEvents.CAN_ENTER_MAP.register(new EventConsumer<CanEnterMapEvent>() {
             @Override
             public void accept(CanEnterMapEvent event) {

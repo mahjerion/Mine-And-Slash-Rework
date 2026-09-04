@@ -51,11 +51,16 @@ public class SocketedGem {
 
         }
 
-        // no link count check here on purpose. a slot's link count follows the skill's rank, and that
-        // rank can vanish for a moment - the weapon granting the skill stops being the selected hotbar
-        // item, a respec empties the cache, a level changes. ejecting on that dumped all five gems into
-        // the player's bag over something that came back a tick later. getActiveSupportDatas clips
-        // instead, so a gem past the unlocked links stays socketed and simply does nothing.
+        // a slot with no learned skill in it hands every support gem back. this is the only rank
+        // driven eject on the recalc path: a learned skill whose link count shrank keeps its gems
+        // and getActiveSupportDatas clips them instead. the flicker that once made this fire
+        // falsely - the granting weapon scrolled off hand - is closed by
+        // SpellCastingData.mergeHotbarWeaponSpells, which keeps the skill learned while the weapon
+        // is anywhere in the hotbar
+        if (getSkillData() == null) {
+            ejectSupportsPastLinks(p);
+            return; // nothing left in the slot for the checks below
+        }
 
 
         HashMap<String, Integer> map = new HashMap<>();
@@ -91,6 +96,32 @@ public class SocketedGem {
             }
         }
 
+    }
+
+    /**
+     * Hands back the support gems this slot has no link for. Positional, same rule as
+     * getActiveSupportDatas: support i is kept only while i is below the link count. Only two things
+     * may call this - a slot with no learned skill at all, and setHotbar right after the player put a
+     * skill in a slot. It must never run on a learned skill from the recalc path: a link count can dip
+     * for a tick there (rank change, level cap) and ejecting on that dumped all five gems into the bag,
+     * which is why the old size > links check was removed.
+     */
+    public boolean ejectSupportsPastLinks(Player p) {
+        int unlocked = getMaxLinks(p).links;
+        List<ItemStack> supports = getSupports();
+        boolean any = false;
+        for (int i = unlocked; i < supports.size(); i++) {
+            ItemStack s = supports.get(i);
+            if (!s.isEmpty()) {
+                PlayerUtils.forceUnequipItem(s.copy(), p);
+                s.shrink(100);
+                any = true;
+            }
+        }
+        if (any) {
+            p.sendSystemMessage(ExplainedResultUtil.createErrorAndReason(Chats.EQUIP_SUPP_ERROR, Chats.SUPPORTS_PAST_LINKS_RETURNED));
+        }
+        return any;
     }
 
 

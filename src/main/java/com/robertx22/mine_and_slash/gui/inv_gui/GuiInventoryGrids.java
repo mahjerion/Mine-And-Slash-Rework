@@ -1,5 +1,10 @@
 package com.robertx22.mine_and_slash.gui.inv_gui;
 
+import com.robertx22.addons.map_device.MapDeviceClientState;
+import com.robertx22.addons.map_device.MapDeviceServer;
+import com.robertx22.library_of_exile.dimension.device.IMapDeviceBlockEntity;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.map_device.MapDeviceEquipAction;
+import net.minecraft.world.SimpleContainer;
 import com.robertx22.mine_and_slash.capability.player.data.PlayerConfigData;
 import com.robertx22.mine_and_slash.database.data.gear_types.bases.BaseGearType;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
@@ -81,6 +86,43 @@ public class GuiInventoryGrids {
                 continue;
             }
             list.add(new GuiItemData(new MercEquipAction(i)));
+        }
+
+        return InvGuiGrid.ofList(list);
+    }
+
+    /**
+     * The items in the player's inventory that may go into one slot of a map device: dungeon/harvest/
+     * obelisk maps for the map slot, relics within their type cap for the relic slots. Judged against the
+     * device's last synced contents; the server re-checks the pick against the real ones.
+     */
+    public static InvGuiGrid ofMapDeviceSlotChoices(Player p, MapDeviceClientState state, int slot) {
+        GuiAction.regenActionMap();
+
+        MapDeviceEquipAction.TARGET_POS = state.pos;
+        MapDeviceEquipAction.TARGET_SLOT = slot;
+
+        List<GuiItemData> list = new ArrayList<>();
+
+        // the client has its own copy of the block entity, and the checks below are pure item checks
+        IMapDeviceBlockEntity device = p.level().getBlockEntity(state.pos) instanceof IMapDeviceBlockEntity d ? d : null;
+        if (device == null) {
+            return InvGuiGrid.ofList(list);
+        }
+        SimpleContainer contents = state.asContainer();
+
+        for (int i = 0; i < p.getInventory().getContainerSize() && i < MapDeviceEquipAction.MAX_INVENTORY_SLOTS; i++) {
+            if (!MapDeviceEquipAction.isOfferableSlot(i)) {
+                continue;
+            }
+            ItemStack stack = p.getInventory().getItem(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            if (!MapDeviceServer.mayPlace(device, contents, slot, stack, state.hasMapSlot)) {
+                continue;
+            }
+            list.add(new GuiItemData(new MapDeviceEquipAction(i)));
         }
 
         return InvGuiGrid.ofList(list);

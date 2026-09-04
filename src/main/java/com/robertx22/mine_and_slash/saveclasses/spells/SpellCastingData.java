@@ -112,6 +112,16 @@ public class SpellCastingData {
 
         hotbar.put(slot, spell);
 
+        // the slot just got a skill put in it by hand. if that skill unlocks fewer links than there
+        // are gems socketed, the extras go back to the player now. done here and not on the recalc
+        // path because this is an explicit action - the link count cannot be a one tick dip
+        if (p != null && !p.level().isClientSide) {
+            var gem = Load.player(p).getSkillGemInventory().getHotbarGem(slot);
+            if (gem != null) {
+                gem.ejectSupportsPastLinks(p);
+            }
+        }
+
         before.removeAll(hotbar.values());
 
         // a skill that left the bar takes its self buffs and its summons with it. otherwise a player

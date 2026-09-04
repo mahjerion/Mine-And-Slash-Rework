@@ -46,6 +46,10 @@ public class CachedEntityStats {
     private boolean offhandUsesDualWieldEffectiveness = false;
     private float dualWieldEffectivenessUsed = 0;
 
+    // set when afterStatCalc() moved an effect's strength multiplier and queued the one follow-up
+    // calc that applies it. cleared by that follow-up, so a trigger costs at most one extra calc.
+    private boolean effectStrengthRefreshQueued = false;
+
 
     LazyClass<EntityData> unitdata = new LazyClass<>(() -> Load.Unit(entity));
 
@@ -203,11 +207,30 @@ public class CachedEntityStats {
     // the gear pass so the offhand's share catches up. GEAR syncs before STAT_CALC in onTick, so
     // this lands next tick, and it converges because each round shrinks the disagreement.
     public void afterStatCalc() {
+        refreshEffectStrength();
+
         if (!offhandUsesDualWieldEffectiveness) {
             return;
         }
         if (Math.abs(DualWieldUtils.getEffectiveness(unitdata.get()) - dualWieldEffectivenessUsed) > 0.01F) {
             GEAR.setDirty();
+        }
+    }
+
+    // an effect's strength multiplier (Effect Strength stats) is stored on the effect instance, so it
+    // has to be refreshed from the stats that just finished calculating. if it moved, the POTION_EFFECT
+    // context this calc used is stale: redo it next tick. same shape as the dual wield check above.
+    // the flag makes it a one shot: the follow-up calc never queues another, so an effect that grants
+    // its own tag's Effect Strength creeps once per periodic recalc instead of recalculating every tick.
+    private void refreshEffectStrength() {
+        if (effectStrengthRefreshQueued) {
+            effectStrengthRefreshQueued = false;
+            unitdata.get().getStatusEffectsData().refreshStrengthMultis(entity);
+            return;
+        }
+        if (unitdata.get().getStatusEffectsData().refreshStrengthMultis(entity)) {
+            effectStrengthRefreshQueued = true;
+            STATUS.setDirty();
         }
     }
 

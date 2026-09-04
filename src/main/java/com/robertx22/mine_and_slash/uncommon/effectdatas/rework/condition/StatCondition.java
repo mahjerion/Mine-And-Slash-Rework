@@ -63,6 +63,24 @@ public abstract class StatCondition implements JsonExileRegistry<StatCondition>,
 
     public abstract boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat);
 
+    /**
+     * true for conditions that look at the event's target (its health, effects, curses, undead).
+     * a simulated hit has no real target - the caster stands in - so those must not read the caster.
+     */
+    public boolean readsTarget() {
+        return false;
+    }
+
+    // what the stat sweep should call instead of can(). in a simulation the target is a plain enemy:
+    // not low, not cursed, not undead, under no effects - so every target check comes back false and
+    // a flipped one ("target is not undead") comes back true, the same as against a fresh mob
+    public final boolean test(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
+        if (event.simulation && readsTarget()) {
+            return false;
+        }
+        return can(event, statSource, data, stat);
+    }
+
     @Override
     public final StatCondition fromJson(JsonObject json) {
         String ser = json.get("ser").getAsString();

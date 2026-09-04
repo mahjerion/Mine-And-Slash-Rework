@@ -3,6 +3,8 @@ package com.robertx22.mine_and_slash.aoe_data.database.spells;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.value_calc.ValueCalculation;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellTooltipInfo;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellTooltipInfos;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.TooltipUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,12 +39,16 @@ public class SpellDesc {
 
         int amount = countMatches(tip, "calc:");
 
+        // the caster's own damage numbers for this spell, if the server has sent them. everything
+        // that changes a hit's damage lives in stats the client can't sweep itself
+        SpellTooltipInfo info = SpellTooltipInfos.of(caster, spell);
+
         int counted = 0;
         for (ValueCalculation calc : ExileDB.ValueCalculations()
                 .getList()) {
             String id = "[calc:" + calc.id + "]";
 
-            tip = tip.replace(id, calc.getShortTooltip(caster, spell).getString());
+            tip = tip.replace(id, calc.getShortTooltip(caster, spell, info == null ? null : info.getDamage(calc.id)).getString());
             
             if (!tip.equals(copy)) {
                 counted++;

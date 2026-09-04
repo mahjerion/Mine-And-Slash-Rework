@@ -351,6 +351,13 @@ public class DamageEvent extends EffectEvent {
             return;
         }
 
+        // the real one puts the target on an attack cooldown as a side effect. a simulated hit is
+        // never swung, so it reads as a full strength one and leaves the cooldowns alone
+        if (simulation) {
+            data.setupNumber(EventData.ATTACK_COOLDOWN, 1);
+            return;
+        }
+
         float cool = 1;
 
         WeaponTypes weaponType = data.getWeaponType();
@@ -514,6 +521,12 @@ public class DamageEvent extends EffectEvent {
     // whole sweep, so an ally hit applies nothing and costs nothing.
     public boolean stopFriendlyFire() {
 
+        // a simulated hit uses the caster as its own target only because an event needs one, and
+        // the caster always counts as their own ally - it would be cancelled to 0 every time
+        if (simulation) {
+            return false;
+        }
+
         if (allowSelfDamage) {
             if (source == target) {
                 return false;
@@ -577,7 +590,8 @@ public class DamageEvent extends EffectEvent {
         }
 
         // todo this should be in layers too or multis
-        if (areBothPlayers()) {
+        // a simulation hangs its event off the caster as its own target, which is not a duel
+        if (areBothPlayers() && !simulation) {
             this.addMoreMulti(() -> Words.PVP_DMG_MULTI.locName(), EventData.NUMBER, ServerContainer.get().PVP_DMG_MULTI.get().floatValue());
         }
 
@@ -1037,6 +1051,10 @@ public class DamageEvent extends EffectEvent {
 
                     x.conversionDepth = depth;
                     x.calcSourceEffects = !takenAs;
+                    x.simulation = this.simulation;
+                    // a simulation deliberately leaves the target's mitigation out; the copies that
+                    // carry the converted part of the hit have to leave it out as well
+                    x.calcTargetEffects = this.calcTargetEffects;
 
                     x.data.setBoolean(EventData.IS_BASIC_ATTACK, this.data.getBoolean(EventData.IS_BASIC_ATTACK));
                     // a conversion/added flat event re-runs the whole source stat sweep, so every proc

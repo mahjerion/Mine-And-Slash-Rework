@@ -13,6 +13,11 @@ public class IsTargetCursed extends StatCondition {
     }
 
     @Override
+    public boolean readsTarget() {
+        return true;
+    }
+
+    @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         return event.targetData.getStatusEffectsData().getEffects().stream().anyMatch(x -> x.hasTag(EffectTags.curse));
     }

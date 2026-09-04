@@ -22,6 +22,15 @@ public interface IStatEffect {
         return false;
     }
 
+    /**
+     * false for effects that change the world instead of only the event's numbers - leeching,
+     * proccing spells, applying status effects, setting cooldowns. a simulated event (a spell
+     * tooltip working out what a hit would deal) skips those, it only wants the numbers.
+     */
+    public default boolean worksInSimulation() {
+        return true;
+    }
+
     public abstract void TryModifyEffect(EffectEvent effect, EffectSides statSource, StatData data, Stat stat);
 
 }

@@ -94,13 +94,18 @@ public class DataPackStatEffect implements IStatEffect {
                     if (cond == null) {
                         return false;
                     }
-                    Boolean istrue = cond.can(effect, statSource, data, stat) == cond.getConditionBoolean();
+                    Boolean istrue = cond.test(effect, statSource, data, stat) == cond.getConditionBoolean();
                     return istrue;
                 })) {
 
             effects.forEach(x -> {
                 StatEffect e = ExileDB.StatEffects().get(x);
                 if (e == null) {
+                    return;
+                }
+                // a datapack stat can pair a number change with a world change (leech, proc, effect).
+                // a simulated event wants the first half and must never run the second
+                if (effect.simulation && !e.worksInSimulation()) {
                     return;
                 }
                 e.activate(effect, statSource, data, stat);

@@ -30,6 +30,11 @@ public class GiveExileStatusEffect extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // applies a status effect to a real entity
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
 
         ExilePotionEvent potionEvent = EventBuilder.ofEffect(CalculatedSpellData.NO_SPELL_RELATED, event.getSide(statSource), event.getSide(give_to), Load.Unit(event.getSide(statSource))

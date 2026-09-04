@@ -42,6 +42,7 @@ public class S2CPacketRegister {
         Packets.registerServerToClient(MMORPG.NETWORK, new SyncUniqueCollectionPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new MapDeviceSyncPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new MercBagSyncPacket(), i++);
+        Packets.registerServerToClient(MMORPG.NETWORK, new SyncSpellTooltipsPacket(), i++);
 
 
     }

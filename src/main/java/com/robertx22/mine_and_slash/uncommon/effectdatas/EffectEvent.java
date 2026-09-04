@@ -37,6 +37,13 @@ import java.util.function.Supplier;
 public abstract class EffectEvent implements IGUID {
     public boolean disableActivation = false;
 
+    // a simulation runs the whole stat sweep to find out what an event *would* do, then throws the
+    // result away instead of applying it - it's how a spell tooltip can show the damage a hit really
+    // deals. it must not touch the world, so stat effects that leech, proc spells, apply effects or
+    // set cooldowns are skipped (IStatEffect.worksInSimulation), and every random roll reads as a
+    // miss, which is what makes the number reproducible: a plain, non critical hit.
+    public boolean simulation = false;
+
     public boolean calcSourceEffects = true;
     public boolean calcTargetEffects = true;
 
@@ -272,6 +279,9 @@ public abstract class EffectEvent implements IGUID {
             testEffectsAreOrderedCorrectly(effectsWithCtx);
 
             for (EffectWithCtx item : effectsWithCtx) {
+                if (simulation && !item.effect.worksInSimulation()) {
+                    continue;
+                }
                 if (item.stat.isNotZero() || item.effect.runsOnZeroStat()) {
                     item.effect.TryModifyEffect(this, item.statSource, item.stat, item.stat.GetStat());
                 } else {

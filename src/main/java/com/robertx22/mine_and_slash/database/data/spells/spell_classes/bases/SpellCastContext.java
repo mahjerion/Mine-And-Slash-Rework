@@ -34,6 +34,12 @@ public class SpellCastContext {
     public Unit unit;
 
     public SpellCastContext(LivingEntity caster, int ticksInUse, Spell spell) {
+        this(caster, ticksInUse, spell, false);
+    }
+
+    // simulation = nothing is being cast, the numbers are only being read (spell tooltips). see
+    // EffectEvent.simulation
+    public SpellCastContext(LivingEntity caster, int ticksInUse, Spell spell, boolean simulation) {
         this.caster = caster;
         this.ticksInUse = ticksInUse;
         this.spell = spell;
@@ -43,6 +49,7 @@ public class SpellCastContext {
 
 
         this.event = new SpellStatsCalculationEvent(caster, spell.GUID());
+        this.event.simulation = simulation;
 
         event.Activate();
 

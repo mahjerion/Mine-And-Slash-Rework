@@ -143,6 +143,12 @@ public class CachedEntityStats {
         }
 
         STAT_CALC.onTickTrySync(entity);
+
+        // after the stat calc above, never before it - the spell tooltip numbers are built out of the
+        // stat units that recalc just rebuilt, and it is what marks them dirty
+        if (entity instanceof Player p) {
+            Load.player(p).cachedStats.SPELL_TOOLTIPS.onTickTrySync(p);
+        }
     }
 
     public List<GearData> getGear() {

@@ -8,7 +8,11 @@ import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.stat_calculation.CommonStatUtils;
 import com.robertx22.mine_and_slash.uncommon.stat_calculation.PlayerStatUtils;
+import com.robertx22.mine_and_slash.uncommon.stat_calculation.SpellTooltipCalculation;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.SyncSpellTooltipsPacket;
+import com.robertx22.library_of_exile.main.Packets;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -61,10 +65,52 @@ public class CachedPlayerStats {
 
     };
 
+    // one full stat calculation per equipped skill gem plus a simulated hit per damage component is
+    // far too much to redo every time a buff ticks, and nothing but a tooltip ever reads the result,
+    // so it is allowed to lag a second behind the stats it is built from
+    public static final int SPELL_TOOLTIP_CALC_INTERVAL = 20;
+    private boolean calcedSpellTooltipsOnce = false;
+    private int lastSpellTooltipTick = 0;
+    private boolean forceSpellTooltipSend = false;
+
+    // the client throws its copy away on a dimension change while the server's stays the same, so
+    // the next result has to go out even if nothing in it changed
+    public void resendSpellTooltips() {
+        forceSpellTooltipSend = true;
+        SPELL_TOOLTIPS.setDirty();
+    }
+
+    // the numbers a spell tooltip shows that only the server can work out. recalculated after the
+    // stats they are built from changed, then pushed to the client - see SpellTooltipCalculation
+    public DirtySync SPELL_TOOLTIPS = new DirtySync("spell_tooltips", x -> {
+        if (x instanceof ServerPlayer sp) {
+            int now = sp.tickCount;
+            // now < last means this is a different entity than the one that last calculated (respawn),
+            // which has no client side numbers at all and has to be done straight away
+            if (calcedSpellTooltipsOnce && now >= lastSpellTooltipTick && now - lastSpellTooltipTick < SPELL_TOOLTIP_CALC_INTERVAL) {
+                this.SPELL_TOOLTIPS.setDirty(); // too soon, come back next tick
+                return;
+            }
+            calcedSpellTooltipsOnce = true;
+            lastSpellTooltipTick = now;
+
+            var next = SpellTooltipCalculation.calcAll(sp);
+            var pd = Load.player(sp);
+            // a stat recalc fires on every buff tick in combat and most of them change nothing a
+            // tooltip shows, so only send when the numbers actually moved
+            if (forceSpellTooltipSend || !next.equals(pd.spellTooltips)) {
+                forceSpellTooltipSend = false;
+                pd.spellTooltips = next;
+                Packets.sendToClient(sp, new SyncSpellTooltipsPacket(next));
+            }
+        }
+    });
+
     public void setAllDirty() {
         ALLOCATED.setDirty();
         ENCHANT_COMPAT.setDirty();
         STAT_COMPAT.setDirty();
+        SPELL_TOOLTIPS.setDirty();
     }
 
     public void tick() {
@@ -73,6 +119,8 @@ public class CachedPlayerStats {
         ENCHANT_COMPAT.onTickTrySync(p);
         STAT_COMPAT.onTickTrySync(p);
 
+        // SPELL_TOOLTIPS is not ticked here on purpose - it is built out of the stats the recalc that
+        // runs after this produces, so CachedEntityStats ticks it once that has happened
     }
 
     public CachedPlayerStats(Player p) {

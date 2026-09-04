@@ -24,6 +24,11 @@ public class IsUnderExileEffect extends StatCondition {
     }
 
     @Override
+    public boolean readsTarget() {
+        return side == EffectSides.Target;
+    }
+
+    @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         var d = Load.Unit(event.getSide(side)).getStatusEffectsData();
 

@@ -31,6 +31,11 @@ public class AilmentProcStat extends Stat {
     private class Effect extends BaseDamageEffect {
 
         @Override
+        public boolean worksInSimulation() {
+            return false; // shatters the ailment accumulated on the target
+        }
+
+        @Override
         public StatPriority GetPriority() {
             // strictly after AilmentChance at FINAL_DAMAGE. both used to sit on the same
             // priority, and ties keep stat map order, so whether the hit that applied the

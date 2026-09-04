@@ -67,6 +67,16 @@ public class StatCalculation {
     // the List<StatContext> is modified so i cant reuse it until the code is redone and fixed
     // todo trying to rewrite calc code..
     public static void calc(Unit unit, List<StatContext> statsWithoutSuppGems, LivingEntity entity, Spell spell, int skillGem) {
+        calc(unit, statsWithoutSuppGems, entity, spell, skillGem, true);
+    }
+
+    /**
+     * applyAttributesToEntity is false for the per spell units. those are a what-if stat set for one
+     * spell and its support gems, not the entity's own stats - writing them onto the entity's vanilla
+     * attributes would leave whichever spell was calculated last in charge of the player's real
+     * movement speed, attack speed and the rest.
+     */
+    public static void calc(Unit unit, List<StatContext> statsWithoutSuppGems, LivingEntity entity, Spell spell, int skillGem, boolean applyAttributesToEntity) {
 
         if (entity.level().isClientSide) {
             return;
@@ -156,39 +166,41 @@ public class StatCalculation {
             stat.softCapStat(unit);
         }
 
-        Cached.VANILLA_STAT_UIDS_TO_CLEAR_EVERY_STAT_CALC.forEach(x -> {
-            AttributeInstance in = entity.getAttribute(x.left);
-            if (in != null && in.getModifier(x.right) != null) {
-                in.removeModifier(x.right);
-            }
-        });
-
-        // self-heal for exile effect attribute modifiers (stun's x0 attack damage and movement
-        // speed etc): strip any whose effect isn't active on this entity anymore. every effect
-        // removal marks the entity's stats dirty, so this runs right when it matters, and it's a
-        // handful of getModifier lookups per calc. same shape as the NO_KNOCKBACK strip in
-        // DamageEvent - a modifier left stuck on an entity gets cleaned up instead of lasting forever
-        if (!Cached.EXILE_EFFECT_VANILLA_MODIFIERS.isEmpty()) {
-            var effects = data.getStatusEffectsData();
-            for (var mod : Cached.EXILE_EFFECT_VANILLA_MODIFIERS) {
-                AttributeInstance in = entity.getAttribute(mod.attribute());
-                if (in == null || in.getModifier(mod.uuid()) == null) {
-                    continue;
+        if (applyAttributesToEntity) {
+            Cached.VANILLA_STAT_UIDS_TO_CLEAR_EVERY_STAT_CALC.forEach(x -> {
+                AttributeInstance in = entity.getAttribute(x.left);
+                if (in != null && in.getModifier(x.right) != null) {
+                    in.removeModifier(x.right);
                 }
-                var inst = effects.exileMap.get(mod.effectId());
-                if (inst == null || inst.shouldRemove()) {
-                    in.removeModifier(mod.uuid());
-                }
-            }
-        }
+            });
 
-        unit.getStats().stats.values()
-                .forEach(x -> {
-                    if (x.GetStat() instanceof AttributeStat) {
-                        AttributeStat stat = (AttributeStat) x.GetStat();
-                        stat.addToEntity(entity, x);
+            // self-heal for exile effect attribute modifiers (stun's x0 attack damage and movement
+            // speed etc): strip any whose effect isn't active on this entity anymore. every effect
+            // removal marks the entity's stats dirty, so this runs right when it matters, and it's a
+            // handful of getModifier lookups per calc. same shape as the NO_KNOCKBACK strip in
+            // DamageEvent - a modifier left stuck on an entity gets cleaned up instead of lasting forever
+            if (!Cached.EXILE_EFFECT_VANILLA_MODIFIERS.isEmpty()) {
+                var effects = data.getStatusEffectsData();
+                for (var mod : Cached.EXILE_EFFECT_VANILLA_MODIFIERS) {
+                    AttributeInstance in = entity.getAttribute(mod.attribute());
+                    if (in == null || in.getModifier(mod.uuid()) == null) {
+                        continue;
                     }
-                });
+                    var inst = effects.exileMap.get(mod.effectId());
+                    if (inst == null || inst.shouldRemove()) {
+                        in.removeModifier(mod.uuid());
+                    }
+                }
+            }
+
+            unit.getStats().stats.values()
+                    .forEach(x -> {
+                        if (x.GetStat() instanceof AttributeStat) {
+                            AttributeStat stat = (AttributeStat) x.GetStat();
+                            stat.addToEntity(entity, x);
+                        }
+                    });
+        }
 
 
     }

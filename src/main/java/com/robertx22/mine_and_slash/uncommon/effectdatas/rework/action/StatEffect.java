@@ -43,6 +43,15 @@ public abstract class StatEffect implements JsonExileRegistry<StatEffect>, IAuto
 
     public abstract void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat);
 
+    /**
+     * false for effects that change the world instead of only the event's numbers. a simulated
+     * event (a spell tooltip working out what a hit would deal) skips those - see
+     * DataPackStatEffect.TryModifyEffect and EffectEvent.simulation.
+     */
+    public boolean worksInSimulation() {
+        return true;
+    }
+
     @Override
     public ExileRegistryType getExileRegistryType() {
         return ExileRegistryTypes.STAT_EFFECT;

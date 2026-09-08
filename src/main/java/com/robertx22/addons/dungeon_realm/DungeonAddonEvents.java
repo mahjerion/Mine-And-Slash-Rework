@@ -63,6 +63,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 public class DungeonAddonEvents {
 
@@ -184,6 +185,13 @@ public class DungeonAddonEvents {
                     if (map != null) {
 
                         map.lvl = Load.Unit(event.p).getLevel();
+
+                        // the uuid identifies the RUN for the prophecy system (OnServerTick only clears
+                        // the player's offers/rerolls when it changes). it lives on the item, so any copy
+                        // of a map item - the duplicate_map_chance drop, a creative copy - starts a run
+                        // with the previous run's identity and keeps its prophecy state. the item is
+                        // consumed right here, so a fresh id per start loses nothing item-side.
+                        map.uuid = UUID.randomUUID().toString();
 
                         var mapdata = MapData.newMap(event.p, map);
 

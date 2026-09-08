@@ -227,13 +227,23 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                 Load.Unit(entity).equipmentCache.STATUS.setDirty();
 
                 if (!this.one_of_a_kind_id.isEmpty()) {
-                    Load.Unit(entity).getStatusEffectsData().exileMap.entrySet()
-                            .removeIf(x -> {
-                                if (x.getKey().equals(this.GUID())) {
-                                    return false;
-                                }
-                                return ExileDB.ExileEffects().get(x.getKey()).one_of_a_kind_id.equals(this.one_of_a_kind_id);
-                            });
+                    // displaced effects go through their own onRemove, or their vanilla attribute
+                    // modifiers (mc_stats) stay on the entity forever. entry out of the map first,
+                    // same reason as EntityStatusEffectsData.removeWhere
+                    var map = Load.Unit(entity).getStatusEffectsData().exileMap;
+                    List<String> displaced = new ArrayList<>();
+                    for (String id : map.keySet()) {
+                        if (id.equals(this.GUID()) || !ExileDB.ExileEffects().isRegistered(id)) {
+                            continue;
+                        }
+                        if (ExileDB.ExileEffects().get(id).one_of_a_kind_id.equals(this.one_of_a_kind_id)) {
+                            displaced.add(id);
+                        }
+                    }
+                    for (String id : displaced) {
+                        ExileEffectInstanceData removed = map.remove(id);
+                        ExileDB.ExileEffects().get(id).onRemove(entity, removed);
+                    }
                 }
             }
 
@@ -264,13 +274,39 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
     }
 
     public void onRemove(LivingEntity target) {
+        onRemove(target, getSavedData(target));
+    }
+
+    /**
+     * @param data the instance that was (or is being) removed. Passed in because the callers that
+     *             take the entry out of the map first would otherwise hand a blank default here,
+     *             and the on-expire cast needs the caster and spell the instance recorded.
+     */
+    public void onRemove(LivingEntity target, ExileEffectInstanceData data) {
+
+        EntityData unitdata = Load.Unit(target);
 
         try {
-
+            // the cleanup that must not be skipped comes first and is not behind the expire cast:
+            // strip the vanilla attribute modifiers, and mark the cached status stats stale so the
+            // next stat calc drops this effect's stats. a failure inside the on-expire spell used to
+            // leave the mob's stat context frozen with, say, a -100% total damage still in it
             mc_stats.forEach(x -> x.removeVanillaStats(target));
 
-            ExileEffectInstanceData data = getSavedData(target);
+            if (data != null) {
+                data.stacks = 0;
+            }
+            var still = unitdata.getStatusEffectsData().exileMap.get(this.GUID());
+            if (still != null) {
+                still.stacks = 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            unitdata.equipmentCache.STATUS.setDirty();
+        }
 
+        try {
             if (data != null) {
                 LivingEntity caster = data.getCaster(target.level());
                 if (caster != null && spell != null) {
@@ -278,13 +314,6 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                     spell.tryActivate(Spell.DEFAULT_EN_NAME, ctx); // source is default name at all times
                 }
             }
-
-            EntityData unitdata = Load.Unit(target);
-            unitdata.getStatusEffectsData()
-                    .get(this).stacks = 0;
-            unitdata.equipmentCache.STATUS.setDirty();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

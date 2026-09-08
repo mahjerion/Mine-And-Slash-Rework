@@ -30,6 +30,10 @@ public class VanillaStatData {
         return BuiltInRegistries.ATTRIBUTE.get(new ResourceLocation(id));
     }
 
+    public UUID getUUID() {
+        return UUID.fromString(uuid);
+    }
+
     public void applyVanillaStats(LivingEntity en, int stacks) {
         applyVanillaStats(en, stacks, 1F);
     }

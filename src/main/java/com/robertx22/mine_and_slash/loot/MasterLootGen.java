@@ -48,14 +48,10 @@ public class MasterLootGen {
                 }
             }
 
-            tries = 0;
-
+            // the cap has to actually cap. every pass removes one item so this always terminates,
+            // and the old 50-try bail-out meant a generator that rolled high in a chest (chests
+            // stack a x10-x90 multiplier) delivered well over a hundred items past a max of 7
             while (items.size() > info.getMaxItems()) {
-                tries++;
-                if (tries > 50) {
-                    ExileLog.get().warn("Took too many tries to remove items from masterlootgen");
-                    break;
-                }
                 items.remove(RandomUtils.RandomRange(0, items.size() - 1));
             }
 

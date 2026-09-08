@@ -45,26 +45,46 @@ public class EntityStatusEffectsData {
 
 
         // todo this is probably bit laggy per tick no?
-        if (en.tickCount % 80 == 0) {
-            // Prevent keeping e.g. auras and stances after respeccing
-            // Has to string compare spell UUIDs to look up the new spell level, so it's done infrequently
-            exileMap.entrySet().removeIf(x -> {
-                if (x.getValue().shouldRemove() || x.getValue().isSpellNoLongerAllocated(en)) {
-                    ExileDB.ExileEffects().get(x.getKey()).onRemove(en);
-                    return true;
-                }
-                return false;
-            });
-        } else {
-            exileMap.entrySet().removeIf(x -> {
-                if (x.getValue().shouldRemove()) {
-                    ExileDB.ExileEffects().get(x.getKey()).onRemove(en);
-                    return true;
-                }
-                return false;
-            });
-        }
+        // Prevent keeping e.g. auras and stances after respeccing
+        // Has to string compare spell UUIDs to look up the new spell level, so it's done infrequently
+        boolean checkAllocation = en.tickCount % 80 == 0;
 
+        removeWhere(en, x -> x.getValue().shouldRemove() || (checkAllocation && x.getValue().isSpellNoLongerAllocated(en)));
+
+    }
+
+    /**
+     * Drops every entry matching the filter and runs the effect's onRemove for each. The entry
+     * leaves the map BEFORE onRemove runs: onRemove used to be called from inside the removeIf
+     * predicate, with the entry still present and its stacks zeroed, so anything the on-expire
+     * cast re-applied to this entity (the same effect from a proc, a chained cc) landed on that
+     * dying entry, put its vanilla attribute modifiers back through onApply, and was then dropped
+     * with the entry - an orphaned x0 attack damage modifier, and a mob that never hurts anyone
+     * again. With the entry gone first a re-application creates a fresh, tracked entry.
+     *
+     * @return true if anything was removed
+     */
+    private boolean removeWhere(LivingEntity en, java.util.function.Predicate<Map.Entry<String, ExileEffectInstanceData>> filter) {
+        List<String> expired = null;
+        for (Map.Entry<String, ExileEffectInstanceData> e : exileMap.entrySet()) {
+            if (filter.test(e)) {
+                if (expired == null) {
+                    expired = new ArrayList<>();
+                }
+                expired.add(e.getKey());
+            }
+        }
+        if (expired == null) {
+            return false;
+        }
+        for (String id : expired) {
+            ExileEffectInstanceData removed = exileMap.remove(id);
+            ExileEffect eff = ExileDB.ExileEffects().isRegistered(id) ? ExileDB.ExileEffects().get(id) : null;
+            if (eff != null) {
+                eff.onRemove(en, removed);
+            }
+        }
+        return true;
     }
 
     public boolean has(ExileEffect eff) {
@@ -104,16 +124,7 @@ public class EntityStatusEffectsData {
 
         // has to go through the effect's own onRemove like the tick loop does, or its vanilla
         // attribute modifiers (mc_stats) stay on the entity forever
-        return exileMap.entrySet().removeIf(x -> {
-            if (!x.getValue().self_cast || !spellId.equals(x.getValue().spell_id)) {
-                return false;
-            }
-            if (!ExileDB.ExileEffects().isRegistered(x.getKey())) {
-                return true;
-            }
-            ExileDB.ExileEffects().get(x.getKey()).onRemove(en);
-            return true;
-        });
+        return removeWhere(en, x -> x.getValue().self_cast && spellId.equals(x.getValue().spell_id));
     }
 
 
@@ -139,9 +150,16 @@ public class EntityStatusEffectsData {
         for (Map.Entry<String, ExileEffectInstanceData> e : exileMap.entrySet()) {
             ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
             ExileEffectInstanceData inst = e.getValue();
+
+            if (eff == null || inst.shouldRemove()) {
+                // an expired entry the tick sweep hasn't dropped yet must not get its vanilla
+                // modifiers re-applied - that's how they outlive the effect
+                continue;
+            }
+
             LivingEntity caster = inst.getCaster(en.level());
 
-            if (eff == null || caster == null) {
+            if (caster == null) {
                 // a buff with no loaded caster already contributes no stats (getExactStats), leave it
                 continue;
             }
@@ -164,9 +182,10 @@ public class EntityStatusEffectsData {
 
         for (Map.Entry<String, ExileEffectInstanceData> e : exileMap.entrySet()) {
             ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
-            if (eff != null) {
-                var data = e.getValue();
-                stats.addAll(eff.getExactStats(e.getValue().getCaster(en.level()), data.getSpellOrNull(), data.stacks, data.str_multi));
+            var data = e.getValue();
+            // an expired entry contributes nothing, whether or not the tick sweep got to it yet
+            if (eff != null && !data.shouldRemove()) {
+                stats.addAll(eff.getExactStats(data.getCaster(en.level()), data.getSpellOrNull(), data.stacks, data.str_multi));
             }
         }
 

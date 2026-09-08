@@ -107,9 +107,10 @@ public class ExilePotionEvent extends EffectEvent {
 
             if (extraData.stacks < 1) {
                 // the tick loop calls onRemove when it drops an expired effect, so removing it
-                // here has to do the same or vanilla attribute modifiers leak
-                effect.onRemove(target);
+                // here has to do the same or vanilla attribute modifiers leak. entry out first,
+                // then onRemove with it (see EntityStatusEffectsData.removeWhere)
                 Load.Unit(target).getStatusEffectsData().delete(effect);
+                effect.onRemove(target, extraData);
             }
 
             Load.Unit(target).equipmentCache.STATUS.setDirty();

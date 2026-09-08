@@ -163,6 +163,25 @@ public class StatCalculation {
             }
         });
 
+        // self-heal for exile effect attribute modifiers (stun's x0 attack damage and movement
+        // speed etc): strip any whose effect isn't active on this entity anymore. every effect
+        // removal marks the entity's stats dirty, so this runs right when it matters, and it's a
+        // handful of getModifier lookups per calc. same shape as the NO_KNOCKBACK strip in
+        // DamageEvent - a modifier left stuck on an entity gets cleaned up instead of lasting forever
+        if (!Cached.EXILE_EFFECT_VANILLA_MODIFIERS.isEmpty()) {
+            var effects = data.getStatusEffectsData();
+            for (var mod : Cached.EXILE_EFFECT_VANILLA_MODIFIERS) {
+                AttributeInstance in = entity.getAttribute(mod.attribute());
+                if (in == null || in.getModifier(mod.uuid()) == null) {
+                    continue;
+                }
+                var inst = effects.exileMap.get(mod.effectId());
+                if (inst == null || inst.shouldRemove()) {
+                    in.removeModifier(mod.uuid());
+                }
+            }
+        }
+
         unit.getStats().stats.values()
                 .forEach(x -> {
                     if (x.GetStat() instanceof AttributeStat) {

@@ -7,6 +7,9 @@ import com.robertx22.mine_and_slash.capability.entity.EntityData;
 import com.robertx22.mine_and_slash.database.data.gear_slots.GearSlot;
 import com.robertx22.mine_and_slash.database.data.item_set.ItemSet;
 import com.robertx22.mine_and_slash.database.data.atlas.AtlasNodeLayout;
+import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
+import com.robertx22.mine_and_slash.database.data.exile_effects.VanillaStatData;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.stats.datapacks.stats.AttributeStat;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
@@ -74,5 +77,22 @@ public class DatabaseCaches {
                     AttributeStat attri = (AttributeStat) x;
                     Cached.VANILLA_STAT_UIDS_TO_CLEAR_EVERY_STAT_CALC.add(ImmutablePair.of(attri.attribute, attri.uuid));
                 });
+
+        Cached.EXILE_EFFECT_VANILLA_MODIFIERS = new ArrayList<>();
+
+        for (ExileEffect eff : ExileDB.ExileEffects().getList()) {
+            for (VanillaStatData mc : eff.mc_stats) {
+                try {
+                    Attribute attribute = mc.getAttribute();
+                    if (attribute != null) {
+                        Cached.EXILE_EFFECT_VANILLA_MODIFIERS.add(new Cached.ExileEffectVanillaModifier(eff.GUID(), attribute, mc.getUUID()));
+                    }
+                } catch (Exception e) {
+                    // a datapack effect naming an attribute or uuid that doesn't parse must not stop
+                    // the rest of the list from building
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -255,9 +255,11 @@ public class ModEffects implements ExileRegistryInit {
                 .addTags(EffectTags.curse, EffectTags.negative)
                 .build();
 
+        // own uuids: these used to be the same as stun's, so applying one silently replaced the other's
+        // modifier and whichever expired first stripped the survivor's
         ExileEffectBuilder.of(ModEffects.SLOW)
-                .vanillaStat(VanillaStatData.create(MOVEMENT_SPEED, -0.25F, ModType.MORE, UUID.fromString("3fb10485-f309-468f-afc6-a23b0d6cf4c1")))
-                .vanillaStat(VanillaStatData.create(ATTACK_SPEED, -0.10F, ModType.MORE, UUID.fromString("00fb60a7-904b-462f-a7cb-a557f02e362e")))
+                .vanillaStat(VanillaStatData.create(MOVEMENT_SPEED, -0.25F, ModType.MORE, UUID.fromString("7c2d6b1e-5a3f-4c8e-9d21-0b4f6e8a1c35")))
+                .vanillaStat(VanillaStatData.create(ATTACK_SPEED, -0.10F, ModType.MORE, UUID.fromString("9e4b2f7a-1d6c-4e3b-8a57-2c9d0f1b6e48")))
                 .addTags(EffectTags.negative)
                 .build();
 

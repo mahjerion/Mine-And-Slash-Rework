@@ -4,7 +4,6 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
-import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
 import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
@@ -13,7 +12,6 @@ import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -166,7 +164,7 @@ public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
     public void clientAction(Player p, Object obj) {
         // keep the cursor where it is, then go back to the mercenary screen
         GuiMousePosition.save();
-        Minecraft.getInstance().setScreen(new MercenaryScreen());
+        ClientOnly.openMercenaryScreen();
     }
 
     @Override

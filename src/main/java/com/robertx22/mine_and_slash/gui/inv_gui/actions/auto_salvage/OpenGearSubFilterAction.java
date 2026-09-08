@@ -1,6 +1,5 @@
 package com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage;
 
-import com.robertx22.mine_and_slash.gui.inv_gui.SalvageSubFilterScreen;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.localization.Gui;
@@ -57,7 +56,7 @@ public class OpenGearSubFilterAction extends GuiAction {
 
     @Override
     public void clientAction(Player p, Object obj) {
-        ClientOnly.setScreen(new SalvageSubFilterScreen(type, 0));
+        ClientOnly.openSalvageSubFilter(type, 0);
     }
 
     @Override

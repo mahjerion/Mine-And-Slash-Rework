@@ -5,9 +5,8 @@ import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
-import com.robertx22.mine_and_slash.gui.screens.mercenary.MercenaryScreen;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenaryActionPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -61,7 +60,7 @@ public class MercPickSkillAction extends GuiAction<Integer> {
     @Override
     public void clientAction(Player p, Object obj) {
         GuiMousePosition.save();
-        Minecraft.getInstance().setScreen(new MercenaryScreen());
+        ClientOnly.openMercenaryScreen();
     }
 
     @Override

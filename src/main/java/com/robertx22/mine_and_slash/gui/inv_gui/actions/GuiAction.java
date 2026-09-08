@@ -17,6 +17,7 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleMapLa
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.map_device.MapDeviceEquipAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.library_of_exile.registry.IGUID;
 import net.minecraft.network.FriendlyByteBuf;
@@ -80,47 +81,69 @@ public abstract class GuiAction<T> implements IGUID {
 
     // do every time before constructing the gui, because we want to use datapack stuff and not care about when its loaded
     public static void regenActionMap() {
-
-
-        for (PlayerConfigData.Config v : PlayerConfigData.Config.values()) {
-            of(new GuiConfigToggle(v));
-
-        }
-
-        for (ToggleAutoSalvageRarity.SalvageType type : ToggleAutoSalvageRarity.SalvageType.values()) {
-            for (GearRarity rar : ExileDB.GearRarities().getList()) {
-                of(new ToggleAutoSalvageRarity(type, rar));
+        // each group on its own so one action that fails to construct cannot silently truncate the
+        // registry - that is exactly what happened when an action class dragged a client Screen onto
+        // the dedicated server. Throwable on purpose: a failed class link is an Error, not an Exception
+        register("config toggles", () -> {
+            for (PlayerConfigData.Config v : PlayerConfigData.Config.values()) {
+                of(new GuiConfigToggle(v));
             }
-        }
-        for (BaseGearType gt : ExileDB.GearTypes().getList()) {
-            of(new ResetGearTypeSalvage(gt));
-            for (GearRarity rar : ExileDB.GearRarities().getList()) {
-                of(new ToggleGearTypeSalvage(gt, rar));
+        });
+        register("salvage rarity toggles", () -> {
+            for (ToggleAutoSalvageRarity.SalvageType type : ToggleAutoSalvageRarity.SalvageType.values()) {
+                for (GearRarity rar : ExileDB.GearRarities().getList()) {
+                    of(new ToggleAutoSalvageRarity(type, rar));
+                }
             }
-        }
-        for (ToggleAutoSalvageRarity.SalvageType type : OpenGearSubFilterAction.TYPES) {
-            of(new OpenGearSubFilterAction(type));
-        }
-        of(new CycleRunedSocketFilter());
-        of(new OpenMapLayoutFilterAction());
-        // datapacked layouts are in this registry too, so they register with no extra code
-        for (Dungeon layout : DungeonDatabase.Dungeons().getList()) {
-            of(new ToggleMapLayoutSalvage(layout));
-        }
-        for (Spell rw : ExileDB.Spells().getList()) {
-            of(new PickSpellAction(rw));
-            of(new MercPickSkillAction(rw));
-        }
-        // the mercenary equip picker is keyed by player inventory slot - the action map is looked up
-        // by GUID on the server, so the slot has to be part of the id rather than extra data.
-        for (int i = 0; i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
-            of(new MercEquipAction(i));
-        }
-        // same idea for the map device's map and relic slots
-        for (int i = 0; i < MapDeviceEquipAction.MAX_INVENTORY_SLOTS; i++) {
-            of(new MapDeviceEquipAction(i));
-        }
+        });
+        register("salvage gear type toggles", () -> {
+            for (BaseGearType gt : ExileDB.GearTypes().getList()) {
+                of(new ResetGearTypeSalvage(gt));
+                for (GearRarity rar : ExileDB.GearRarities().getList()) {
+                    of(new ToggleGearTypeSalvage(gt, rar));
+                }
+            }
+        });
+        register("salvage sub filters", () -> {
+            for (ToggleAutoSalvageRarity.SalvageType type : OpenGearSubFilterAction.TYPES) {
+                of(new OpenGearSubFilterAction(type));
+            }
+            of(new CycleRunedSocketFilter());
+            of(new OpenMapLayoutFilterAction());
+        });
+        register("map layout salvage toggles", () -> {
+            // datapacked layouts are in this registry too, so they register with no extra code
+            for (Dungeon layout : DungeonDatabase.Dungeons().getList()) {
+                of(new ToggleMapLayoutSalvage(layout));
+            }
+        });
+        register("spell picks", () -> {
+            for (Spell rw : ExileDB.Spells().getList()) {
+                of(new PickSpellAction(rw));
+                of(new MercPickSkillAction(rw));
+            }
+        });
+        register("mercenary equip", () -> {
+            // the mercenary equip picker is keyed by player inventory slot - the action map is looked up
+            // by GUID on the server, so the slot has to be part of the id rather than extra data.
+            for (int i = 0; i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
+                of(new MercEquipAction(i));
+            }
+        });
+        register("map device equip", () -> {
+            // same idea for the map device's map and relic slots
+            for (int i = 0; i < MapDeviceEquipAction.MAX_INVENTORY_SLOTS; i++) {
+                of(new MapDeviceEquipAction(i));
+            }
+        });
+    }
 
+    private static void register(String group, Runnable adder) {
+        try {
+            adder.run();
+        } catch (Throwable e) {
+            ExileLog.get().error("Failed to register inv gui actions: " + group + ". The rest of the registry still loads, but these actions will do nothing.", e);
+        }
     }
 
 

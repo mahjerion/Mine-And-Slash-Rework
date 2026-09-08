@@ -1,12 +1,9 @@
 package com.robertx22.mine_and_slash.gui.inv_gui.actions.map_device;
 
-import com.robertx22.addons.map_device.MapDeviceClientState;
 import com.robertx22.addons.map_device.MapDeviceServer;
 import com.robertx22.mine_and_slash.gui.bases.GuiMousePosition;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.GuiAction;
-import com.robertx22.mine_and_slash.gui.screens.map_device.MapDeviceScreen;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -107,11 +104,7 @@ public class MapDeviceEquipAction extends GuiAction<MapDeviceEquipAction.Target>
         // keep the cursor where it is, then go back to the device screen. the snapshot it shows is the
         // one from before the pick; the server's reply refreshes it a moment later
         GuiMousePosition.save();
-        if (MapDeviceClientState.last != null) {
-            Minecraft.getInstance().setScreen(new MapDeviceScreen(MapDeviceClientState.last));
-        } else {
-            Minecraft.getInstance().setScreen(null);
-        }
+        ClientOnly.openMapDeviceScreenOrClose();
     }
 
     @Override

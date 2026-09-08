@@ -45,6 +45,13 @@ public class OnKeyPress {
         }
 
         if (ChatUtils.wasChatOpenRecently()) {
+            // the keybind poll is skipped while chat is up, so a held channel key would never report
+            // its release and the server would keep channelling until the input timeout ran out
+            if (lastHeldMask != 0) {
+                lastHeldMask = 0;
+                Load.player(mc.player).spellCastingData.setHeldSlots(0);
+                Packets.sendToServer(new TellServerToCastSpellPacket(0));
+            }
             return;
         }
 

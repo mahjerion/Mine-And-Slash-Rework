@@ -35,6 +35,7 @@ import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.RepairUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.NoManaPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.spells.TellClientEntityCastingSpell;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -377,8 +378,14 @@ public class SpellCastingData {
     // Where the next slot walk starts. advancing it past every cast is what makes a key bound to
     // several skills play the next one instead of the same one forever
     transient int rotationSlot = 0;
-    // How many ticks left without another packet before we stop casting
-    transient int spellInputTimeoutTicks = 0;
+    // How long the client may go silent before its held keys are forgotten. Measured in real time,
+    // not server ticks: a server catching up after a hitch replays its missed ticks back to back in
+    // a few milliseconds, so a tick countdown expired before any keepalive could possibly arrive and
+    // the channel dropped on every small lag spike. Generous on purpose. it is only a safety net for
+    // a client that stopped talking, a release is signalled at once by the mask-change packet
+    static final long CHANNEL_INPUT_TIMEOUT_MS = 1000;
+    // Util.getMillis() reading past which heldSlotMask is treated as stale
+    transient long spellInputDeadlineMillis = 0;
 
     // called from the client keybind poll. the server goes through onSpellInputPressed instead
     public void setHeldSlots(int heldMask) {
@@ -395,7 +402,7 @@ public class SpellCastingData {
             bufferTicks = INPUT_BUFFER_TICKS;
         }
         heldSlotMask = heldMask;
-        spellInputTimeoutTicks = 8;
+        spellInputDeadlineMillis = Util.getMillis() + CHANNEL_INPUT_TIMEOUT_MS;
     }
 
     public boolean tryStartSpellCast(Player player, Spell spell) {
@@ -570,9 +577,7 @@ public class SpellCastingData {
 
     private void processSpellInputs(Player player) {
 
-        if (spellInputTimeoutTicks > 0) {
-            spellInputTimeoutTicks--;
-        } else {
+        if (Util.getMillis() > spellInputDeadlineMillis) {
             heldSlotMask = 0; // client went quiet
         }
         if (bufferTicks > 0) {

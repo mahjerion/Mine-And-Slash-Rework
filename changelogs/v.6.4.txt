@@ -1,5 +1,19 @@
 Changelog of recent updates: https://github.com/mahjerion/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.3.txt
 
+v.6.4.8
+- merc
+- auto-salvage improvements
+- master bag currency tabs
+- unique gear salvaging system
+- overhauled map gui
+- skill system overhaul
+- channelling skills
+- block rework
+- dodge rework
+- real set item mechanic
+- bug fixes
+- tp lag fix
+
 v.6.4.1
 - fixed potion level range not being respected
 - redid the potion tooltips

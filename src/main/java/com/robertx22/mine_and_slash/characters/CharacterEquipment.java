@@ -70,6 +70,23 @@ public class CharacterEquipment {
         return new MyInventory((int) JewelSocketStat.getInstance().max);
     }
 
+    // Better Combat injects into Player.getItemBySlot and returns EMPTY for OFFHAND whenever either hand
+    // holds one of its two-handed weapons. the stack is still sitting in Inventory.offhand - the getter
+    // just hides it. going through the getter here meant stashInto skipped the hidden offhand and
+    // restoreFrom then setItemSlot'd the incoming character's offhand straight over it, destroying the
+    // item. read the backing lists directly so the swap sees what is really there; setItemSlot is not
+    // hooked, so writes go through unchanged.
+    private static ItemStack rawItemBySlot(Player player, EquipmentSlot slot) {
+        var inv = player.getInventory();
+        if (slot == EquipmentSlot.OFFHAND) {
+            return inv.offhand.get(0);
+        }
+        if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+            return inv.armor.get(slot.getIndex());
+        }
+        return player.getItemBySlot(slot);
+    }
+
     private static ICurioStacksHandler handlerFor(Player player, CurioBlock block) {
         List<ICurioStacksHandler> found = MyCuriosUtils.getHandlers(Collections.singletonList(block.slot()), player);
         return found.isEmpty() ? null : found.get(0);
@@ -80,7 +97,7 @@ public class CharacterEquipment {
         try {
             for (int i = 0; i < VANILLA_SLOTS.size(); i++) {
                 EquipmentSlot slot = VANILLA_SLOTS.get(i);
-                ItemStack stack = player.getItemBySlot(slot);
+                ItemStack stack = rawItemBySlot(player, slot);
                 if (stack.isEmpty()) {
                     continue;
                 }
@@ -125,7 +142,7 @@ public class CharacterEquipment {
                 storage.setItem(i, ItemStack.EMPTY);
 
                 EquipmentSlot slot = VANILLA_SLOTS.get(i);
-                if (player.getItemBySlot(slot).isEmpty()) {
+                if (rawItemBySlot(player, slot).isEmpty()) {
                     player.setItemSlot(slot, stack);
                 } else {
                     PlayerUtils.forceUnequipItem(stack, player);

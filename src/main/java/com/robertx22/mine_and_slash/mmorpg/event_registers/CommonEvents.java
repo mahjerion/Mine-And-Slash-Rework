@@ -271,6 +271,24 @@ public class CommonEvents {
             }
         }, EventPriority.LOWEST);
 
+        // the mercenary is never saved to the world, so it is only ever brought back from the owner's
+        // data (OnLogin -> MercenaryManager.requestRespawn). nothing removed it when that owner LEFT
+        // though: with getOwner() null it stopped fighting and following, but stood in the chunk until
+        // it unloaded - hours, on a busy server - and a relog spawned a second one beside it.
+        // PlayerLoggedOutEvent fires at the top of PlayerList.remove, before the player entity leaves
+        // the level, so caps and level are still live and dismiss() can find it through spawnedId.
+        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerLoggedOutEvent.class, event ->
+
+        {
+            try {
+                if (event.getEntity() instanceof ServerPlayer p) {
+                    MercenaryManager.dismiss(p);
+                }
+            } catch (Exception e) {
+                ModErrors.print(e);
+            }
+        });
+
 
         ForgeEvents.registerForgeEvent(TickEvent.PlayerTickEvent.class, event ->
 

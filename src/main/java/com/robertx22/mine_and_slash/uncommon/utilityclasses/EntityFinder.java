@@ -171,7 +171,12 @@ public class EntityFinder {
             if (list.isEmpty()) {
                 return null;
             }
-            LivingEntity en = list.stream().min(Comparator.comparingInt(x -> (int) x.distanceTo(caster))).get();
+            // measured from the search origin, not the caster. the candidate box is already centred
+            // on pos, but the pick used to be whichever was nearest the CASTER, truncated to whole
+            // blocks: a projectile or turret far from the player (soul siphon's blood balls, totems,
+            // homing and chain jumps) aimed at what was nearest the player instead of nearest itself,
+            // and ties fell to list order. for a direct cast pos is the caster, so nothing changes there
+            LivingEntity en = list.stream().min(Comparator.comparingDouble(x -> x.distanceToSqr(pos))).get();
 
             return en;
 

@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.database.data.wizard;
 
 import com.robertx22.mine_and_slash.database.data.spells.components.ComponentPart;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
+import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
@@ -220,7 +221,10 @@ public class WizardSpellCaster {
                 int castsByThisTick = cast.ticksDone * timesToCast / cast.totalTicks;
 
                 if (castsByThisTick != castsByLastTick) {
-                    fire(wizard, spell, new SpellCastContext(wizard, cast.ticksDone, spell), target);
+                    SpellCastContext ctx = new SpellCastContext(wizard, cast.ticksDone, spell);
+                    ctx.castNumber = castsByThisTick;
+                    ctx.castsTotal = timesToCast;
+                    fire(wizard, spell, ctx, target);
                 }
             }
 
@@ -272,7 +276,7 @@ public class WizardSpellCaster {
     private static void fire(WizardEntity wizard, Spell spell, SpellCastContext ctx, @Nullable LivingEntity target) {
         aimAt(wizard, target);
 
-        SpellCtx c = SpellCtx.onCast(wizard, ctx.calcData);
+        SpellCtx c = SpellCtx.onCast(wizard, ctx.calcData).setCastIndex(ctx.castNumber, ctx.castsTotal);
         c.target = target;
 
         spell.attached.onCast(c);
@@ -424,7 +428,9 @@ public class WizardSpellCaster {
                     huntsAnything = true;
                     double life = act.getOrDefault(MapField.LIFESPAN_TICKS, 0D);
                     double speed = act.getOrDefault(MapField.PROJECTILE_SPEED, 0D);
-                    projTravel = Math.max(projTravel, life * speed);
+                    // real flight, after vanilla per-tick air drag - the naive life * speed
+                    // overshoots by ~25% on slow long-lived shots like frozen orb
+                    projTravel = Math.max(projTravel, ProjectileCastHelper.travelDistance(speed, life));
                 }
             }
 

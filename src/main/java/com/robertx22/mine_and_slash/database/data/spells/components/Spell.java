@@ -175,12 +175,21 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
     public final void onCastingTick(SpellCastContext ctx) {
         int timesToCast = (int) ctx.spell.getConfig().times_to_cast;
         if (timesToCast > 1) {
-            // check how many times we should've cast by now to see if it increased
-            int castTimeTicks = getCastTimeTicks(ctx);
+            // check how many times we should've cast by now to see if it increased.
+            // paced against the cast time frozen when the cast began, the same total the countdown in
+            // SpellCastingData runs on. getCastTimeTicks(ctx) is re-read from live stats every tick, so
+            // an attack speed buff landing or dropping mid cast moved the beat while the countdown did
+            // not: a shrink jumped the count by 2+ (only one cast fires per tick, the rest were lost) and
+            // then kept firing past times_to_cast until the countdown ran out, a grow ran the count
+            // backwards and ended the cast before every repeat had gone off. the mercenary and wizard
+            // casters already pace against their own frozen total
+            int castTimeTicks = ctx.castTotalTicks > 0 ? ctx.castTotalTicks : getCastTimeTicks(ctx);
             int castCountLastTick = (ctx.ticksInUse - 1) * timesToCast / castTimeTicks;
             int castCountThisTick = ctx.ticksInUse * timesToCast / castTimeTicks;
 
             if (castCountThisTick != castCountLastTick) {
+                ctx.castNumber = castCountThisTick;
+                ctx.castsTotal = timesToCast;
                 this.cast(ctx);
             }
         } else if (timesToCast < 1) {
@@ -197,7 +206,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             //   caster.swing(InteractionHand.MAIN_HAND);
         }
         */
-        attached.onCast(SpellCtx.onCast(caster, ctx.calcData));
+        attached.onCast(SpellCtx.onCast(caster, ctx.calcData).setCastIndex(ctx.castNumber, ctx.castsTotal));
     }
 
     public final int getCooldownTicks(SpellCastContext ctx) {

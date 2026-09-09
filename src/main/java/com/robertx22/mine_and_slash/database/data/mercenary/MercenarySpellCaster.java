@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.components.ComponentPart;
 import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
+import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
@@ -373,7 +374,8 @@ public class MercenarySpellCaster {
                     huntsAnything = true;
                     double life = act.getOrDefault(MapField.LIFESPAN_TICKS, 0D);
                     double speed = act.getOrDefault(MapField.PROJECTILE_SPEED, 0D);
-                    projTravel = Math.max(projTravel, life * speed);
+                    // real flight, after vanilla per-tick air drag - see ProjectileCastHelper
+                    projTravel = Math.max(projTravel, ProjectileCastHelper.travelDistance(speed, life));
                 }
             }
 
@@ -644,7 +646,10 @@ public class MercenarySpellCaster {
                 int castsByThisTick = cast.ticksDone * timesToCast / cast.totalTicks;
 
                 if (castsByThisTick != castsByLastTick) {
-                    fire(merc, spell, new SpellCastContext(merc, cast.ticksDone, spell), target);
+                    SpellCastContext ctx = new SpellCastContext(merc, cast.ticksDone, spell);
+                    ctx.castNumber = castsByThisTick;
+                    ctx.castsTotal = timesToCast;
+                    fire(merc, spell, ctx, target);
                 }
             }
 
@@ -699,7 +704,9 @@ public class MercenarySpellCaster {
         for (LivingEntity other : merc.level().getEntitiesOfClass(
                 LivingEntity.class, merc.getBoundingBox().inflate(range))) {
 
-            if (other == merc || !other.isAlive() || !AllyOrEnemy.summonShouldAttack.is(owner, other)) {
+            // mayEngage rather than summonShouldAttack directly, so the fallback aim can't land a
+            // skill on a player nobody is fighting
+            if (other == merc || !other.isAlive() || !merc.mayEngage(owner, other)) {
                 continue;
             }
             double distSqr = merc.distanceToSqr(other);
@@ -731,7 +738,7 @@ public class MercenarySpellCaster {
         // heading instead of flying wherever it happened to be facing.
         aimAt(merc, target);
 
-        SpellCtx c = SpellCtx.onCast(merc, ctx.calcData);
+        SpellCtx c = SpellCtx.onCast(merc, ctx.calcData).setCastIndex(ctx.castNumber, ctx.castsTotal);
         c.target = target;
 
         // last, for the same reason ProcSpellEffect does it last

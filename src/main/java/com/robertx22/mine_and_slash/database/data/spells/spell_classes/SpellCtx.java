@@ -44,6 +44,19 @@ public class SpellCtx {
         return this;
     }
 
+    // which repeat of a multicast (times_to_cast) this on_cast is, 1-based, and how many there are.
+    // 1/1 for an ordinary single cast. what the is_first_cast / is_last_cast conditions read, so a
+    // datapack can run something once per cast instead of faking it with a cooldown that only holds
+    // at one attack speed
+    public int castNumber = 1;
+    public int castsTotal = 1;
+
+    public SpellCtx setCastIndex(int number, int total) {
+        this.castNumber = number;
+        this.castsTotal = total;
+        return this;
+    }
+
     private PositionSource positionSource = PositionSource.SOURCE_ENTITY;
 
     public Entity getPositionEntity() {

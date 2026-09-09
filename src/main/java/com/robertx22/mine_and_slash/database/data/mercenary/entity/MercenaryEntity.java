@@ -267,6 +267,9 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         // consults canAttack(), which returns false in Idle and in Defensive explicitly allows
         // getLastHurtByMob(). Naturally rate limited too - vanilla's canUse only fires on a NEW
         // hurt timestamp, so standing in an aoe doesn't make it flip target every tick.
+        //
+        // these three are also exactly the routes that open another PLAYER up - see mayEngage. all
+        // of them still pass through canAttack via TargetingConditions, so the rule lives in one place.
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
@@ -306,6 +309,33 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         }
     }
 
+    /**
+     * Whether the mercenary may fight this entity at all, before any combat mode is consulted.
+     * <p>
+     * The team / pvp / blacklist question is still {@link AllyOrEnemy#summonShouldAttack}, asked from
+     * the owner's seat - that is what keeps the owner, their teammates and everyone's pets off the
+     * list. On top of it: another player, or anything a player owns (a pet, a summon, their own
+     * mercenary), is never picked off the street. It only becomes fair game once the fight is already
+     * on - that exact entity hit the owner, hit this mercenary, or is what the owner is hitting right
+     * now. Judged per entity, so player B hitting the owner opens up B, not B's mercenary; B's
+     * mercenary opens itself up the moment it swings at anyone on this side.
+     * <p>
+     * Vanilla clears {@code lastHurtByMob} about five seconds after the last hit and every new hit
+     * refreshes it, so the mercenary stays on a player while the fight is live and lets go once it
+     * goes quiet - {@code TargetGoal.canContinueToUse} re-asks {@link #canAttack} every tick.
+     */
+    public boolean mayEngage(LivingEntity owner, LivingEntity target) {
+        if (!AllyOrEnemy.summonShouldAttack.is(owner, target)) {
+            return false;
+        }
+        if (AllyOrEnemy.resolveOwner(target) instanceof Player) {
+            return target == owner.getLastHurtByMob()
+                    || target == this.getLastHurtByMob()
+                    || target == owner.getLastHurtMob();
+        }
+        return true;
+    }
+
     @Override
     public boolean canAttack(LivingEntity target) {
         LivingEntity owner = getOwner();
@@ -313,9 +343,7 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
         if (owner == null || !target.isAlive()) {
             return false;
         }
-        // ask from the owner's point of view - that is what keeps the owner, their teammates and
-        // everyone's pets off the list
-        if (!AllyOrEnemy.summonShouldAttack.is(owner, target)) {
+        if (!mayEngage(owner, target)) {
             return false;
         }
 
@@ -463,8 +491,8 @@ public class MercenaryEntity extends TamableAnimal implements RangedAttackMob {
                     continue;
                 }
                 // the same ownership question canAttack asks, so the splash can never catch the
-                // owner, their teammates or anybody's pets
-                if (!AllyOrEnemy.summonShouldAttack.is(owner, other)) {
+                // owner, their teammates, anybody's pets - or a bystander player
+                if (!mayEngage(owner, other)) {
                     continue;
                 }
                 // inflate() gives a box, not a sphere - check the real distance so a corner of the

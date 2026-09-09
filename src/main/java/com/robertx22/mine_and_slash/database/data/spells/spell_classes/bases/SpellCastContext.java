@@ -22,6 +22,13 @@ public class SpellCastContext {
     public final int ticksInUse;
     public final Spell spell;
     public boolean castedThisTick = false;
+    // the cast time frozen when the cast started. a multicast paces its repeats against this, not
+    // against a cast time re-read every tick, because the countdown that ends the cast was set once
+    // and a mid-cast attack speed change would otherwise skip repeats or fire extra ones. 0 = unknown
+    public int castTotalTicks = 0;
+    // which repeat of a multicast this is (1-based) and how many there are. 1/1 for a single cast
+    public int castNumber = 1;
+    public int castsTotal = 1;
     public SpellStatsCalculationEvent event;
     public CalculatedSpellData calcData;
     public Unit unit;

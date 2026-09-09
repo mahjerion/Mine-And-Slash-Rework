@@ -168,11 +168,31 @@ public class ProjectileCastHelper {
 
     }
 
+    /**
+     * Vanilla {@code AbstractArrow.tick()} scales velocity by this every tick in air, and
+     * {@link com.robertx22.mine_and_slash.database.data.spells.entities.SimpleProjectileEntity}
+     * never re-normalizes it, so a projectile does NOT travel {@code speed * lifeTicks} blocks.
+     */
+    public static final double AIR_DRAG_PER_TICK = 0.99D;
+
+    /**
+     * Real blocks a spell projectile covers before it expires: the geometric sum
+     * {@code speed * (1 + 0.99 + 0.99^2 + ...)} over its lifespan. Linear in speed, so callers
+     * may apply a projectile-speed multiplier to the result instead of the input.
+     */
+    public static double travelDistance(double speed, double lifeTicks) {
+        if (lifeTicks <= 0 || speed <= 0) {
+            return 0;
+        }
+        // java.lang.Math on purpose - this file imports JOML's Math, which has no pow()
+        return speed * (1 - java.lang.Math.pow(AIR_DRAG_PER_TICK, lifeTicks)) / (1 - AIR_DRAG_PER_TICK);
+    }
+
     private double calculateRadius() {
         if (lifespanTicks == -1) {
             return 15;
         }
-        return lifespanTicks * shootSpeed;
+        return travelDistance(shootSpeed, lifespanTicks);
     }
 
     private @NotNull Vector3f calculateDirection(float pitch, float yaw, float pitchOffset, float yawOffset, Vector3f outUpVector) {

@@ -53,6 +53,7 @@ Implement a Mercenary (Companion) System for the Mine and Slash ARPG Minecraft m
    1. Aggressive: Attacks any hostile target in radius; prioritizes player's target.
    2. Defensive: Only attacks targets that strike the player or the mercenary.
    3. Idle: Follows the player passively; does not engage in combat.
+* Other players, and anything a player owns (pets, summons, their own mercenary), are never engaged on sight in any mode. A mercenary only fights one once that entity hits the owner, hits the mercenary, or the owner attacks it; it lets go again once the fight goes quiet. A mercenary is dismissed when its owner logs out and returns on login.
 * Any kills from the Mercenary are attributed to the player but don't count for on-kill stats, just the kill participation (for stuff like FTB Quests and loot tables). However, Mercenaries will take into account Bonus Experience, drop rate bonuses and Magic Find from the player and combine it with their own on kill. Player's don't get to benefit from Bonus Experience, Magic Find or drop rate bonuses from Mercenary stats though.
 
 ------------------------------

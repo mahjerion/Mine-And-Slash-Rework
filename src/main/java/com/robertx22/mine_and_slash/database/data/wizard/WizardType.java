@@ -46,8 +46,8 @@ public class WizardType implements JsonExileRegistry<WizardType>, IAutoGson<Wiza
      * they are authored for a player who ranks them up and pays mana, and honouring them would have
      * a three skill wizard standing idle most of a fight. It has no basic attack to fall back on.
      */
-    public int min_cast_interval_ticks = 20 * 3;
-    public int max_cast_interval_ticks = 20 * 5;
+    public int min_cast_interval_ticks = 20 * 4;
+    public int max_cast_interval_ticks = 20 * 6;
 
     public WizardType() {
     }

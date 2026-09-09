@@ -641,6 +641,7 @@ public class SpellCastingData {
                 Spell spell = this.calcSpell.getSpell();
 
                 SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
+                ctx.castTotalTicks = this.spellTotalCastTicks;
 
                 if (spell != null && ExileDB.Spells()
                         .isRegistered(spell)) {

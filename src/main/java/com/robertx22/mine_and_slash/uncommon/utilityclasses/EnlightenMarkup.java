@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.uncommon.utilityclasses;
 
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -12,11 +13,13 @@ import java.util.regex.Pattern;
  * Strips Enlighten glossary markup - {@code [Display Text](term_id)} - down to its display text.
  * <p>
  * The Craft to Exile 2 pack writes that markup straight into lang strings (stat names included) for
- * Tooltips Core, which only resolves it while rendering item tooltips. Anything the mod draws with
- * {@code GuiGraphics.drawString} - the stat screen, the map device panels - would otherwise show the
- * raw brackets. The mixin on drawString runs text through here; by the time tooltip text reaches the
- * font the tooltip mod has already turned the markup into its own spans, so there is nothing to strip
- * there and the hoverable terms keep working.
+ * Tooltips Core, which only resolves it on the text lines of a tooltip. Everything else would show the
+ * raw brackets: the stat screen and map device panels (drawn with {@code GuiGraphics.drawString}),
+ * chat when ChatPlus renders it (it draws with {@code Font.drawInBatch} directly), and tooltip image
+ * components that draw their own text such as {@code SocketTooltip}. {@code FontStripMarkupMixin}
+ * therefore runs every {@code Font.drawInBatch} and {@code Font.width} call through here. Tooltip lines
+ * Tooltips Core has resolved reach the font as display text plus its own spans, so there is nothing
+ * left to strip there and the hoverable terms keep working.
  * <p>
  * {@code [VAL1]} style placeholders are untouched: they are never followed by {@code (...)}.
  */
@@ -34,6 +37,21 @@ public class EnlightenMarkup {
             return text;
         }
         return MARKUP.matcher(text).replaceAll("$1");
+    }
+
+    /**
+     * Only used for measuring ({@code Font.width(FormattedText)}), never for drawing, so dropping the
+     * styles is fine: bold is the only style that changes glyph width, by a pixel.
+     */
+    public static FormattedText strip(FormattedText text) {
+        if (text == null) {
+            return null;
+        }
+        String s = text.getString();
+        if (!mightContain(s)) {
+            return text;
+        }
+        return FormattedText.of(strip(s));
     }
 
     /**

@@ -33,6 +33,9 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
     public static HasMnsEffectCondition HAS_MNS_EFFECT;
     public static CasterHasMnsEffectCondition CASTER_HAS_MNS_EFFECT;
 
+    public static IsFirstCastCondition IS_FIRST_CAST;
+    public static IsLastCastCondition IS_LAST_CAST;
+
 
     public abstract boolean canActivate(SpellCtx ctx, MapHolder data);
 
@@ -101,6 +104,9 @@ public abstract class EffectCondition extends BaseFieldNeeder implements IGUID {
 
         CASTER_HAS_STAT = of(new CasterHasStatCondition());
         ON_ATTACKED = of(new OnAttackedCondition());
+
+        IS_FIRST_CAST = of(new IsFirstCastCondition());
+        IS_LAST_CAST = of(new IsLastCastCondition());
 
     }
 }

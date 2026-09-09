@@ -338,7 +338,13 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(getCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
         }
 
-        list.add(Words.RECOVERY.locName(tooltipFormatTicksAsSeconds(recovery)).withStyle(ChatFormatting.YELLOW));
+        if (config.isOffGlobalCooldown()) {
+            // the calculated recovery is the 2-3 tick floor here, which would read as "Recovery: 0.1s".
+            // what the player needs to know is that this one does not wait on, or impose, the gate
+            list.add(Words.NO_RECOVERY.locName().withStyle(ChatFormatting.GREEN));
+        } else {
+            list.add(Words.RECOVERY.locName(tooltipFormatTicksAsSeconds(recovery)).withStyle(ChatFormatting.YELLOW));
+        }
 
         int casttime = getCastTimeTicks(ctx);
 

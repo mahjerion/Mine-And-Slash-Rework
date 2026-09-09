@@ -21,6 +21,13 @@ Remove simultaneous multi-casting entirely while maintaining fluid gameplay thro
 | Channeling Speed | Governed by the "Cast Speed" stat (used primarily for channel effects). | Officially renamed to Channel Speed. |
 | Stat Overlaps | Innate Cast Speed → Cooldown conversion causes unintended stat doubling. | Conversion removed. Stats are cleanly separated. |
 
+### Off global cooldown skills (`cast_speed_ticks: 0`)
+Player feedback: the GCD punished buffs, curses, dodges and heals, because pressing one cost a cast of your damage skill. A skill authored with `cast_speed_ticks: 0` is **off the global cooldown** (`SpellConfiguration.isOffGlobalCooldown`, read from the raw config since the stat event floors the calculated value):
+* it may **start** while another skill's recovery is running (`SpellCastingData.tryStartSpellCast` / `processSpellInputs`), so only its own `cast_time_ticks` wind-up costs time;
+* finishing or cancelling it **never writes** the global cooldown (`armGlobalCooldown`) - otherwise it would overwrite the damage skill's remaining recovery with its own 2-tick floor and act as a recovery reset;
+* the hotbar does not grey its slot during the GCD, and its tooltip shows "No Recovery" instead of `Recovery: 0.1s`.
+Its own cooldown is still `max(cooldown_ticks, 2-tick floor)`, so give such a skill a real `cooldown_ticks` (CTE2 uses 40 where there was none) or it is spammable. Mercenaries are untouched: their pack spells keep a 20-tick recovery. No new datapack field - any pack opts a skill in by writing the 0.
+
 ## 📊 Stat & Skill Remapping
 
 * Craft to Exile 2 datapack path, do NOT update server files - I will do it on my own: C:\Users\Kelvin\curseforge\minecraft\Instances\Craft to Exile 2\config\openloader\data\cte_mns\data\mmorpg

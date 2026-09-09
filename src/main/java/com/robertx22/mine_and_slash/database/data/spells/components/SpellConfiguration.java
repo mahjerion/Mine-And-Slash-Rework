@@ -108,6 +108,15 @@ public class SpellConfiguration {
         return cast_speed_ticks;
     }
 
+    // a skill with no recovery of its own is off the global cooldown: it may start while another
+    // skill's recovery is still running, and finishing it never writes that recovery. this is how
+    // buffs, curses, dodges and heals weave between damage skills instead of costing a cast of them.
+    // read from the raw config on purpose - the stat event floors cast_speed_ticks at
+    // GLOBAL_COOLDOWN_TICKS, so the calculated value can never be 0 and could not carry this flag
+    public boolean isOffGlobalCooldown() {
+        return cast_speed_ticks <= 0;
+    }
+
     public SpellConfiguration setCastSpeedTicks(int ticks) {
         this.cast_speed_ticks = ticks;
         return this;

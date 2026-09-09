@@ -233,11 +233,16 @@ public class SpellOnHotbarRender {
         CooldownsData cds = Load.Unit(mc.player).getCooldowns();
 
         // whichever wait has the most left is the one the player actually cares about. the global
-        // cooldown is in here so every slot darkens together, not just the skill that was cast
+        // cooldown is in here so every slot darkens together, not just the skill that was cast.
+        // an off global cooldown skill can be pressed during it, so its slot must not darken
         float percent = 0F;
         int longestLeft = 0;
 
-        for (String id : new String[]{spell.GUID(), CooldownsData.GLOBAL_COOLDOWN}) {
+        String[] ids = spell.getConfig().isOffGlobalCooldown()
+                ? new String[]{spell.GUID()}
+                : new String[]{spell.GUID(), CooldownsData.GLOBAL_COOLDOWN};
+
+        for (String id : ids) {
             int left = cds.getCooldownTicks(id);
             int need = cds.getNeededTicks(id);
             // compared by time left, not by fraction. the two waits have different lengths, so a full

@@ -28,7 +28,8 @@ public class IsRangedWeapon extends StatCondition {
         // projectile - read that. the bonus element child event carries the same attackInfo, so
         // added flat damage of another element is covered too. not fixed by giving mobs a ranged
         // weapon type: bow hits get scaled by the arrow's draw multiplier, which is only recorded
-        // by shootFromRotation, and mobs (and mercenaries) shoot with shoot() - it would be 0.
+        // by shootFromRotation, and mobs (and mercenaries) shoot with shoot() - they'd read as an
+        // unmeasured (full) draw and that path is meant for player bows only.
         if (event instanceof DamageEvent dmg && dmg.attackInfo != null && dmg.attackInfo.getSource() != null) {
             return dmg.attackInfo.getSource().is(DamageTypeTags.IS_PROJECTILE);
         }

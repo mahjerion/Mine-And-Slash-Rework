@@ -99,6 +99,11 @@
 "entity.mmorpg.auto_aim_skull": "Summoned Skull",
 "entity.mmorpg.mercenary": "Mercenary",
 
+"entity.mmorpg.fire_wizard": "Fire Wizard",
+"entity.mmorpg.ice_wizard": "Ice Wizard",
+"entity.mmorpg.lightning_wizard": "Lightning Wizard",
+"entity.mmorpg.chaos_wizard": "Chaos Wizard",
+
 "effect.mmorpg.food_health_regen": "Health Regen",
 "effect.mmorpg.food_mana_regen": "Mana Regen",
 "effect.mmorpg.food_magic_shield_regen": "Magic Regen",

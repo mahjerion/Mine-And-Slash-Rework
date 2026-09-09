@@ -414,11 +414,13 @@ public class SpellCastingData {
             return false;
         }
 
-        if (cds.isOnCooldown(CooldownsData.GLOBAL_COOLDOWN)) {
-            return false;
-        }
-
         if (spell != null) {
+
+            // the gate holds every skill except one that is off the global cooldown - those are
+            // exactly the ones meant to be pressed while another skill is still recovering
+            if (cds.isOnCooldown(CooldownsData.GLOBAL_COOLDOWN) && !spell.getConfig().isOffGlobalCooldown()) {
+                return false;
+            }
 
             var can = canCast(spell, player);
 
@@ -481,9 +483,7 @@ public class SpellCastingData {
 
                     // an interrupted cast still owes the recovery, but only from where it stopped -
                     // the gate was holding the remaining cast time and that time is not being spent
-                    Load.Unit(entity)
-                            .getCooldowns()
-                            .setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, ctx.spell.getCastSpeedTicks(ctx));
+                    armGlobalCooldown(ctx);
                     Load.Unit(entity).sync.setDirty();
                 }
 
@@ -601,10 +601,11 @@ public class SpellCastingData {
         }
 
         // one skill per global cooldown. this is what turns a shared bind from a simultaneous volley
-        // into a rotation, and it also covers the cast time of whatever is already going off
-        if (Load.Unit(player).getCooldowns().isOnCooldown(CooldownsData.GLOBAL_COOLDOWN)) {
-            return;
-        }
+        // into a rotation, and it also covers the cast time of whatever is already going off.
+        // decided per slot rather than up front: an off global cooldown skill (a buff, a curse, a
+        // dodge) is let through the gate, that is the whole point of it being off the cooldown
+        boolean onGlobalCooldown = Load.Unit(player).getCooldowns().isOnCooldown(CooldownsData.GLOBAL_COOLDOWN);
+        var gems = Load.player(player).getSkillGemInventory();
 
         // walk the live slots once from the rotation point, so a key holding several skills plays the
         // next one rather than all of them, and a slot that cannot cast right now yields to the next
@@ -612,6 +613,15 @@ public class SpellCastingData {
             int slot = (rotationSlot + i) % GemInventoryHelper.MAX_SKILL_GEMS;
             if ((mask & (1 << slot)) == 0) {
                 continue;
+            }
+            if (onGlobalCooldown) {
+                // resolved here so canCast, which runs a full stat event, is never reached for a gated
+                // skill - this keeps the walk as cheap as the early return it replaces
+                var gem = gems.getHotbarGem(slot);
+                Spell held = gem == null ? null : gem.getSpell();
+                if (held == null || !held.getConfig().isOffGlobalCooldown()) {
+                    continue;
+                }
             }
             if (tryStartSpellCast(player, slot)) {
                 rotationSlot = (slot + 1) % GemInventoryHelper.MAX_SKILL_GEMS;
@@ -905,6 +915,18 @@ public class SpellCastingData {
 
     }
 
+    // the one place the global cooldown is written from a player cast. an off global cooldown skill
+    // never writes it: it was allowed to start while another skill's recovery was running, and
+    // stamping its own 2 tick floor over that would hand the player a recovery reset - fireball,
+    // buff, fireball again 7 ticks later instead of 20. the skill's own cooldown is stamped
+    // separately in setCooldownOnCasted, so it still cannot fire twice in one tick
+    private void armGlobalCooldown(SpellCastContext ctx) {
+        if (ctx.spell.getConfig().isOffGlobalCooldown()) {
+            return;
+        }
+        ctx.data.getCooldowns().setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, ctx.spell.getCastSpeedTicks(ctx));
+    }
+
     public void onSpellCastFinished(SpellCastContext ctx) {
 
         setCooldownOnCasted(ctx);
@@ -913,7 +935,7 @@ public class SpellCastingData {
         if (!ctx.caster.level().isClientSide) {
             // recovery starts when the cast ends, never when it began - a cast time is time spent, not
             // time recovered. a channel follows the same rule, its cast simply runs until the key is up
-            ctx.data.getCooldowns().setOnCooldown(CooldownsData.GLOBAL_COOLDOWN, ctx.spell.getCastSpeedTicks(ctx));
+            armGlobalCooldown(ctx);
             ctx.data.sync.setDirty(); // same reason as in tryStartSpellCast
 
             if (ctx.spell.getConfig().isChannel() && ctx.caster instanceof ServerPlayer p) {

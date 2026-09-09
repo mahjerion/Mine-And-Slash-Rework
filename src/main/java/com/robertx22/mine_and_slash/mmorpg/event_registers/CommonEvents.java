@@ -77,7 +77,7 @@ public class CommonEvents {
                     .add(Attributes.MOVEMENT_SPEED, 0.3)
                     .add(Attributes.MAX_HEALTH, 20)
                     .add(Attributes.ATTACK_DAMAGE, 1)
-                    .add(Attributes.FOLLOW_RANGE, 32)
+                    .add(Attributes.FOLLOW_RANGE, 16)
                     .build());
 
             // wizards. max health is a seed only - the real pool comes from the Health stat, rolled
@@ -91,7 +91,7 @@ public class CommonEvents {
                 x.put(wizard.get(), Monster.createMonsterAttributes()
                         .add(Attributes.MOVEMENT_SPEED, 0.26)
                         .add(Attributes.MAX_HEALTH, 26)
-                        .add(Attributes.FOLLOW_RANGE, 24)
+                        .add(Attributes.FOLLOW_RANGE, 10)
                         .build());
             }
 

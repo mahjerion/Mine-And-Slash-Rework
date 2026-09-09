@@ -423,7 +423,11 @@ public class DamageEvent extends EffectEvent {
     private void modifyIfArrowDamage() {
         if (attackInfo != null && attackInfo.getSource() != null) {
             if (attackInfo.getSource().getDirectEntity() instanceof ProjectileEntityDuck) {
-                if (data.getWeaponType() == WeaponTypes.bow) {
+                // by id, never by identity: weapon types are a datapack registry, and the loader
+                // unregisters the static WeaponTypes.bow and registers a fresh Gson copy built from
+                // bow.json in its place. An == here was false in every loaded world, so the draw
+                // multiplier below never applied and a barely drawn arrow dealt full damage
+                if (WeaponTypes.bow.GUID().equals(data.getWeaponType().GUID())) {
 
                     if (!ServerContainer.get().REMOVE_DRAW_SPEED_COOLDOWN.get()) {
 
@@ -502,6 +506,12 @@ public class DamageEvent extends EffectEvent {
     public boolean allowSelfDamage = false;
 
 
+    // decided BEFORE the stat pass (calculateEffects), not in activate(). Activate() runs initBeforeActivating ->
+    // calculateEffects -> activate, and every "on hit" stat effect fires during calculateEffects: give_x_to_target
+    // (shred, bleed, stun, poison...), ailment chance, proc_spell, leech. With the check in activate() all of those
+    // had already landed on an ally by the time the hit was cancelled - a Marauder's cleave that swept the owner's
+    // own mercenary did 0 damage to it and still put Shred on it. Cancelling here makes calculateEffects skip the
+    // whole sweep, so an ally hit applies nothing and costs nothing.
     public boolean stopFriendlyFire() {
 
         if (allowSelfDamage) {
@@ -534,6 +544,11 @@ public class DamageEvent extends EffectEvent {
 
     @Override
     public void initBeforeActivating() {
+
+        // has to be the very first thing the event does - see stopFriendlyFire
+        if (stopFriendlyFire()) {
+            return; // cancelled: calculateEffects() bails on data.isCanceled() and activate() never runs
+        }
 
         var initevent = new DamageInitEvent(this);
         initevent.Activate();
@@ -717,11 +732,6 @@ public class DamageEvent extends EffectEvent {
                 attackInfo.setAmount(0);
             }
         }
-        if (stopFriendlyFire()) {
-            return;
-        }
-
-
         this.targetData.lastDamageTaken = this;
 
         // this has to be checked before the bonus element damage is calculated. every bonus element

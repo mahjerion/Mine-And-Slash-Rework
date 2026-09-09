@@ -7,6 +7,7 @@ import com.robertx22.mine_and_slash.a_libraries.player_animations.PlayerAnimatio
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
+import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,6 +61,17 @@ public class TellClientEntityCastingSpell extends MyPacket<TellClientEntityCasti
 
         if (en instanceof Player p) {
             Spell spell = ExileDB.Spells().get(spellid);
+
+            // the server ended or cancelled the cast (shield block, stun). the client predicts the
+            // cast on its own and would otherwise keep it "casting" - and keep refusing attacks -
+            // until its own countdown ran out. client side cancelCast only resets the local fields
+            if (type == PlayerAnimations.CastEnum.CAST_FINISH && p == ctx.getPlayer()) {
+                var data = Load.player(p);
+                if (data != null) {
+                    data.spellCastingData.cancelCast(p);
+                }
+            }
+
             PlayerAnimations.onSpellCast(p, spell, type);
 
         }

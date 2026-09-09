@@ -18,7 +18,7 @@ import com.robertx22.mine_and_slash.event_hooks.my_events.OnMobDeathDrops;
 import com.robertx22.mine_and_slash.event_hooks.my_events.OnPlayerDeath;
 import com.robertx22.mine_and_slash.event_hooks.ontick.OnServerTick;
 import com.robertx22.mine_and_slash.event_hooks.player.OnLogin;
-import com.robertx22.mine_and_slash.event_hooks.player.StopCastingIfInteract;
+import com.robertx22.mine_and_slash.event_hooks.player.BlockAttacksWhileCasting;
 import com.robertx22.mine_and_slash.itemstack.ExileStack;
 import com.robertx22.mine_and_slash.itemstack.StackKeys;
 import com.robertx22.mine_and_slash.mixin_methods.OnItemInteract;
@@ -304,8 +304,10 @@ public class CommonEvents {
         ForgeEvents.registerForgeEvent(AttackEntityEvent.class, event ->
 
         {
-            if (event.getEntity() instanceof ServerPlayer) {
-                StopCastingIfInteract.interact(event.getEntity());
+            // the cast owns the hands: a basic attack during a cast is refused instead of
+            // interrupting it. Better Combat's hits arrive here too, through Player.attack
+            if (event.getEntity() instanceof ServerPlayer p && BlockAttacksWhileCasting.isCasting(p)) {
+                event.setCanceled(true);
             }
         });
 

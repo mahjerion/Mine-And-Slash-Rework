@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.gui.screens.map_device;
 
 import com.robertx22.addons.map_device.MapDeviceActionPacket;
 import com.robertx22.addons.map_device.MapDeviceClientState;
+import com.robertx22.addons.map_device.MapDeviceServer;
 import com.robertx22.dungeon_realm.client.DungeonStatsOverlay;
 import com.robertx22.dungeon_realm.item.DungeonItemNbt;
 import com.robertx22.dungeon_realm.item.relic.RelicItemData;
@@ -235,7 +236,8 @@ public class MapDeviceScreen extends BaseScreen {
         }
         try {
             var container = state.asContainer();
-            List<RelicItemData> applying = RelicSlotUtil.loadEquippable(container, IMapDeviceBlockEntity.RELIC_SLOT_START, IMapDeviceBlockEntity.RELIC_SLOTS);
+            String type = MapDeviceServer.relicTypeFor(state.kind);
+            List<RelicItemData> applying = RelicSlotUtil.loadEquippable(container, IMapDeviceBlockEntity.RELIC_SLOT_START, IMapDeviceBlockEntity.RELIC_SLOTS, type);
             Map<RelicStat, Float> totals = RelicSlotUtil.aggregate(applying);
 
             relicLines.add(Words.MAP_DEVICE_RELIC_STATS.locName().withStyle(ChatFormatting.GOLD));
@@ -245,9 +247,10 @@ public class MapDeviceScreen extends BaseScreen {
 
             relicLines.add(Component.empty());
 
-            // slot order, same wording as the relic's own tooltip. a relic past its type's cap is listed
-            // greyed so it's visible that it won't apply (and won't be consumed). same first-slots-win
-            // rule as RelicItemData.filterEquippable, counted here per slot
+            // slot order, same wording as the relic's own tooltip. a relic past its type's cap, or of a
+            // type this device doesn't take, is listed greyed so it's visible that it won't apply (and
+            // won't be consumed). same first-slots-win rule as RelicItemData.filterEquippable, counted
+            // here per slot
             Map<String, Integer> perType = new java.util.HashMap<>();
             for (int i = IMapDeviceBlockEntity.RELIC_SLOT_START; i < IMapDeviceBlockEntity.SIZE; i++) {
                 var stack = container.getItem(i);
@@ -256,7 +259,7 @@ public class MapDeviceScreen extends BaseScreen {
                 }
                 RelicItemData data = DungeonItemNbt.RELIC.loadFrom(stack);
                 int nth = perType.merge(data.type, 1, Integer::sum);
-                boolean applies = nth <= data.getType().max_equipped;
+                boolean applies = data.type.equals(type) && nth <= data.getType().max_equipped;
 
                 // "Epic Relic - Uses Remaining: 3/3" on one line: the rarity in its own colour, the rest aqua
                 MutableComponent rarity = data.getRarity().getTranslation(TranslationType.NAME).getTranslatedName()

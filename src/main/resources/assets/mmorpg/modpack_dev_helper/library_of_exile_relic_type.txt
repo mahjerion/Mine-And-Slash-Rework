@@ -3,5 +3,4 @@ This registry is modify-able through datapacks.
 ancient_obelisks
 dungeon_realm
 empty
-mmorpg
 the_harvest

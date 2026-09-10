@@ -4,8 +4,11 @@ import com.robertx22.dungeon_realm.block_entity.MapDeviceBE;
 import com.robertx22.dungeon_realm.item.DungeonItemNbt;
 import com.robertx22.dungeon_realm.item.relic.RelicSlotUtil;
 import com.robertx22.dungeon_realm.main.DungeonMain;
+import com.robertx22.the_harvest.main.HarvestMain;
+import com.robertx22.ancient_obelisks.main.ObelisksMain;
 import com.robertx22.library_of_exile.database.relic.stat.RelicStatsContainer;
 import com.robertx22.library_of_exile.dimension.device.IMapDeviceBlockEntity;
+import com.robertx22.library_of_exile.dimension.device.MapDeviceKind;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.maps.MapData;
@@ -53,6 +56,19 @@ public class MapDeviceServer {
     }
 
     /**
+     * The one relic type a device takes: a league's relic stats only do anything inside that league, so
+     * the map device takes dungeon relics, the harvest altar harvest relics, the obelisk altar obelisk
+     * relics. Relic type ids are the owning modids.
+     */
+    public static String relicTypeFor(MapDeviceKind kind) {
+        return switch (kind) {
+            case DUNGEON -> DungeonMain.MODID;
+            case HARVEST -> HarvestMain.MODID;
+            case OBELISK -> ObelisksMain.MODID;
+        };
+    }
+
+    /**
      * Whether {@code stack} may go into {@code slot} of this device. Shared by the client's picker filter
      * and the server's final check, so the two can't drift.
      */
@@ -64,7 +80,7 @@ public class MapDeviceServer {
             return hasMapSlot && device.acceptsMapItem(stack);
         }
         if (isRelicSlot(slot)) {
-            return RelicSlotUtil.canPlace(contents, RELIC_SLOT_START, RELIC_SLOTS, slot, stack);
+            return RelicSlotUtil.canPlace(contents, RELIC_SLOT_START, RELIC_SLOTS, slot, stack, relicTypeFor(device.getDeviceKind()));
         }
         return false;
     }
@@ -144,7 +160,7 @@ public class MapDeviceServer {
         if (device.isFreeRunAvailable(p.level()) || !device.getDeviceInventory().getItem(MAP_SLOT).isEmpty()) {
             SimpleContainer inv = device.getDeviceInventory();
             // resolved by the addon at the exact point the instance is written, never on a refused start
-            result = device.startMap(p, () -> consumeRelics(inv)) ? StartResult.STARTED : StartResult.REFUSED;
+            result = device.startMap(p, () -> consumeRelics(device, inv)) ? StartResult.STARTED : StartResult.REFUSED;
         } else if (device.isActivated()) {
             result = device.joinMap(p) ? StartResult.JOINED : StartResult.REFUSED;
         } else {
@@ -175,16 +191,21 @@ public class MapDeviceServer {
         return true;
     }
 
-    /** null when nothing is slotted, so the addons can tell "no relics" from "relics with no stats" */
-    private static RelicStatsContainer consumeRelics(SimpleContainer inv) {
+    /**
+     * null when nothing of the device's type is slotted, so the addons can tell "no relics" from "relics
+     * with no stats". A relic of another type (slotted before devices became type-bound) neither counts
+     * nor gets consumed.
+     */
+    private static RelicStatsContainer consumeRelics(IMapDeviceBlockEntity device, SimpleContainer inv) {
+        String type = relicTypeFor(device.getDeviceKind());
         boolean any = false;
         for (int i = RELIC_SLOT_START; i < RELIC_SLOT_START + RELIC_SLOTS; i++) {
-            if (RelicSlotUtil.isRelic(inv.getItem(i))) {
+            if (RelicSlotUtil.isRelicOfType(inv.getItem(i), type)) {
                 any = true;
                 break;
             }
         }
-        return any ? RelicSlotUtil.consumeAndCalculate(inv, RELIC_SLOT_START, RELIC_SLOTS) : null;
+        return any ? RelicSlotUtil.consumeAndCalculate(inv, RELIC_SLOT_START, RELIC_SLOTS, type) : null;
     }
 
     public static void sync(Player p, IMapDeviceBlockEntity device, BlockPos pos) {

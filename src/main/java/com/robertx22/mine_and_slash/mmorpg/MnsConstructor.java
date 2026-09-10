@@ -18,7 +18,6 @@ import com.robertx22.mine_and_slash.database.data.profession.buffs.StatBuffs;
 import com.robertx22.mine_and_slash.database.data.stats.types.special.SpecialStats;
 import com.robertx22.mine_and_slash.database.holders.MnsRelicAffixes;
 import com.robertx22.mine_and_slash.database.holders.MnsRelicStats;
-import com.robertx22.mine_and_slash.database.holders.MnsRelicTypes;
 import com.robertx22.mine_and_slash.database.registrators.StatsRegister;
 import com.robertx22.mine_and_slash.database.registry.ExileDBInit;
 import com.robertx22.mine_and_slash.mmorpg.registers.deferred_wrapper.SlashDeferred;
@@ -51,7 +50,6 @@ public class MnsConstructor extends OrderedModConstructor {
                 MnsMapContents.INSTANCE,
                 MnsLeagues.INSTANCE,
                 MnsDungeonOrbEdits.INSTANCE,
-                MnsRelicTypes.INSTANCE,
                 MnsRelicStats.INSTANCE,
                 MnsRelicAffixes.INSTANCE
 

@@ -37,8 +37,11 @@ public class BlockAttacksWhileCasting {
                 return false;
             }
             var data = playerData.spellCastingData;
-            // same test the cast bar and the casting slow use
-            return data.isCasting() && data.castTickLeft > 0;
+            // same test the cast bar uses. no castTickLeft > 0: the client parks at zero until the
+            // server's CAST_FINISH clears the state, and the swing has to stay refused until then -
+            // the server is still casting and would refuse it anyway. on the server the two tests are
+            // equivalent, calcSpell is nulled on the same tick the countdown hits zero
+            return data.isCasting();
         } catch (Exception e) {
             return false;
         }

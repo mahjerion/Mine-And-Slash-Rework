@@ -33,12 +33,15 @@ public class SpellCastBarOverlay {
             return;
         }
 
-        if (data.spellCastingData.isCasting() && data.spellCastingData.castTickLeft > 0) {
+        // no castTickLeft > 0 here: the client parks at zero and keeps the state until the server's
+        // CAST_FINISH arrives, so under lag the bar sits full instead of vanishing before the skill
+        // has actually gone off (see SpellCastingData.onTimePass)
+        if (data.spellCastingData.isCasting()) {
 
             float total = data.spellCastingData.spellTotalCastTicks;
             float current = data.spellCastingData.castTickLeft;
 
-            float percent = (total - current + partialtick) / total;
+            float percent = Math.min(1.0F, (total - current + partialtick) / total);
 
             renderCastBar(gui, data.spellCastingData.getSpellBeingCast(), percent);
 

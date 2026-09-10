@@ -640,6 +640,22 @@ public class SpellCastingData {
 
         if (isCasting()) {
             try {
+                Spell spell = this.calcSpell.getSpell();
+
+                if (entity.level().isClientSide && spell != null && !spell.getConfig().isChannel()) {
+                    // the client only draws the bar. it does not finish the cast: the server's
+                    // CAST_FINISH does, via TellClientEntityCastingSpell -> cancelCast. counting to
+                    // zero here and clearing the state made the bar complete on the client's clock
+                    // while a lagging server still had ticks to go, so the player saw the cast end,
+                    // nothing happen, and then the cooldown land. parked at zero the bar stays full
+                    // until the server actually fires. a channel keeps predicting its pulse loop
+                    if (castTickLeft > 0) {
+                        castTickLeft--;
+                        castTicksDone++;
+                    }
+                    return;
+                }
+
                 if (isChannelling() && !isChannelInputHeld(entity)) {
                     endChannel(entity);
                     return;
@@ -647,8 +663,6 @@ public class SpellCastingData {
 
                 castTickLeft--;
                 castTicksDone++;
-
-                Spell spell = this.calcSpell.getSpell();
 
                 SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
                 ctx.castTotalTicks = this.spellTotalCastTicks;
@@ -678,6 +692,9 @@ public class SpellCastingData {
                     this.calcSpell = null;
                 }
             } catch (Exception e) {
+                // named so a live log can tell which skill died here: cancelCast stamps the full
+                // cooldown with nothing fired, which looks exactly like a successful cast to the player
+                System.err.println("Spell cast tick failed for " + (calcSpell == null ? "?" : calcSpell.spell_id) + ", cancelling:");
                 e.printStackTrace();
                 this.cancelCast(entity);
                 // cancel when error, cus this is called on tick, so it doesn't crash servers when 1 spell fails

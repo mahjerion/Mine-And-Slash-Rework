@@ -20,6 +20,7 @@ import com.robertx22.mine_and_slash.vanilla_mc.items.SoulExtractorItem;
 import com.robertx22.mine_and_slash.vanilla_mc.items.misc.RarityStoneItem;
 import com.robertx22.orbs_of_crafting.misc.ClickContext;
 import com.robertx22.orbs_of_crafting.misc.LocReqContext;
+import com.robertx22.orbs_of_crafting.register.ExileCurrency;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.inventory.ClickAction;
@@ -166,14 +167,21 @@ public class OnItemInteract {
             public Result tryApply(ClickContext ctx) {
                 if (ctx.currency.getItem() instanceof IItemAsCurrency c) {
                     if (!ctx.target.isEmpty()) {
-                        if (ctx.refuseIfStacked()) {
-                            return new Result(true);
+                        if (ctx.target.getItem() instanceof IItemAsCurrency || ExileCurrency.get(ctx.target).isPresent()) {
+                            // stacking or swapping two currencies (gem onto a gem stack after a right click
+                            // split, rune onto an orb..) is plain inventory management, not a craft. stay quiet
+                            return new Result(false);
                         }
                         LocReqContext req = new LocReqContext(ctx.player, ctx.target.copyWithCount(1), ctx.currency);
 
                         var effect = c.currencyEffect(ctx.currency);
                         var can = effect.canItemBeModified(req);
                         if (can.can) {
+                            // only once the currency is known to apply to this item. earlier, and a gem
+                            // dropped on any stacked non-gear slot was told "must be a single item"
+                            if (ctx.refuseIfStacked()) {
+                                return new Result(true);
+                            }
                             ItemStack result = effect.modifyItem(req).stack.copy();
                             ctx.consumeCurrency(1);
                             ctx.replaceTarget(result); // the currency builds a new item, so the old one goes away

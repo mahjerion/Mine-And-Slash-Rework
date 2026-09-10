@@ -1,7 +1,6 @@
 Changelog of recent updates: https://github.com/RobertSkalko/Mine-And-Slash-Rework/blob/1.20-Forge/changelogs/v.6.2.txt
 
-v.6.3.7
+v.6.4.X
 
-- added map dim wipe feature
-- removed scoreboard for map complete
-- added jei plugin for runewords
+- fixed relic stuff
+- fixed ele conversion prio

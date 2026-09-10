@@ -240,6 +240,8 @@ int getPackFormat() {
 
 publishMods {
 
+    // Run with -PdryRun to build and print the upload request without publishing.
+    dryRun = providers.gradleProperty("dryRun").isPresent()
     file = jar.archiveFile
     changelog = file("CHANGELOG.txt").text
     type = "${release_type}".startsWith("release") ? STABLE : ("${release_type}".startsWith("beta") ? BETA : ALPHA)
@@ -248,14 +250,14 @@ publishMods {
 
     curseforge {
         //this will not block the build process even you don't have the file
-        accessToken = file("key.properties").exists() ? file("key.properties").text : ""
+        accessToken = file("key.properties").exists() ? file("key.properties").text.trim() : ""
         projectId = "${curse_id}"
         minecraftVersions.add("${minecraft_version}")
         minecraftVersions.add("1.20")
     }
 
     modrinth {
-        accessToken = file("modrinth_key.properties").exists() ? file("modrinth_key.properties").text : ""
+        accessToken = file("modrinth_key.properties").exists() ? file("modrinth_key.properties").text.trim() : ""
         projectId = "${modrinth_id}"
         minecraftVersions.add("${minecraft_version}")
         minecraftVersions.add("1.20")

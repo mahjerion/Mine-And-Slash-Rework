@@ -13,6 +13,7 @@ import com.robertx22.mine_and_slash.database.data.stats.layers.StatLayers;
 import com.robertx22.mine_and_slash.database.data.stats.priority.StatPriority;
 import com.robertx22.mine_and_slash.database.data.stats.types.UnknownStat;
 import com.robertx22.mine_and_slash.database.data.stats.types.defense.Armor;
+import com.robertx22.mine_and_slash.database.data.stats.types.generated.ElementalResist;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
@@ -400,20 +401,38 @@ public abstract class EffectEvent implements IGUID {
                 });
 
         if (side == EffectSides.Target) {
-            // the loop above skips stats with a value of 0, but armor still needs to run at 0 so
-            // leftover armor penetration applies to unarmored targets instead of being ignored
-            StatData armorData = un.getCalculatedStat(Armor.GUID);
+            // the loop above skips stats with a value of 0, but mitigation stats that have a
+            // penetration counterpart still need to run at 0 so leftover penetration applies
+            // to an undefended target instead of being ignored. otherwise 0 resist is strictly
+            // better for the target than 1 resist.
+            addIfZero(effects, un, side, Armor.getInstance());
 
-            if (!armorData.isNotZero()) {
-                IStatEffect armorEffect = Armor.getInstance().statEffect;
-
-                if (armorEffect.Side().equals(side) && armorEffect.worksOnEvent(this)) {
-                    effects.add(new EffectWithCtx(armorEffect, side, armorData));
+            if (this instanceof DamageEvent dmg) {
+                Elements ele = dmg.GetElement();
+                // physical pene is zeroed inside the resist effect and the generic elemental
+                // resist never activates, so neither needs the zero-stat pass
+                if (ele != null && ele != Elements.Physical && ele != Elements.Elemental) {
+                    Stat resist = ElementalResist.MAP.get(ele);
+                    if (resist != null) {
+                        addIfZero(effects, un, side, resist);
+                    }
                 }
             }
         }
 
         return effects;
+    }
+
+    private void addIfZero(List<EffectWithCtx> effects, Unit un, EffectSides side, Stat stat) {
+        StatData data = un.getCalculatedStat(stat.GUID());
+
+        if (!data.isNotZero()) {
+            IStatEffect effect = stat.statEffect;
+
+            if (effect != null && effect.runsOnZeroStat() && effect.Side().equals(side) && effect.worksOnEvent(this)) {
+                effects.add(new EffectWithCtx(effect, side, data));
+            }
+        }
     }
 
 }

@@ -24,6 +24,13 @@ public class ElementalResistEffect extends BaseDamageEffect {
         return EffectSides.Target;
     }
 
+    // must run even at 0 resist, otherwise elemental penetration is silently ignored against
+    // a target with no resist while a target with 1 resist gets pushed negative by it
+    @Override
+    public boolean runsOnZeroStat() {
+        return true;
+    }
+
     @Override
     public DamageEvent activate(DamageEvent effect, StatData data, Stat stat) {
 

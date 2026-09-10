@@ -20,6 +20,12 @@ public class ComponentPart {
 
     List<ComponentPart> per_entity_hit = null;
 
+    // sub-parts that run once per entity the targets selected, ie the "on hit" chapter of this part.
+    // Exposed so tooltip/validation scans can see actions nested here, not just top level acts
+    public List<ComponentPart> getPerEntityHit() {
+        return per_entity_hit == null ? Collections.emptyList() : per_entity_hit;
+    }
+
     public ComponentPart addPerEntityHit(ComponentPart add) {
 
         if (per_entity_hit == null) {

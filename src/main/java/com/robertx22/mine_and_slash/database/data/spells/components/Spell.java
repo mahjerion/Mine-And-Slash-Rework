@@ -16,6 +16,7 @@ import com.robertx22.mine_and_slash.config.forge.compat.CompatConfig;
 import com.robertx22.mine_and_slash.database.data.StatMod;
 import com.robertx22.mine_and_slash.database.data.exile_effects.ExileEffect;
 import com.robertx22.mine_and_slash.database.data.game_balance_config.GameBalanceConfig;
+import com.robertx22.mine_and_slash.database.data.spells.components.actions.ExileEffectAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
 import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
@@ -411,7 +412,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                     .getAllComponents()
                     .forEach(x -> {
                         x.acts.forEach(a -> {
-                            if (a.has(MapField.EXILE_POTION_ID)) {
+                            if (a.has(MapField.EXILE_POTION_ID) && isGivingEffect(a)) {
                                 ExileEffect eff = a.getExileEffect();
                                 String dur = tooltipFormatTicksAsSeconds((int) (double) a.getOrDefault(MapField.POTION_DURATION, 0D));
                                 // If already present, keep the greater duration
@@ -545,6 +546,21 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         TooltipUtils.removeDoubleBlankLines(list);
 
         return list;
+    }
+
+    // an exile_effect act only counts as "this spell applies X" when it gives stacks. A part that
+    // just removes an effect (cleanses, self-stack consumers like timewinder's alpha/beta/gamma)
+    // shouldn't advertise that effect in the tooltip. Missing action = give, same as ExileEffectAction
+    private static boolean isGivingEffect(MapHolder act) {
+        if (!act.has(MapField.POTION_ACTION)) {
+            return true;
+        }
+        try {
+            return act.getPotionAction() == ExileEffectAction.GiveOrTake.GIVE_STACKS;
+        } catch (Exception e) {
+            // unknown action string in a datapack; don't let it blank the whole tooltip
+            return false;
+        }
     }
 
     // Helper to parse duration string to float, treating empty as 0

@@ -35,11 +35,20 @@ public class AttachedSpell {
         }
     }
 
+    // every part of the spell, including the per_entity_hit sub-parts nested under a part.
+    // tooltips scan this for applied effects, so an effect given only "per entity hit" (pack
+    // spells like timewinder) must be visible here too, one level deep like runtime executes it
     public List<ComponentPart> getAllComponents() {
-        List<ComponentPart> list = new ArrayList<>();
-        list.addAll(this.on_cast);
+        List<ComponentPart> top = new ArrayList<>();
+        top.addAll(this.on_cast);
         this.entity_components.entrySet()
-            .forEach(x -> list.addAll(x.getValue()));
+            .forEach(x -> top.addAll(x.getValue()));
+
+        List<ComponentPart> list = new ArrayList<>();
+        for (ComponentPart part : top) {
+            list.add(part);
+            list.addAll(part.getPerEntityHit());
+        }
         return list;
     }
 

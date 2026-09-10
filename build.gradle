@@ -242,7 +242,8 @@ publishMods {
 
     // Run with -PdryRun to build and print the upload request without publishing.
     dryRun = providers.gradleProperty("dryRun").isPresent()
-    file = jar.archiveFile
+    // ModDev's jar task writes the unobfuscated dev jar to build/devlibs; reobfJar writes the shippable SRG jar to build/libs.
+    file = tasks.named('reobfJar').flatMap { it.archiveFile }
     changelog = file("CHANGELOG.txt").text
     type = "${release_type}".startsWith("release") ? STABLE : ("${release_type}".startsWith("beta") ? BETA : ALPHA)
     modLoaders.add("forge")

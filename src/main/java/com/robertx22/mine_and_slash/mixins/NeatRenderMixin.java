@@ -2,6 +2,7 @@ package com.robertx22.mine_and_slash.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.robertx22.mine_and_slash.a_libraries.neat.HealthBarRenderer;
+import com.robertx22.mine_and_slash.database.data.wizard.render.WizardTelegraphRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
@@ -31,5 +32,6 @@ public abstract class NeatRenderMixin {
     )
     private void neat_renderHealthBar(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
         HealthBarRenderer.hookRender(entity, poseStack, buffers, cameraOrientation());
+        WizardTelegraphRenderer.hookRender(entity, poseStack, buffers, cameraOrientation(), partialTicks);
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.robertx22.library_of_exile.util.UNICODE;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.mob_affixes.MobAffix;
+import com.robertx22.mine_and_slash.database.data.wizard.entity.WizardEntity;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -78,7 +79,9 @@ public class HealthBarRenderer {
         for (Entity entity : entitiesInBoundingBox) {
             Entity lookedEntity = null;
             if (entity.isPickable()) {
-                AABB collisionBox = entity.getBoundingBoxForCulling();
+                // a wizard's culling box is grown to fit its projectile telegraph beam, which would
+                // make it the "looked at" mob from way off its body
+                AABB collisionBox = entity instanceof WizardEntity ? entity.getBoundingBox() : entity.getBoundingBoxForCulling();
                 Optional<Vec3> interceptPosition = collisionBox.clip(positionVector, reachVector);
 
                 if (collisionBox.contains(positionVector)) {

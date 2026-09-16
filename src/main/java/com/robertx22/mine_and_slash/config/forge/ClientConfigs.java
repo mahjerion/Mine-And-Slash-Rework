@@ -36,6 +36,7 @@ public class ClientConfigs {
 
         SHOW_LOW_ENERGY_MANA_WARNING = b.define("show_low_mana_warning", true);
         RENDER_SIMPLE_MOB_BAR = b.define("render_mob_bar", true);
+        RENDER_WIZARD_TELEGRAPHS = b.comment("Show the skill icon above a wizard monster while it winds up a cast, and where the skill will land").define("render_wizard_telegraphs", true);
         RENDER_DEATH_STATISTICS = b.define("render_death_stats", true);
         RENDER_ITEM_RARITY_BACKGROUND = b.define("render_item_rarity_background", true);
         SHOW_DURABILITY = b.define("show_durability", true);
@@ -95,6 +96,7 @@ public class ClientConfigs {
     public ForgeConfigSpec.BooleanValue SHOW_LOW_ENERGY_MANA_WARNING;
     public ForgeConfigSpec.EnumValue<DamageNumbersEnum> ENABLE_FLOATING_DMG;
     public ForgeConfigSpec.BooleanValue RENDER_SIMPLE_MOB_BAR;
+    public ForgeConfigSpec.BooleanValue RENDER_WIZARD_TELEGRAPHS;
     public ForgeConfigSpec.BooleanValue RENDER_DEATH_STATISTICS;
     public ForgeConfigSpec.BooleanValue RENDER_ITEM_RARITY_BACKGROUND;
     public ForgeConfigSpec.BooleanValue SHOW_DURABILITY;

@@ -1,32 +1,25 @@
 package com.robertx22.mine_and_slash.database.data.wizard;
 
-import com.robertx22.mine_and_slash.database.data.spells.components.ComponentPart;
-import com.robertx22.mine_and_slash.database.data.spells.components.MapHolder;
-import com.robertx22.mine_and_slash.database.data.spells.components.ProjectileCastHelper;
+import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
-import com.robertx22.mine_and_slash.database.data.spells.components.actions.SpellAction;
-import com.robertx22.mine_and_slash.database.data.spells.components.selectors.TargetSelector;
-import com.robertx22.mine_and_slash.database.data.spells.map_fields.MapField;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.SpellCtx;
 import com.robertx22.mine_and_slash.database.data.spells.spell_classes.bases.SpellCastContext;
+import com.robertx22.mine_and_slash.database.data.wizard.WizardSpellShapes.Analysis;
 import com.robertx22.mine_and_slash.database.data.wizard.entity.WizardEntity;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.EventData;
-import com.robertx22.mine_and_slash.uncommon.utilityclasses.AllyOrEnemy;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import com.robertx22.library_of_exile.main.ExileLog;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.WeakHashMap;
 
 /**
- * The skill AI of a wizard monster: pick something that reaches, wind it up, fire it.
+ * The skill AI of a wizard monster: pick something that reaches, telegraph it, wind it up, fire it.
  * <p>
  * A pared down {@code MercenarySpellCaster}. The range engine below is lifted from it wholesale
  * because it solves the same problem - a datapack skill declares no range, so the only honest
@@ -43,8 +36,22 @@ import java.util.WeakHashMap;
  * <li><b>No walk-in phase.</b> {@code WizardCombatGoal} already holds the wizard at its active
  * skill's distance, and a skill that doesn't reach is simply not picked this tick.</li>
  * </ul>
+ * And one a mercenary doesn't need: every cast opens with a {@link #TELEGRAPH_TICKS} <b>telegraph</b>.
+ * A mercenary fights on the player's side; a wizard's skills are aimed at the player, who needs to
+ * see what is coming and where it lands. The skill's icon fills over its head and its area is drawn
+ * on the ground - see {@code WizardTelegraphRenderer} and {@code WizardTelegraphParticles}.
  */
 public class WizardSpellCaster {
+
+    /**
+     * How long every wizard cast is announced before anything happens, instants included. Added in
+     * front of the skill's own cast time rather than folded into it, so a multicast still paces its
+     * repeats against its own cast time.
+     * <p>
+     * A constant rather than a {@link WizardType} field: a new registry field makes every pack
+     * override of that type fail the datapack round trip check with a warning per file.
+     */
+    public static final int TELEGRAPH_TICKS = 20;
 
     /** a contact skill still needs contact, whatever its components say */
     private static final double MIN_CAST_RANGE = 2.5D;
@@ -69,7 +76,7 @@ public class WizardSpellCaster {
         // itself, StationaryFallingBlockEntity stops ticking damage and expires - so there is
         // nothing to clean up beyond forgetting the cast.
         if (!wizard.isAlive() || wizard.isRemoved()) {
-            cast.clear();
+            wizard.endCast();
             return;
         }
 
@@ -141,15 +148,18 @@ public class WizardSpellCaster {
         int i = wizard.getRandom().nextInt(castable.size());
 
         beginCast(wizard, castable.get(i), target, ranges.get(i));
+        // counts down only once the cast has resolved - onTick returns above while one is running -
+        // so the telegraph and cast time come on top of this, not out of it
         wizard.nextCastTicks = type.rollCastInterval(wizard.getRandom());
     }
 
     /**
-     * Arms the skill and either fires it immediately (an instant) or starts its wind up.
+     * Starts the telegraph. Nothing fires here any more, instants included - they go off when the
+     * telegraph ends, see {@link #tickCast}.
      * <p>
      * No cooldown goes on here, unlike the mercenary version - see the class note. Nothing needs one:
      * a running cast blocks {@link #onTick} on its own, and the interval is rolled by the caller once
-     * this returns, whether the skill fired instantly or is still winding up.
+     * this returns.
      */
     private static void beginCast(WizardEntity wizard, Spell spell, LivingEntity target, double engageRange) {
         try {
@@ -157,8 +167,8 @@ public class WizardSpellCaster {
 
             // the player's own cast swing is commented out in Spell.cast - players get an animation
             // from the Player Animator instead, which a mob has no equivalent of. so the wizard
-            // swings here, respecting the spell's own swing_arm flag, as the cast STARTS - a skill
-            // with a wind up gets a tell instead of landing out of nowhere.
+            // swings here, respecting the spell's own swing_arm flag, as the telegraph STARTS, and
+            // again in fire() as it lands.
             if (spell.config.swing_arm) {
                 wizard.swing(InteractionHand.MAIN_HAND);
             }
@@ -166,21 +176,51 @@ public class WizardSpellCaster {
             aimAt(wizard, target);
 
             int castTime = castTimeTicksFor(spell, ctx);
+            boolean instant = castTime <= 1;
 
-            if (castTime <= 1) {
-                fire(wizard, spell, ctx, target);
-                return;
+            Analysis shape = WizardSpellShapes.of(spell);
+
+            // the telegraph shows what the skill will really do, so it is scaled by the same stats
+            // the skill itself is: AoeSelector multiplies radius by AREA_MULTI, and
+            // SummonProjectileAction multiplies speed by PROJECTILE_SPEED_MULTI and adds
+            // BONUS_PROJECTILES. a mob affix that grows an area grows the circle with it.
+            float size = 0;
+            int projCount = 0;
+            Vec3 anchor = null;
+
+            switch (shape.kind()) {
+                case SELF_CIRCLE -> size = (float) (shape.rawSize() * ctx.calcData.data.getNumber(EventData.AREA_MULTI, 1).number);
+                case AT_TARGET_CIRCLE -> {
+                    size = (float) (shape.rawSize() * ctx.calcData.data.getNumber(EventData.AREA_MULTI, 1).number);
+                    anchor = target.position();
+                }
+                case PROJECTILE_LINE -> {
+                    size = (float) (shape.rawSize() * ctx.calcData.data.getNumber(EventData.PROJECTILE_SPEED_MULTI, 1).number);
+                    int bonus = shape.ignoresBonusProjectiles() ? 0 : (int) ctx.calcData.data.getNumber(EventData.BONUS_PROJECTILES, 0).number;
+                    projCount = Math.max(1, shape.projCount() + bonus);
+                }
+                default -> {
+                }
             }
 
-            wizard.getCastState().start(spell, target, castTime, engageRange);
+            wizard.getCastState().startTelegraph(spell, target, TELEGRAPH_TICKS, castTime, engageRange, anchor);
+
+            // the icon fills to the moment the skill goes off. that is the end of the cast for an
+            // ordinary skill, but the FIRST repeat of a multicast lands a fraction into its cast
+            // time, so a multicast fills over the telegraph and then stays lit while it fires.
+            int totalTicks = TELEGRAPH_TICKS + (instant ? 0 : castTime);
+            int fillTicks = spell.getConfig().times_to_cast > 1 ? TELEGRAPH_TICKS : totalTicks;
+
+            wizard.publishCast(spell.GUID(), totalTicks, fillTicks, shape.kind(), size, projCount, (float) shape.projApart(), anchor);
 
         } catch (Exception e) {
             e.printStackTrace();
+            wizard.endCast();
         }
     }
 
     /**
-     * How long this skill winds up for before it goes off.
+     * How long this skill winds up for before it goes off, not counting the telegraph.
      * <p>
      * A channel is deliberately treated as instant: its {@code cast_time_ticks} is the gap between
      * pulses rather than a wind up, and keeping one going needs an input held down, which a mob has
@@ -193,17 +233,39 @@ public class WizardSpellCaster {
         return spell.getCastTimeTicks(ctx);
     }
 
-    /** one tick of a wind up: keep aiming, pace any repeats, fire when the timer runs out */
+    /** one tick of a cast: burn the telegraph, then keep aiming, pace any repeats, fire when done */
     private static void tickCast(WizardEntity wizard, WizardCastState cast) {
         try {
             Spell spell = cast.spell;
 
             if (spell == null) {
-                cast.clear();
+                wizard.endCast();
                 return;
             }
 
             LivingEntity target = liveTarget(wizard, cast);
+
+            if (cast.telegraphTicksLeft > 0) {
+                cast.telegraphTicksLeft--;
+
+                // projectiles keep tracking through the telegraph, the drawn line follows the aim.
+                // an at-sight skill's landing spot does not move - that was locked when it started.
+                aimAt(wizard, target);
+
+                if (cast.telegraphTicksLeft > 0) {
+                    return;
+                }
+
+                if (cast.castTimeTicks <= 1) {
+                    fire(wizard, spell, new SpellCastContext(wizard, 0, spell), target, cast);
+                    wizard.endCast();
+                } else {
+                    // the cast time starts counting next tick, so none of the telegraph leaks into
+                    // the times_to_cast pacing below
+                    cast.beginCastPhase();
+                }
+                return;
+            }
 
             cast.ticksLeft--;
             cast.ticksDone++;
@@ -224,19 +286,19 @@ public class WizardSpellCaster {
                     SpellCastContext ctx = new SpellCastContext(wizard, cast.ticksDone, spell);
                     ctx.castNumber = castsByThisTick;
                     ctx.castsTotal = timesToCast;
-                    fire(wizard, spell, ctx, target);
+                    fire(wizard, spell, ctx, target, cast);
                 }
             }
 
             if (cast.ticksLeft <= 0) {
                 if (timesToCast <= 1) {
-                    fire(wizard, spell, new SpellCastContext(wizard, cast.ticksDone, spell), target);
+                    fire(wizard, spell, new SpellCastContext(wizard, cast.ticksDone, spell), target, cast);
                 }
-                cast.clear();
+                wizard.endCast();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            cast.clear();
+            wizard.endCast();
         }
     }
 
@@ -269,14 +331,21 @@ public class WizardSpellCaster {
      * <p>
      * The position source is left at the default {@code SOURCE_ENTITY}, which is the wizard. A skill
      * that has to land on the player asks for that explicitly, through {@code SUMMON_AT_SIGHT},
-     * which drops onto the target's own position for a non player caster. Forcing the position to
-     * the target here instead would move every component of every skill: projectiles would spawn
-     * inside the player and fly onward, and a five block nova would connect from forty blocks away.
+     * which drops onto the spot locked when the telegraph started - see
+     * {@link WizardCastState#lockedPos}. Forcing the position to the target here instead would move
+     * every component of every skill: projectiles would spawn inside the player and fly onward, and
+     * a five block nova would connect from forty blocks away.
      */
-    private static void fire(WizardEntity wizard, Spell spell, SpellCastContext ctx, @Nullable LivingEntity target) {
+    private static void fire(WizardEntity wizard, Spell spell, SpellCastContext ctx, @Nullable LivingEntity target, WizardCastState cast) {
         aimAt(wizard, target);
 
-        SpellCtx c = SpellCtx.onCast(wizard, ctx.calcData).setCastIndex(ctx.castNumber, ctx.castsTotal);
+        if (spell.config.swing_arm) {
+            wizard.swing(InteractionHand.MAIN_HAND);
+        }
+
+        SpellCtx c = SpellCtx.onCast(wizard, ctx.calcData)
+                .setCastIndex(ctx.castNumber, ctx.castsTotal)
+                .setLockedPos(cast.lockedPos);
         c.target = target;
 
         spell.attached.onCast(c);
@@ -325,7 +394,7 @@ public class WizardSpellCaster {
      * <p>
      * Read off the skill's own components rather than declared as a datapack field, so a pack that
      * retunes a radius or a projectile speed moves the mob's engagement distance with it and cannot
-     * forget to.
+     * forget to. The components are walked by {@link WizardSpellShapes}, which the telegraph reads too.
      * <p>
      * Clamped at Follow Range on the way out, which the mercenary version does not need: a
      * mercenary's skills were authored for it, while a wizard's are cut down from player skills that
@@ -337,23 +406,23 @@ public class WizardSpellCaster {
 
         double max = wizard.getAttributeValue(Attributes.FOLLOW_RANGE);
 
-        Reach reach = reachOf(spell);
+        Analysis reach = WizardSpellShapes.of(spell);
 
-        if (reach.unlimited) {
+        if (reach.unlimited()) {
             // nothing to close on - it lands on the target itself, or it is not aimed at an enemy at
             // all. cast it from wherever the wizard happens to be standing.
             return max;
         }
 
-        double range = reach.onCastRange;
+        double range = reach.onCastRange();
 
-        if (reach.projTravel > 0) {
+        if (reach.projTravel() > 0) {
             // a projectile reaches as far as it flies before it expires, plus whatever it does when
             // it gets there. same speed times lifespan ProjectileCastHelper uses to size its own
             // enemy search, and the same multiplier SummonProjectileAction applies to shootSpeed.
-            range = Math.max(range, reach.projTravel * projSpeedMulti(wizard, spell, projMulti) + reach.detonationRadius);
+            range = Math.max(range, reach.projTravel() * projSpeedMulti(wizard, spell, projMulti) + reach.detonationRadius());
         } else {
-            range = Math.max(range, reach.detonationRadius);
+            range = Math.max(range, reach.detonationRadius());
         }
 
         return Math.min(max, Math.max(range * ENGAGE_FACTOR, MIN_CAST_RANGE));
@@ -376,126 +445,6 @@ public class WizardSpellCaster {
             }
         }
         return cache[0];
-    }
-
-    /**
-     * What a skill can reach, worked out once from its components.
-     * <p>
-     * {@code unlimited} covers the two cases with no distance to close: an action that lands on the
-     * target's own position, and a skill with nothing aimed at an enemy anywhere in it.
-     */
-    private record Reach(boolean unlimited, double onCastRange, double projTravel, double detonationRadius) {
-        /** aimed at an enemy, but with no distance to close - it lands on the target itself */
-        static final Reach ON_TARGET = new Reach(true, 0, 0, 0);
-        /** nothing in the skill is aimed at an enemy */
-        static final Reach HELPS_ONLY = new Reach(true, 0, 0, 0);
-    }
-
-    /**
-     * Computed once per spell - a function of datapack data that does not change while loaded.
-     * <p>
-     * Keyed on the Spell instance rather than its id, and weak, so a datapack reload invalidates it
-     * for free: the reload builds new Spell objects, the old ones become unreachable, and their
-     * entries go with them. An id-keyed cache would serve a pre-reload radius forever. Server thread
-     * only, from the wizard tick.
-     */
-    private static final Map<Spell, Reach> RANGE_CACHE = new WeakHashMap<>();
-
-    private static Reach reachOf(Spell spell) {
-        Reach cached = RANGE_CACHE.get(spell);
-        if (cached == null) {
-            cached = computeReach(spell);
-            RANGE_CACHE.put(spell, cached);
-        }
-        return cached;
-    }
-
-    private static Reach computeReach(Spell spell) {
-
-        double onCastRange = 0;
-        double projTravel = 0;
-        boolean huntsAnything = false;
-
-        for (ComponentPart part : spell.attached.on_cast) {
-
-            for (MapHolder act : part.acts) {
-                if (SpellAction.SUMMON_AT_SIGHT.GUID().equals(act.type)) {
-                    // for anything that isn't a player this drops straight onto the target's own
-                    // position - see SummonAtSightAction - so there is no distance to close
-                    return Reach.ON_TARGET;
-                }
-                if (SpellAction.SUMMON_PROJECTILE.GUID().equals(act.type)) {
-                    huntsAnything = true;
-                    double life = act.getOrDefault(MapField.LIFESPAN_TICKS, 0D);
-                    double speed = act.getOrDefault(MapField.PROJECTILE_SPEED, 0D);
-                    // real flight, after vanilla per-tick air drag - the naive life * speed
-                    // overshoots by ~25% on slow long-lived shots like frozen orb
-                    projTravel = Math.max(projTravel, ProjectileCastHelper.travelDistance(speed, life));
-                }
-            }
-
-            for (MapHolder sel : part.targets) {
-                // only what the skill is trying to hit sets how close it has to be, and only a
-                // selector that describes a DISTANCE says anything about it - a self or target
-                // selector hits what it hits from wherever the caster is standing.
-                if (!huntsEnemies(sel)) {
-                    continue;
-                }
-                if (TargetSelector.AOE.GUID().equals(sel.type)) {
-                    huntsAnything = true;
-                    onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.RADIUS, 0D));
-                } else if (TargetSelector.IN_FRONT.GUID().equals(sel.type)) {
-                    huntsAnything = true;
-                    onCastRange = Math.max(onCastRange, sel.getOrDefault(MapField.DISTANCE, 0D));
-                }
-            }
-        }
-
-        // the widest enemy hunting area on whatever the skill leaves behind. an orb that travels six
-        // blocks and detonates for four can hit something ten blocks away, and a field that never
-        // moves reaches exactly its own radius.
-        double detonation = 0;
-        boolean entitiesHuntEnemies = false;
-
-        for (List<ComponentPart> parts : spell.attached.entity_components.values()) {
-            for (ComponentPart part : parts) {
-                for (MapHolder sel : part.targets) {
-                    if (!huntsEnemies(sel)) {
-                        continue;
-                    }
-                    entitiesHuntEnemies = true;
-                    if (TargetSelector.AOE.GUID().equals(sel.type)) {
-                        detonation = Math.max(detonation, sel.getOrDefault(MapField.RADIUS, 0D));
-                    }
-                }
-            }
-        }
-
-        if (!huntsAnything && !entitiesHuntEnemies) {
-            return Reach.HELPS_ONLY;
-        }
-
-        return new Reach(false, onCastRange, projTravel, detonation);
-    }
-
-    /**
-     * Whether this selector is looking for something to hit rather than something to help.
-     * <p>
-     * Written as a list of the ally predicates rather than of the hostile ones on purpose: a
-     * predicate nobody thought of here counts as hostile, which costs the wizard a few steps it did
-     * not need to take. Guessing the other way would put it back to casting at nothing.
-     */
-    private static boolean huntsEnemies(MapHolder selector) {
-        try {
-            AllyOrEnemy pred = selector.getEntityPredicate();
-            return pred != AllyOrEnemy.allies
-                    && pred != AllyOrEnemy.allies_not_self
-                    && pred != AllyOrEnemy.pets
-                    && pred != AllyOrEnemy.casters_summons;
-        } catch (Exception e) {
-            // no predicate declared at all - assume it is aimed at something
-            return true;
-        }
     }
 
     /**

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -33,6 +34,19 @@ public class SpellCtx {
     // which spell created it even when its cached CalculatedSpellData doesn't, so actions can fall
     // back to it rather than treating the effect as spell-less
     public ExileEffectInstanceData sourceEffect = null;
+
+    /**
+     * Where an at-sight action must land, frozen when a telegraph started, instead of the target's
+     * live position. Only WizardSpellCaster sets this - a wizard shows the player a circle during its
+     * wind up, and the spell has to honour the circle or the warning is a lie. Null everywhere else.
+     */
+    @Nullable
+    public Vec3 lockedPos = null;
+
+    public SpellCtx setLockedPos(@Nullable Vec3 pos) {
+        this.lockedPos = pos;
+        return this;
+    }
 
     public SpellCtx setSourceEffect(ExileEffectInstanceData effect) {
         this.sourceEffect = effect;

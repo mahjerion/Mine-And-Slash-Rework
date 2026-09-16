@@ -60,7 +60,14 @@ public class SummonAtSightAction extends SpellAction {
 
         Vec3 pos;
 
-        if (posEn == ctx.caster && posEn instanceof Player) {
+        if (ctx.lockedPos != null
+                && !(ctx.caster instanceof Player)
+                && data.getOrDefault(MapField.POS_SOURCE, "").isEmpty()) {
+            // a telegraphed cast (only wizards set this) drew a circle here when it started. land on
+            // the circle even if the target walked away - that is what makes it dodgeable - and even
+            // if the target died meanwhile, which would otherwise drop it on the caster's own head
+            pos = ctx.lockedPos;
+        } else if (posEn == ctx.caster && posEn instanceof Player) {
             // someone is actually aiming, so trace from the crosshair - the whole point of "at sight"
             HitResult ray = posEn.pick(distance, 0.0F, false);
             pos = ray.getLocation();

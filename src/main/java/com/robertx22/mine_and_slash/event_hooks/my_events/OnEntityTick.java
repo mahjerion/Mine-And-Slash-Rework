@@ -1,5 +1,6 @@
 package com.robertx22.mine_and_slash.event_hooks.my_events;
 
+import com.robertx22.mine_and_slash.uncommon.effectdatas.TenSecondPlayerTickEvent;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ThrottledErrors;
 import com.robertx22.mine_and_slash.capability.bases.EntityGears;
 import com.robertx22.mine_and_slash.capability.entity.EntityData;
@@ -100,6 +101,14 @@ public class OnEntityTick {
             // entities on its own.
             if (merc.tickCount % 20 == 0) {
                 guard("mercenary regen", () -> MercenaryManager.tickRegen(merc));
+            }
+
+            // and the 10 second stat tick, for the same reason: TenSecondPlayerTickEvent is only
+            // raised in OnServerTick's player loop, so any "every 10s, give yourself X" stat on a
+            // mercenary's gear never fired. Crater's instant_traps is one - it hands out the
+            // Saboteur buff the trap spells check to detonate instantly.
+            if (merc.tickCount % 200 == 0) {
+                guard("mercenary 10s tick", () -> new TenSecondPlayerTickEvent(merc, merc).Activate());
             }
 
         } else if (entity instanceof WizardEntity wizard) {

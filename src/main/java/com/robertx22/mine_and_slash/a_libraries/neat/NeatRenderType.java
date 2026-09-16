@@ -54,6 +54,21 @@ public class NeatRenderType extends RenderStateShard {
     }
 
 
+    public static final String beamKey = "wizard_telegraph_beam";
+
+    // untextured translucent quads for the wizard projectile telegraph. no culling, the ribbon is
+    // turned to face the camera but can still be seen from behind at a glancing angle
+    public static RenderType getTelegraphBeamType() {
+        return getCaches().computeIfAbsent(NeatRenderType.beamKey, x -> {
+            RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
+                    .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setCullState(NO_CULL)
+                    .createCompositeState(false);
+            return AccessorRenderType.neat_create("mmorpg_wizard_telegraph_beam", POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true, renderTypeState);
+        });
+    }
+
     private static RenderType generateHealthBarType() {
         RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
                 .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)

@@ -41,7 +41,7 @@ import java.util.Arrays;
  * Costs are zero - a monster has no mana - and {@code weight(0)} plus {@code hideFromWiki()} keeps
  * them out of gem drops and out of the wiki: they are not player content.
  * <p>
- * <b>Range is authored, not declared.</b> {@code WizardSpellCaster.computeReach} works out how far
+ * <b>Range is authored, not declared.</b> {@code WizardSpellShapes} works out how far
  * each skill reaches from its own components - {@code life_ticks * proj_speed} for a projectile,
  * the radius for an aoe - and the wizard only casts what currently reaches its target. So the
  * numbers below ARE the engagement distances, and a projectile lifespan copied straight from the

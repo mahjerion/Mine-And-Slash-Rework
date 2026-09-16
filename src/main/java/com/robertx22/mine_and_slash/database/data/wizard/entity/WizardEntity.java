@@ -1,8 +1,13 @@
 package com.robertx22.mine_and_slash.database.data.wizard.entity;
 
 import com.robertx22.mine_and_slash.database.data.wizard.WizardCastState;
+import com.robertx22.mine_and_slash.database.data.wizard.WizardSpellShapes.TelegraphKind;
+import com.robertx22.mine_and_slash.database.data.wizard.WizardTelegraphParticles;
 import com.robertx22.mine_and_slash.database.data.wizard.WizardType;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,8 +23,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * An elemental caster monster - Fire, Ice, Lightning or Chaos Wizard.
@@ -45,8 +53,8 @@ public class WizardEntity extends Monster {
     /**
      * Ticks until the next cast, counted down by {@link com.robertx22.mine_and_slash.database.data.wizard.WizardSpellCaster}.
      * <p>
-     * Public and plain rather than synched: casting is entirely server side, and the client only
-     * ever needs to know the arm swung, which {@code swing()} already broadcasts.
+     * Public and plain rather than synched: the client never needs the wait between casts, only the
+     * cast itself, which {@link #publishCast} sends.
      */
     public int nextCastTicks = 0;
 
@@ -57,6 +65,47 @@ public class WizardEntity extends Monster {
      */
     private WizardCastState castState;
 
+    /** the longest projectile telegraph beam drawn, whatever the projectile's range. here rather than in the
+     * renderer so this common class never references a client one */
+    public static final double TELEGRAPH_BEAM_MAX_LENGTH = 20D;
+
+    // ------------------------------------------------------------------ the telegraph, as clients see it
+    //
+    // Everything a client needs to draw the icon and the ground telegraph, set once when a cast starts
+    // and once when it ends - never per tick. Progress is a start TIME rather than a counter, so a
+    // player who starts tracking the wizard halfway through a cast still sees the right fill.
+    //
+    // The shape numbers arrive already scaled by the wizard's stats: the client never reads the
+    // spell's components itself, see WizardSpellShapes. Not saved - a cast isn't.
+
+    /** spell GUID, empty when idle. every client reader gates on this, so it is set last */
+    private static final EntityDataAccessor<String> CAST_SPELL =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.STRING);
+    /** game time the telegraph started */
+    private static final EntityDataAccessor<Integer> CAST_START =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.INT);
+    /** telegraph + cast time, in ticks */
+    private static final EntityDataAccessor<Integer> CAST_TOTAL =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.INT);
+    /** ticks the icon fills over. shorter than the total for a multicast, which fires while lit */
+    private static final EntityDataAccessor<Integer> CAST_FILL =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.INT);
+    /** {@link TelegraphKind} ordinal */
+    private static final EntityDataAccessor<Integer> CAST_SHAPE =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.INT);
+    /** circle radius or line length, in blocks */
+    private static final EntityDataAccessor<Float> CAST_SIZE =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.FLOAT);
+    /** how many projectiles a line telegraph fans out into */
+    private static final EntityDataAccessor<Integer> CAST_PROJ_COUNT =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.INT);
+    /** the fan's spread, the same {@code proj_apart} ProjectileCastHelper spreads by */
+    private static final EntityDataAccessor<Float> CAST_PROJ_APART =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.FLOAT);
+    /** where an at-sight skill will land. only meaningful for {@link TelegraphKind#AT_TARGET_CIRCLE} */
+    private static final EntityDataAccessor<Vector3f> CAST_ANCHOR =
+            SynchedEntityData.defineId(WizardEntity.class, EntityDataSerializers.VECTOR3);
+
     public WizardEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
         // a wizard spends the fight walking backwards away from whoever it is fighting, without
@@ -66,11 +115,123 @@ public class WizardEntity extends Monster {
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1F);
     }
 
+    // runs from the Entity constructor, before this class's field initialisers - like registerGoals.
+    // safe because it only touches entityData and the static accessors; never read castState here.
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(CAST_SPELL, "");
+        this.entityData.define(CAST_START, 0);
+        this.entityData.define(CAST_TOTAL, 0);
+        this.entityData.define(CAST_FILL, 0);
+        this.entityData.define(CAST_SHAPE, 0);
+        this.entityData.define(CAST_SIZE, 0F);
+        this.entityData.define(CAST_PROJ_COUNT, 0);
+        this.entityData.define(CAST_PROJ_APART, 0F);
+        this.entityData.define(CAST_ANCHOR, new Vector3f());
+    }
+
     public WizardCastState getCastState() {
         if (castState == null) {
             castState = new WizardCastState();
         }
         return castState;
+    }
+
+    /** server side: show every client tracking this wizard the cast that just started */
+    public void publishCast(String spellGuid, int totalTicks, int fillTicks, TelegraphKind kind, float size,
+                            int projCount, float projApart, @Nullable Vec3 anchor) {
+        if (level().isClientSide) {
+            return;
+        }
+        this.entityData.set(CAST_START, (int) level().getGameTime());
+        this.entityData.set(CAST_TOTAL, Math.max(1, totalTicks));
+        this.entityData.set(CAST_FILL, Math.max(1, fillTicks));
+        this.entityData.set(CAST_SHAPE, kind.ordinal());
+        this.entityData.set(CAST_SIZE, size);
+        this.entityData.set(CAST_PROJ_COUNT, projCount);
+        this.entityData.set(CAST_PROJ_APART, projApart);
+        this.entityData.set(CAST_ANCHOR, anchor == null ? new Vector3f()
+                : new Vector3f((float) anchor.x, (float) anchor.y, (float) anchor.z));
+        // last: a client never sees a live spell next to the previous cast's shape
+        this.entityData.set(CAST_SPELL, spellGuid);
+    }
+
+    /**
+     * The one place a cast ends - forgets it on the server and takes the telegraph down on clients.
+     * <p>
+     * Everything that ends a cast goes through here rather than {@code getCastState().clear()}: a
+     * cast cleared without this leaves the client drawing a full icon and a telegraph forever.
+     */
+    public void endCast() {
+        getCastState().clear();
+        if (!level().isClientSide) {
+            this.entityData.set(CAST_SPELL, "");
+        }
+    }
+
+    // ------------------------------------------------------------------ client readers
+
+    /** the spell being cast, or empty when idle */
+    public String getTelegraphSpell() {
+        return this.entityData.get(CAST_SPELL);
+    }
+
+    /** ticks since the telegraph started, with partial tick for smooth rendering */
+    public float getTelegraphElapsed(float partialTick) {
+        return (level().getGameTime() - (long) this.entityData.get(CAST_START)) + partialTick;
+    }
+
+    public int getTelegraphTotalTicks() {
+        return this.entityData.get(CAST_TOTAL);
+    }
+
+    public int getTelegraphFillTicks() {
+        return this.entityData.get(CAST_FILL);
+    }
+
+    public TelegraphKind getTelegraphKind() {
+        int i = this.entityData.get(CAST_SHAPE);
+        TelegraphKind[] all = TelegraphKind.values();
+        return i >= 0 && i < all.length ? all[i] : TelegraphKind.NONE;
+    }
+
+    public float getTelegraphSize() {
+        return this.entityData.get(CAST_SIZE);
+    }
+
+    public int getTelegraphProjCount() {
+        return this.entityData.get(CAST_PROJ_COUNT);
+    }
+
+    public float getTelegraphProjApart() {
+        return this.entityData.get(CAST_PROJ_APART);
+    }
+
+    public Vector3f getTelegraphAnchor() {
+        return this.entityData.get(CAST_ANCHOR);
+    }
+
+    /**
+     * Grown while a projectile telegraph is up. The beam is drawn from this wizard's render call, which
+     * only happens when this box is in view - so without this a wizard just off screen would drop a
+     * beam that crosses the middle of it. Rendering is the only use of this box here - the Neat plate focus check reads the real box for wizards.
+     */
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        AABB box = super.getBoundingBoxForCulling();
+        if (!getTelegraphSpell().isEmpty() && getTelegraphKind() == TelegraphKind.PROJECTILE_LINE) {
+            return box.inflate(Math.min(getTelegraphSize(), TELEGRAPH_BEAM_MAX_LENGTH));
+        }
+        return box;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level().isClientSide) {
+            WizardTelegraphParticles.tick(this);
+        }
     }
 
     /**
@@ -128,13 +289,13 @@ public class WizardEntity extends Monster {
     public void die(DamageSource source) {
         // whatever it was winding up is over. the spell entities it already placed look after
         // themselves with no caster, so this is all the cleanup there is.
-        getCastState().clear();
+        endCast();
         super.die(source);
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        getCastState().clear();
+        endCast();
         super.remove(reason);
     }
 

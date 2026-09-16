@@ -4,8 +4,6 @@ import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.library_of_exile.utils.TextUTIL;
 import com.robertx22.mine_and_slash.database.data.item_set.EquippedSets;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
-import com.robertx22.mine_and_slash.gui.inv_gui.GuiInventoryGrids;
-import com.robertx22.mine_and_slash.gui.inv_gui.InvGuiScreen;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearTooltipUtils;
@@ -83,15 +81,13 @@ public class MercSlotButton extends AbstractButton {
         if (isLocked()) {
             return;
         }
-        // the grid is built from the local inventory, so the action needs to know where it is going
+        // the grid is built from the local inventory and the last master bag snapshot, so the action
+        // needs to know where it is going. cancelling the pick returns to the mercenary screen,
+        // matching where MercEquipAction leaves you after a successful one
         MercEquipAction.TARGET_TYPE = type;
         MercEquipAction.TARGET_INDEX = index;
 
-        // cancelling the pick returns to the mercenary screen, matching where MercEquipAction leaves
-        // you after a successful one
-        Minecraft.getInstance().setScreen(new InvGuiScreen(
-                GuiInventoryGrids.ofMercSlotChoices(ClientOnly.getPlayer(), type, index),
-                Words.Mercenary.locName(), () -> ClientOnly.setScreen(new MercenaryScreen())));
+        ClientOnly.setScreen(new MercEquipPickerScreen(type, index, 0));
     }
 
     @Override

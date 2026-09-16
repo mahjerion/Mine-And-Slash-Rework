@@ -16,6 +16,7 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearT
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleMapLayoutSalvage;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.map_device.MapDeviceEquipAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipFromBagAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
 import com.robertx22.library_of_exile.main.ExileLog;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
@@ -128,6 +129,14 @@ public abstract class GuiAction<T> implements IGUID {
             // by GUID on the server, so the slot has to be part of the id rather than extra data.
             for (int i = 0; i < MercEquipAction.MAX_INVENTORY_SLOTS; i++) {
                 of(new MercEquipAction(i));
+            }
+        });
+        register("mercenary bag equip", () -> {
+            // the master bag half of the same picker, keyed by bag slot. a fixed ceiling rather than
+            // the tab's configured size - that is datapack driven and could be smaller than what a
+            // save already holds, and this is the real cap anyway
+            for (int i = 0; i < MercEquipFromBagAction.MAX_BAG_SLOTS; i++) {
+                of(new MercEquipFromBagAction(i));
             }
         });
         register("map device equip", () -> {

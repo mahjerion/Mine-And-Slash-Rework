@@ -6,8 +6,12 @@ import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
+import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.ExilePotionEvent;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.Cached;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,12 @@ public class EntityStatusEffectsData {
 
 
     public ConcurrentHashMap<String, ExileEffectInstanceData> exileMap = new ConcurrentHashMap<>();
+
+    // true once this entity has held any exile effect in THIS session. The vanilla modifiers the
+    // reconcile below owns are transient (addTransientModifier) and so is this flag, so an entity
+    // that has not had an effect since it was loaded provably has none of them and can skip the
+    // whole pass. Not serialized - LoadSave is gson based and ignores transient fields.
+    private transient boolean everHadEffects = false;
 
     public int getStacks(String eff) {
         if (exileMap.containsKey(eff)) {
@@ -51,6 +61,83 @@ public class EntityStatusEffectsData {
 
         removeWhere(en, x -> x.getValue().shouldRemove() || (checkAllocation && x.getValue().isSpellNoLongerAllocated(en)));
 
+    }
+
+    /**
+     * Makes the entity's exile effect vanilla attribute modifiers (mc_stats) a pure function of
+     * exileMap, in both directions, instead of something that stays correct only if every apply is
+     * matched by a remove.
+     * <p>
+     * Why it has to exist: those modifiers ARE the whole mechanic of the cc effects. Stun is nothing
+     * but a x0 on movement speed, attack speed and attack damage - no AI is touched - so one that
+     * outlives its effect is a mob rooted in place, or one that swings forever for nothing
+     * (EntityData.mobBasicAttack builds mob damage from the vanilla hit amount, which is its
+     * ATTACK_DAMAGE attribute). Every removal path calls onRemove today, and StatCalculation.calc
+     * strips leftovers, but that net only runs when the entity recalculates its stats, and an
+     * exception anywhere in the entity tick can cost an entity both its effect expiry and its
+     * recalc. Reconciling from a fixed cadence in its own try/catch is correct no matter which path
+     * leaked.
+     * <p>
+     * The restore half fixes the mirror bug: modifiers are transient, exileMap is saved to nbt, so
+     * after a reload a still running stun had its entry, its icon and its timer but no modifiers at
+     * all - onApply only fires for the first stack and refreshVanillaStats only when str_multi moves.
+     */
+    public void reconcileVanillaModifiers(LivingEntity en) {
+
+        if (en.level().isClientSide) {
+            return;
+        }
+
+        if (!exileMap.isEmpty()) {
+            everHadEffects = true;
+        }
+        if (!everHadEffects) {
+            return;
+        }
+
+        boolean strippedAny = false;
+
+        for (Cached.ExileEffectVanillaModifier mod : Cached.EXILE_EFFECT_VANILLA_MODIFIERS) {
+            AttributeInstance in = en.getAttribute(mod.attribute());
+
+            if (in == null || in.getModifier(mod.uuid()) == null) {
+                continue;
+            }
+
+            ExileEffectInstanceData inst = exileMap.get(mod.effectId());
+
+            if (inst == null || inst.shouldRemove()) {
+                in.removeModifier(mod.uuid());
+                strippedAny = true;
+                if (MMORPG.RUN_DEV_TOOLS) {
+                    System.out.println("[mns] reconcile stripped leaked '" + mod.effectId() + "' modifier on "
+                            + BuiltInRegistries.ATTRIBUTE.getKey(mod.attribute()) + " from " + en.getName().getString());
+                }
+            }
+        }
+
+        // restore AFTER the strip, never before. Two effects sharing one modifier uuid is a datapack
+        // mistake that has already happened once here (slow used to carry stun's), and in that state
+        // the expired one's pass above strips a modifier the live one still needs. Running the
+        // restore second means the live effect simply puts it back in the same pass.
+        for (Map.Entry<String, ExileEffectInstanceData> e : exileMap.entrySet()) {
+            ExileEffectInstanceData inst = e.getValue();
+
+            if (inst.shouldRemove() || !ExileDB.ExileEffects().isRegistered(e.getKey())) {
+                continue;
+            }
+
+            ExileEffect eff = ExileDB.ExileEffects().get(e.getKey());
+
+            if (eff != null && eff.restoreVanillaStats(en, inst) && MMORPG.RUN_DEV_TOOLS) {
+                System.out.println("[mns] reconcile restored missing '" + e.getKey() + "' modifiers on " + en.getName().getString());
+            }
+        }
+
+        // nothing left to own. re-armed by the next effect that lands
+        if (exileMap.isEmpty() && !strippedAny) {
+            everHadEffects = false;
+        }
     }
 
     /**

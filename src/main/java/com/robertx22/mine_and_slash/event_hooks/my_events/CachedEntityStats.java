@@ -86,11 +86,30 @@ public class CachedEntityStats {
 
     });
 
+    // what mainHandBlocksOffhandWeapon answered the last time the gear pass ran, so a weapon-only
+    // change can tell whether that answer just moved
+    private boolean mainHandBlockedOffhand = false;
+
     public DirtySync WEAPON = new DirtySync("weapon", x -> {
         recalcWeapon();
+
+        // the gear pass reads the MAIN HAND to decide whether a two handed weapon takes up the
+        // offhand too - GearData.isUsableBy -> DualWieldUtils.mainHandBlocksOffhandWeapon. it was
+        // never redone here, so swapping a 1H for a 2H left the offhand weapon's stats applied until
+        // a gear change or the 10s forced refresh in OnServerTick. only redone when that answer
+        // actually moved: recalcGears walks every armor slot and every curio, too heavy to pay for
+        // on every hotbar scroll
+        if (DualWieldUtils.mainHandBlocksOffhandWeapon(entity) != mainHandBlockedOffhand) {
+            recalcGears();
+        }
+
         if (x instanceof Player p) {
             Load.player(p).cachedStats.ENCHANT_COMPAT.setDirty();
+            // PlayerStatUtils.addToolStats reads the held item but lives in the ALLOCATED context,
+            // which this callback never dirtied - so the previous tool's stats outlived the swap
+            Load.player(p).cachedStats.ALLOCATED.setDirty();
         }
+
         STAT_CALC.setDirty();
     });
 
@@ -200,6 +219,8 @@ public class CachedEntityStats {
 
         this.offhandUsesDualWieldEffectiveness = this.gear.stream().anyMatch(x -> x.usesDualWieldEffectiveness);
         this.dualWieldEffectivenessUsed = DualWieldUtils.getEffectiveness(unitdata.get());
+        // recorded here rather than by the caller, so the GEAR path keeps it current too
+        this.mainHandBlockedOffhand = DualWieldUtils.mainHandBlocksOffhandWeapon(entity);
     }
 
     // the gear pass above reads Dual-Wield Effectiveness from the *previous* stat calc, since gear

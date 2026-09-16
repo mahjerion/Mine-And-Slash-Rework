@@ -23,9 +23,9 @@ public class MobRarities implements ExileRegistryInit {
         MobRarity.of(IRarity.EPIC_ID, "Epic", 250, 20, 2, 2, ChatFormatting.LIGHT_PURPLE, false).setElite().limitChillSlowTo(10);
         MobRarity.of(IRarity.LEGENDARY_ID, "Legendary", 50, 40, 4, 3, ChatFormatting.GOLD, false).setElite().limitChillSlowTo(5);
         MobRarity.of(IRarity.MYTHIC_ID, "Mythic", 25, 50, 8, 3, ChatFormatting.DARK_PURPLE, false).limitChillSlowTo(3);
-        MobRarity.of(IRarity.UBER, "Uber", 0, 1, 15, 0, ChatFormatting.RED, false).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(2).addStat(negativeEffectResistance(75));
-        MobRarity.of(IRarity.PINNACLE, "Pinnacle", 0, 1, 22, 0, ChatFormatting.DARK_RED, false).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(1).addStat(negativeEffectResistance(75));
-        MobRarity.of(IRarity.BOSS, "Boss", 0, 1, 10, 3, ChatFormatting.RED, false).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(1).addStat(negativeEffectResistance(75));
+        MobRarity.of(IRarity.UBER, "Uber", 0, 1, 15, 0, ChatFormatting.RED, false).setLootMulti(12F).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(2).addStat(negativeEffectResistance(75));
+        MobRarity.of(IRarity.PINNACLE, "Pinnacle", 0, 1, 22, 0, ChatFormatting.DARK_RED, false).setLootMulti(18F).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(1).addStat(negativeEffectResistance(75));
+        MobRarity.of(IRarity.BOSS, "Boss", 0, 1, 10, 3, ChatFormatting.RED, false).setLootMulti(8F).setForceCustomHP(20).setSpecial().addSpell(NatureSpells.BOSS_CC_RESISTANCE).limitChillSlowTo(1).addStat(negativeEffectResistance(75));
 
 
         MobRarity.of(IRarity.SUMMON_ID, "Summon", 0, 0, 1, 0, ChatFormatting.YELLOW, true).setSpecial();

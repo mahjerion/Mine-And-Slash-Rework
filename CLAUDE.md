@@ -31,8 +31,8 @@ Datapack JSON (stats, spells, gear, etc.) is generated from Java but only **in-g
 ## Craft to Exile 2 modpack — live pack overrides
 Day-to-day `mmorpg` tuning often happens **outside this repo** as openloader datapack overrides, which win over the mod's own generated JSON at runtime. Only touch this **when asked** — default to editing `aoe_data` + regenerating.
 
-- **Working copy (edit here):** `C:\Users\Kelvin\curseforge\minecraft\Instances\Craft to Exile 2\` — datapack overrides under `config\openloader\data\cte_mns\data\` (per-registry-type folders mirroring `src/generated/resources`) and sibling `data\library_of_exile\`, `data\dungeon_realm\`, `data\ancient_obelisks\`; Forge configs under `defaultconfigs\*-server.toml`.
-- **Live server — never edit:** `C:\Users\Kelvin\Documents\GitHub\Craft-to-Exile-2-Server\` — same paths, but the user copies client→server by hand; it lags the instance and isn't a git repo (no history to recover). Read-only, for checking what's actually live.
+- **Working copy (edit here):** `C:\Users\Mahj\curseforge\minecraft\Instances\Craft to Exile 2\` — datapack overrides under `config\openloader\data\cte_mns\data\` (per-registry-type folders mirroring `src/generated/resources`) and sibling `data\library_of_exile\`, `data\dungeon_realm\`, `data\ancient_obelisks\`, `data\the_harvest\`; Forge configs under `defaultconfigs\*-server.toml`.
+- **Live server — never edit:** `C:\Users\Mahj\Documents\GitHub\Craft-to-Exile-2-Server\` — same paths, but the user copies client→server by hand; it lags the instance and isn't a git repo (no history to recover). Read-only, for checking what's actually live.
 - Ignore other CurseForge instances, `curseforge\minecraft\Backups\`, and this repo's own `src\generated\resources`/`build\resources\main` when hunting for "the" pack.
 
 ## Submodules

@@ -12,6 +12,9 @@ public class CooldownsData {
     // the one skill at a time gate. every started cast puts this on, so it is what the hotbar greys
     // out and what processSpellInputs waits on before pulling the next queued skill
     public static String GLOBAL_COOLDOWN = "global_cooldown";
+    // armed when the main hand changes. blocks every skill, off global cooldown ones included, so a
+    // weapon swap bound to a skill key cannot hand a player both weapons' skills at no cost
+    public static String WEAPON_SWAP = "weapon_swap";
 
     private HashMap<String, Data> map = new HashMap<>();
 

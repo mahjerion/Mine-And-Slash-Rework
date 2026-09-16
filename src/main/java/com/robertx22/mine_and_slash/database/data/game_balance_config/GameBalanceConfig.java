@@ -76,9 +76,17 @@ public class GameBalanceConfig implements JsonExileRegistry<GameBalanceConfig>, 
     public double HP_MOB_BONUS_PER_MAP_TIER = 0.067;
     public double DMG_MOB_BONUS_PER_MAP_TIER = 0.01;
 
+    // the reward side of the tier curve above - loot quantity multi is 1 + bonus x tier, so this is
+    // what the extra hp per tier buys. multiplies drop chance for every loot generator inside a map
+    public double LOOT_BONUS_PER_MAP_TIER = 0.02;
+
     public double MIN_SPELL_COOLDOWN_MULTI = 0.2;
 
     public int GLOBAL_COOLDOWN_TICKS = 3;
+
+    // swapping your main hand costs time, so a skill bound to the same key as a weapon swap can no
+    // longer borrow a second weapon's skills for free. 0 disables the lockout entirely
+    public int WEAPON_SWAP_LOCKOUT_TICKS = 10;
 
     // how much of a player's general skill speed a channelled skill counts. Channel Speed is added on
     // top at full weight, so this is the dial between "channels ignore your gear" and "Channel Speed

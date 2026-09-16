@@ -58,10 +58,13 @@ public class DefenseStats {
             .worksWithEvent(DamageEvent.ID)
             .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
             .setSide(EffectSides.Target)
+            // already applied to the full hit before a "damage taken as" split moved part of it out
+            .addCondition(StatConditions.IS_FALSE.get(EventData.IS_DAMAGE_TAKEN_AS))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> "Damage Received")
             .setLocDesc(x -> "")
             .modifyAfterDone(x -> {
+                x.minus_is_good = true;
                 x.is_perc = true;
                 x.scaling = StatScaling.NONE;
                 x.group = Stat.StatGroup.Misc;
@@ -131,10 +134,13 @@ public class DefenseStats {
             .setPriority(StatPriority.Damage.DAMAGE_LAYERS)
             .setSide(EffectSides.Target)
             .addCondition(StatConditions.IS_ANY_PROJECTILE)
+            // see dmg_received - the weapon type rides along to the child event, so without this it stacks twice
+            .addCondition(StatConditions.IS_FALSE.get(EventData.IS_DAMAGE_TAKEN_AS))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> "Projectile Damage Receieved")
             .setLocDesc(x -> "Affects projectile damage, includes projectile spells like fireballs, and ranged basic attacks.")
             .modifyAfterDone(x -> {
+                x.minus_is_good = true;
                 x.is_perc = true;
                 x.base = 0;
             })
@@ -147,10 +153,13 @@ public class DefenseStats {
             .setSide(EffectSides.Target)
             .setUsesMoreMultiplier()
             .addCondition(x -> StatConditions.SPELL_HAS_TAG.get(x))
+            // see dmg_received - the spell id rides along to the child event, so without this it stacks twice
+            .addCondition(x -> StatConditions.IS_FALSE.get(EventData.IS_DAMAGE_TAKEN_AS))
             .addEffect(StatEffects.Layers.ADDITIVE_DAMAGE_PERCENT)
             .setLocName(x -> x.locNameForLangFile() + " Damage Taken")
             .setLocDesc(x -> "")
             .modifyAfterDone(x -> {
+                x.minus_is_good = true;
                 x.is_perc = true;
             })
             .build();
@@ -165,6 +174,7 @@ public class DefenseStats {
             .setLocName(x -> "Damage Received per 10% Missing Magic Shield")
             .setLocDesc(x -> "Gain " + Stat.VAL1 + "% Damage Received for every 10% of Magic Shield that is missing.")
             .modifyAfterDone(x -> {
+                x.minus_is_good = true;
                 x.is_perc = true;
             })
             .build();

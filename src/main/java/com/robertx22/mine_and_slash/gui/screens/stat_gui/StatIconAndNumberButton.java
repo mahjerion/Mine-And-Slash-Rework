@@ -4,6 +4,7 @@ import com.robertx22.mine_and_slash.gui.buttons.CharacterStatsButtons;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.unit.StatData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.uncommon.utilityclasses.NumberUtils;
 import com.robertx22.library_of_exile.utils.GuiUtils;
 import com.robertx22.library_of_exile.utils.RenderUtils;
 import com.robertx22.library_of_exile.utils.TextUTIL;
@@ -60,7 +61,7 @@ public class StatIconAndNumberButton extends ImageButton {
         int numX = 10;
         int numY = 16;
 
-        String stattext = ((int) stat.getValue()) + "";
+        String stattext = NumberUtils.formatForTooltip(stat.getValue());
 
 
         RenderUtils.render16Icon(gui, stat.GetStat().getIconForRenderingInGroup(), getX() + iconX - 4, getY() + iconY - 3);

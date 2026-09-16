@@ -1,6 +1,6 @@
 # Hand-off: Mercenary GUI bug fixes + new AI-behavior feature
 
-Repo: `C:\Users\Kelvin\Documents\GitHub\Mine-And-Slash-Rework` (Forge 1.20.1 mod, mod id `mmorpg`).
+Repo: `C:\Users\Mahj\Documents\GitHub\Mine-And-Slash-Rework` (Forge 1.20.1 mod, mod id `mmorpg`).
 Branch: `1.20-Forge-mahj`. All touched files are part of an **uncommitted, in-progress** mercenary feature
 (git status shows them as untracked `??`, not `M`) — there is no prior commit to diff against.
 

@@ -526,8 +526,14 @@ public class DamageEvent extends EffectEvent {
                 return true;
             }
         } else {
-            // outside maps, we want zombies to kill villagers etc
-            if (source instanceof Player) {
+            // outside maps, we want zombies to kill villagers etc - but an entity a player OWNS is
+            // not a wild mob. asking only about a Player source meant a mercenary, which is a
+            // TamableAnimal and not a Player, was never checked at all out here, so its basic attack
+            // landed on its own owner at full damage (in a map the branch above caught it, which is
+            // why this only ever reproduced in the overworld). resolveOwner is the same walk
+            // `enemies` already does to judge ally-ness from the owner's point of view, and its own
+            // comment names mercenaries as the reason it exists.
+            if (AllyOrEnemy.resolveOwner(source) instanceof Player) {
                 if (AllyOrEnemy.allies.is(source, target)) {
                     cancelDamage();
                     return true;
@@ -1019,6 +1025,11 @@ public class DamageEvent extends EffectEvent {
                         x.data.setString(EventData.SPELL, this.data.getString(EventData.SPELL));
                     }
                     x.data.setBoolean(EventData.IS_BONUS_ELEMENT_DAMAGE, true);
+                    // a conversion child left the parent at layer 1, before anything multiplied it, so it
+                    // has to run the full sweep. a taken as child left at layer 99, after every additive
+                    // layer already applied to it - the element agnostic "damage received" stats that live
+                    // in those layers key off this to skip themselves here instead of stacking twice.
+                    x.data.setBoolean(EventData.IS_DAMAGE_TAKEN_AS, takenAs);
 
                     // same hit, same positions - don't redo the map lookups per element
                     x.sourceInMapWorld = this.sourceInMapWorld;

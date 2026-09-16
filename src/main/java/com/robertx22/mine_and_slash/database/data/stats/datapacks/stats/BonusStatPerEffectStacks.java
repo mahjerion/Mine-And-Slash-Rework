@@ -62,7 +62,7 @@ public class BonusStatPerEffectStacks extends BaseDatapackStat implements ICoreS
     }
 
 
-    public List<ExactStatData> getMods(EntityData data, int amount) {
+    public List<ExactStatData> getMods(EntityData data, float amount) {
 
         return this.data.stats.stream()
                 .map(x -> {
@@ -84,7 +84,7 @@ public class BonusStatPerEffectStacks extends BaseDatapackStat implements ICoreS
 
     @Override
     public void affectStats(EntityData endata, StatData data, InCalcStatContainer incalc) {
-        for (ExactStatData x : getMods(endata, (int) data.getValue())) {
+        for (ExactStatData x : getMods(endata, data.getValue())) {
             x.applyToStatInCalc(incalc);
         }
     }

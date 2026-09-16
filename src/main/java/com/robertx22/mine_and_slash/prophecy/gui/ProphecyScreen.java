@@ -46,6 +46,9 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
 
     static int SLOT_SPACING = 18;
 
+    // 9 * 18 = 162 plus the 9px left margin fits inside sizeX (177)
+    static int TAKEN_PER_ROW = 9;
+
     @Override
     public void init() {
         super.init();
@@ -81,24 +84,15 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
 
             this.addRenderableWidget(new RerollProphecyButton(this.guiLeft + sizeX + 2, this.guiTop + 2));
 
-            i = 0;
-/*
-            if (data.numMobAffixesCanAdd > 0) {
-                for (String id : data.affixOffers) {
-                    MapAffix affix = ExileDB.MapAffixes().get(id);
-                    int x = this.guiLeft + 9 + (i * SLOT_SPACING);
-                    int y = this.guiTop + 107;
-                    this.addRenderableWidget(new ProphecyAffixButton(affix, ProphecyAffixButton.Info.IS_OFFER, true, x, y));
-                    i++;
-                }
-            }
-
- */
+            // accepted curses, laid out as a grid rather than the single row this used to be - the
+            // cap is PlayerProphecies.MAX_CURSES and a 10th icon on one row renders off the panel.
+            // the band from y+107 down is free because curse offers are picked on the card screen,
+            // not here. 3 rows of 9 = 27 slots, bottom edge 159 inside the 180 tall panel.
             i = 0;
             for (String id : data.affixesTaken) {
                 MapAffix affix = ExileDB.MapAffixes().get(id);
-                int x = this.guiLeft + 9 + (i * SLOT_SPACING);
-                int y = this.guiTop + 153;
+                int x = this.guiLeft + 9 + ((i % TAKEN_PER_ROW) * SLOT_SPACING);
+                int y = this.guiTop + 107 + ((i / TAKEN_PER_ROW) * SLOT_SPACING);
                 this.addRenderableWidget(new ProphecyAffixButton(affix, ProphecyAffixButton.Info.IS_TAKEN, false, x, y));
                 i++;
             }
@@ -146,8 +140,7 @@ public class ProphecyScreen extends BaseScreen implements INamedScreen {
             super.render(gui, x, y, ticks);
 
             GuiUtils.renderScaledText(gui, guiLeft + 88, guiTop + 35, 1, Words.REWARD_OFFERS.locName().getString(), ChatFormatting.LIGHT_PURPLE);
-            GuiUtils.renderScaledText(gui, guiLeft + 88, guiTop + 98, 1, Words.CURSE_OFFERS.locName().getString(), ChatFormatting.RED);
-            GuiUtils.renderScaledText(gui, guiLeft + 88, guiTop + 144, 1, Words.ACCEPTED_CURSES.locName().getString(), ChatFormatting.YELLOW);
+            GuiUtils.renderScaledText(gui, guiLeft + 88, guiTop + 98, 1, Words.ACCEPTED_CURSES.locName().getString(), ChatFormatting.YELLOW);
 
             //buttons.forEach(b -> b.renderToolTip(matrix, x, y));
         } catch (Exception e) {

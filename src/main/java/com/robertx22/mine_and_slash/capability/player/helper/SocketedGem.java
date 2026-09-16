@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.capability.player.helper;
 
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
+import com.robertx22.mine_and_slash.database.data.support_gem.SupportGemRules;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.MaxLinks;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
@@ -13,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SocketedGem {
@@ -63,7 +63,10 @@ public class SocketedGem {
         }
 
 
-        HashMap<String, Integer> map = new HashMap<>();
+        // the same rule the mercenary support slots are held to, in SupportGemRules, so the two can't
+        // drift. this used to be an inline id/group counter here and nothing at all on the mercenary
+        // side, which is how a mercenary ended up able to stack three GMPs on one skill.
+        List<SkillGemData> kept = new ArrayList<>();
 
         boolean toomany = false;
 
@@ -71,20 +74,11 @@ public class SocketedGem {
             if (data.getSupport() == null) {
                 continue;
             }
-            map.put(data.getSupport().id, map.getOrDefault(data.getSupport().id, 0) + 1);
-            if (map.get(data.getSupport().id) > 1) {
+            if (SupportGemRules.conflicts(kept, data)) {
                 toomany = true;
                 break;
             }
-            if (data.getSupport().isOneOfAKind()) {
-                String id = data.getSupport().one_of_a_kind;
-                map.put(id, map.getOrDefault(id, 0) + 1);
-
-                if (map.get(id) > 1) {
-                    toomany = true;
-                    break;
-                }
-            }
+            kept.add(data);
         }
 
         if (toomany) {

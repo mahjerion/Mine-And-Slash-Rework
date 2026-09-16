@@ -32,6 +32,12 @@ import java.util.List;
 
 public class PlayerProphecies implements IStatCtx {
 
+    // how many curses a player can stack in a single map. ProphecyScreen draws them 9 per row and
+    // has room for 3 rows, and the whole prophecy affix pool is only 29 entries, so this is the
+    // practical ceiling. NOTHING may ever grant more picks than curseSlotsLeft() - budget that
+    // can't be spent strands numMobAffixesCanAdd above 0, which locks every altar in the map.
+    public static final int MAX_CURSES = 20;
+
     public List<ProphecyData> rewardOffers = new ArrayList<>();
 
     public List<String> affixOffers = new ArrayList<>();
@@ -71,6 +77,14 @@ public class PlayerProphecies implements IStatCtx {
         clearPendingAltar();
     }
 
+    public int curseSlotsLeft() {
+        return Math.max(0, MAX_CURSES - affixesTaken.size());
+    }
+
+    public boolean isAtCurseCap() {
+        return curseSlotsLeft() < 1;
+    }
+
     public boolean hasPendingAltar() {
         // null when loaded from a save written before this field existed
         return altarDim != null && !altarDim.isEmpty();
@@ -106,6 +120,12 @@ public class PlayerProphecies implements IStatCtx {
 
     public void regenAffixOffers() {
         this.affixOffers.clear();
+
+        // at the cap there is nothing to pick - leaving the list empty is what tells the callers to
+        // zero the budget and consume the altar instead of opening a screen that can't be acted on
+        if (isAtCurseCap()) {
+            return;
+        }
 
         for (int i = 0; i < 3; i++) {
             // todo did i figure it out correctly

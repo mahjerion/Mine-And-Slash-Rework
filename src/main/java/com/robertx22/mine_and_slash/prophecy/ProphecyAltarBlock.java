@@ -54,6 +54,11 @@ public class ProphecyAltarBlock extends Block {
 
             var prophecy = Load.player(p).prophecy;
 
+            // self heal. a save written before the cap was clamped (or any future slip) can hold
+            // budget the player has no slots left to spend, and the gate below would then short
+            // circuit every altar for the rest of the map - the prophecy lockout bug.
+            prophecy.numMobAffixesCanAdd = Math.min(prophecy.numMobAffixesCanAdd, prophecy.curseSlotsLeft());
+
             // picks are still owed from an earlier click (the player closed the card screen, or the
             // Twin Curse keystone gave them two). don't grant more and don't consume this altar -
             // just put the offers back on screen. the altar that granted them is still standing too,
@@ -62,24 +67,49 @@ public class ProphecyAltarBlock extends Block {
                 if (prophecy.affixOffers.isEmpty()) {
                     prophecy.regenAffixOffers();
                 }
-                openCurseScreen(p);
-                return InteractionResult.SUCCESS;
+                if (!prophecy.affixOffers.isEmpty()) {
+                    openCurseScreen(p);
+                    return InteractionResult.SUCCESS;
+                }
+                // the affix pool ran dry, so the owed pick can never be spent. drop it rather than
+                // hold the rest of the map's prophecy hostage over it.
+                prophecy.numMobAffixesCanAdd = 0;
             }
-
-            // Atlas "Twin Curse" - forces 2 curse picks per altar instead of 1. the altar isn't
-            // consumed until the budget is back to 0, so both picks are always spendable.
-            boolean doubleCurse = Load.Unit(p).getUnit().getCalculatedStat(ProphecyDoubleCurse.getInstance()).getValue() > 0;
-            prophecy.numMobAffixesCanAdd += doubleCurse ? 2 : 1;
 
             // the first altar touched in a map "initiates" the prophecy event, granting a free look
             // at reward offers - every altar after that (and every reroll from then on) only grants
-            // a curse; further reward rolls have to go through the paid GUI reroll
+            // a curse; further reward rolls have to go through the paid GUI reroll. this runs before
+            // the curse grant so that even an altar that grants no curse (player at the cap) still
+            // opens up the reward offers and the reroll button.
             if (!prophecy.usedFreeRoll) {
                 prophecy.usedFreeRoll = true;
                 prophecy.regenerateNewOffers(p);
             }
 
+            // Atlas "Twin Curse" - forces 2 curse picks per altar instead of 1. the altar isn't
+            // consumed until the budget is back to 0, so both picks are always spendable. clamped to
+            // the slots actually left, otherwise the odd pick out is stranded above the cap forever.
+            boolean doubleCurse = Load.Unit(p).getUnit().getCalculatedStat(ProphecyDoubleCurse.getInstance()).getValue() > 0;
+            prophecy.numMobAffixesCanAdd += Math.min(doubleCurse ? 2 : 1, prophecy.curseSlotsLeft());
+
             prophecy.regenAffixOffers();
+
+            if (prophecy.numMobAffixesCanAdd < 1 || prophecy.affixOffers.isEmpty()) {
+                // player is at the curse cap (or the pool is dry). the altar is still spent - it
+                // initiated the prophecy above, so rewards and rerolls stay reachable from the hub -
+                // it just doesn't hand out a curse.
+                prophecy.numMobAffixesCanAdd = 0;
+                prophecy.affixOffers.clear();
+                prophecy.clearPendingAltar();
+
+                p.sendSystemMessage(Chats.PROPHECY_MAX_CURSES.locName().withStyle(ChatFormatting.YELLOW));
+                SoundUtils.playSound(p, SoundEvents.EXPERIENCE_ORB_PICKUP);
+
+                level.setBlock(pPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                Load.player(p).playerDataSync.setDirty();
+
+                return InteractionResult.SUCCESS;
+            }
 
             p.sendSystemMessage(Chats.PROPHECY_ALTAR_MSG.locName().withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD));
 

@@ -126,6 +126,14 @@ public class ExactStatData implements ISerializable<ExactStatData>, ITooltipList
     }
 
 
+    /**
+     * Whether this modifier helps whoever holds it: a positive value on a normal stat, or a negative
+     * one on a stat where less is better (Stat.minus_is_good, eg mana cost or damage received).
+     */
+    public boolean isGoodForHolder() {
+        return (v1 >= 0) != getStat().minus_is_good;
+    }
+
     public float getFirstValue() {
         return v1;
     }

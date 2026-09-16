@@ -23,6 +23,7 @@ import com.robertx22.mine_and_slash.uncommon.stat_calculation.MercenaryStatUtils
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.ClientOnly;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.LevelUtils;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenaryActionPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.RequestMercBagPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -100,6 +101,11 @@ public class MercenaryScreen extends BaseScreen implements INamedScreen {
     protected void init() {
         super.init();
         rebuild();
+        // backpacks are never synced to the client, so the equip pickers this screen opens have no way
+        // to see the master bag unless the server sends it. asked for here rather than on each slot
+        // click so the picker opens with no round trip - GuiInventoryGrids.mercSlotChoiceEntries
+        // explains why a snapshot this old is still safe to build from.
+        Packets.sendToServer(new RequestMercBagPacket());
     }
 
     /**

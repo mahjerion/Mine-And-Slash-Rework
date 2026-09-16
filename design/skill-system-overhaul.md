@@ -30,7 +30,7 @@ Its own cooldown is still `max(cooldown_ticks, 2-tick floor)`, so give such a sk
 
 ## 📊 Stat & Skill Remapping
 
-* Craft to Exile 2 datapack path, do NOT update server files - I will do it on my own: C:\Users\Kelvin\curseforge\minecraft\Instances\Craft to Exile 2\config\openloader\data\cte_mns\data\mmorpg
+* Craft to Exile 2 datapack path, do NOT update server files - I will do it on my own: C:\Users\Mahj\curseforge\minecraft\Instances\Craft to Exile 2\config\openloader\data\cte_mns\data\mmorpg
 * Cooldown → Cast Speed: Existing instances of "Cooldown" on gear/skills will convert to "Cast Speed."
 * Cast Speed → Channel Speed: Existing instances of "Cast Speed" will either remain or convert to "Channel Speed" depending on the skill type.
 * Archetype Separation:

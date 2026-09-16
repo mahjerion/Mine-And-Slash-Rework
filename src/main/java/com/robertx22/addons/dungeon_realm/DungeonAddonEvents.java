@@ -436,14 +436,11 @@ public class DungeonAddonEvents {
                 float chance = Load.Unit(event.player).getUnit().getCalculatedStat(DoubleEventChance.getInstance()).getValue();
 
                 // map tier feeds the same pool: higher tier maps just have a higher chance at more
-                // league mechanics, scaling linearly from nothing at tier 0 to the configured value
-                // at max tier. dungeon_realm has no concept of map tiers, which is why this lives here.
+                // league mechanics. dungeon_realm has no concept of map tiers, which is why the hookup
+                // lives here - the curve itself is on MapItemData so the map tooltip can show it too.
                 MapItemData map = StackSaving.MAP.loadFrom(event.mapStack);
                 if (map != null) {
-                    int maxTier = MapItemData.maxMapTier();
-                    if (maxTier > 0) {
-                        chance += ServerContainer.get().MAX_TIER_BONUS_EVENT_CHANCE.get() * (map.tier / (float) maxTier);
-                    }
+                    chance += map.getTierBonusEventChance();
                 }
 
                 event.bonusPercent = chance;

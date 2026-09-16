@@ -1,12 +1,15 @@
 package com.robertx22.addons.map_device;
 
+import com.robertx22.library_of_exile.dimension.MapDimensions;
 import com.robertx22.library_of_exile.dimension.device.IMapDeviceBlockEntity;
 import com.robertx22.library_of_exile.events.base.EventConsumer;
 import com.robertx22.library_of_exile.events.base.ExileEvents;
 import com.robertx22.mine_and_slash.mmorpg.ForgeEvents;
 import com.robertx22.mine_and_slash.uncommon.ExplainedResultUtil;
 import com.robertx22.mine_and_slash.uncommon.localization.Chats;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -38,6 +41,21 @@ public class MapDeviceEvents {
             }
             event.setUseBlock(Event.Result.ALLOW);
             event.setUseItem(Event.Result.DENY);
+        });
+
+        // leaving a map is the last moment a relic left in one of its devices can still be handed back -
+        // see MapDeviceRelicGuard. both legs run after the player is out, so a drop lands somewhere safe.
+        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerChangedDimensionEvent.class, event -> {
+            if (event.getEntity() instanceof ServerPlayer p && MapDimensions.isMap(event.getFrom().location())) {
+                MapDeviceRelicGuard.onLeftMapDimension(p, event.getFrom());
+            }
+        });
+
+        // dying in a map is an exit too, and a respawn fires no dimension change event
+        ForgeEvents.registerForgeEvent(PlayerEvent.PlayerRespawnEvent.class, event -> {
+            if (event.getEntity() instanceof ServerPlayer p) {
+                MapDeviceRelicGuard.onRespawn(p);
+            }
         });
 
         ExileEvents.OPEN_MAP_DEVICE.register(new EventConsumer<ExileEvents.OpenMapDeviceEvent>() {

@@ -14,6 +14,7 @@ import com.robertx22.mine_and_slash.prophecy.AcceptProphecyPacket;
 import com.robertx22.mine_and_slash.prophecy.RerollProphecyPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.*;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenaryActionPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.RequestMercBagPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.unique_collection.CraftUniquePacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.BackPackLootMenuPacket;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.backpack.OpenBackpackPacket;
@@ -55,6 +56,7 @@ public class C2SPacketRegister {
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new MercenaryActionPacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new CraftUniquePacket(), i++);
         Packets.registerClientToServerPacket(MMORPG.NETWORK, new MapDeviceActionPacket(), i++);
+        Packets.registerClientToServerPacket(MMORPG.NETWORK, new RequestMercBagPacket(), i++);
 
 
         // Packets.registerClientToServerPacket(MMORPG.NETWORK, new SetupHotbarPacket(), i++);

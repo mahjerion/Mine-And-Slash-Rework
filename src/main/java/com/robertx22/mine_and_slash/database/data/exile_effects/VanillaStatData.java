@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.UUID;
@@ -34,17 +35,15 @@ public class VanillaStatData {
         return UUID.fromString(uuid);
     }
 
-    public void applyVanillaStats(LivingEntity en, int stacks) {
-        applyVanillaStats(en, stacks, 1F);
-    }
-
     /**
+     * The modifier amount this stat should currently be worth on its holder.
+     *
      * @param strMulti the holder's effect strength multiplier (ExileEffectInstanceData.str_multi).
      *                 The mns stats of an effect already scale by it, these vanilla modifiers have
      *                 to as well or a target resistant to an effect still eats its whole attribute
      *                 lockdown.
      */
-    public void applyVanillaStats(LivingEntity en, int stacks, float strMulti) {
+    public float getTargetAmount(int stacks, float strMulti) {
 
         float amount = val * stacks * strMulti;
 
@@ -57,31 +56,67 @@ public class VanillaStatData {
             amount = Math.max(amount, -1F);
         }
 
-        AttributeModifier mod = new AttributeModifier(UUID.fromString(uuid), "", amount, type.operation);
-        Attribute attri = getAttribute();
+        return amount;
+    }
 
-        this.removeVanillaStats(en);
+    public void applyVanillaStats(LivingEntity en, int stacks) {
+        applyVanillaStats(en, stacks, 1F);
+    }
 
-        if (en.getAttribute(attri) != null) {
-            if (!en.getAttribute(attri)
-                    .hasModifier(mod)) {
-                en.getAttribute(attri)
-                        .addTransientModifier(mod);
-            }
+    public void applyVanillaStats(LivingEntity en, int stacks, float strMulti) {
+
+        AttributeInstance in = en.getAttribute(getAttribute());
+
+        if (in == null) {
+            return; // the entity has no such attribute at all - most mobs have no generic.attack_speed
         }
 
+        // remove first: vanilla keys a modifier by uuid, so re-adding one that is already there is
+        // a no-op and the stale amount would survive a stack or strength change
+        if (in.getModifier(getUUID()) != null) {
+            in.removeModifier(getUUID());
+        }
+
+        in.addTransientModifier(new AttributeModifier(getUUID(), "", getTargetAmount(stacks, strMulti), type.operation));
+    }
+
+    /**
+     * Same as {@link #applyVanillaStats} but leaves the attribute instance untouched when the
+     * modifier already reads exactly what it should. The reconcile pass re-asserts every active
+     * effect's modifiers on a fixed cadence, and without this that would churn a remove + add (and
+     * the setDirty/resync each one costs) every second per effect per entity for no change at all.
+     *
+     * @return true if the entity's modifier was actually added or corrected
+     */
+    public boolean applyIfDifferent(LivingEntity en, int stacks, float strMulti) {
+
+        AttributeInstance in = en.getAttribute(getAttribute());
+
+        if (in == null) {
+            return false;
+        }
+
+        float target = getTargetAmount(stacks, strMulti);
+        AttributeModifier current = in.getModifier(getUUID());
+
+        if (current != null && current.getOperation() == type.operation && current.getAmount() == target) {
+            return false;
+        }
+
+        if (current != null) {
+            in.removeModifier(getUUID());
+        }
+
+        in.addTransientModifier(new AttributeModifier(getUUID(), "", target, type.operation));
+
+        return true;
     }
 
     public void removeVanillaStats(LivingEntity en) {
-        AttributeModifier mod = new AttributeModifier(UUID.fromString(uuid), "", val, type.operation);
-        Attribute attri = getAttribute();
+        AttributeInstance in = en.getAttribute(getAttribute());
 
-        if (en.getAttribute(attri) != null) {
-            if (en.getAttribute(attri)
-                    .hasModifier(mod)) {
-                en.getAttribute(attri)
-                        .removeModifier(mod);
-            }
+        if (in != null && in.getModifier(getUUID()) != null) {
+            in.removeModifier(getUUID());
         }
     }
 }

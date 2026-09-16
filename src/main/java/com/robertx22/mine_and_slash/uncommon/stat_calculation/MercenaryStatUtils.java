@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.data.stats.types.spirit.AuraCapacit
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
+import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.SimpleStatCtx;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_ctx.StatContext;
@@ -129,6 +130,39 @@ public class MercenaryStatUtils {
         for (ItemStack stack : getAuraStacks(data)) {
             SkillGemData gem = StackSaving.SKILL_GEM.loadFrom(stack);
             if (gem != null && gem.getAura() != null) {
+                list.add(gem);
+            }
+        }
+        return list;
+    }
+
+    // ------------------------------------------------------------------ support gems
+
+    /**
+     * The support gems socketed under one equipped skill, for the uniqueness rule in
+     * {@code MercenarySlotType.SUPPORT}.
+     * <p>
+     * Only the slots the skill has actually unlocked are scanned, the same range
+     * {@code StatCalculation.collectMercGemStats} draws stats from. A gem stranded in a locked slot by
+     * a level reset contributes nothing, so letting it block socketing the same gem into an unlocked
+     * slot would only be confusing - and {@code MercenaryManager.dedupeSupports} hands it back anyway.
+     *
+     * @param excludeIndex a support inventory index to skip, so a gem being swapped into an occupied
+     *                     slot is not judged against the one it is replacing
+     */
+    public static List<SkillGemData> getSupportGems(MercenaryData data, int skillSlot, int excludeIndex) {
+        List<SkillGemData> list = new ArrayList<>();
+
+        MyInventory inv = data.getSupports();
+        int unlocked = data.getSupportSlots(skillSlot);
+
+        for (int i = 0; i < Math.min(unlocked, MercenaryClass.SUPPORTS_PER_SKILL); i++) {
+            int index = MercenaryInventories.supportIndex(skillSlot, i);
+            if (index == excludeIndex || index < 0 || index >= inv.getContainerSize()) {
+                continue;
+            }
+            SkillGemData gem = StackSaving.SKILL_GEM.loadFrom(inv.getItem(index));
+            if (gem != null && gem.getSupport() != null) {
                 list.add(gem);
             }
         }

@@ -416,6 +416,14 @@ public class SpellCastingData {
 
         if (spell != null) {
 
+            // the weapon changed a moment ago. no exemption for an off global cooldown skill: that
+            // flag is about pacing, and this is about whether the weapon in hand is the one that
+            // earned the cast. fails silently like the gate below - the hotbar greys for the whole
+            // lockout, and a chat line every time someone scrolled their hotbar would be noise
+            if (cds.isOnCooldown(CooldownsData.WEAPON_SWAP)) {
+                return false;
+            }
+
             // the gate holds every skill except one that is off the global cooldown - those are
             // exactly the ones meant to be pressed while another skill is still recovering
             if (cds.isOnCooldown(CooldownsData.GLOBAL_COOLDOWN) && !spell.getConfig().isOffGlobalCooldown()) {
@@ -503,6 +511,44 @@ public class SpellCastingData {
 
     }
 
+    /**
+     * A player's main hand weapon changed. Everything in flight was authorised by a weapon that is no
+     * longer held, so it ends here, and nothing new may start for a moment. Without this, a "swap
+     * weapon" keybind sharing a physical key with a skill keybind was worth two weapons' worth of
+     * skills off one hotbar: the swap and the cast land in the same tick, so every skill passed its
+     * own weapon check honestly, one weapon each.
+     * <p>
+     * Only reached for real players, from OnEntityTick.checkGearChanged. Mercenaries, wizards and
+     * mobs have no SpellCastingData and are untouched.
+     */
+    public void onMainHandWeaponSwapped(ServerPlayer player) {
+
+        if (player.isCreative()) {
+            return; // canCast waives every weapon rule in creative, this has to agree
+        }
+
+        int ticks = GameBalanceConfig.get().WEAPON_SWAP_LOCKOUT_TICKS;
+
+        // armed before the cast is ended, because cancelCast writes the global cooldown and
+        // onTimePass runs later in this same tick
+        if (ticks > 0) {
+            Load.Unit(player).getCooldowns().setOnCooldown(CooldownsData.WEAPON_SWAP, ticks);
+        }
+
+        if (isChannelling()) {
+            // the clean end: onSpellCastFinished stamps the skill cooldown and the recovery, and the
+            // pulse that was part way through was never pre paid
+            endChannel(player);
+        } else if (isCasting()) {
+            // an interrupted cast still owes its cooldown and its recovery - see cancelCast. a swap
+            // must not become a free way to abort a cast that turned out badly
+            cancelCast(player);
+        }
+
+        Load.Unit(player).sync.setDirty();              // the hotbar greys off this cooldown
+        Load.player(player).playerDataSync.setDirty();  // and the client stops predicting the cast
+    }
+
     public boolean isCasting() {
         return calcSpell != null && casting && ExileDB.Spells()
                 .isRegistered(calcSpell.spell_id);
@@ -551,6 +597,12 @@ public class SpellCastingData {
             return false;
         }
         if (RepairUtils.isItemBroken(ctx.caster.getMainHandItem())) {
+            return false;
+        }
+        // the weapon that started the channel has to still be in hand. without this a channel begun
+        // with a valid weapon kept pulsing right through a swap, and each pulse was typed and scaled
+        // off whatever was held at that instant
+        if (ctx.caster instanceof Player p && !weaponAllowsSpell(spell, p).can) {
             return false;
         }
         return ctx.data.getResources().hasEnoughForBoth(spell.getManaCostCtx(ctx), spell.getEnergyCostCtx(ctx));
@@ -666,6 +718,16 @@ public class SpellCastingData {
 
                 SpellCastContext ctx = new SpellCastContext(entity, castTicksDone, spell);
                 ctx.castTotalTicks = this.spellTotalCastTicks;
+
+                // the weapon that authorised this cast has to still be in hand when it resolves.
+                // here rather than in tryCast so a multicast's repeats are covered too - those fire
+                // from onCastingTick just below, not from tryCast. a channel is gated per pulse by
+                // canPulseChannel instead, so it is skipped
+                if (!entity.level().isClientSide && spell != null && !spell.getConfig().isChannel()
+                        && entity instanceof Player p && !weaponAllowsSpell(spell, p).can) {
+                    cancelCast(entity); // the cooldown and the recovery are still owed
+                    return;
+                }
 
                 if (spell != null && ExileDB.Spells()
                         .isRegistered(spell)) {
@@ -858,37 +920,7 @@ public class SpellCastingData {
 
 
             if (data.getResources().hasEnoughForBoth(mana, energy)) {
-
-                var opt = Load.Unit(player).equipmentCache.getWeaponOpt();
-
-                if (RepairUtils.isItemBroken(player.getMainHandItem())) {
-                    return ExplainedResult.failure(Chats.CANT_CAST_WITH_BROKEN_WEAPON.locName());
-                }
-
-
-                if (!CompatConfig.get().ignoreWeaponReqForSpells()) {
-
-                    GearItemData wep = opt.map(x -> x.gear).orElse(null);
-
-                    if (wep == null) {
-                        return ExplainedResult.failure(Chats.NOT_MNS_WEAPON.locName());
-                    }
-
-                    if (!spell.getConfig().castingWeapon.predicate.predicate.test(player)) {
-                        // If the spell requires a mage weapon and the player is a battlemage, allow casting
-                        if (spell.getConfig().castingWeapon == CastingWeapon.MAGE_WEAPON && data.getUnit().isBattlemage()) {
-                            // Do nothing, allow casting
-                        } else {
-                            return ExplainedResult.failure(Chats.WRONG_CASTING_WEAPON.locName());
-                        }
-                    }
-
-                    if (!wep.canPlayerWear(ctx.data)) {
-                        return ExplainedResult.failure(Chats.WEAPON_REQ_NOT_MET.locName());
-                    }
-                }
-
-                return ExplainedResult.success();
+                return weaponAllowsSpell(spell, player);
             } else {
                 if (player instanceof ServerPlayer) {
                     Packets.sendToClient((Player) player, new NoManaPacket());
@@ -898,6 +930,58 @@ public class SpellCastingData {
         }
         return ExplainedResult.silentlyFail();
 
+    }
+
+    /**
+     * The weapon half of {@link #canCast}, on its own so the checks that happen <i>after</i> a cast has
+     * already begun can ask the same question and get the same answers. canCast only ever ran once, at
+     * cast start, so a weapon swapped in mid cast or mid channel was never looked at again - and every
+     * channel pulse and every cast resolution reads whatever is in hand at that instant
+     * (SpellCtx.getWeapon and DamageAction both go straight to the equipment cache).
+     * <p>
+     * Cheap enough for a per pulse gate: it reads the equipment cache and the stat container, it does
+     * not build a SpellCastContext, which would fire a full stat event.
+     */
+    public static ExplainedResult weaponAllowsSpell(Spell spell, Player player) {
+
+        if (player.isCreative()) {
+            return ExplainedResult.success();
+        }
+
+        EntityData data = Load.Unit(player);
+
+        if (data == null) {
+            return ExplainedResult.success(); // nothing to enforce against, never block on missing data
+        }
+
+        // outside the compat branch on purpose, exactly where canCast had it: ignoring weapon
+        // requirements never meant ignoring a broken weapon
+        if (RepairUtils.isItemBroken(player.getMainHandItem())) {
+            return ExplainedResult.failure(Chats.CANT_CAST_WITH_BROKEN_WEAPON.locName());
+        }
+
+        if (CompatConfig.get().ignoreWeaponReqForSpells()) {
+            return ExplainedResult.success();
+        }
+
+        GearItemData wep = data.equipmentCache.getWeaponOpt().map(x -> x.gear).orElse(null);
+
+        if (wep == null) {
+            return ExplainedResult.failure(Chats.NOT_MNS_WEAPON.locName());
+        }
+
+        if (!spell.getConfig().castingWeapon.predicate.predicate.test(player)) {
+            // If the spell requires a mage weapon and the player is a battlemage, allow casting
+            if (spell.getConfig().castingWeapon != CastingWeapon.MAGE_WEAPON || !data.getUnit().isBattlemage()) {
+                return ExplainedResult.failure(Chats.WRONG_CASTING_WEAPON.locName());
+            }
+        }
+
+        if (!wep.canPlayerWear(data)) {
+            return ExplainedResult.failure(Chats.WEAPON_REQ_NOT_MET.locName());
+        }
+
+        return ExplainedResult.success();
     }
 
     public void setCooldownOnCasted(SpellCastContext ctx) {

@@ -9,6 +9,8 @@ import com.robertx22.mine_and_slash.gui.screens.atlas_map.AtlasMapScreen;
 import com.robertx22.mine_and_slash.gui.card_picker.ICard;
 import com.robertx22.mine_and_slash.gui.card_picker.ProphecyCurseCard;
 import com.robertx22.mine_and_slash.gui.screens.character_screen.MainHubScreen;
+import com.robertx22.mine_and_slash.gui.screens.mercenary.MercEquipPickerScreen;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercBagClientState;
 import com.robertx22.mine_and_slash.gui.wiki.BestiaryGroup;
 import com.robertx22.mine_and_slash.gui.wiki.reworked.NewWikiScreen;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
@@ -75,7 +77,10 @@ public class OpenGuiWrapper {
 
         List<ICard> cards = Load.player(p).prophecy.affixOffers.stream().map(x -> new ProphecyCurseCard(ExileDB.MapAffixes().get(x))).collect(Collectors.toList());
 
-        if (cards.size() == 3) {
+        // 1 or 2 cards is legal - regenAffixOffers() draws 3 distinct prophecy_types and stops early
+        // once the remaining pool runs out of them, which is reachable near the curse cap. only a
+        // genuinely empty offer list means there is nothing to show.
+        if (!cards.isEmpty()) {
             return new CardPickScreen(cards, Words.PROPHECIES, "prophecy");
         }
         return null;
@@ -110,6 +115,19 @@ public class OpenGuiWrapper {
         }
         if (mc.screen == null) {
             mc.setScreen(new MapDeviceScreen(state));
+        }
+    }
+
+    /**
+     * A master bag snapshot arrived. Store it, and if the equip picker is the screen open, rebuild it
+     * so its entries follow. Never opens or replaces a screen - unlike the map device, this snapshot is
+     * an answer to a request a screen made, not an instruction to show anything.
+     */
+    public static void onMercBagSync(MercBagClientState state) {
+        MercBagClientState.last = state;
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.screen instanceof MercEquipPickerScreen screen) {
+            screen.refresh();
         }
     }
 

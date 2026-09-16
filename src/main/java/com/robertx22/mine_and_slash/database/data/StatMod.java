@@ -31,6 +31,14 @@ public class StatMod implements ISerializable<StatMod> {
     public String stat;
     public String type;
 
+    /**
+     * Forces whether Effect Strength scales this modifier, overriding the automatic read in
+     * ExileEffect.scalesWithEffectStrength. Needed when a stat lies about its own polarity - a
+     * "X procs against you" stat is harmful to its holder despite being a positive number, so a
+     * curse built from one has to opt back in. Null means let the automatic read decide.
+     */
+    public Boolean scale_with_effect_strength = null;
+
     public static StatMod EMPTY = new StatMod();
 
     private StatMod() {
@@ -141,6 +149,10 @@ public class StatMod implements ISerializable<StatMod> {
         json.addProperty("stat", stat);
         json.addProperty("type", ModType.valueOf(type).id);
 
+        if (scale_with_effect_strength != null) {
+            json.addProperty("scale_with_effect_strength", scale_with_effect_strength);
+        }
+
         return json;
     }
 
@@ -158,7 +170,13 @@ public class StatMod implements ISerializable<StatMod> {
         ModType type = ModType.fromString(json.get("type")
                 .getAsString());
 
-        return new StatMod(firstMin, firstMax, stat, type);
+        StatMod mod = new StatMod(firstMin, firstMax, stat, type);
+
+        if (json.has("scale_with_effect_strength")) {
+            mod.scale_with_effect_strength = json.get("scale_with_effect_strength").getAsBoolean();
+        }
+
+        return mod;
 
     }
 

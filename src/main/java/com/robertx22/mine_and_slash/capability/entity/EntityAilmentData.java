@@ -228,7 +228,12 @@ public class EntityAilmentData {
     public void onTick(LivingEntity en) {
 
 
-        for (Map.Entry<UUID, OneData> entry : this.datas.entrySet()) {
+        // snapshot: the dot damage further down calls Activate(), which runs the whole damage
+        // pipeline and can land a fresh ailment back on this same entity - onAilmentCausingDamage
+        // puts a new attacker key into `datas`. Structurally modifying a HashMap mid-iteration is a
+        // ConcurrentModificationException, thrown out of the entity tick, which used to take every
+        // step after it down with it (effect expiry, stat recalc, sync).
+        for (Map.Entry<UUID, OneData> entry : new ArrayList<>(this.datas.entrySet())) {
             var data = entry.getValue();
 
             for (Map.Entry<String, List<DotData>> e : data.dotMap.entrySet()) {
@@ -280,10 +285,13 @@ public class EntityAilmentData {
                         Entity entity = s.getEntity(id);
 
                         if (entity instanceof LivingEntity caster) {
-                            for (Map.Entry<String, List<DotData>> e : data.dotMap.entrySet()) {
+                            // snapshotted for the same reason as the outer loop: the Activate()
+                            // below can route back into onAilmentCausingDamage and put a new
+                            // ailment id into this very dotMap, and its DotData list too
+                            for (Map.Entry<String, List<DotData>> e : new ArrayList<>(data.dotMap.entrySet())) {
                                 float dmg = 0;
 
-                                for (DotData d : e.getValue()) {
+                                for (DotData d : new ArrayList<>(e.getValue())) {
                                     if (d.ticks > 0) {
                                         dmg += d.dmg;
                                     }

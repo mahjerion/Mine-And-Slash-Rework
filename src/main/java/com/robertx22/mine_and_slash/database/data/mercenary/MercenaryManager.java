@@ -7,11 +7,14 @@ import com.robertx22.mine_and_slash.capability.player.helper.MyInventory;
 import com.robertx22.mine_and_slash.config.forge.ServerContainer;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
 import com.robertx22.mine_and_slash.database.data.spells.components.actions.SummonPetAction;
+import com.robertx22.mine_and_slash.database.data.support_gem.SupportGemRules;
 import com.robertx22.mine_and_slash.mmorpg.registers.common.SlashEntities;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryInventories;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
+import com.robertx22.mine_and_slash.saveclasses.skill_gem.SkillGemData;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
+import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.EventBuilder;
 import com.robertx22.mine_and_slash.uncommon.effectdatas.rework.RestoreType;
@@ -34,6 +37,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -361,6 +366,14 @@ public class MercenaryManager {
             return null;
         }
 
+        // migration for loadouts saved before mercenaries had the support gem uniqueness rule. it has
+        // to be this rather than validateEquipment: dismiss() below nulls mercs.spawnedId and nothing
+        // reassigns it until the entity is in the world, so anywhere in this method getMerc() returns
+        // null - the aura spirit check would fall back to the flat class value and eject every aura
+        // that only fits because of gear granted Spirit, and after the entity exists its stats are
+        // only marked dirty, so the attribute check could hand back the whole gear set.
+        dedupeSupports(player, data);
+
         dismiss(player);
 
         ServerLevel level = player.serverLevel();
@@ -443,6 +456,11 @@ public class MercenaryManager {
      * owner rather than simply ceasing to apply.
      */
     public static void validateEquipment(Player player, MercenaryData data) {
+        // before the mayPlace sweep below, so it never sees a duplicate. the sweep does resolve one on
+        // its own - it blanks a slot before asking, so the second gem fails against the first - but it
+        // keeps the LATER gem, and keeping the one socketed first is the less surprising outcome.
+        dedupeSupports(player, data);
+
         for (MercenarySlotType type : MercenarySlotType.values()) {
             var inv = type.inventoryOf(data);
 
@@ -470,6 +488,58 @@ public class MercenaryManager {
             }
         }
         refreshGear(player);
+    }
+
+    /**
+     * Hands back support gems that break the "one of each, one per one_of_a_kind group" rule, keeping
+     * the first legal gem under each skill.
+     * <p>
+     * Mercenaries were never held to that rule, so an existing save can hold three GMPs on one skill
+     * with all three applying. This is the migration for those, and it is deliberately NOT
+     * {@link #validateEquipment}: this reads only stored data - no live entity, no stat calculation -
+     * so it is safe to call from anywhere, including mid spawn where the mercenary entity does not
+     * exist yet and every stat driven check would give a wrong answer.
+     *
+     * @return true if anything was handed back
+     */
+    public static boolean dedupeSupports(Player player, MercenaryData data) {
+        MyInventory inv = data.getSupports();
+        boolean any = false;
+
+        for (int skill = 0; skill < MercenaryClass.EQUIPPED_SKILLS; skill++) {
+            List<SkillGemData> kept = new ArrayList<>();
+
+            for (int i = 0; i < MercenaryClass.SUPPORTS_PER_SKILL; i++) {
+                int index = MercenaryInventories.supportIndex(skill, i);
+                if (index < 0 || index >= inv.getContainerSize()) {
+                    continue;
+                }
+                ItemStack stack = inv.getItem(index);
+                SkillGemData gem = StackSaving.SKILL_GEM.loadFrom(stack);
+                if (gem == null || gem.getSupport() == null) {
+                    continue;
+                }
+                if (SupportGemRules.conflicts(kept, gem)) {
+                    inv.setItem(index, ItemStack.EMPTY);
+                    MercenarySlotType.giveBack(player, stack);
+                    any = true;
+                } else {
+                    kept.add(gem);
+                }
+            }
+        }
+
+        if (any) {
+            // one message however many gems moved, unlike the player side equivalent which sends one
+            // per ejected stack
+            player.sendSystemMessage(Chats.CANT_USE_MULTIPLE_SAME_SUPPORTS.locName());
+            data.setSpellUnitsDirty();
+            // the support inventory rides to the client on playerDataSync's version, and unlike the
+            // validateEquipment callers the spawn path has nothing else that dirties it - without this
+            // the mercenary screen keeps drawing a gem that is already back in the player's inventory
+            Load.player(player).playerDataSync.setDirtyAndSync(player);
+        }
+        return any;
     }
 
     // ------------------------------------------------------------------ experience

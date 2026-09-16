@@ -194,7 +194,14 @@ public abstract class EffectEvent implements IGUID {
             //watch.min = 500;
 
             initBeforeActivating();
-            calculateEffects();
+            // only when init didn't already cancel the event. calculateEffects re-checks the flag
+            // itself, so this was previously redundant - but only by coincidence of ordering, and the
+            // effectsCalculated latch inside it means whoever gets there first decides whether the
+            // whole stat sweep runs. Not calling it at all is what actually makes DamageEvent's
+            // friendly fire cancel binding: an ally hit must apply nothing and cost nothing.
+            if (!data.isCanceled()) {
+                calculateEffects();
+            }
             data.freeze();
 
             if (!data.isCanceled()) {

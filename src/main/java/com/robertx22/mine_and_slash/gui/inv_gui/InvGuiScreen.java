@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public class InvGuiScreen extends BaseScreen {
     static ResourceLocation TEX = SlashRef.guiId("inv_gui/background");
 
-    InvGuiGrid grid;
+    protected InvGuiGrid grid;
 
     // This screen is the generic item picker - it backs the "Features" grid and the salvage config off
     // the hub, but also the skill gem spell picker and the mercenary equip pickers, which are reached

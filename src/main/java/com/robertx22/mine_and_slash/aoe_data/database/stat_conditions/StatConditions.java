@@ -42,6 +42,7 @@ public class StatConditions implements ExileRegistryInit {
             EventData.AILMENT_PROCCED,
             EventData.IS_BLOCKED,
             EventData.IS_BONUS_ELEMENT_DAMAGE,
+            EventData.IS_DAMAGE_TAKEN_AS,
             EventData.IS_DODGED,
             EventData.CRIT,
             EventData.IS_BASIC_ATTACK,

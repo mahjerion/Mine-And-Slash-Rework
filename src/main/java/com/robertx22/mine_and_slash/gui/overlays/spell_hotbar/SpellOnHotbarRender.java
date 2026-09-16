@@ -238,9 +238,11 @@ public class SpellOnHotbarRender {
         float percent = 0F;
         int longestLeft = 0;
 
+        // the weapon swap lockout is in both arms: it blocks off global cooldown skills too, so
+        // their slots have to darken for it as well
         String[] ids = spell.getConfig().isOffGlobalCooldown()
-                ? new String[]{spell.GUID()}
-                : new String[]{spell.GUID(), CooldownsData.GLOBAL_COOLDOWN};
+                ? new String[]{spell.GUID(), CooldownsData.WEAPON_SWAP}
+                : new String[]{spell.GUID(), CooldownsData.GLOBAL_COOLDOWN, CooldownsData.WEAPON_SWAP};
 
         for (String id : ids) {
             int left = cds.getCooldownTicks(id);

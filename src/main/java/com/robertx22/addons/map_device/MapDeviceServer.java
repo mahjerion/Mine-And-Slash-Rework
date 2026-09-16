@@ -7,13 +7,16 @@ import com.robertx22.dungeon_realm.main.DungeonMain;
 import com.robertx22.the_harvest.main.HarvestMain;
 import com.robertx22.ancient_obelisks.main.ObelisksMain;
 import com.robertx22.library_of_exile.database.relic.stat.RelicStatsContainer;
+import com.robertx22.library_of_exile.dimension.MapDimensions;
 import com.robertx22.library_of_exile.dimension.device.IMapDeviceBlockEntity;
 import com.robertx22.library_of_exile.dimension.device.MapDeviceKind;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.capability.world.WorldData;
 import com.robertx22.mine_and_slash.maps.MapData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
+import com.robertx22.mine_and_slash.uncommon.localization.Chats;
 import com.robertx22.mine_and_slash.uncommon.utilityclasses.PlayerUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -111,6 +114,11 @@ public class MapDeviceServer {
         if (!previous.isEmpty()) {
             giveBack(p, previous);
         }
+        if (isRelicSlot(slot)) {
+            // a device inside a map goes inert after its one free run and can never be reached again,
+            // so remember it and hand the relic back when the player leaves - see MapDeviceRelicGuard
+            MapDeviceRelicGuard.track(p, pos);
+        }
         markChanged(device);
         sync(p, device, pos);
     }
@@ -125,6 +133,7 @@ public class MapDeviceServer {
             inv.setItem(slot, ItemStack.EMPTY);
             giveBack(p, stack);
             markChanged(device);
+            MapDeviceRelicGuard.untrackIfEmpty(p, device, pos);
         }
         sync(p, device, pos);
     }
@@ -156,6 +165,10 @@ public class MapDeviceServer {
      * run) starts a new run; otherwise a live run is joined.
      */
     public static StartResult tryStartOrJoin(Player p, IMapDeviceBlockEntity device) {
+        // read before the start: the entrance teleport is only scheduled, so the player is still standing
+        // in the instance when startMap returns and this would already answer for the destination
+        boolean inMap = MapDimensions.isMap(p.level());
+
         StartResult result;
         if (device.isFreeRunAvailable(p.level()) || !device.getDeviceInventory().getItem(MAP_SLOT).isEmpty()) {
             SimpleContainer inv = device.getDeviceInventory();
@@ -166,8 +179,58 @@ public class MapDeviceServer {
         } else {
             result = StartResult.NOTHING_TO_DO;
         }
+
+        if (result == StartResult.STARTED && inMap) {
+            // that was this device's one free run. it is inert from here on, in an instance nobody can
+            // come back to, so the relics that survived the consume must not stay in it.
+            returnRelics(p, device, true);
+            if (device instanceof BlockEntity be) {
+                MapDeviceRelicGuard.untrackIfEmpty(p, device, be.getBlockPos());
+            }
+        }
         markChanged(device);
         return result;
+    }
+
+    /**
+     * Empties the device's relic slots back to the player.
+     *
+     * @param stillInside true while the player is still standing in the instance the device belongs to.
+     *                    An item entity dropped there would be left behind by the entrance teleport, so
+     *                    a relic that does not fit the inventory stays in its slot instead, and
+     *                    {@link MapDeviceRelicGuard} hands it over once the player is actually out.
+     * @return whether anything was returned
+     */
+    public static boolean returnRelics(Player p, IMapDeviceBlockEntity device, boolean stillInside) {
+        SimpleContainer inv = device.getDeviceInventory();
+        boolean any = false;
+
+        for (int i = RELIC_SLOT_START; i < RELIC_SLOT_START + RELIC_SLOTS && i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            if (stillInside) {
+                // add() drains the stack it is given and leaves any remainder in it, so the slot keeps
+                // exactly what did not fit
+                p.getInventory().add(stack);
+                p.getInventory().setChanged();
+                if (!stack.isEmpty()) {
+                    continue;
+                }
+                inv.setItem(i, ItemStack.EMPTY);
+            } else {
+                inv.setItem(i, ItemStack.EMPTY);
+                giveBack(p, stack);
+            }
+            any = true;
+        }
+
+        if (any) {
+            markChanged(device);
+            p.sendSystemMessage(Chats.MAP_DEVICE_RELICS_RETURNED.locName().withStyle(ChatFormatting.GREEN));
+        }
+        return any;
     }
 
     /**

@@ -106,6 +106,15 @@ public class OnMobDeathDrops extends EventConsumer<ExileEvents.OnMobDeath> {
                     float loot_multi = (float) config.loot_multi;
                     float exp_multi = (float) config.exp_multi;
 
+                    // a mob's EntityConfig can zero its loot to kill off a vanilla farm (iron golems,
+                    // polar bears), but a map boss is placed by the dungeon itself and has to pay out.
+                    // The sandstone arena boss IS an iron golem, so that farm guard was silently eating
+                    // the entire reward - no drops and no exp for finishing the map.
+                    if (mobKilledData.getMobRarity().isBossRarity()) {
+                        loot_multi = Math.max(loot_multi, 1F);
+                        exp_multi = Math.max(exp_multi, 1F);
+                    }
+
 
                     if (loot_multi > 0) {
 

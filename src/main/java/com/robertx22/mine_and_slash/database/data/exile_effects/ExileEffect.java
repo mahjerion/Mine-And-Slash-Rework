@@ -166,7 +166,9 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                         result.increaseByAddedPercent();
                     }
 
-                    result.percentIncrease = (100 * multi) - 100;
+                    float effMulti = scalesWithEffectStrength(x, result) ? multi : 1F;
+
+                    result.percentIncrease = (100 * effMulti) - 100;
                     result.increaseByAddedPercent();
 
                     return result;
@@ -174,6 +176,42 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
                 })
                 .collect(Collectors.toList());
 
+    }
+
+    /**
+     * Effect Strength is meant to make an effect better at what it is for, not bigger in both
+     * directions. The multiplier used to hit every mod the same way, so a buff that trades an upside
+     * for a downside (Eighth Gate: more attack damage, -50% health regen) deepened its own penalty
+     * as you stacked the stat, and investing in it partly punished you. Scale only the mods that
+     * point the way the effect intends: the holder's gains on a beneficial effect, the holder's
+     * losses on a curse. Both directions - a multiplier below 1 must not soften a downside either.
+     * <p>
+     * A neutral effect has no intent to read, so it keeps scaling whole. StatMod.scale_with_effect_strength
+     * overrides the read for stats that lie about their polarity.
+     */
+    private boolean scalesWithEffectStrength(StatMod mod, ExactStatData exact) {
+        if (mod.scale_with_effect_strength != null) {
+            return mod.scale_with_effect_strength;
+        }
+        if (type == EffectType.neutral) {
+            return true;
+        }
+        boolean good = exact.isGoodForHolder();
+        return type == EffectType.negative ? !good : good;
+    }
+
+    /**
+     * Same rule as {@link #scalesWithEffectStrength} for the vanilla attribute modifiers. These carry
+     * no Stat to ask about polarity, but every attribute they are used on (movement speed, attack
+     * speed, attack damage) is higher-is-better, so the sign of the amount is the whole answer.
+     */
+    private float vanillaEffectStrength(VanillaStatData stat, float multi) {
+        if (type == EffectType.neutral) {
+            return multi;
+        }
+        boolean good = stat.val >= 0;
+        boolean intended = type == EffectType.negative ? !good : good;
+        return intended ? multi : 1F;
     }
 
     public List<Component> GetTooltipString(StatRangeInfo info) {
@@ -223,7 +261,15 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
 
             if (data != null) {
                 int stacks = data.stacks;
-                mc_stats.forEach(x -> x.applyVanillaStats(entity, stacks, data.str_multi));
+                // per stat try/catch, same reason as restoreVanillaStats: a half applied effect is
+                // worse than an unapplied one, because the half that landed is what gets left behind
+                for (VanillaStatData x : mc_stats) {
+                    try {
+                        x.applyVanillaStats(entity, stacks, vanillaEffectStrength(x, data.str_multi));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 Load.Unit(entity).equipmentCache.STATUS.setDirty();
 
                 if (!this.one_of_a_kind_id.isEmpty()) {
@@ -262,11 +308,34 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
      * applyVanillaStats removes the old modifier before adding, so calling this repeatedly is safe.
      */
     public void refreshVanillaStats(LivingEntity entity, ExileEffectInstanceData data) {
+        restoreVanillaStats(entity, data);
+    }
+
+    /**
+     * Asserts this effect's vanilla attribute modifiers on the holder at the instance's current
+     * stacks and strength, and reports whether anything actually had to change. Used by the reconcile
+     * pass in EntityStatusEffectsData, which runs on a cadence rather than on an event, so it has to
+     * be free when the entity is already correct - applyIfDifferent leaves the attribute instance
+     * alone in that case instead of paying a remove + add and a resync.
+     *
+     * @return true if a modifier was added or corrected
+     */
+    public boolean restoreVanillaStats(LivingEntity entity, ExileEffectInstanceData data) {
         if (mc_stats.isEmpty() || data == null) {
-            return;
+            return false;
         }
         int stacks = data.stacks;
-        mc_stats.forEach(x -> x.applyVanillaStats(entity, stacks, data.str_multi));
+        boolean changed = false;
+        for (VanillaStatData x : mc_stats) {
+            // not a stream/forEach: one attribute throwing must not skip the rest of the list, or an
+            // effect comes half off and the mob keeps, say, its x0 attack damage but gets its speed back
+            try {
+                changed |= x.applyIfDifferent(entity, stacks, vanillaEffectStrength(x, data.str_multi));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return changed;
     }
 
     public ExileEffectInstanceData getSavedData(LivingEntity en) {
@@ -291,7 +360,16 @@ public class ExileEffect implements JsonExileRegistry<ExileEffect>, IAutoGson<Ex
             // strip the vanilla attribute modifiers, and mark the cached status stats stale so the
             // next stat calc drops this effect's stats. a failure inside the on-expire spell used to
             // leave the mob's stat context frozen with, say, a -100% total damage still in it
-            mc_stats.forEach(x -> x.removeVanillaStats(target));
+            // one attribute failing must not strand the others ON the entity. this is exactly how a
+            // stun comes off as "mob moves again but still hits for nothing": the movement modifier
+            // was stripped, something threw, and the attack damage one never was
+            for (VanillaStatData x : mc_stats) {
+                try {
+                    x.removeVanillaStats(target);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             if (data != null) {
                 data.stacks = 0;

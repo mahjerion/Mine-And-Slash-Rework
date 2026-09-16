@@ -20,11 +20,13 @@ import com.robertx22.mine_and_slash.gui.inv_gui.actions.auto_salvage.ToggleGearT
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.database.data.spells.components.Spell;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipAction;
+import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercEquipFromBagAction;
 import com.robertx22.mine_and_slash.gui.inv_gui.actions.mercenary.MercPickSkillAction;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
 import com.robertx22.mine_and_slash.uncommon.datasaving.Load;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercBagClientState;
 import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercenarySlotType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -59,11 +61,19 @@ public class GuiInventoryGrids {
 
 
     /**
-     * Everything in the player's inventory that legally fits one mercenary slot. This is the picker
-     * half of "click the slot and it brings up legal entries for that slot" - it is filtered here for
-     * the player's benefit, and filtered again on the server, which is the copy that counts.
+     * Everything the player has that legally fits one mercenary slot - their inventory first, then the
+     * master bag. This is the picker half of "click the slot and it brings up legal entries for that
+     * slot" - it is filtered here for the player's benefit, and filtered again on the server, which is
+     * the copy that counts.
+     * <p>
+     * The bag half reads the snapshot the server pushed when the mercenary screen opened, because
+     * backpacks are never synced to the client. A snapshot cannot go stale in a way that matters here:
+     * the only thing that can write to a bag while this screen is up is auto pickup, and
+     * {@code BackpackInventory.addItem} only ever fills an empty slot or grows a stack of the same
+     * item - it never changes which item is at an occupied slot. Re-homing does, but that happens in
+     * {@code openBackpack}, which replaces this screen.
      */
-    public static InvGuiGrid ofMercSlotChoices(Player p, MercenarySlotType type, int index) {
+    public static List<GuiItemData> mercSlotChoiceEntries(Player p, MercenarySlotType type, int index) {
         GuiAction.regenActionMap();
 
         MercEquipAction.TARGET_TYPE = type;
@@ -88,7 +98,40 @@ public class GuiInventoryGrids {
             list.add(new GuiItemData(new MercEquipAction(i)));
         }
 
-        return InvGuiGrid.ofList(list);
+        MercBagClientState state = MercBagClientState.last;
+        if (state != null && state.hasBackpack) {
+            for (MercBagClientState.Entry entry : state.get(MercBagClientState.tabFor(type))) {
+                if (entry.stack().isEmpty()) {
+                    continue;
+                }
+                if (!type.mayPlace(p, data, index, entry.stack())) {
+                    continue;
+                }
+                list.add(new GuiItemData(new MercEquipFromBagAction(entry.bagSlot())));
+            }
+        }
+
+        return list;
+    }
+
+    public static int mercSlotChoicePageCount(Player p, MercenarySlotType type, int index) {
+        int size = mercSlotChoiceEntries(p, type, index).size();
+        return Math.max(1, (int) Math.ceil(size / (double) InvGuiGrid.TOTAL_SLOTS));
+    }
+
+    /**
+     * One page of the entries above. Paged because the inventory and a full bag tab together can far
+     * exceed the grid, and {@code InvGuiGrid.ofList} truncates in silence - which would hide items just
+     * as thoroughly as not reading the bag at all did.
+     */
+    public static InvGuiGrid ofMercSlotChoices(Player p, MercenarySlotType type, int index, int page) {
+        List<GuiItemData> all = mercSlotChoiceEntries(p, type, index);
+
+        int from = Math.max(0, page) * InvGuiGrid.TOTAL_SLOTS;
+        if (from >= all.size()) {
+            return InvGuiGrid.ofList(new ArrayList<>());
+        }
+        return InvGuiGrid.ofList(all.subList(from, Math.min(from + InvGuiGrid.TOTAL_SLOTS, all.size())));
     }
 
     /**

@@ -36,6 +36,7 @@ public enum Itemtips implements IAutoLocName {
     SOUL_TIER_TIP("Soul tier determine the level range of generated gear"),
     MAP_TIER_TIP("Map tier indicate the difficulty and loot quality of this map"),
     MAP_ENTRY_TICKETS("Entry Tickets: %1$s"),
+    MAP_BONUS_LEAGUE_CHANCE("Bonus League Mechanic Chance: %1$s%%"),
     SHIFT_TIP("[Shift]: Detail"),
     ALT_TIP("[Alt]: Desc"),
     CTRL_TIP("[Ctrl]: Hide"),

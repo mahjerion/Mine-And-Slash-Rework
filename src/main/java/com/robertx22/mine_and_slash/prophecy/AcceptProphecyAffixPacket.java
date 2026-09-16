@@ -42,25 +42,28 @@ public class AcceptProphecyAffixPacket extends MyPacket<AcceptProphecyPacket> {
         var data = Load.player(p).prophecy;
 
         if (data.affixOffers.contains(this.id)) {
-            if (data.numMobAffixesCanAdd > 0 && data.affixesTaken.size() < 9) {
+            if (data.numMobAffixesCanAdd > 0 && !data.isAtCurseCap()) {
                 data.affixesTaken.removeIf(x -> x == null || x.isEmpty() || !ExileDB.MapAffixes().isRegistered(x));
 
                 data.affixesTaken.add(id);
+                // a curse that was just taken must never stay on the offer list, or the contains()
+                // check above would let the same card be accepted twice
+                data.affixOffers.remove(this.id);
 
                 data.numMobAffixesCanAdd--;
 
                 // Twin Curse - roll a fresh set for the next pick and put the screen back up.
-                // without this the offers stay empty and the leftover budget blocks every altar in
-                // the map for good. getProphecyCardsScreen() needs exactly 3, so a dry pool counts
-                // as being done rather than stranding the budget.
-                if (data.numMobAffixesCanAdd > 0 && data.affixesTaken.size() < 9) {
+                // without this the offers stay stale and the leftover budget blocks every altar in
+                // the map for good.
+                if (data.numMobAffixesCanAdd > 0 && !data.isAtCurseCap()) {
                     data.regenAffixOffers();
                 }
 
-                if (data.numMobAffixesCanAdd < 1 || data.affixOffers.size() < 3) {
+                // never strand budget: the guards above turn every further accept into a no-op once
+                // the cap is hit or the affix pool runs dry, while the altar gate would still see a
+                // pending pick and short circuit every altar for the rest of the map
+                if (data.numMobAffixesCanAdd < 1 || data.isAtCurseCap() || data.affixOffers.isEmpty()) {
                     data.affixOffers = new ArrayList<>();
-                    // never strand budget on the 9 curse cap - the guard above would make every
-                    // further accept a no-op while the altar gate still saw a pending pick
                     data.numMobAffixesCanAdd = 0;
                     data.consumePendingAltar(p);
                 }

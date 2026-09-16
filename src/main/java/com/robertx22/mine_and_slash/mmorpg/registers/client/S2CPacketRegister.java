@@ -1,6 +1,7 @@
 package com.robertx22.mine_and_slash.mmorpg.registers.client;
 
 import com.robertx22.addons.map_device.MapDeviceSyncPacket;
+import com.robertx22.mine_and_slash.vanilla_mc.packets.mercenary.MercBagSyncPacket;
 import com.robertx22.library_of_exile.main.Packets;
 import com.robertx22.mine_and_slash.database.data.profession.StationPacket;
 import com.robertx22.mine_and_slash.database.data.profession.StationSyncData;
@@ -40,6 +41,7 @@ public class S2CPacketRegister {
         Packets.registerServerToClient(MMORPG.NETWORK, new SetBackpackSlotPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new SyncUniqueCollectionPacket(), i++);
         Packets.registerServerToClient(MMORPG.NETWORK, new MapDeviceSyncPacket(), i++);
+        Packets.registerServerToClient(MMORPG.NETWORK, new MercBagSyncPacket(), i++);
 
 
     }

@@ -92,15 +92,25 @@ public class MercEquipAction extends GuiAction<MercEquipAction.Target> {
 
     @Override
     public List<Component> getTooltip(Player p) {
+        return mercTooltip(p, p.getInventory().getItem(invSlot));
+    }
+
+    /**
+     * An item's tooltip as the MERCENARY sees it.
+     * <p>
+     * These grids only ever list gear the mercenary can wear - mayPlace runs meetsAttributeReq against
+     * its stats - so the requirement check marks have to be judged the same way, or every entry the
+     * owner personally falls short of is offered and then marked with a red X.
+     * <p>
+     * Shared with {@link MercEquipFromBagAction}, which lists the same items out of the master bag and
+     * has to judge them identically.
+     */
+    public static List<Component> mercTooltip(Player p, ItemStack stack) {
         List<Component> list = new ArrayList<>();
-        ItemStack stack = p.getInventory().getItem(invSlot);
         if (stack.isEmpty()) {
             return list;
         }
 
-        // this grid only ever lists gear the MERCENARY can wear - mayPlace runs meetsAttributeReq
-        // against its stats - so the requirement check marks have to be judged the same way, or every
-        // entry the owner personally falls short of is offered and then marked with a red X.
         MercenaryEntity merc = ClientMercenary.get();
 
         GearTooltipUtils.TOOLTIP_ENTITY_OVERRIDE = merc == null ? null : Load.Unit(merc);

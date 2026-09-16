@@ -6,6 +6,7 @@ import com.robertx22.mine_and_slash.database.data.mercenary.ClientMercenary;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryClass;
 import com.robertx22.mine_and_slash.database.data.mercenary.MercenaryManager;
 import com.robertx22.mine_and_slash.database.data.mercenary.entity.MercenaryEntity;
+import com.robertx22.mine_and_slash.database.data.support_gem.SupportGemRules;
 import com.robertx22.mine_and_slash.database.registry.ExileDB;
 import com.robertx22.mine_and_slash.saveclasses.item_classes.GearItemData;
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryData;
@@ -56,9 +57,13 @@ public enum MercenarySlotType {
             if (!fitsSlot(gear, slot)) {
                 return false;
             }
-            // a two hander occupies both hands, so nothing may sit alongside it, and it may not be
-            // put on while something is already in the offhand.
-            if (slot == EquipmentSlot.OFFHAND) {
+            // a two hander occupies both hands, so no second WEAPON may sit alongside it. shields,
+            // tomes and totems are unaffected, exactly as they are for a player: GearData.isGearGood
+            // only reaches mainHandBlocksOffhandWeapon inside `type.isWeapon()`, so an offhand_family
+            // item is accepted whatever the mainhand holds. Testing the slot instead of the item is
+            // what stopped a mercenary equipping a totem next to a bow - bows and crossbows really
+            // are two handed (can_dual_wield false), the rule was just far too broad.
+            if (slot == EquipmentSlot.OFFHAND && isWeapon(gear)) {
                 ItemStack main = data.getGear().getItem(MercenaryInventories.gearIndexOf(EquipmentSlot.MAINHAND));
                 if (DualWieldUtils.isTwoHandedWeapon(main)) {
                     return false;
@@ -66,7 +71,9 @@ public enum MercenarySlotType {
             }
             if (slot == EquipmentSlot.MAINHAND && DualWieldUtils.isTwoHandedWeapon(stack)) {
                 ItemStack off = data.getGear().getItem(MercenaryInventories.gearIndexOf(EquipmentSlot.OFFHAND));
-                if (!off.isEmpty()) {
+                // and symmetrically: only an offhand weapon blocks a two hander going on, or a totem
+                // equipped first would lock the mercenary out of every bow and greatsword it owns
+                if (isWeapon(StackSaving.GEARS.loadFrom(off))) {
                     return false;
                 }
             }
@@ -93,7 +100,14 @@ public enum MercenarySlotType {
             // skill they sit under unlocks, up to 3 (design section 6).
             int skill = index / MercenaryClass.SUPPORTS_PER_SKILL;
             int within = index % MercenaryClass.SUPPORTS_PER_SKILL;
-            return within < data.getSupportSlots(skill);
+            if (within >= data.getSupportSlots(skill)) {
+                return false;
+            }
+            // no stacking the same support under one skill, and only one gem out of any one_of_a_kind
+            // group - the rule SocketedGem.removeSupportGemsIfTooMany holds players to, and the same
+            // shape as the duplicate check the AURA branch below already does. index is excluded so a
+            // gem swapped into an occupied slot isn't judged against the one it is replacing.
+            return !SupportGemRules.conflicts(MercenaryStatUtils.getSupportGems(data, skill, index), gem);
         }
     },
 
@@ -154,6 +168,15 @@ public enum MercenarySlotType {
         return gear.getRequirement().meetsReq(gear.getLevel(), Load.Unit(merc));
     }
 
+    /** whether a piece of gear is a weapon, for the two hander rules. null safe - an empty slot is not */
+    private static boolean isWeapon(GearItemData gear) {
+        if (gear == null) {
+            return false;
+        }
+        BaseGearType type = gear.GetBaseGearType();
+        return type != null && type.isWeapon();
+    }
+
     private static boolean fitsSlot(GearItemData gear, EquipmentSlot slot) {
         BaseGearType type = gear.GetBaseGearType();
         if (type == null || type.isJewelry()) {
@@ -180,5 +203,8 @@ public enum MercenarySlotType {
     public static void afterChange(Player p) {
         MercenaryManager.refreshGear(p);
         Load.player(p).playerDataSync.setDirtyAndSync(p);
+        // an equip can have come out of the master bag, and a displaced item can have gone back into
+        // it, so the picker's snapshot is stale the moment anything here changes
+        MercBagServer.sync(p);
     }
 }

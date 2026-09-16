@@ -267,11 +267,14 @@ public class MainHubScreen extends BaseScreen implements INamedScreen {
 
         if (mc.level.dimension().location().equals(DungeonMain.DIMENSION_KEY)) {
             rightButtons.add(new MapScreen());
-            if (Load.player(mc.player).prophecy.affixOffers.isEmpty()) {
-                rightButtons.add(new ProphecyScreen());
-            } else {
-                rightButtons.add(OpenGuiWrapper.getProphecyCardsScreen());
+            // only hand the slot to the card picker while a pick is actually owed, and never let a
+            // null screen through - getProphecyCardsScreen() returns null on an empty offer list and
+            // that would NPE in the MainHubButton loop below, taking the whole hub with it
+            INamedScreen prophecyScreen = null;
+            if (Load.player(mc.player).prophecy.numMobAffixesCanAdd > 0) {
+                prophecyScreen = OpenGuiWrapper.getProphecyCardsScreen();
             }
+            rightButtons.add(prophecyScreen == null ? new ProphecyScreen() : prophecyScreen);
         }
 
         List<INamedScreen> leftButtons = new ArrayList<>();

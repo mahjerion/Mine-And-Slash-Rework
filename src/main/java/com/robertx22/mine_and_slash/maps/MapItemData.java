@@ -184,8 +184,19 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
     }
 
     public float bonusFormula() {
-        float tierBonus = tier * 0.02F;
+        float tierBonus = (float) (tier * GameBalanceConfig.get().LOOT_BONUS_PER_MAP_TIER);
         return (1 + tierBonus);
+    }
+
+    // tier's contribution to the league-mechanic pool, scaling linearly from nothing at tier 0 to the
+    // configured value at max tier. Lives here, not in dungeon_realm, so the map tooltip and the event
+    // that consumes it read one formula.
+    public float getTierBonusEventChance() {
+        int maxTier = maxMapTier();
+        if (maxTier <= 0) {
+            return 0;
+        }
+        return ServerContainer.get().MAX_TIER_BONUS_EVENT_CHANCE.get() * (tier / (float) maxTier);
     }
 
     public float getExpMulti() {
@@ -275,14 +286,19 @@ public class MapItemData implements ICommonDataItem<GearRarity> {
                         }
                     }
 
-                    if (!tooltipInfo.shouldShowDescriptions()) {
-                        additional.add(Itemtips.Exp.locName(this.getBonusExpAmountInPercent()).withStyle(ChatFormatting.GOLD));
-                        additional.add(Itemtips.Loot.locName(this.getBonusLootAmountInPercent()).withStyle(ChatFormatting.GOLD));
-                        additional.add(TooltipUtils.tier(this.tier).withStyle(ChatFormatting.GOLD));
-                    } else {
-                        additional.add(Itemtips.Exp.locName(this.getBonusExpAmountInPercent()).withStyle(ChatFormatting.GOLD));
-                        additional.add(Itemtips.Loot.locName(this.getBonusLootAmountInPercent()).withStyle(ChatFormatting.GOLD));
-                        additional.add(TooltipUtils.tier(this.tier).withStyle(ChatFormatting.GOLD));
+                    additional.add(Itemtips.Exp.locName(this.getBonusExpAmountInPercent()).withStyle(ChatFormatting.GOLD));
+                    additional.add(Itemtips.Loot.locName(this.getBonusLootAmountInPercent()).withStyle(ChatFormatting.GOLD));
+
+                    // hidden at 0, so it stays off the tooltip when MAX_TIER_BONUS_EVENT_CHANCE is
+                    // configured off entirely, and on a tier 0 map where it contributes nothing
+                    int leagueChance = (int) this.getTierBonusEventChance();
+                    if (leagueChance > 0) {
+                        additional.add(Itemtips.MAP_BONUS_LEAGUE_CHANCE.locName(leagueChance).withStyle(ChatFormatting.GOLD));
+                    }
+
+                    additional.add(TooltipUtils.tier(this.tier).withStyle(ChatFormatting.GOLD));
+
+                    if (tooltipInfo.shouldShowDescriptions()) {
                         additional.add(Component.literal("[" + Itemtips.SOUL_TIER_TIP.locName().getString() + "]").withStyle(ChatFormatting.BLUE));
                     }
 

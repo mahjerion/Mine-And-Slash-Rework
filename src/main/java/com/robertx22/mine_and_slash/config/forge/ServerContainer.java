@@ -104,6 +104,11 @@ public class ServerContainer {
         OMEN_DROPRATE = b.defineInRange("OMEN_DROPRATE", 0.1D, 0, 1000);
         MAP_DROPRATE = b.defineInRange("MAP_DROPRATE", 1D, 0, 1000);
 
+        MOB_HEALTH_LOOT_EXPONENT = b.comment("How strongly a mob's vanilla health raises its loot and exp. 1.0 is the old linear behaviour, 0.5 heavily compresses it so tanky mobs stop dictating which map is worth farming, 0 makes health irrelevant.")
+                .defineInRange("MOB_HEALTH_LOOT_EXPONENT", 0.5D, 0D, 1D);
+        MOB_HEALTH_LOOT_MAX_MULTI = b.comment("Hard cap on the mob health loot and exp multiplier. A safety net for modded mobs with huge health pools.")
+                .defineInRange("MOB_HEALTH_LOOT_MAX_MULTI", 5D, 1D, 100D);
+
         MAP_TIER_DROP_FALLOFF = b.comment("Maps dropped inside a map can't roll lower than the run's tier minus this.")
                 .defineInRange("MAP_TIER_DROP_FALLOFF", 5, 0, 100);
         MAP_TIER_DROP_RISE = b.comment("How far above the run's tier a dropped map's floor can reach.")
@@ -367,6 +372,8 @@ public class ServerContainer {
     public ForgeConfigSpec.DoubleValue PROPHECY_COIN_DROPRATE;
     public ForgeConfigSpec.DoubleValue OMEN_DROPRATE;
     public ForgeConfigSpec.DoubleValue MAP_DROPRATE;
+    public ForgeConfigSpec.DoubleValue MOB_HEALTH_LOOT_EXPONENT;
+    public ForgeConfigSpec.DoubleValue MOB_HEALTH_LOOT_MAX_MULTI;
 
     public ForgeConfigSpec.IntValue MAP_TIER_DROP_FALLOFF;
     public ForgeConfigSpec.IntValue MAP_TIER_DROP_RISE;

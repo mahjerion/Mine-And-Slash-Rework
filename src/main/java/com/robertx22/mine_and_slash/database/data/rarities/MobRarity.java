@@ -8,6 +8,7 @@ import com.robertx22.mine_and_slash.database.registry.ExileRegistryTypes;
 import com.robertx22.mine_and_slash.mmorpg.MMORPG;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.interfaces.IAutoLocName;
+import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.IRarity;
 import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
@@ -52,6 +53,23 @@ public final class MobRarity implements JsonExileRegistry<MobRarity>, IAutoGson<
     public MobRarity setForceCustomHP(int hp) {
         this.force_custom_hp = hp;
         return this;
+    }
+
+    /**
+     * Overrides only the loot multiplier, leaving exp_multi at the value derived from bonusstatmulti, so
+     * raising a boss's drops doesn't also inflate the levelling curve.
+     */
+    public MobRarity setLootMulti(float multi) {
+        this.loot_multi = multi;
+        return this;
+    }
+
+    /**
+     * A hand placed map boss, as opposed to an elite that merely rolled a high rarity. Deliberately not
+     * the is_special flag, which SUMMON_ID also sets - player summons must never start paying out loot.
+     */
+    public boolean isBossRarity() {
+        return IRarity.BOSS.equals(id) || IRarity.UBER.equals(id) || IRarity.PINNACLE.equals(id);
     }
 
 

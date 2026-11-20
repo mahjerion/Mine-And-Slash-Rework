@@ -829,7 +829,32 @@ public class DamageEvent extends EffectEvent {
 
             if (target instanceof Player == false && config != null && config.set_health_damage_override) {
                 float hp = MathHelper.clamp(target.getHealth() - vanillaDamage, 0, target.getMaxHealth() + 1);
+                // this path skips hurt(), so tell Quest Kill Task who did the damage (no-op without it)
+                com.robertx22.mine_and_slash.compat.QuestKillTaskCompat.trackDamage(target, source);
+                // hurt() is what normally records the last player to damage a mob, which vanilla and
+                // modded "killed by player" loot conditions and mobs that restore it after a death
+                // animation (Mowzie's) depend on. skipping hurt() skipped that too.
+                if (source instanceof Player p) {
+                    target.setLastHurtByPlayer(p);
+                } else if (source instanceof net.minecraft.world.entity.TamableAnimal pet && pet.getOwner() instanceof Player owner) {
+                    target.setLastHurtByPlayer(owner);
+                }
                 target.setHealth(hp);
+                // the library records who damaged a mob from the vanilla hurt hooks, which this path
+                // skips, and the lethal hit below is the only one that fires those events by hand. so
+                // everything before the killing blow went unrecorded, and Anti Mob Farm (which cancels
+                // the loot of mobs the player did too little damage to) swallowed the drops of mobs
+                // killed purely by spells/DoTs.
+                if (target.getHealth() > 0 && vanillaDamage > 0 && Float.isFinite(vanillaDamage)) {
+                    net.minecraft.world.entity.Entity credited = source;
+                    if (source instanceof net.minecraft.world.entity.TamableAnimal pet && pet.getOwner() instanceof Player owner) {
+                        credited = owner;
+                    }
+                    var dmgStatsInfo = com.robertx22.library_of_exile.components.EntityInfoComponent.get(target);
+                    if (dmgStatsInfo != null) {
+                        dmgStatsInfo.getDamageStats().onDamagedBy(credited, vanillaDamage);
+                    }
+                }
                 // todo this might create bugs but its probably better that damage actually works..
                 if (target.getHealth() <= 0) {
                     ExileEvents.DAMAGE_BEFORE_CALC.callEvents(new ExileEvents.OnDamageEntity(dmgsource, vanillaDamage, target));

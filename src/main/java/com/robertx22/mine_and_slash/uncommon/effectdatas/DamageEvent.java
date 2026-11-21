@@ -672,21 +672,19 @@ public class DamageEvent extends EffectEvent {
             }
         }
 
-        msg.append(Words.FINAL_DAMAGE.locName(info.dmgmap.getOrDefault(getElement(), 0F).intValue()).withStyle(ChatFormatting.GOLD));
+        // this part's own damage. the element total used to go here, so when two parts shared an
+        // element the first block claimed the other's damage too
+        msg.append(Words.FINAL_DAMAGE.locName(info.parts.getOrDefault(this, getActualDamage()).intValue()).withStyle(ChatFormatting.GOLD));
 
 
+        // one block per part, not per element. keyed by element, a second part of the same element
+        // (added flat physical converted into a fire skill's own fire, a "taken as" split) overwrote
+        // the first, and a hit that ended up single element never listed its splits at all
         if (doBonusDmg) {
-            if (info.isMixedDamage()) {
-
-                for (Entry<Elements, Float> en : info.dmgmap.entrySet()) {
-                    if (en.getKey() != getElement()) {
-
-                        msg.append(Words.BONUS_DAMAGE_TYPE.locName().withStyle(ChatFormatting.YELLOW));
-
-                        var dmg = info.eventMap.get(en.getKey());
-                        msg.append(dmg.getInfoHoverMessage(info, false));
-
-                    }
+            for (DamageEvent part : info.parts.keySet()) {
+                if (part != this) {
+                    msg.append(Words.BONUS_DAMAGE_TYPE.locName().withStyle(ChatFormatting.YELLOW));
+                    msg.append(part.getInfoHoverMessage(info, false));
                 }
             }
         }
@@ -1128,6 +1126,10 @@ public class DamageEvent extends EffectEvent {
         // map and make isMixedDamage() call a single element hit "Multi Element"
         if (dmg > 0) {
             info.addDmg(bonus, dmg, bonus.getElement());
+        } else {
+            // still listed in the breakdown: it's where the next round's damage came from (added
+            // flat physical that converted onward), and its block shows the conversion that emptied it
+            info.parts.put(bonus, 0F);
         }
 
         bonus.bonusElementDamageMap.forEach((ele, num) -> next.merge(ele, num, Integer::sum));
@@ -1154,7 +1156,9 @@ public class DamageEvent extends EffectEvent {
 
         public float totalDmg = 0;
         private HashMap<Elements, Float> dmgmap = new HashMap<>();
-        private HashMap<Elements, DamageEvent> eventMap = new HashMap<>();
+        // every event that makes up this hit with the damage it dealt itself, in the order they
+        // resolved. only the damage breakdown reads it
+        private final java.util.LinkedHashMap<DamageEvent, Float> parts = new java.util.LinkedHashMap<>();
 
         public boolean isMixedDamage() {
             int bonusdmg = (int) dmgmap.entrySet().stream().filter(x -> true).count();
@@ -1178,7 +1182,7 @@ public class DamageEvent extends EffectEvent {
             float total = (dmgmap.getOrDefault(ele, 0F) + dmg);
 
             dmgmap.put(ele, total);
-            eventMap.put(ele, event);
+            parts.merge(event, dmg, Float::sum);
 
             totalDmg += dmg;
         }

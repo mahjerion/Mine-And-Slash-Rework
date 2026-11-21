@@ -11,6 +11,8 @@ import com.robertx22.mine_and_slash.uncommon.enumclasses.PlayStyle;
 import com.robertx22.mine_and_slash.uncommon.enumclasses.WeaponTypes;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EventData {
     public static String AILMENT = "ailment";
@@ -163,7 +165,19 @@ public class EventData {
     public void setBoolean(String id, Boolean bool) {
         tryFreezeErrorMessage();
 
+        if (lockedBools.contains(id)) {
+            return;
+        }
         bools.put(id, bool);
+    }
+
+    // a locked boolean keeps its value and ignores later writes. bonus element events use this to
+    // inherit decisions the original hit already made (crit), so their own stat sweep can't re-roll them
+    private Set<String> lockedBools = new HashSet<>();
+
+    public void lockBoolean(String id, boolean value) {
+        bools.put(id, value);
+        lockedBools.add(id);
     }
 
     public float getNumber() {

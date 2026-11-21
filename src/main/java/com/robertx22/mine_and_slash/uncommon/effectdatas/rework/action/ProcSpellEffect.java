@@ -87,6 +87,11 @@ public class ProcSpellEffect extends StatEffect {
     }
 
     @Override
+    public boolean oncePerAttack() {
+        return true;
+    }
+
+    @Override
     public Class<? extends StatEffect> getSerClass() {
         return ProcSpellEffect.class;
     }

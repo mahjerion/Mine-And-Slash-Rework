@@ -28,7 +28,7 @@ public class EitherIsTrueCondition extends StatCondition {
         return ifs.stream()
             .anyMatch(x -> ExileDB.StatConditions()
                 .get(x)
-                .can(event, statSource, data, stat));
+                .test(event, statSource, data, stat));
     }
 
     @Override

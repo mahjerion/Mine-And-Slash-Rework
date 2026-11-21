@@ -233,7 +233,7 @@ public class MercenaryData {
         }
 
         Unit unit = new Unit();
-        StatCalculation.calc(unit, allStatsWithoutSuppGems, merc, spell, slot);
+        StatCalculation.calc(unit, allStatsWithoutSuppGems, merc, spell, slot, false);
         spellUnits.put(id, unit);
         return unit;
     }

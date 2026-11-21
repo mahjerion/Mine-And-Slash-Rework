@@ -29,6 +29,11 @@ public class RemoveExileEffectAction extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // removes a status effect from a real entity
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         // the 1/false here are the duration ticks and infinite flag, not the stack count.
         // they are unused on the take path, which never touches the effect's duration.

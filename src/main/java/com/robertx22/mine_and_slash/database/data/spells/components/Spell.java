@@ -30,6 +30,9 @@ import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.saveclasses.ExactStatData;
 import com.robertx22.mine_and_slash.saveclasses.gearitem.gear_bases.StatRangeInfo;
 import com.robertx22.mine_and_slash.saveclasses.skill_gem.ISkillGem;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellTooltipInfo;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellTooltipInfos;
+import com.robertx22.mine_and_slash.uncommon.stat_calculation.SpellTooltipCalculation;
 import com.robertx22.mine_and_slash.saveclasses.unit.ResourceType;
 import com.robertx22.mine_and_slash.tags.all.SpellTags;
 import com.robertx22.mine_and_slash.tags.imp.SpellTag;
@@ -307,8 +310,13 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
 
         list.add(ExileText.emptyLine().get());
 
-        int mana = getCalculatedManaCost(ctx);
-        int ene = getCalculatedEnergyCost(ctx);
+        // the client's own SpellCastContext only knows the spell's base numbers - the stats that
+        // change a cost, a cooldown or a cast time are swept server side. use what was synced over
+        // whenever there is any, see SpellTooltipCalculation
+        SpellTooltipInfo tip = SpellTooltipInfos.of(ctx.caster, this);
+
+        int mana = tip != null ? tip.mana : getCalculatedManaCost(ctx);
+        int ene = tip != null ? tip.energy : getCalculatedEnergyCost(ctx);
 
         // a Blood Mage pays both costs out of one blood pool, so show them as one line. this reads
         // the stat rather than the spend event's resource type on purpose - calculateEffects bails
@@ -326,17 +334,17 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
                 list.add(Words.ENE_COST.locName(ene).withStyle(ChatFormatting.GREEN));
             }
         }
-        int recovery = getCastSpeedTicks(ctx);
+        int recovery = tip != null ? tip.recovery_ticks : getCastSpeedTicks(ctx);
+        int cooldown = tip != null ? tip.cooldown_ticks : getCooldownTicks(ctx);
 
         if (config.usesCharges()) {
+            int chargeRegen = tip != null ? tip.charge_cooldown_ticks : getChargeCooldownTicks(ctx);
             list.add(Words.MAX_CHARGES.locName(config.charges).withStyle(ChatFormatting.YELLOW));
-            // read from the event, not from config - Cooldown Reduction shortens charge regen too, and
-            // getChargeCooldownTicks is the same value spendCharge actually stores on the charge
-            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(getChargeCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
-        } else if (getCooldownTicks(ctx) > recovery) {
+            list.add(Words.CHARGE_REGEN.locName(tooltipFormatTicksAsSeconds(chargeRegen)).withStyle(ChatFormatting.YELLOW));
+        } else if (cooldown > recovery) {
             // recovery is the floor of every skill's cycle now, so only a genuinely longer cooldown
             // is worth a line. printing both on the ~250 skills where they match is just noise
-            list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(getCooldownTicks(ctx))).withStyle(ChatFormatting.YELLOW));
+            list.add(Words.COOLDOWN.locName(tooltipFormatTicksAsSeconds(cooldown)).withStyle(ChatFormatting.YELLOW));
         }
 
         if (config.isOffGlobalCooldown()) {
@@ -347,7 +355,7 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             list.add(Words.RECOVERY.locName(tooltipFormatTicksAsSeconds(recovery)).withStyle(ChatFormatting.YELLOW));
         }
 
-        int casttime = getCastTimeTicks(ctx);
+        int casttime = tip != null ? tip.cast_ticks : getCastTimeTicks(ctx);
 
         if (config.isChannel()) {
             // a channel has no cast time, casttime is the gap between pulses
@@ -356,6 +364,14 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
             list.add(Words.INSTANT_CAST.locName().withStyle(ChatFormatting.GREEN));
         } else {
             list.add(Words.CAST_TIME.locName(tooltipFormatTicksAsSeconds(casttime)).withStyle(ChatFormatting.GREEN));
+        }
+
+        // the damage above is the plain, non critical hit - a tooltip can't roll dice, so the crit
+        // odds and what a crit multiplies by are shown separately. these are the spell's own, support
+        // gems included, not the character sheet's
+        if (tip != null && !tip.dmg.isEmpty() && tip.crit_chance > 0) {
+            addCritLine(list, SpellTooltipCalculation.CRIT_CHANCE_ID, tip.crit_chance);
+            addCritLine(list, SpellTooltipCalculation.CRIT_DAMAGE_ID, tip.crit_damage);
         }
 
         Set<String> radiuses = new LinkedHashSet<>();
@@ -571,6 +587,14 @@ public final class Spell implements ISkillGem, IGUID, IAutoGson<Spell>, JsonExil
         } catch (Exception e) {
             return 0f;
         }
+    }
+
+    private static void addCritLine(List<Component> list, String statId, float value) {
+        var stat = ExileDB.Stats().get(statId);
+        if (stat == null) {
+            return;
+        }
+        list.add(Component.literal(stat.getFormat() + TOOLTIP_NUMBER_FORMAT.format(value) + "% ").append(stat.getMutableIconNameFormat()));
     }
 
     private static final DecimalFormat TOOLTIP_NUMBER_FORMAT = new DecimalFormat("0.##");

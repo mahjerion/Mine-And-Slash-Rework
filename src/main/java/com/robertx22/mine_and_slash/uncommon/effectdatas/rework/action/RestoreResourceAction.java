@@ -30,6 +30,11 @@ public class RestoreResourceAction extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // leeches resources onto a real entity
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
 
         float val = num_provider.getValue(event, event.getSide(statSource), data);

@@ -150,18 +150,32 @@ public class ValueCalculation implements JsonExileRegistry<ValueCalculation>, IA
     }
 
     public Component getShortTooltip(LivingEntity en, MaxLevelProvider provider) {
+        return getShortTooltip(en, provider, null);
+    }
+
+    /**
+     * calculatedHit is what one hit of this calculation actually deals for the caster - base scaling
+     * plus every increase, more multiplier and reduction they have - worked out server side by
+     * SpellTooltipCalculation and synced over. null when there is none to show (no skill gem for the
+     * spell, or the first sync hasn't landed yet), and then the raw base scaling is shown instead.
+     */
+    public Component getShortTooltip(LivingEntity en, MaxLevelProvider provider, Integer calculatedHit) {
         MutableComponent text = Component.literal("");
 
         int val = getCalculatedValue(en, provider);
 
+        int shown = calculatedHit != null ? calculatedHit : val;
 
-        text.append("" + ChatFormatting.GREEN + val + ChatFormatting.GRAY);
+        text.append("" + ChatFormatting.GREEN + shown + ChatFormatting.GRAY);
 
         if (!Screen.hasShiftDown()) {
             return text;
         }
 
-        int baseVal = getCalculatedBaseValue(en, provider);
+        // with a calculated hit the number above already has every bonus in it, so "Base" has to be
+        // the whole pre-bonus value for the breakdown to add up. without one it's the flat part only,
+        // as before, and the stat scalings below make up the rest
+        int baseVal = calculatedHit != null ? val : getCalculatedBaseValue(en, provider);
         if (baseVal > 0) {
             text.append(" ").append(Words.BASE_SPELL_DAMAGE.locName(baseVal));
         }

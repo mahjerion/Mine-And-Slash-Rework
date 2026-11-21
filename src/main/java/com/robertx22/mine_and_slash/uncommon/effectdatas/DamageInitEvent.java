@@ -9,6 +9,8 @@ public class DamageInitEvent extends EffectEvent {
         super(1, dmg.source, dmg.target);
         this.data = dmg.data;
         this.dmg = dmg;
+        this.simulation = dmg.simulation;
+        this.calcTargetEffects = dmg.calcTargetEffects;
     }
 
     @Override

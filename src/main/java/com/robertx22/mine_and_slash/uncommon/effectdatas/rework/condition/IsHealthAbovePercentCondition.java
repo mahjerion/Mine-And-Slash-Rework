@@ -22,6 +22,11 @@ public class IsHealthAbovePercentCondition extends StatCondition {
     }
 
     @Override
+    public boolean readsTarget() {
+        return side == EffectSides.Target;
+    }
+
+    @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         LivingEntity en = event.getSide(side);
         return perc < en.getHealth() / en.getMaxHealth() * 100;

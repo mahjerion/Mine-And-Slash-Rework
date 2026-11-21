@@ -334,6 +334,8 @@ public class CommonEvents {
                 // the client rebuilds the player entity and its capabilities on a dimension change,
                 // so the client's PlayerData is blank until we push it again
                 Load.player(p).forceNextSync();
+                // spell tooltip numbers ride their own packet, they need resending too
+                Load.player(p).cachedStats.resendSpellTooltips();
 
                 // Entry Tickets. This is the one hook that sees EVERY arrival into a map dimension,
                 // including teleports from other mods that never touch the map device - see

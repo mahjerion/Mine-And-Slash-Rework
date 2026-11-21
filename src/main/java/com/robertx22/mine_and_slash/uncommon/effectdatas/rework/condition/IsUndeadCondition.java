@@ -12,6 +12,11 @@ public class IsUndeadCondition extends StatCondition {
     }
 
     @Override
+    public boolean readsTarget() {
+        return true;
+    }
+
+    @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         return event.target.isInvertedHealAndHarm();
     }

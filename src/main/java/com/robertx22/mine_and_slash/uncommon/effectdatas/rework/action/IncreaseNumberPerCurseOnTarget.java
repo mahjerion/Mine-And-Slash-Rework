@@ -16,6 +16,11 @@ public class IncreaseNumberPerCurseOnTarget extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // counts curses on the target, which in a simulation is the caster
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
 
         int curses = ExileEffectUtils.countEffectsWithTag(event.target, EffectTags.curse);

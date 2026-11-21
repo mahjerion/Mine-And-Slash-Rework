@@ -42,6 +42,11 @@ public class ProcSpellEffect extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // casts a spell in the world
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         var SO = event.getSide(source);
         var TA = event.getSide(target);

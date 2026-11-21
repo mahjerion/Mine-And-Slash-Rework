@@ -14,6 +14,11 @@ public class RandomRollCondition extends StatCondition {
 
     @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
+        if (event.simulation) {
+            // a tooltip has to show one number, not a coin flip. every chance reads as a miss there,
+            // so what it shows is the plain hit - crit chance is reported on its own line instead
+            return false;
+        }
         return RandomUtils.roll(data.getValue());
     }
 

@@ -35,6 +35,11 @@ public class GiveExileStatusInRadius extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // applies a status effect to real entities
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
 
         LivingEntity en = event.getSide(statSource);

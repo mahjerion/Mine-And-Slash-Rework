@@ -61,6 +61,11 @@ public class AilmentChance extends Stat {
     private class Effect extends BaseDamageEffect {
 
         @Override
+        public boolean worksInSimulation() {
+            return false; // rolls the ailment and applies it to the target
+        }
+
+        @Override
         public StatPriority GetPriority() {
             return StatPriority.Damage.FINAL_DAMAGE;
         }

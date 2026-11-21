@@ -683,6 +683,8 @@ public class EntityData implements ICap, INeededForClient {
             data.cachedStats.allStatsWithoutSuppGems = stats;
 
             data.setSpellUnitsDirty();
+            // the tooltip numbers are built out of the spell units that were just thrown away
+            data.cachedStats.SPELL_TOOLTIPS.setDirty();
 
             Load.player(p).spellCastingData.calcSpellLevels(unit, p);
             Load.player(p).getSkillGemInventory().removeAurasIfCantWear(p);

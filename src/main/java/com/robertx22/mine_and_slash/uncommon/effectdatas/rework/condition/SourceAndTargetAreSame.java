@@ -15,6 +15,11 @@ public class SourceAndTargetAreSame extends StatCondition {
 
     @Override
     public boolean can(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
+        if (event.simulation) {
+            // a simulated hit hangs off the caster as its own target for lack of anything else to
+            // aim at. that isn't the caster hurting themselves, so self damage rules must not fire
+            return false;
+        }
         return event.source == event.target;
     }
 

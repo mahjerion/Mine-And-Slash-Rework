@@ -24,6 +24,7 @@ import com.robertx22.mine_and_slash.saveclasses.unique_collection.UniqueCollecti
 import com.robertx22.mine_and_slash.saveclasses.mercenary.MercenaryStorageData;
 import com.robertx22.mine_and_slash.saveclasses.perks.TalentsData;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellCastingData;
+import com.robertx22.mine_and_slash.saveclasses.spells.SpellTooltipInfos;
 import com.robertx22.mine_and_slash.saveclasses.spells.SpellSchoolsData;
 import com.robertx22.mine_and_slash.saveclasses.unit.Unit;
 import com.robertx22.mine_and_slash.saveclasses.unit.stat_calc.StatCalculation;
@@ -120,6 +121,13 @@ public class PlayerData implements ICap {
 
 
     public transient StatCalcInfoData ctxs = new StatCalcInfoData();
+
+    // the spell tooltip numbers the client can't work out for itself (damage after every increase and
+    // more multiplier, costs and timings after the stats that change them, crit). calculated server
+    // side on every stat recalc and pushed over with SyncSpellTooltipsPacket - see
+    // SpellTooltipCalculation. empty until the first sync arrives, and the tooltips fall back to the
+    // spell's own base numbers while it is
+    public transient SpellTooltipInfos spellTooltips = new SpellTooltipInfos();
 
     // so players know where their stats come from in the future gui
     //ublic SavedStatCtxList ctxStats = new SavedStatCtxList();
@@ -527,7 +535,7 @@ public class PlayerData implements ICap {
 
     private Unit calcSpellUnit(Spell spell, int key) {
         var unit = new Unit();
-        StatCalculation.calc(unit, this.cachedStats.allStatsWithoutSuppGems, player, spell, key);
+        StatCalculation.calc(unit, this.cachedStats.allStatsWithoutSuppGems, player, spell, key, false);
         return unit;
     }
 

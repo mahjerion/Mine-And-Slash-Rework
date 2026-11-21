@@ -44,6 +44,11 @@ public class SetCooldownEffect extends StatEffect {
     }
 
     @Override
+    public boolean worksInSimulation() {
+        return false; // puts a real cooldown on the caster
+    }
+
+    @Override
     public void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat) {
         event.sourceData.getCooldowns().setOnCooldown(this.data.cd_id, this.data.num);
     }

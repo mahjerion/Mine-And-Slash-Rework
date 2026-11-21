@@ -43,6 +43,14 @@ public abstract class StatEffect implements JsonExileRegistry<StatEffect>, IAuto
 
     public abstract void activate(EffectEvent event, EffectSides statSource, StatData data, Stat stat);
 
+    // true for side effects of landing a hit (procs, applying or removing effects, cooldowns) as
+    // opposed to effects that scale the damage number. one attack is split into one damage event per
+    // element, and those events must not each get their own roll at a side effect - see
+    // DataPackStatEffect.TryModifyEffect
+    public boolean oncePerAttack() {
+        return false;
+    }
+
     @Override
     public ExileRegistryType getExileRegistryType() {
         return ExileRegistryTypes.STAT_EFFECT;

@@ -49,6 +49,11 @@ public class SetCooldownEffect extends StatEffect {
     }
 
     @Override
+    public boolean oncePerAttack() {
+        return true;
+    }
+
+    @Override
     public Class<? extends StatEffect> getSerClass() {
         return SetCooldownEffect.class;
     }

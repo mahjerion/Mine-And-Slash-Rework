@@ -61,7 +61,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -96,6 +98,10 @@ public class DamageEvent extends EffectEvent {
     // stop firing at the cap so a pair of stats converting into each other can't loop forever.
     public static final int MAX_CONVERSION_DEPTH = 2;
     public int conversionDepth = 0;
+
+    // stat effects marked StatEffect.oncePerAttack that already took their roll on this attack. the
+    // original hit and every bonus element event built from it share the same set
+    public Set<String> oncePerAttackRolls = new HashSet<>();
 
     // these two are identical for this hit and for every bonus-element copy of it (same source,
     // same target, same tick), but each costs world/map data lookups to work out. resolve them
@@ -1057,6 +1063,13 @@ public class DamageEvent extends EffectEvent {
                     // which would push the realised dodge rate well past the listed one.
                     x.data.setBoolean(EventData.AVOIDANCE_ROLLED, this.data.getBoolean(EventData.AVOIDANCE_ROLLED));
                     x.data.setBoolean(EventData.IS_ATTACK_FULLY_CHARGED, this.data.getBoolean(EventData.IS_ATTACK_FULLY_CHARGED));
+                    // one attack, one crit decision. the crit chance stat runs on bonus_dmg too, so
+                    // without the lock each element split rolled its own crit and an attack could
+                    // crit with its fire part and not its physical part
+                    x.data.lockBoolean(EventData.CRIT, this.data.isCrit());
+                    // and one roll per on-hit side effect (procs, applying effects, cooldowns) across
+                    // all the splits - see DataPackStatEffect.TryModifyEffect
+                    x.oncePerAttackRolls = this.oncePerAttackRolls;
                     x.data.setupNumber(EventData.ATTACK_COOLDOWN, this.data.getNumber(EventData.ATTACK_COOLDOWN).number);
                     x.data.setupNumber(EventData.DMG_EFFECTIVENESS, this.data.getNumber(EventData.DMG_EFFECTIVENESS).number);
                     if (wepdmgMulti != 1) {
